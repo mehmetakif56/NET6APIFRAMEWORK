@@ -25,6 +25,12 @@ namespace TTBS.Controllers
             return Ok("Hi, you're on public property");
         }
 
+        [HttpGet("About")]
+        public IActionResult About()
+        {
+            return Ok("Hi, you're on public property");
+        }
+
         private UserModel GetCurrentUser()
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
