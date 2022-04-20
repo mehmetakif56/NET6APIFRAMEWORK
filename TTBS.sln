@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TTBS", "TTBS\TTBS.csproj", "{4B198691-E0F6-4F3A-948D-803455CE2693}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TTBS", "TTBS\TTBS.csproj", "{4B198691-E0F6-4F3A-948D-803455CE2693}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TTBS.Core", "TTBS.Core\TTBS.Core.csproj", "{0523F0D8-FD1E-44ED-932F-2BC4C532DA86}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TTBS.Resources", "TTBS.Resources\TTBS.Resources.csproj", "{6427F7A5-ACA7-48C9-A636-5C7304AE8422}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{4B198691-E0F6-4F3A-948D-803455CE2693}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B198691-E0F6-4F3A-948D-803455CE2693}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B198691-E0F6-4F3A-948D-803455CE2693}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0523F0D8-FD1E-44ED-932F-2BC4C532DA86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0523F0D8-FD1E-44ED-932F-2BC4C532DA86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0523F0D8-FD1E-44ED-932F-2BC4C532DA86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0523F0D8-FD1E-44ED-932F-2BC4C532DA86}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6427F7A5-ACA7-48C9-A636-5C7304AE8422}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6427F7A5-ACA7-48C9-A636-5C7304AE8422}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6427F7A5-ACA7-48C9-A636-5C7304AE8422}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6427F7A5-ACA7-48C9-A636-5C7304AE8422}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
