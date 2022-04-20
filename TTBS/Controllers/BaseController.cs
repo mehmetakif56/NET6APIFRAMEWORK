@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using TTBS.Core.Entities;
+using TTBS.Helper;
 
 namespace TTBS.Controllers
 {
@@ -9,6 +10,7 @@ namespace TTBS.Controllers
         private IMapper _mapper;
         private ILogger<T> _logger;
         private IConfiguration _conf;
+        private GenericSharedResourceService _localizer;
         private UserEntity _currentUser;
 
         protected IConfiguration Configuration => _conf ?? (_conf = HttpContext.RequestServices.GetService<IConfiguration>());
@@ -16,6 +18,8 @@ namespace TTBS.Controllers
         protected ILogger<T> Logger => _logger ?? (_logger = HttpContext.RequestServices.GetService<ILogger<T>>());
 
         //protected UserEntity CurrentUser => _currentUser ?? (_currentUser = HttpContext.RequestServices.GetService<ISessionHelper>().User);
+        protected GenericSharedResourceService L => _localizer ??
+               (_localizer = HttpContext.RequestServices.GetService<GenericSharedResourceService>());
         protected string BasePath => Configuration.GetValue<string>("BasePath");
 
     }

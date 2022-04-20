@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using TTBS.Core.Entities;
 using TTBS.Models;
 using TTBS.Services;
@@ -7,13 +8,17 @@ namespace TTBS.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DonemController : ControllerBase
+    public class DonemController : BaseController<DonemController>
     {
         private readonly IDonemService _donemService;
+        private readonly ILogger<DonemController> _logger;
+        public readonly IMapper _mapper;
 
-        public DonemController(IDonemService donemService)
+        public DonemController(IDonemService donemService, ILogger<DonemController> logger, IMapper mapper)
         {
             _donemService = donemService;
+            _logger = logger;
+            _mapper = mapper;
         }
 
         [Microsoft.AspNetCore.Authorization.AllowAnonymous]
@@ -21,8 +26,8 @@ namespace TTBS.Controllers
         public DonemModel Index()
         {
             var donemEntity = _donemService.GetDonem();
-            //var model = Mapper.Map<DonemModel>(donemEntity);
-            return null;
+            var model = _mapper.Map<DonemModel>(donemEntity);
+            return model;
         }
     }
 }
