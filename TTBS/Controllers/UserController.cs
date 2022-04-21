@@ -16,7 +16,7 @@ namespace TTBS.Controllers
         {
             var currentUser = GetCurrentUser();
 
-            return Ok($"Hi {currentUser.GivenName}, you are an {currentUser.Role}");
+            return Ok($"Hi {currentUser.FullName}, you are an {currentUser.Roles}");
         }
 
         [HttpGet("Public")]
@@ -42,10 +42,9 @@ namespace TTBS.Controllers
                 return new UserModel
                 {
                     Username = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.NameIdentifier)?.Value,
-                    EmailAddress = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value,
-                    GivenName = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.GivenName)?.Value,
-                    Surname = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Surname)?.Value,
-                    Role = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Role)?.Value
+                    Email = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value,
+                    FullName = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Name)?.Value,
+                    //Roles = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Role)?.Value
                 };
             }
             return null;

@@ -42,6 +42,8 @@
   <ItemGroup>
     <Compile Include="BaseEntities\BaseEntities.cs" />
     <Compile Include="Entities\ClaimEntity.cs" />
+    <Compile Include="Entities\UserRoleEntity.cs" />
+    <Compile Include="Entities\RoleEntity.cs" />
     <Compile Include="Entities\RoleClaimEntity.cs" />
     <Compile Include="Entities\DonemEntity.cs" />
     <Compile Include="Entities\UserEntity.cs" />

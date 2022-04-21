@@ -11,8 +11,7 @@ namespace TTBS.Core.Entities
     {
         public Guid ClaimId { get; set; }
         public Guid RoleId { get; set; }
-
-        //public virtual RoleEntity Role { get; set; }
+        public virtual RoleEntity Role { get; set; }
         public virtual ClaimEntity Claim { get; set; }
     }
 }

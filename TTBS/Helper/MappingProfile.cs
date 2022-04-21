@@ -10,6 +10,9 @@ namespace TTBS.Helper
         {
             CreateMap<DonemModel, DonemEntity>();
             CreateMap<DonemEntity, DonemModel>();
+            CreateMap<UserEntity, UserModel>()
+                .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.UserRoles.Select(x => x.Role.Name)));
+            CreateMap<UserModel, UserEntity>();
         }
     }
 }

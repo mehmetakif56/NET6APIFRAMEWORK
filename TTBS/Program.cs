@@ -3,7 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using TTBS;
 using TTBS.Core.Interfaces;
+using TTBS.Extensions;
 using TTBS.Helper;
 using TTBS.Infrastructure;
 using TTBS.Services;
@@ -33,10 +35,13 @@ builder.Services.AddCors(options =>
                           });
 });
 
+
 builder.Services.AddScoped(typeof(IRepository<>), typeof(EFRepository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IDonemService, DonemService>();
 builder.Services.AddSingleton(typeof(GenericSharedResourceService));
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ISessionHelper, SessionHelper>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -65,6 +70,16 @@ var mapperConfig = new MapperConfiguration(mc =>
 
 IMapper mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromSeconds(10);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+builder.Services.AddAuth();
+;
 
 var app = builder.Build();
 
@@ -76,9 +91,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 app.UseRouting();
 app.UseCors(MyAllowSpecificOrigins);
+
 app.UseAuthorization();
+app.UseSession();
+app.UseContextUserSession();
 app.MapControllers();
 
 app.Run();
