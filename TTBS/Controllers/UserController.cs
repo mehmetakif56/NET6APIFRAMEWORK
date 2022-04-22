@@ -41,7 +41,7 @@ namespace TTBS.Controllers
 
                 return new UserModel
                 {
-                    Username = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.NameIdentifier)?.Value,
+                    Token = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.NameIdentifier)?.Value,
                     Email = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value,
                     FullName = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Name)?.Value,
                     //Roles = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Role)?.Value

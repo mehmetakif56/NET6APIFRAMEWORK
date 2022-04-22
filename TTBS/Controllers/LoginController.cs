@@ -1,10 +1,6 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 using TTBS.Core.Interfaces;
 using TTBS.Models;
 
@@ -34,20 +30,27 @@ namespace TTBS.Controllers
         [HttpPost]
         public IActionResult Login()
         {
-            if (_sessionHelper.User != null)
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+
+            if (identity != null)
             {
-                var claims = _contextAccessor.HttpContext.User.Claims;
-                var user = _sessionHelper.User;
-                var model = _mapper.Map<UserModel>(user);
-                model.Token = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(o => o.Type == ClaimTypes.NameIdentifier).Value;
-                return Ok(model);
+                var userClaims = identity.Claims;
+                var roleList = userClaims.Where(x => x.Type == ClaimTypes.Role);
+
+
+                return Ok(new UserModel
+                {
+                    Token = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.NameIdentifier)?.Value,
+                    Email = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value,
+                    FullName = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Name)?.Value,
+                    Roles = userClaims.Where(x => x.Type == ClaimTypes.Role)?
+                            .Select(c => new RoleModel { RoleName = c.Value }).ToArray()
+
+               
+            });
             }
 
             return NotFound("User not found");
         }
-
-      
-
-        
     }
 }

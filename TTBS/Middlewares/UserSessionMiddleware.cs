@@ -67,7 +67,7 @@ namespace TTBS.Middlewares
                 new Claim(ClaimTypes.Email,user.Email??""),
                 new Claim(ClaimTypes.NameIdentifier, token)
             };
-            claims.AddRange(user.UserRoles.ToList().Select(o => new Claim(ClaimTypes.Role, o.Role.RoleStatusId.ToString())));
+            claims.AddRange(user.UserRoles.ToList().Select(o => new Claim(ClaimTypes.Role, o.Role.Name.ToString())));
             claims.AddRange(roleClaims.Select(o => new Claim(o.ClaimType, o.ClaimValue)));
 
             return claims;
@@ -78,14 +78,8 @@ namespace TTBS.Middlewares
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Secret"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.UserName),
-                new Claim(ClaimTypes.Email, user.Email??""),
-                new Claim(ClaimTypes.Name, user.FullName),
-            };
-
-            var token = new JwtSecurityToken(_config["Jwt:Issuer"],
+            var claims = new[] { new Claim(ClaimTypes.NameIdentifier, user.UserName) };
+             var token = new JwtSecurityToken(_config["Jwt:Issuer"],
               _config["Jwt:Audience"],
               claims,
               expires: DateTime.Now.AddMinutes(20),
