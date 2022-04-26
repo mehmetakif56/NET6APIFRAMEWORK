@@ -11,11 +11,12 @@ namespace TTBS.Models
         public int StenoSure { get; set; }
         public int UzmanStenoSure { get; set; }
         public int UzmanStenoSayisi { get; set; }
-        public string Yeri { get; set; }
-        public ToplanmaTuru ToplanmaTuru { get; set; }
-        public string Ad { get; set; }
+        public string GorevYeri { get; set; }
+        public string GorevAd { get; set; }
         public List<SelectListItem> BirlesimList { get; set; }
         public List<SelectListItem> KomisyonList {get;set;}
+        public IEnumerable<StenoGorevModel> StenoGorevs { get; set; }
+        public List<SelectListItem> GorevTuru { get; set; }
 
     }
 }

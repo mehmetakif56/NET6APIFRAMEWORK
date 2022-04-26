@@ -38,7 +38,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(EFRepository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IDonemService, DonemService>();
+builder.Services.AddScoped<IGlobalService, GlobalService>();
 builder.Services.AddSingleton(typeof(GenericSharedResourceService));
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ISessionHelper, SessionHelper>();

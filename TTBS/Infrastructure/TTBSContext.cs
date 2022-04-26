@@ -14,7 +14,7 @@ namespace TTBS.Infrastructure
           
         }
 
-        public DbSet<DonemEntity> Donems { get; set; }
+        public DbSet<Donem> Donems { get; set; }
 
         public DbSet<StenoPlan> StenoPlans { get; set; }
 
@@ -26,7 +26,7 @@ namespace TTBS.Infrastructure
         {
             builder.ApplyBaseEntityConfiguration();
 
-            builder.Entity<DonemEntity>(ConfigureDonem);
+            builder.Entity<Donem>(ConfigureDonem);
 
             builder.Entity<StenoPlan>(ConfigureStenoPlan);            
         }

@@ -14,7 +14,7 @@ namespace TTBS.Services
 
         public BaseService(IServiceProvider provider)
         {
-            //CurrentUser = provider.GetService<ISessionHelper>().User;
+            CurrentUser = provider.GetService<ISessionHelper>().User;
             Mapper = provider.GetService<IMapper>();
             Logger = provider.GetService<ILogger<BaseService>>();
             Configuration = provider.GetService<IConfiguration>();

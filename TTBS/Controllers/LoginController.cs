@@ -12,13 +12,13 @@ namespace TTBS.Controllers
     {
         private readonly ISessionHelper _sessionHelper;
         private readonly IHttpContextAccessor _contextAccessor;
-        private readonly ILogger<DonemController> _logger;
+        private readonly ILogger<GlobalController> _logger;
         public readonly IMapper _mapper;
 
         public LoginController(IConfiguration config, 
                                ISessionHelper sessionHelper,
                                IHttpContextAccessor contextAccessor,
-                               ILogger<DonemController> logger, IMapper mapper)
+                               ILogger<GlobalController> logger, IMapper mapper)
         {
             _sessionHelper = sessionHelper;
             _contextAccessor = contextAccessor;

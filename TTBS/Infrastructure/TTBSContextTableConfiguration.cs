@@ -6,7 +6,7 @@ namespace TTBS.Infrastructure
 {
     public partial class TTBSContext
     {
-        private void ConfigureDonem(EntityTypeBuilder<DonemEntity> builder)
+        private void ConfigureDonem(EntityTypeBuilder<Donem> builder)
         {
             builder.ToTable("Donem");
         }
