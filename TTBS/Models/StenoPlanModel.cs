@@ -1,4 +1,5 @@
-﻿using TTBS.Core.Enums;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using TTBS.Core.Enums;
 
 namespace TTBS.Models
 {
@@ -13,8 +14,8 @@ namespace TTBS.Models
         public string Yeri { get; set; }
         public ToplanmaTuru ToplanmaTuru { get; set; }
         public string Ad { get; set; }
-        public BirlesimModel Birlesim { get; set; }
-        public KomisyonModel Komisyon { get; set; }
+        public List<SelectListItem> BirlesimList { get; set; }
+        public List<SelectListItem> KomisyonList {get;set;}
 
     }
 }
