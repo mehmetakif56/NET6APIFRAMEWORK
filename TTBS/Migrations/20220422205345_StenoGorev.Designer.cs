@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TTBS.Infrastructure;
 
@@ -11,9 +12,10 @@ using TTBS.Infrastructure;
 namespace TTBS.Migrations
 {
     [DbContext(typeof(TTBSContext))]
-    partial class TTBSContextModelSnapshot : ModelSnapshot
+    [Migration("20220422205345_StenoGorev")]
+    partial class StenoGorev
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,44 +23,6 @@ namespace TTBS.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("TTBS.Core.Entities.Birlesim", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("BaslangicTarihi")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("BirlesimNo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("BitisTarihi")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid?>("ModifiedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Birlesim");
-                });
 
             modelBuilder.Entity("TTBS.Core.Entities.ClaimEntity", b =>
                 {
@@ -128,50 +92,6 @@ namespace TTBS.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Donem", (string)null);
-                });
-
-            modelBuilder.Entity("TTBS.Core.Entities.Komisyon", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Ad")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Kodu")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("KomisyonTipi")
-                        .HasColumnType("int");
-
-                    b.Property<Guid?>("ModifiedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("Tarih")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Yeri")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Komisyon");
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.RoleClaimEntity", b =>
@@ -248,70 +168,42 @@ namespace TTBS.Migrations
                     b.ToTable("RoleEntity");
                 });
 
-            modelBuilder.Entity("TTBS.Core.Entities.StenoPlan", b =>
+            modelBuilder.Entity("TTBS.Core.Entities.StenoGorevPlan", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Ad")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("BaslangicTarihi")
                         .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("BirlesimId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("BitisTarihi")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
+                    b.Property<string>("GorevAd")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid?>("KomisyonId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("ModifiedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("StenoSayisi")
+                    b.Property<int>("GorevTuru")
                         .HasColumnType("int");
 
-                    b.Property<int>("StenoSure")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ToplanmaTuru")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UzmanStenoSayisi")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UzmanStenoSure")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Yeri")
+                    b.Property<string>("GorevYeri")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("StenografGorevSure")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StenografSayisi")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UzmanStenografGorevSure")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UzmanStenografSayisi")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BirlesimId");
-
-                    b.HasIndex("KomisyonId");
-
-                    b.ToTable("StenoPlan", (string)null);
+                    b.ToTable("StenoGorevPlan", (string)null);
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.UserEntity", b =>
@@ -416,21 +308,6 @@ namespace TTBS.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("TTBS.Core.Entities.StenoPlan", b =>
-                {
-                    b.HasOne("TTBS.Core.Entities.Birlesim", "Birlesim")
-                        .WithMany("StenoPlans")
-                        .HasForeignKey("BirlesimId");
-
-                    b.HasOne("TTBS.Core.Entities.Komisyon", "Komisyon")
-                        .WithMany()
-                        .HasForeignKey("KomisyonId");
-
-                    b.Navigation("Birlesim");
-
-                    b.Navigation("Komisyon");
-                });
-
             modelBuilder.Entity("TTBS.Core.Entities.UserRoleEntity", b =>
                 {
                     b.HasOne("TTBS.Core.Entities.RoleEntity", "Role")
@@ -448,11 +325,6 @@ namespace TTBS.Migrations
                     b.Navigation("Role");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("TTBS.Core.Entities.Birlesim", b =>
-                {
-                    b.Navigation("StenoPlans");
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.ClaimEntity", b =>

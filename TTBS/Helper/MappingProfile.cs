@@ -13,6 +13,9 @@ namespace TTBS.Helper
             CreateMap<UserEntity, UserModel>()
                 .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.UserRoles.Select(x => x.Role.Name)));
             CreateMap<UserModel, UserEntity>();
+
+            CreateMap<StenoPlan, StenoPlanModel>();
+            CreateMap<StenoPlanModel, StenoPlan>();
         }
     }
 }

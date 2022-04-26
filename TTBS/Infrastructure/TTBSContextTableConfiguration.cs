@@ -10,5 +10,10 @@ namespace TTBS.Infrastructure
         {
             builder.ToTable("Donem");
         }
+
+        private void ConfigureStenoPlan(EntityTypeBuilder<StenoPlan> builder)
+        {
+            builder.ToTable("StenoPlan");
+        }
     }
 }

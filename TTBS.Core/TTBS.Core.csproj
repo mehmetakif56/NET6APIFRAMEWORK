@@ -41,13 +41,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseEntities\BaseEntities.cs" />
+    <Compile Include="Entities\Birlesim.cs" />
     <Compile Include="Entities\ClaimEntity.cs" />
+    <Compile Include="Entities\Komisyon.cs" />
+    <Compile Include="Entities\StenoPlan.cs" />
     <Compile Include="Entities\UserRoleEntity.cs" />
     <Compile Include="Entities\RoleEntity.cs" />
     <Compile Include="Entities\RoleClaimEntity.cs" />
     <Compile Include="Entities\DonemEntity.cs" />
     <Compile Include="Entities\UserEntity.cs" />
+    <Compile Include="Enums\KomisyonTipi.cs" />
     <Compile Include="Enums\BirlesimTuru.cs" />
+    <Compile Include="Enums\ToplanmaTuru.cs" />
     <Compile Include="Interfaces\IEntity.cs" />
     <Compile Include="Interfaces\IUnitOfWork.cs" />
     <Compile Include="Interfaces\ISessionHelper.cs" />
