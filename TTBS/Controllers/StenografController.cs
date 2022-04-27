@@ -64,8 +64,8 @@ namespace TTBS.Controllers
             return model;
         }
 
-        [HttpGet("GetStenoIzinByName")]
-        public IEnumerable<StenoIzinModel> GetStenoIzinByName(DateTime basTarihi,DateTime bitTarihi)
+        [HttpGet("GetStenoIzinBetweenDate")]
+        public IEnumerable<StenoIzinModel> GetStenoIzinBetweenDate(DateTime basTarihi,DateTime bitTarihi)
         {
             var stenoEntity = _stenoService.GetStenoIzinBetweenDate(basTarihi, bitTarihi);
             var model = _mapper.Map<IEnumerable<StenoIzinModel>>(stenoEntity);
@@ -101,15 +101,11 @@ namespace TTBS.Controllers
         }
 
         [HttpGet("GetStenoGorevByDateAndTime")]
-        public IEnumerable<StenoGorevModel> GetStenoGorevByDateAndTime(DateTime? basTarihi, DateTime? basSaati)
+        public IEnumerable<StenoGorevModel> GetStenoGorevByDateAndTime(DateTime basTarihi, DateTime basSaati)
         {
-            if(basTarihi.HasValue && basSaati.HasValue)
-            {
-                var stenoEntity = _stenoService.GetStenoGorevByDateAndTime(basTarihi, basSaati.Value.Hour * 60 + basSaati.Value.Minute);
-                var model = _mapper.Map<IEnumerable<StenoGorevModel>>(stenoEntity);
-                return model;
-            }
-           return new List<StenoGorevModel>();
+            var stenoEntity = _stenoService.GetStenoGorevByDateAndTime(basTarihi, basSaati.Hour * 60 + basSaati.Minute);
+            var model = _mapper.Map<IEnumerable<StenoGorevModel>>(stenoEntity);
+            return model;
         }
 
         [HttpPost("CreateStenoGorev")]

@@ -19,7 +19,7 @@ namespace TTBS.Services
 
         IEnumerable<StenoGorev> GetStenoGorevByName(string adSoyad);
 
-        IEnumerable<StenoGorev> GetStenoGorevByDateAndTime(DateTime? gorevTarihi, int gorevSaati);
+        IEnumerable<StenoGorev> GetStenoGorevByDateAndTime(DateTime gorevTarihi, int gorevSaati);
 
         void CreateStenoGorev(StenoGorev stenoGorev);
 
@@ -83,9 +83,9 @@ namespace TTBS.Services
             return _stenoGorevRepo.Get(x => x.AdSoyad == adSoyad);
         }
 
-        public IEnumerable<StenoGorev> GetStenoGorevByDateAndTime(DateTime? gorevTarihi, int gorevSaati)
+        public IEnumerable<StenoGorev> GetStenoGorevByDateAndTime(DateTime gorevTarihi, int gorevSaati)
         {
-            return _stenoGorevRepo.Get(x => x.GörevTarihi == gorevTarihi.Value && x.GorevSaati == gorevSaati);
+            return _stenoGorevRepo.Get(x => x.GörevTarihi == gorevTarihi && x.GorevSaati == gorevSaati);
         }
 
         public void CreateStenoGorev(StenoGorev entity)
