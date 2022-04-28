@@ -20,9 +20,9 @@ namespace TTBS.Helper
                  .ForMember(dest => dest.BirlesimList, opt => opt.MapFrom(src => new SelectListItem { Text = "", Value = src.BirlesimId.ToString() }))
                  .ForMember(dest => dest.KomisyonList, opt => opt.MapFrom(src => new SelectListItem { Text = "", Value = src.KomisyonId.ToString() }));
             CreateMap<StenoPlanModel, StenoPlan>()
-                .ForMember(dest => dest.GorevTuruId, opt => opt.MapFrom(src => new Guid(src.GorevList.FirstOrDefault().Value)))
-               .ForMember(dest => dest.BirlesimId, opt => opt.MapFrom(src => new Guid(src.BirlesimList.FirstOrDefault().Value)))
-                .ForMember(dest => dest.KomisyonId, opt => opt.MapFrom(src => new Guid(src.KomisyonList.FirstOrDefault().Value)));
+                .ForMember(dest => dest.GorevTuruId, opt => opt.MapFrom(src => new Guid(src.GorevList.Value)))
+               .ForMember(dest => dest.BirlesimId, opt => opt.MapFrom(src => new Guid(src.BirlesimList.Value)))
+                .ForMember(dest => dest.KomisyonId, opt => opt.MapFrom(src =>  src.KomisyonList.Value !=null ? new Guid(src.KomisyonList.Value):Guid.Empty)) ;
             CreateMap<StenoIzin, StenoIzinModel>();
             CreateMap<StenoIzinModel, StenoIzin>();
 
