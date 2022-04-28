@@ -62,7 +62,8 @@ namespace TTBS.Services
 
         public Donem GetDonemById(Guid id)
         {
-            return _donemRepo.GetById(id);
+            var result = _donemRepo.GetById(id);
+            return result;
         }
 
         public void CreateDonem(Donem donem)

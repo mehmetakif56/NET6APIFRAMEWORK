@@ -15,8 +15,7 @@ namespace TTBS.Models
         public string GorevAd { get; set; }
         public List<SelectListItem> BirlesimList { get; set; }
         public List<SelectListItem> KomisyonList {get;set;}
-        public IEnumerable<StenoGorevModel> StenoGorevs { get; set; }
-        public List<SelectListItem> GorevTuru { get; set; }
+        public List<SelectListItem> GorevList { get; set; }
 
     }
 }

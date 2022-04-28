@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using TTBS.Core.Entities;
 using TTBS.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace TTBS.Helper
 {
@@ -14,9 +15,14 @@ namespace TTBS.Helper
                 .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.UserRoles.Select(x => x.Role.Name)));
             CreateMap<UserModel, UserEntity>();
 
-            CreateMap<StenoPlan, StenoPlanModel>();
-            CreateMap<StenoPlanModel, StenoPlan>();
-
+            CreateMap<StenoPlan, StenoPlanModel>()
+                 .ForMember(dest => dest.GorevList , opt => opt.MapFrom(src => new SelectListItem { Text = "", Value = src.GorevTuruId.ToString() }))
+                 .ForMember(dest => dest.BirlesimList, opt => opt.MapFrom(src => new SelectListItem { Text = "", Value = src.BirlesimId.ToString() }))
+                 .ForMember(dest => dest.KomisyonList, opt => opt.MapFrom(src => new SelectListItem { Text = "", Value = src.KomisyonId.ToString() }));
+            CreateMap<StenoPlanModel, StenoPlan>()
+                .ForMember(dest => dest.GorevTuruId, opt => opt.MapFrom(src => new Guid(src.GorevList.FirstOrDefault().Value)))
+               .ForMember(dest => dest.BirlesimId, opt => opt.MapFrom(src => new Guid(src.BirlesimList.FirstOrDefault().Value)))
+                .ForMember(dest => dest.KomisyonId, opt => opt.MapFrom(src => new Guid(src.KomisyonList.FirstOrDefault().Value)));
             CreateMap<StenoIzin, StenoIzinModel>();
             CreateMap<StenoIzinModel, StenoIzin>();
 
@@ -25,6 +31,9 @@ namespace TTBS.Helper
 
             CreateMap<KomisyonModel, Komisyon>();
             CreateMap<Komisyon, KomisyonModel>();
+
+            CreateMap<GorevTuruModel, GorevTuru>();
+            CreateMap<GorevTuru, GorevTuruModel>();
 
             CreateMap<StenoGorev, StenoGorevModel>()
                       .ForMember(dest => dest.GorevSaati, opt => opt.MapFrom(src => src.GorevSaati/60 + src.GorevSaati%60 ));

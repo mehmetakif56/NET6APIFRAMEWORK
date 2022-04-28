@@ -25,7 +25,7 @@ namespace TTBS.Controllers
         [HttpGet("GetStenoGorevPlan")]
         public IEnumerable<StenoPlanModel> GetStenoGorevPlan()
         {
-            var stenoEntity = _stenoService.GetStenoPlan;
+            var stenoEntity = _stenoService.GetStenoPlan();
             var model = _mapper.Map<IEnumerable<StenoPlanModel>>(stenoEntity);
             return model;
         }

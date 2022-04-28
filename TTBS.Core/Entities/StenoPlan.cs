@@ -22,7 +22,7 @@ namespace TTBS.Core.Entities
         public Guid? KomisyonId { get; set; }
         public virtual ICollection<StenoGorev> StenoGorevs { get; set; }
         public GorevTuru GorevTuru { get; set; }
-        public Guid GorevTuruId { get; set; }
+        public Guid? GorevTuruId { get; set; }
 
     }
 }
