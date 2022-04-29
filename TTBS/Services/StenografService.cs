@@ -1,6 +1,7 @@
 ﻿using TTBS.Core.Entities;
 using TTBS.Core.Interfaces;
 
+
 namespace TTBS.Services
 {
     public interface IStenografService

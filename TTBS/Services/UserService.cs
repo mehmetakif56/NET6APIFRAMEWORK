@@ -29,7 +29,7 @@ namespace TTBS.Services
 
         public UserEntity GetUserByUserName(string userName)
         {
-            return _userRepository.GetOne(x => x.UserName == userName,includeProperties: "UserRoles.Role");
+            return _userRepository.GetOne(x => x.UserName == userName, includeProperties: "UserRoles.Role");
         }
 
         public UserEntity GetUserById(Guid? id)

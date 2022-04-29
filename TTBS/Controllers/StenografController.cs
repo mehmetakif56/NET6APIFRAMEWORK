@@ -33,9 +33,17 @@ namespace TTBS.Controllers
         [HttpPost("CreateStenoPlan")]
         public IActionResult CreateStenoPlan(StenoPlanModel model)
         {
-            StenoPlan entity = Mapper.Map<StenoPlan>(model);
-            _stenoService.CreateStenoPlan(entity);
-            return Ok(entity);
+            try
+            {
+                var entity = Mapper.Map<StenoPlan>(model);
+                _stenoService.CreateStenoPlan(entity);
+            }
+            catch (Exception ex)
+            {
+
+            }
+           
+            return Ok();
 
         }
         #endregion 
