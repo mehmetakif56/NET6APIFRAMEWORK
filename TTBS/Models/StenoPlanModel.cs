@@ -14,7 +14,14 @@ namespace TTBS.Models
         public string GorevYeri { get; set; }
         public string GorevAd { get; set; }
         public SelectListItem BirlesimList { get; set; }
-        public SelectListItem KomisyonList { get; set; }
+        //public SelectListItem KomisyonList { get; set; }
+
+        public SelectListItem _komisyonList { get; set; }
+        public SelectListItem KomisyonList
+        {
+            get { return _komisyonList; }
+            set { if (value != null) _komisyonList = value; _komisyonList = new SelectListItem { }; }
+        }
         public SelectListItem GorevList { get; set; }
 
     }

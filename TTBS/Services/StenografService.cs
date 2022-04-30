@@ -50,6 +50,7 @@ namespace TTBS.Services
 
         public void CreateStenoPlan(StenoPlan entity)
         {
+            entity.KomisyonId = entity.KomisyonId ==Guid.Empty ? null : entity.KomisyonId;
             _stenoPlanRepo.Create(entity, CurrentUser.Id);
             _stenoPlanRepo.Save();
         }
