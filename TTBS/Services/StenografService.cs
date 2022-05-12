@@ -45,7 +45,7 @@ namespace TTBS.Services
         }
         public IEnumerable<StenoPlan> GetStenoPlan()
         {
-            return _stenoPlanRepo.GetAll();
+            return _stenoPlanRepo.GetAll(includeProperties: "Birlesim,Komisyon,StenoGorevs,GorevTuru");
         }
 
         public void CreateStenoPlan(StenoPlan entity)

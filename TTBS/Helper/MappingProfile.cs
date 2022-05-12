@@ -16,9 +16,9 @@ namespace TTBS.Helper
             CreateMap<UserModel, UserEntity>();
 
             CreateMap<StenoPlan, StenoPlanModel>()
-                 .ForMember(dest => dest.GorevList , opt => opt.MapFrom(src => new SelectListItem { Text = "", Value = src.GorevTuruId.ToString() }))
-                 .ForMember(dest => dest.BirlesimList, opt => opt.MapFrom(src => new SelectListItem { Text = "", Value = src.BirlesimId.ToString() }))
-                 .ForMember(dest => dest.KomisyonList, opt => opt.MapFrom(src => new SelectListItem { Text = "", Value = src.KomisyonId.ToString() }));
+                 .ForMember(dest => dest.GorevList , opt => opt.MapFrom(src => new SelectListItem { Text = src.GorevTuru.Ad, Value = src.GorevTuruId.ToString() }))
+                 .ForMember(dest => dest.BirlesimList, opt => opt.MapFrom(src => new SelectListItem { Text = src.Birlesim.BirlesimNo, Value = src.BirlesimId.ToString() }))
+                 .ForMember(dest => dest.KomisyonList, opt => opt.MapFrom(src => new SelectListItem { Text = src.Komisyon.Ad, Value = src.KomisyonId.ToString() }));
             CreateMap<StenoPlanModel, StenoPlan>()
                 .ForMember(dest => dest.GorevTuruId, opt => opt.MapFrom(src => new Guid(src.GorevList.Value)))
                .ForMember(dest => dest.BirlesimId, opt => opt.MapFrom(src => new Guid(src.BirlesimList.Value)))
