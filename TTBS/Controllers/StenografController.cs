@@ -117,7 +117,7 @@ namespace TTBS.Controllers
         }
 
         [HttpPost("CreateStenoGorev")]
-        public IActionResult CreateStenoGorev(StenoGorevModel model)
+        public IActionResult CreateStenoGorev(List<StenoGorevModel> model)
         {
             var entity = Mapper.Map<StenoGorev>(model);
             _stenoService.CreateStenoGorev(entity);
