@@ -9,6 +9,6 @@ namespace TTBS.Models
         public DateTime? GorevSaati { get; set; }
         public int GorevSuresi { get; set; }
         public string AdSoyad { get; set; }
-
+        public Guid  PlanId { get; set; }
     }
 }
