@@ -46,6 +46,14 @@ namespace TTBS.Controllers
             return Ok();
 
         }
+
+        [HttpGet("GetStenoPlanByStatus")]
+        public List<StenoPlanModel> GetStenoPlanByStatus(int status=0)
+        {
+            var stenoEntity = _stenoService.GetStenoPlanByStatus(status);
+            var model = _mapper.Map<List<StenoPlanModel>>(stenoEntity);
+            return model;
+        }
         #endregion 
         #region StenoIzin
         [HttpGet("GetAllStenoIzin")]
@@ -100,6 +108,14 @@ namespace TTBS.Controllers
             return model;
         }
 
+        [HttpGet("GetStenoGorevByPlanId")]
+        public List<StenoGorevModel> GetStenoGorevByPlanId(Guid planId)
+        {
+            var stenoEntity = _stenoService.GetStenoGorevByPlanId(planId);
+            var model = _mapper.Map<List<StenoGorevModel>>(stenoEntity);
+            return model;
+        }
+
         [HttpGet("GetStenoGorevByName")]
         public IEnumerable<StenoGorevModel> GetStenoGorevByName(string adSoyad)
         {
@@ -123,6 +139,14 @@ namespace TTBS.Controllers
             _stenoService.CreateStenoGorev(entity);
             return Ok(entity);
 
+        }
+
+        [HttpGet("GetStenoGorevByStatus")]
+        public List<StenoGorevModel> GetStenoGorevByStatus(int status=0)
+        {
+            var stenoEntity = _stenoService.GetStenoGorevBySatatus(status);
+            var model = _mapper.Map<List<StenoGorevModel>>(stenoEntity);
+            return model;
         }
         #endregion
     }

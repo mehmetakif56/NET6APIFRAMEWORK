@@ -17,7 +17,8 @@ namespace TTBS.Infrastructure
         public DbSet<Donem> Donems { get; set; }
 
         public DbSet<StenoPlan> StenoPlans { get; set; }
-
+        public DbSet<StenoGorev> StenoGorevs { get; set; }
+        public DbSet<StenoIzin> StenoIzin { get; set; }
         public DbSet<ClaimEntity> Claims { get; set; }
         public DbSet<RoleClaimEntity> RoleClaims { get; set; }
         public DbSet<UserEntity> Users { get; set; }
@@ -27,8 +28,9 @@ namespace TTBS.Infrastructure
             builder.ApplyBaseEntityConfiguration();
 
             builder.Entity<Donem>(ConfigureDonem);
-
-            builder.Entity<StenoPlan>(ConfigureStenoPlan);            
+            builder.Entity<StenoPlan>(ConfigureStenoPlan);
+            builder.Entity<StenoIzin>(ConfigureStenoIzin);
+            builder.Entity<StenoGorev>(ConfigureStenoGorev);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -53,9 +53,10 @@
     <Compile Include="Entities\RoleClaimEntity.cs" />
     <Compile Include="Entities\Donem.cs" />
     <Compile Include="Entities\UserEntity.cs" />
+    <Compile Include="Enums\PlanStatu.cs" />
+    <Compile Include="Enums\GorevStatu.cs" />
     <Compile Include="Enums\IzınTuru.cs" />
     <Compile Include="Enums\KomisyonTipi.cs" />
-    <Compile Include="Enums\BirlesimTuru.cs" />
     <Compile Include="Enums\ToplanmaTuru.cs" />
     <Compile Include="Interfaces\IEntity.cs" />
     <Compile Include="Interfaces\IUnitOfWork.cs" />

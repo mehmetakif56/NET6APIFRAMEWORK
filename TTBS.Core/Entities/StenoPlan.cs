@@ -23,6 +23,7 @@ namespace TTBS.Core.Entities
         public virtual ICollection<StenoGorev> StenoGorevs { get; set; }
         public GorevTuru GorevTuru { get; set; }
         public Guid? GorevTuruId { get; set; }
+        public PlanStatu PlanStatu { get; set; }
 
     }
 }

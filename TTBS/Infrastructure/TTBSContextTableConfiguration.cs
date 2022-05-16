@@ -15,5 +15,17 @@ namespace TTBS.Infrastructure
         {
             builder.ToTable("StenoPlan");
         }
+
+        private void ConfigureStenoGorev(EntityTypeBuilder<StenoGorev> builder)
+        {
+            builder.ToTable("StenoGorev");
+        }
+
+        private void ConfigureStenoIzin(EntityTypeBuilder<StenoIzin> builder)
+        {
+            builder.ToTable("StenoIzin");
+        }
+
+       
     }
 }

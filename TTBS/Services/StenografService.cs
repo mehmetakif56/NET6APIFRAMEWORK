@@ -26,6 +26,12 @@ namespace TTBS.Services
 
         void CreateStenoIzin(StenoIzin stenoGorev);
 
+        List<StenoGorev> GetStenoGorevByPlanId(Guid id);
+
+        List<StenoPlan> GetStenoPlanByStatus(int status);
+
+        List<StenoGorev> GetStenoGorevBySatatus(int status);
+
     }
     public class StenografService : BaseService, IStenografService
     {
@@ -87,7 +93,7 @@ namespace TTBS.Services
 
         public IEnumerable<StenoGorev> GetStenoGorevByDateAndTime(DateTime gorevTarihi, int gorevSaati)
         {
-            return _stenoGorevRepo.Get(x => x.GörevTarihi == gorevTarihi && x.GorevSaati == gorevSaati);
+            return _stenoGorevRepo.Get(x => x.GörevTarihi == gorevTarihi && x.GorevDakika == gorevSaati);
         }
 
         public void CreateStenoGorev(StenoGorev entity)
@@ -100,6 +106,21 @@ namespace TTBS.Services
         {
             _stenoIzinRepo.Create(entity, CurrentUser.Id);
             _stenoIzinRepo.Save();
+        }
+
+        public List<StenoGorev> GetStenoGorevByPlanId(Guid id)
+        {
+            return _stenoGorevRepo.Get(x=>x.StenoPlanId == id,includeProperties: "StenoPlan").ToList();
+        }
+
+        public List<StenoPlan> GetStenoPlanByStatus(int status)
+        {
+            return _stenoPlanRepo.Get(x => (int)x.PlanStatu == status).ToList();
+        }
+
+        public List<StenoGorev> GetStenoGorevBySatatus(int status)
+        {
+            return _stenoGorevRepo.Get(x => (int)x.GorevStatu == status).ToList();
         }
     }
 }

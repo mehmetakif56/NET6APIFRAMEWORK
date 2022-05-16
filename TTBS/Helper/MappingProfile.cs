@@ -37,9 +37,9 @@ namespace TTBS.Helper
             CreateMap<GorevTuru, GorevTuruModel>();
 
             CreateMap<StenoGorev, StenoGorevModel>()
-                      .ForMember(dest => dest.GorevSaati, opt => opt.MapFrom(src => src.GorevSaati/60 + src.GorevSaati%60 ));
+                      .ForMember(dest => dest.GorevDakika, opt => opt.MapFrom(src => src.GorevDakika/60 + src.GorevDakika % 60 ));
             CreateMap<StenoGorevModel, StenoGorev>()
-                 .ForMember(dest => dest.GorevSaati, opt => opt.MapFrom(src => src.GorevSaati.HasValue ? src.GorevSaati.Value.Hour*60+ src.GorevSaati.Value.Minute:0));
+                 .ForMember(dest => dest.GorevDakika, opt => opt.MapFrom(src => src.GorevDakika.HasValue ? src.GorevDakika.Value.Hour*60+ src.GorevDakika.Value.Minute:0));
         }
     }
 }

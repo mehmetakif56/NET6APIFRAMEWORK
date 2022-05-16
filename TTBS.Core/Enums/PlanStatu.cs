@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace TTBS.Core.Enums
 {
-    public enum PlanTuru
+    public enum PlanStatu
     {
-        GenelKurul=0,
-        Komisyon=1,
-        OzelToplanti=2
+        Planlandı=0,
+        DevamEdiyor =1,
+        Tamamlandı=2
     }
 }

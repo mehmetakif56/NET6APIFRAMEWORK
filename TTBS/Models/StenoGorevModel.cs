@@ -6,9 +6,10 @@ namespace TTBS.Models
     public class StenoGorevModel
     {
         public DateTime? GörevTarihi { get; set; }
-        public DateTime? GorevSaati { get; set; }
-        public int GorevSuresi { get; set; }
+        public DateTime? GorevDakika { get; set; }
+        public int GorevSaniye { get; set; }
         public string AdSoyad { get; set; }
         public Guid  PlanId { get; set; }
+        public StenoPlanModel StenoPlan { get; set; }
     }
 }
