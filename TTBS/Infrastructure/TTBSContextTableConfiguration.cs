@@ -31,6 +31,11 @@ namespace TTBS.Infrastructure
             builder.ToTable("StenoIzin");
         }
 
-       
+        private void ConfigureStenograf(EntityTypeBuilder<Stenograf> builder)
+        {
+            builder.ToTable("Stenograf");
+        }
+
+
     }
 }

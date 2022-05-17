@@ -24,8 +24,12 @@ namespace TTBS.Helper
                .ForMember(dest => dest.BirlesimId, opt => opt.MapFrom(src => new Guid(src.BirlesimList.Value)))
               .ForMember(dest => dest.KomisyonId, opt => opt.MapFrom(src => new Guid(src.KomisyonList.Value)));
 
-            CreateMap<StenoIzin, StenoIzinModel>();
+
             CreateMap<StenoIzinModel, StenoIzin>();
+            CreateMap<StenoIzin, StenoIzinModel>()
+                .ForMember(dest => dest.StenografAdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad));
+
+
 
             CreateMap<BirlesimModel, Birlesim>();
             CreateMap<Birlesim, BirlesimModel>();
@@ -35,6 +39,9 @@ namespace TTBS.Helper
 
             CreateMap <StenoGorevAtamaModel, StenoGorev>();
             CreateMap<StenoGorev, StenoGorevAtamaModel>();
+
+            CreateMap<Stenograf, StenoModel>();
+            CreateMap<StenoModel, Stenograf>();
 
             CreateMap<StenoGorev, StenoGorevModel>()
                       .ForMember(dest => dest.GorevDakika, opt => opt.MapFrom(src => src.GorevDakika/60 + src.GorevDakika % 60 ));

@@ -124,10 +124,10 @@ namespace TTBS.Controllers
             return model;
         }
 
-        [HttpGet("GetStenoGorevByDateAndTime")]
-        public IEnumerable<StenoGorevModel> GetStenoGorevByDateAndTime(DateTime basTarihi, DateTime basSaati)
+        [HttpGet("GetStenoGorevByDateAndStatus")]
+        public IEnumerable<StenoGorevModel> GetStenoGorevByDateAndStatus(DateTime basTarihi, int status)
         {
-            var stenoEntity = _stenoService.GetStenoGorevByDateAndTime(basTarihi, basSaati.Hour * 60 + basSaati.Minute);
+            var stenoEntity = _stenoService.GetStenoGorevByDateAndStatus(basTarihi, status);
             var model = _mapper.Map<IEnumerable<StenoGorevModel>>(stenoEntity);
             return model;
         }
@@ -176,5 +176,16 @@ namespace TTBS.Controllers
             return model;
         }
         #endregion
+
+        # region Stenograf
+        [HttpGet("GetAllStenograf")]
+        public IEnumerable<StenoPlanModel> GetAllStenograf()
+        {
+            var stenoEntity = _stenoService.GetAllStenograf();
+            var model = _mapper.Map<IEnumerable<StenoPlanModel>>(stenoEntity);
+            return model;
+        }
+        #endregion
+
     }
 }

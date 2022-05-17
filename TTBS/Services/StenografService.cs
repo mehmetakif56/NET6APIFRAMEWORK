@@ -9,28 +9,18 @@ namespace TTBS.Services
         IEnumerable<StenoPlan> GetStenoPlan();
         void CreateStenoPlan(StenoPlan stenoPlan);
         IEnumerable<StenoIzin> GetAllStenoIzin();
-
-        StenoIzin GetStenoIzinById(Guid id);
-
+        IEnumerable<StenoIzin> GetStenoIzinById(Guid id);
         IEnumerable<StenoIzin> GetStenoIzinByName(string adSoyad);
-
         IEnumerable<StenoIzin> GetStenoIzinBetweenDate(DateTime basTarihi,DateTime bitTarihi);
-
         StenoGorev GetStenoGorevById(Guid id);
-
         IEnumerable<StenoGorev> GetStenoGorevByName(string adSoyad);
-
-        IEnumerable<StenoGorev> GetStenoGorevByDateAndTime(DateTime gorevTarihi, int gorevSaati);
-
+        IEnumerable<StenoGorev> GetStenoGorevByDateAndStatus(DateTime gorevTarihi, int status);
         void CreateStenoGorev(StenoGorev stenoGorev);
-
         void CreateStenoIzin(StenoIzin stenoGorev);
-
         List<StenoGorev> GetStenoGorevByPlanId(Guid id);
-
         List<StenoPlan> GetStenoPlanByStatus(int status);
-
         List<StenoGorev> GetStenoGorevBySatatus(int status);
+        IEnumerable<Stenograf> GetAllStenograf();
 
     }
     public class StenografService : BaseService, IStenografService
@@ -39,15 +29,18 @@ namespace TTBS.Services
         private IRepository<StenoIzin> _stenoIzinRepo;
         private IRepository<StenoGorev> _stenoGorevRepo;
         private IUnitOfWork _unitWork;
+        private IRepository<Stenograf> _stenograf;
         public StenografService(IRepository<StenoPlan> stenoPlanRepo,
                                 IRepository<StenoIzin> stenoIzinRepo, IRepository<StenoGorev> stenoGorevRepo,
                                 IUnitOfWork unitWork,
+                                IRepository<Stenograf> stenograf,
                                 IServiceProvider provider) : base(provider)
         {
             _stenoPlanRepo = stenoPlanRepo;
             _stenoIzinRepo = stenoIzinRepo;
             _stenoGorevRepo = stenoGorevRepo;
             _unitWork = unitWork;
+            _stenograf = stenograf;
         }
         public IEnumerable<StenoPlan> GetStenoPlan()
         {
@@ -63,37 +56,32 @@ namespace TTBS.Services
 
         public IEnumerable<StenoIzin> GetAllStenoIzin()
         {
-            return _stenoIzinRepo.GetAll();
+            return _stenoIzinRepo.GetAll(includeProperties:"Stenograf");
         }
 
-        public StenoIzin GetStenoIzinById(Guid id)
+        public IEnumerable<StenoIzin> GetStenoIzinById(Guid id)
         {
-            return _stenoIzinRepo.GetById(id);
+            return _stenoIzinRepo.Get(x=>x.Id ==id, includeProperties: "Stenograf");
         }
 
         public IEnumerable<StenoIzin> GetStenoIzinByName(string adSoyad)
         {
-            return _stenoIzinRepo.Get(x=>x.AdSoyad == adSoyad);
+            return _stenoIzinRepo.Get(x=>x.Stenograf.AdSoyad == adSoyad, includeProperties: "Stenograf");
         }
 
         public IEnumerable<StenoIzin> GetStenoIzinBetweenDate(DateTime basTarihi, DateTime bitTarihi)
         {
-            return _stenoIzinRepo.Get(x => x.BaslangicTarihi >= basTarihi && x.BitisTarihi <= bitTarihi);
+            return _stenoIzinRepo.Get(x => x.BaslangicTarihi >= basTarihi && x.BitisTarihi <= bitTarihi, includeProperties: "Stenograf");
         }
 
         public StenoGorev GetStenoGorevById(Guid id)
         {
             return _stenoGorevRepo.GetById(id);
-        }
+        }       
 
-        public IEnumerable<StenoGorev> GetStenoGorevByName(string adSoyad)
+        public IEnumerable<StenoGorev> GetStenoGorevByDateAndStatus(DateTime gorevTarihi, int statu)
         {
-            return null;// _stenoGorevRepo.Get(x => x.AdSoyad == adSoyad);
-        }
-
-        public IEnumerable<StenoGorev> GetStenoGorevByDateAndTime(DateTime gorevTarihi, int gorevSaati)
-        {
-            return _stenoGorevRepo.Get(x => x.GörevTarihi == gorevTarihi && x.GorevDakika == gorevSaati);
+            return _stenoGorevRepo.Get(x => x.GörevTarihi == gorevTarihi && (int)x.GorevStatu == statu);
         }
 
         public void CreateStenoGorev(StenoGorev entity)
@@ -115,12 +103,27 @@ namespace TTBS.Services
 
         public List<StenoPlan> GetStenoPlanByStatus(int status)
         {
-            return _stenoPlanRepo.Get(x => (int)x.PlanStatu == status).ToList();
+            return _stenoPlanRepo.Get(x => (int)x.GorevStatu == status).ToList();
         }
 
         public List<StenoGorev> GetStenoGorevBySatatus(int status)
         {
             return _stenoGorevRepo.Get(x => (int)x.GorevStatu == status).ToList();
+        }
+
+        public IEnumerable<Stenograf> GetAllStenograf()
+        {
+            return _stenograf.GetAll();
+        }
+
+        public IEnumerable<Stenograf> GetStenoGorevByTur(int gorevTuru)
+        {
+            return  _stenograf.Get(x => (int)x.StenoGorevTuru == gorevTuru);
+        }
+
+        public IEnumerable<StenoGorev> GetStenoGorevByName(string adSoyad)
+        {
+            return _stenoGorevRepo.Get(x=>x.Stenograf.AdSoyad == adSoyad);
         }
     }
 }
