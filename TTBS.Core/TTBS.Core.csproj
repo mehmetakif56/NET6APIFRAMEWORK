@@ -41,9 +41,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseEntities\BaseEntities.cs" />
+    <Compile Include="Entities\Stenograf.cs" />
+    <Compile Include="Entities\Yasama.cs" />
     <Compile Include="Entities\Birlesim.cs" />
     <Compile Include="Entities\ClaimEntity.cs" />
-    <Compile Include="Entities\GorevTuru.cs" />
     <Compile Include="Entities\Komisyon.cs" />
     <Compile Include="Entities\StenoGorev.cs" />
     <Compile Include="Entities\StenoIzin.cs" />
@@ -57,7 +58,8 @@
     <Compile Include="Enums\GorevStatu.cs" />
     <Compile Include="Enums\IzınTuru.cs" />
     <Compile Include="Enums\KomisyonTipi.cs" />
-    <Compile Include="Enums\ToplanmaTuru.cs" />
+    <Compile Include="Enums\PlanTuru.cs" />
+    <Compile Include="Enums\StenoGorevTuru.cs" />
     <Compile Include="Interfaces\IEntity.cs" />
     <Compile Include="Interfaces\IUnitOfWork.cs" />
     <Compile Include="Interfaces\ISessionHelper.cs" />

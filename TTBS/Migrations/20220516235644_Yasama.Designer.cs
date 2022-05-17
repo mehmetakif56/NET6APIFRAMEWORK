@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TTBS.Infrastructure;
 
@@ -11,9 +12,10 @@ using TTBS.Infrastructure;
 namespace TTBS.Migrations
 {
     [DbContext(typeof(TTBSContext))]
-    partial class TTBSContextModelSnapshot : ModelSnapshot
+    [Migration("20220516235644_Yasama")]
+    partial class Yasama
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -106,11 +108,8 @@ namespace TTBS.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("BaslangicTarihi")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("BitisTarihi")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("Ad")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
@@ -121,29 +120,11 @@ namespace TTBS.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("DonemAd")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DonemKod")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("DonemSecTarihi")
+                    b.Property<DateTime?>("DonemTarihi")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("EskiAd")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
-
-                    b.Property<string>("KısaAd")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MeclisKod")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("MevcutUye")
-                        .HasColumnType("int");
 
                     b.Property<Guid?>("ModifiedBy")
                         .HasColumnType("uniqueidentifier");
@@ -151,12 +132,41 @@ namespace TTBS.Migrations
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UyeTamsayi")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.ToTable("Donem", (string)null);
+                });
+
+            modelBuilder.Entity("TTBS.Core.Entities.GorevTuru", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Ad")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GorevTuru");
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.Komisyon", b =>
@@ -394,6 +404,9 @@ namespace TTBS.Migrations
                     b.Property<string>("GorevAd")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("GorevTuruId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("GorevYeri")
                         .HasColumnType("nvarchar(max)");
 
@@ -410,9 +423,6 @@ namespace TTBS.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int>("PlanStatu")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PlanTuru")
                         .HasColumnType("int");
 
                     b.Property<int>("StenoSayisi")
@@ -433,6 +443,8 @@ namespace TTBS.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BirlesimId");
+
+                    b.HasIndex("GorevTuruId");
 
                     b.HasIndex("KomisyonId");
 
@@ -564,7 +576,7 @@ namespace TTBS.Migrations
 
                     b.HasIndex("DonemId");
 
-                    b.ToTable("Yasama", (string)null);
+                    b.ToTable("Yasama");
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.Birlesim", b =>
@@ -612,6 +624,10 @@ namespace TTBS.Migrations
                         .WithMany("StenoPlans")
                         .HasForeignKey("BirlesimId");
 
+                    b.HasOne("TTBS.Core.Entities.GorevTuru", "GorevTuru")
+                        .WithMany()
+                        .HasForeignKey("GorevTuruId");
+
                     b.HasOne("TTBS.Core.Entities.Komisyon", "Komisyon")
                         .WithMany("StenoPlans")
                         .HasForeignKey("KomisyonId");
@@ -621,6 +637,8 @@ namespace TTBS.Migrations
                         .HasForeignKey("YasamaId");
 
                     b.Navigation("Birlesim");
+
+                    b.Navigation("GorevTuru");
 
                     b.Navigation("Komisyon");
                 });

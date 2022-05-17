@@ -6,34 +6,37 @@ namespace TTBS.Services
     public interface IGlobalService
     {
         IEnumerable<Donem> GetAllDonem();
+        IEnumerable<Yasama> GetAllYasama();
         IEnumerable<Birlesim> GetAllBirlesim();
         IEnumerable<Komisyon> GetAllKomisyon();
-        IEnumerable<GorevTuru> GetAllGorev();
         Birlesim GetBirlesimById(Guid id);
         Komisyon GetKomisyonById(Guid id);
         Donem GetDonemById(Guid id);
-        GorevTuru GetGorevTuruById(Guid id);
+        Yasama GetYasamaById(Guid id);
         void CreateDonem(Donem donem);
+        void CreateYasama(Yasama donem);
         void CreateBirlesim(Birlesim birlesim);
         void CreateKomisyon(Komisyon komisyon);
-        void CreateGorevTuru(GorevTuru donem);
     }
     public class GlobalService : BaseService, IGlobalService
     {
         private IRepository<Donem> _donemRepo;
+        private IRepository<Yasama> _yasamaRepo;
         private IRepository<Birlesim> _birlesimRepo;
         private IRepository<Komisyon> _komisyonRepo;
-        private IRepository<GorevTuru> _gorevTuruRepo;
         private IUnitOfWork _unitWork;
-        public GlobalService(IRepository<Donem> donemRepo, IRepository<Birlesim> birlesimRepo, 
-                             IRepository<Komisyon> komisyonRepo, IRepository<GorevTuru> gorevTuruRepo,IUnitOfWork unitWork,
+        public GlobalService(IRepository<Donem> donemRepo,
+                             IRepository<Yasama> yasamaRepo,
+                             IRepository<Birlesim> birlesimRepo, 
+                             IRepository<Komisyon> komisyonRepo, 
+                             IUnitOfWork unitWork,
                              IServiceProvider provider) : base(provider)
         {
             _donemRepo = donemRepo;
             _birlesimRepo = birlesimRepo;
             _komisyonRepo = komisyonRepo;
-            _gorevTuruRepo = gorevTuruRepo;
             _unitWork = unitWork;
+            _yasamaRepo = yasamaRepo;
         }
         public IEnumerable<Donem> GetAllDonem()
         {
@@ -84,20 +87,20 @@ namespace TTBS.Services
             _komisyonRepo.Save();
         }
 
-        public IEnumerable<GorevTuru> GetAllGorev()
+        public IEnumerable<Yasama> GetAllYasama()
         {
-            return _gorevTuruRepo.GetAll();
+            return _yasamaRepo.GetAll();
         }
 
-        public GorevTuru GetGorevTuruById(Guid id)
+        public Yasama GetYasamaById(Guid id)
         {
-            return _gorevTuruRepo.GetById(id);
+            return _yasamaRepo.GetById(id);
         }
 
-        public void CreateGorevTuru(GorevTuru gorevTuru)
+        public void CreateYasama(Yasama yasama)
         {
-            _gorevTuruRepo.Create(gorevTuru, CurrentUser.Id);
-            _gorevTuruRepo.Save();
+            _yasamaRepo.Create(yasama, CurrentUser.Id);
+            _yasamaRepo.Save();
         }
     }
 }

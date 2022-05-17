@@ -21,8 +21,7 @@ namespace TTBS.Core.Entities
         public Komisyon Komisyon { get; set; }
         public Guid? KomisyonId { get; set; }
         public virtual ICollection<StenoGorev> StenoGorevs { get; set; }
-        public GorevTuru GorevTuru { get; set; }
-        public Guid? GorevTuruId { get; set; }
+        public PlanTuru PlanTuru { get; set; }
         public PlanStatu PlanStatu { get; set; }
 
     }

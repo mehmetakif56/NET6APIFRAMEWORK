@@ -10,6 +10,6 @@ namespace TTBS.Models
         public int GorevSaniye { get; set; }
         public string AdSoyad { get; set; }
         public Guid  PlanId { get; set; }
-        public StenoPlanModel StenoPlan { get; set; }
+        public int SiraNo { get; set; }
     }
 }

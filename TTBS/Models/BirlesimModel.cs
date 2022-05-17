@@ -8,6 +8,6 @@ namespace TTBS.Models
         public string BirlesimNo { get; set; }
         public DateTime? BaslangicTarihi { get; set; }
         public DateTime? BitisTarihi { get; set; }
-
+        public Guid YasamaId { get; set; }
     }
 }

@@ -15,7 +15,7 @@ namespace TTBS.Infrastructure
         }
 
         public DbSet<Donem> Donems { get; set; }
-
+        public DbSet<Yasama> Yasamas { get; set; }
         public DbSet<StenoPlan> StenoPlans { get; set; }
         public DbSet<StenoGorev> StenoGorevs { get; set; }
         public DbSet<StenoIzin> StenoIzin { get; set; }
@@ -31,6 +31,7 @@ namespace TTBS.Infrastructure
             builder.Entity<StenoPlan>(ConfigureStenoPlan);
             builder.Entity<StenoIzin>(ConfigureStenoIzin);
             builder.Entity<StenoGorev>(ConfigureStenoGorev);
+            builder.Entity<Yasama>(ConfigureYasama);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -48,6 +48,34 @@ namespace TTBS.Controllers
         }
         #endregion
 
+        #region Yasama
+        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
+        [HttpGet("GetYasamaById")]
+        public YasamaModel GetYasamaById(Guid id)
+        {
+            var entity = _globalService.GetYasamaById(id);
+            var model = _mapper.Map<YasamaModel>(entity);
+            return model;
+        }
+
+        [HttpGet("GetAllYasama")]
+        public IEnumerable<DonemModel> GetAllYasama()
+        {
+            var entity = _globalService.GetAllYasama();
+            var model = _mapper.Map<IEnumerable<DonemModel>>(entity);
+            return model;
+        }
+
+        [HttpPost("CreateYasama")]
+        public IActionResult CreateYasama(Yasama model)
+        {
+            var entity = Mapper.Map<Yasama>(model);
+            _globalService.CreateYasama(entity);
+            return Ok(entity);
+
+        }
+        #endregion
+
         #region Birlesim
 
         [HttpGet("GetBirlesimById")]
@@ -105,31 +133,6 @@ namespace TTBS.Controllers
 
         #endregion
 
-        #region Gorev
-        [HttpGet("GetGorevTuruById")]
-        public GorevTuruModel GetGorevTuruById(Guid id)
-        {
-            var entity = _globalService.GetGorevTuruById(id);
-            var model = _mapper.Map<GorevTuruModel>(entity);
-            return model;
-        }
-
-        [HttpGet("GetAllGorev")]
-        public IEnumerable<GorevTuruModel> GetAllGorev()
-        {
-            var entity = _globalService.GetAllGorev();
-            var model = _mapper.Map<IEnumerable<GorevTuruModel>>(entity);
-            return model;
-        }
-
-        [HttpPost("CreateGorevTuru")]
-        public IActionResult CreateGorevTuru(GorevTuruModel model)
-        {
-             var entity = Mapper.Map<GorevTuru>(model);
-            _globalService.CreateGorevTuru(entity);
-            return Ok(entity);
-
-        }
-        #endregion
+      
     }
 }

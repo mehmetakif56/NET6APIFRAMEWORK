@@ -11,6 +11,11 @@ namespace TTBS.Infrastructure
             builder.ToTable("Donem");
         }
 
+        private void ConfigureYasama(EntityTypeBuilder<Yasama> builder)
+        {
+            builder.ToTable("Yasama");
+        }
+
         private void ConfigureStenoPlan(EntityTypeBuilder<StenoPlan> builder)
         {
             builder.ToTable("StenoPlan");

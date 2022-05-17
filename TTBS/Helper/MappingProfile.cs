@@ -11,16 +11,16 @@ namespace TTBS.Helper
         {
             CreateMap<DonemModel, Donem>();
             CreateMap<Donem, DonemModel>();
+            CreateMap<YasamaModel, Yasama>();
+            CreateMap<Yasama, YasamaModel>();
             CreateMap<UserEntity, UserModel>()
                 .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.UserRoles.Select(x => x.Role.Name)));
             CreateMap<UserModel, UserEntity>();
 
-            CreateMap<StenoPlan, StenoPlanModel>()
-                 .ForMember(dest => dest.GorevList , opt => opt.MapFrom(src => new SelectListItem { Text = src.GorevTuru.Ad, Value = src.GorevTuruId.ToString() }))
+            CreateMap<StenoPlan, StenoPlanModel>() 
                  .ForMember(dest => dest.BirlesimList, opt => opt.MapFrom(src => new SelectListItem { Text = src.Birlesim.BirlesimNo, Value = src.BirlesimId.ToString() }))
                  .ForMember(dest => dest.KomisyonList, opt => opt.MapFrom(src => new SelectListItem { Text = src.Komisyon.Ad, Value = src.KomisyonId.ToString() }));
             CreateMap<StenoPlanModel, StenoPlan>()
-                .ForMember(dest => dest.GorevTuruId, opt => opt.MapFrom(src => new Guid(src.GorevList.Value)))
                .ForMember(dest => dest.BirlesimId, opt => opt.MapFrom(src => new Guid(src.BirlesimList.Value)))
               .ForMember(dest => dest.KomisyonId, opt => opt.MapFrom(src => new Guid(src.KomisyonList.Value)));
 
@@ -33,8 +33,8 @@ namespace TTBS.Helper
             CreateMap<KomisyonModel, Komisyon>();
             CreateMap<Komisyon, KomisyonModel>();
 
-            CreateMap<GorevTuruModel, GorevTuru>();
-            CreateMap<GorevTuru, GorevTuruModel>();
+            CreateMap <StenoGorevAtamaModel, StenoGorev>();
+            CreateMap<StenoGorev, StenoGorevAtamaModel>();
 
             CreateMap<StenoGorev, StenoGorevModel>()
                       .ForMember(dest => dest.GorevDakika, opt => opt.MapFrom(src => src.GorevDakika/60 + src.GorevDakika % 60 ));

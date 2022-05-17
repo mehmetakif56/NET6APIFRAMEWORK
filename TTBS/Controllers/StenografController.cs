@@ -22,8 +22,8 @@ namespace TTBS.Controllers
         }
         #region StenoPlan
         [Microsoft.AspNetCore.Authorization.AllowAnonymous]
-        [HttpGet("GetStenoGorevPlan")]
-        public IEnumerable<StenoPlanModel> GetStenoGorevPlan()
+        [HttpGet("GetStenoPlan")]
+        public IEnumerable<StenoPlanModel> GetStenoPlan()
         {
             var stenoEntity = _stenoService.GetStenoPlan();
             var model = _mapper.Map<IEnumerable<StenoPlanModel>>(stenoEntity);
@@ -132,12 +132,39 @@ namespace TTBS.Controllers
             return model;
         }
 
-        [HttpPost("CreateStenoGorev")]
-        public IActionResult CreateStenoGorev(List<StenoGorevModel> model)
+        //[HttpPost("CreateStenoGorev")]
+        //public IActionResult CreateStenoGorev(List<StenoGorevModel> model)
+        //{
+        //    try
+        //    {
+        //        foreach (var item in model)
+        //        {
+        //            var entity = Mapper.Map<StenoGorev>(item);
+        //            _stenoService.CreateStenoGorev(entity);                   
+        //        }
+        //    }
+        //    catch(Exception ex)
+        //    { return BadRequest(ex.Message); }
+
+        //    return Ok();
+
+
+        //}
+
+        [HttpPost("CreateStenoGorevAtama")]
+        public IActionResult CreateStenoGorevAtama(StenoGorevAtamaModel model)
         {
-            var entity = Mapper.Map<StenoGorev>(model);
-            _stenoService.CreateStenoGorev(entity);
-            return Ok(entity);
+            try
+            {
+                    var entity = Mapper.Map<StenoGorev>(model);
+                    _stenoService.CreateStenoGorev(entity);
+             
+            }
+            catch (Exception ex)
+            { return BadRequest(ex.Message); }
+
+            return Ok();
+
 
         }
 

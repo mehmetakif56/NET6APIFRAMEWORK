@@ -51,7 +51,7 @@ namespace TTBS.Services
         }
         public IEnumerable<StenoPlan> GetStenoPlan()
         {
-            return _stenoPlanRepo.GetAll(includeProperties: "Birlesim,Komisyon,StenoGorevs,GorevTuru");
+            return _stenoPlanRepo.GetAll(includeProperties: "Birlesim,Komisyon,StenoGorevs");
         }
 
         public void CreateStenoPlan(StenoPlan entity)
@@ -88,7 +88,7 @@ namespace TTBS.Services
 
         public IEnumerable<StenoGorev> GetStenoGorevByName(string adSoyad)
         {
-            return _stenoGorevRepo.Get(x => x.AdSoyad == adSoyad);
+            return null;// _stenoGorevRepo.Get(x => x.AdSoyad == adSoyad);
         }
 
         public IEnumerable<StenoGorev> GetStenoGorevByDateAndTime(DateTime gorevTarihi, int gorevSaati)
