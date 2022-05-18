@@ -54,6 +54,16 @@ namespace TTBS.Controllers
             var model = _mapper.Map<List<StenoPlanModel>>(stenoEntity);
             return model;
         }
+
+        [HttpGet("GetStenoPlanByDateAndStatus")]
+        public List<StenoPlanModel> GetStenoPlanByDateAndStatus(DateTime gorevTarihi,int gorevTuru)
+        {
+            var stenoEntity = _stenoService.GetStenoPlanByDateAndStatus(gorevTarihi, gorevTuru);
+
+            var model = _mapper.Map<List<StenoPlanModel>>(stenoEntity);
+            return model;
+        }
+
         #endregion 
         #region StenoIzin
         [HttpGet("GetAllStenoIzin")]
@@ -125,9 +135,9 @@ namespace TTBS.Controllers
         }
 
         [HttpGet("GetStenoGorevByDateAndStatus")]
-        public IEnumerable<StenoGorevModel> GetStenoGorevByDateAndStatus(DateTime basTarihi, int status)
+        public IEnumerable<StenoGorevModel> GetStenoGorevByDateAndStatus(DateTime gorevAtamaTarihi, int status,int gorevSaati)
         {
-            var stenoEntity = _stenoService.GetStenoGorevByDateAndStatus(basTarihi, status);
+            var stenoEntity = _stenoService.GetStenoGorevByDateAndStatus(gorevAtamaTarihi, status, gorevSaati);
             var model = _mapper.Map<IEnumerable<StenoGorevModel>>(stenoEntity);
             return model;
         }
