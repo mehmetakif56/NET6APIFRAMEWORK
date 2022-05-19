@@ -6,7 +6,6 @@ namespace TTBS.Models
     public class StenoGorevAtamaModel
     {
         public Guid StenografId { get; set; }
-        public Guid  PlanId { get; set; }
-        public int SiraNo { get; set; }
+        public Guid StenoPlanId { get; set; }
     }
 }

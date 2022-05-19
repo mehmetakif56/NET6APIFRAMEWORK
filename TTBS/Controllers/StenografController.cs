@@ -31,7 +31,7 @@ namespace TTBS.Controllers
         }
 
         [HttpPost("CreateStenoPlan")]
-        public IActionResult CreateStenoPlan(StenoPlanModel model)
+        public IActionResult CreateStenoPlan(StenoPlanOlusturModel model)
         {
             try
             {
@@ -74,10 +74,10 @@ namespace TTBS.Controllers
             return model;
         }
 
-        [HttpGet("GetStenoIzinById")]
-        public IEnumerable<StenoIzinModel> GetStenoIzinById(Guid id)
+        [HttpGet("GetStenoIzinByStenografId")]
+        public IEnumerable<StenoIzinModel> GetStenoIzinByStenografId(Guid id)
         {
-            var stenoEntity = _stenoService.GetStenoIzinById(id);
+            var stenoEntity = _stenoService.GetStenoIzinByStenografId(id);
             var model = _mapper.Map<IEnumerable<StenoIzinModel>>(stenoEntity);
             return model;
         }
@@ -189,11 +189,32 @@ namespace TTBS.Controllers
 
         # region Stenograf
         [HttpGet("GetAllStenograf")]
-        public IEnumerable<StenoPlanModel> GetAllStenograf()
+        public IEnumerable<StenoModel> GetAllStenograf()
         {
             var stenoEntity = _stenoService.GetAllStenograf();
-            var model = _mapper.Map<IEnumerable<StenoPlanModel>>(stenoEntity);
+            var model = _mapper.Map<IEnumerable<StenoModel>>(stenoEntity);
             return model;
+        }
+
+        [HttpGet("GetAllStenografByGorevTuru")]
+        public IEnumerable<StenoModel> GetAllStenografByGorevTuru(int gorevTuru)
+        {
+            var stenoEntity = _stenoService.GetAllStenografByGorevTuru(gorevTuru);
+            var model = _mapper.Map<IEnumerable<StenoModel>>(stenoEntity);
+            return model;
+        }
+        [HttpPost("CreateStenograf")]
+        public IActionResult CreateStenograf(StenoModel model)
+        {
+            try
+            {
+                var entity = Mapper.Map<Stenograf>(model);
+                _stenoService.CreateStenograf(entity);
+            }
+            catch (Exception ex)
+            { return BadRequest(ex.Message); }
+
+            return Ok();
         }
         #endregion
 
