@@ -237,6 +237,19 @@ namespace TTBS.Controllers
             var model = _mapper.Map<IEnumerable<StenoGrupModel>>(stenoGrpEntity);
             return model;
         }
+        //[HttpPost("DeleteStenoGorev")]
+        //public IActionResult DeleteStenoGorev(StenoGorevGüncelleModel model)
+        //{
+        //    try
+        //    {
+        //        var entity = Mapper.Map<StenoGorev>(model);
+        //        _stenoService.CreateStenoGrup(entity);
+        //    }
+        //    catch (Exception ex)
+        //    { return BadRequest(ex.Message); }
+
+        //    return Ok();
+        //}
         #endregion
 
     }

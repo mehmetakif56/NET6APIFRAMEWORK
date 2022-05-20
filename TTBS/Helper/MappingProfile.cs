@@ -44,6 +44,9 @@ namespace TTBS.Helper
                   .ForMember(dest => dest.StenoAdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad))
                   .ForMember(dest => dest.GrupAd, opt => opt.MapFrom(src => src.Grup.Ad));
 
+            CreateMap<StenoGorev, StenoGorevAtamaModel>();
+            CreateMap<StenoGorevAtamaModel, StenoGorev>();
+
             CreateMap <StenoGorevAtamaModel, StenoGorev>();
             CreateMap<StenoGorev, StenoGorevAtamaModel>();
 

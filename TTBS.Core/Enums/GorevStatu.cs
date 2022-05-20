@@ -10,6 +10,7 @@ namespace TTBS.Core.Enums
     {
         Planlandı=0,
         DevamEdiyor =1,
-        Tamamlandı=2
+        Tamamlandı=2,
+        Iptal=3
     }
 }
