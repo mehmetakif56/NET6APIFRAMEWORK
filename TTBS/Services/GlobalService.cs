@@ -17,6 +17,9 @@ namespace TTBS.Services
         void CreateYasama(Yasama donem);
         void CreateBirlesim(Birlesim birlesim);
         void CreateKomisyon(Komisyon komisyon);
+        void CreateGrup(Grup grup);
+        IEnumerable<Grup> GetAllGrup();
+        Grup GetGrupById(Guid id);
     }
     public class GlobalService : BaseService, IGlobalService
     {
@@ -24,17 +27,20 @@ namespace TTBS.Services
         private IRepository<Yasama> _yasamaRepo;
         private IRepository<Birlesim> _birlesimRepo;
         private IRepository<Komisyon> _komisyonRepo;
+        private IRepository<Grup> _grupRepo;
         private IUnitOfWork _unitWork;
         public GlobalService(IRepository<Donem> donemRepo,
                              IRepository<Yasama> yasamaRepo,
-                             IRepository<Birlesim> birlesimRepo, 
-                             IRepository<Komisyon> komisyonRepo, 
+                             IRepository<Birlesim> birlesimRepo,
+                             IRepository<Komisyon> komisyonRepo,
+                             IRepository<Grup> grupRepo,
                              IUnitOfWork unitWork,
                              IServiceProvider provider) : base(provider)
         {
             _donemRepo = donemRepo;
             _birlesimRepo = birlesimRepo;
             _komisyonRepo = komisyonRepo;
+            _grupRepo = grupRepo;
             _unitWork = unitWork;
             _yasamaRepo = yasamaRepo;
         }
@@ -101,6 +107,22 @@ namespace TTBS.Services
         {
             _yasamaRepo.Create(yasama, CurrentUser.Id);
             _yasamaRepo.Save();
+        }
+
+        public void CreateGrup(Grup grup)
+        {
+            _grupRepo.Create(grup, CurrentUser.Id);
+            _grupRepo.Save();
+        }
+
+        public IEnumerable<Grup> GetAllGrup()
+        {
+            return _grupRepo.GetAll();
+        }
+
+        public Grup GetGrupById(Guid id)
+        {
+            return _grupRepo.GetById(id);
         }
     }
 }

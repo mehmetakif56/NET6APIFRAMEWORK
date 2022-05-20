@@ -37,6 +37,12 @@ namespace TTBS.Helper
 
             CreateMap<KomisyonModel, Komisyon>();
             CreateMap<Komisyon, KomisyonModel>();
+            CreateMap<GrupModel, Grup>();
+            CreateMap<Grup, GrupModel>();
+            CreateMap<StenoGrupModel, StenoGrup>();
+            CreateMap<StenoGrup, StenoGrupModel>()
+                  .ForMember(dest => dest.StenoAdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad))
+                  .ForMember(dest => dest.GrupAd, opt => opt.MapFrom(src => src.Grup.Ad));
 
             CreateMap <StenoGorevAtamaModel, StenoGorev>();
             CreateMap<StenoGorev, StenoGorevAtamaModel>();

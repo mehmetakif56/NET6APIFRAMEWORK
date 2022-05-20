@@ -10,5 +10,6 @@ namespace TTBS.Core.Entities
         public Guid Id { get; set; }   
         public string AdSoyad { get; set; }
         public StenoGorevTuru StenoGorevTuru { get; set; }
+        public virtual ICollection<StenoGrup> StenoGrups { get; set; }
     }
 }

@@ -216,6 +216,27 @@ namespace TTBS.Controllers
 
             return Ok();
         }
+
+        [HttpPost("CreateStenoGrup")]
+        public IActionResult CreateStenoGrup(StenoGrupModel model)
+        {
+            try
+            {
+                var entity = Mapper.Map<StenoGrup>(model);
+                _stenoService.CreateStenoGrup(entity);
+            }
+            catch (Exception ex)
+            { return BadRequest(ex.Message); }
+
+            return Ok();
+        }
+        [HttpGet("GetAllStenoGrup")]
+        public IEnumerable<StenoGrupModel> GetAllStenoGrup()
+        {
+            var stenoGrpEntity = _stenoService.GetAllStenoGrup();
+            var model = _mapper.Map<IEnumerable<StenoGrupModel>>(stenoGrpEntity);
+            return model;
+        }
         #endregion
 
     }

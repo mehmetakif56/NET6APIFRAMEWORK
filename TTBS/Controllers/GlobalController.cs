@@ -133,6 +133,30 @@ namespace TTBS.Controllers
 
         #endregion
 
-      
+        #region Grup
+        [HttpPost("CreateGrup")]
+        public IActionResult CreateGrup(GrupModel model)
+        {
+            var entity = Mapper.Map<Grup>(model);
+            _globalService.CreateGrup(entity);
+            return Ok(entity);
+
+        }
+        [HttpGet("GetGrupById")]
+        public GrupModel GetGrupById(Guid id)
+        {
+            var entity = _globalService.GetGrupById(id);
+            var model = _mapper.Map<GrupModel>(entity);
+            return model;
+        }
+
+        [HttpGet("GetAllGrup")]
+        public IEnumerable<GrupModel> GetAllGrup()
+        {
+            var entity = _globalService.GetAllGrup();
+            var model = _mapper.Map<IEnumerable<GrupModel>>(entity);
+            return model;
+        }
+        #endregion
     }
 }

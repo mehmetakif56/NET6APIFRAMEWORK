@@ -41,7 +41,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseEntities\BaseEntities.cs" />
+    <Compile Include="Entities\Grup.cs" />
     <Compile Include="Entities\Stenograf.cs" />
+    <Compile Include="Entities\StenoGrup.cs" />
     <Compile Include="Entities\Yasama.cs" />
     <Compile Include="Entities\Birlesim.cs" />
     <Compile Include="Entities\ClaimEntity.cs" />

@@ -36,6 +36,28 @@ namespace TTBS.Infrastructure
             builder.ToTable("Stenograf");
         }
 
+        private void ConfigureGrup(EntityTypeBuilder<Grup> builder)
+        {
+            builder.ToTable("Grup");
+        }
 
+        private void ConfigureStenoGrup(EntityTypeBuilder<StenoGrup> builder)
+        {
+            builder.ToTable("StenoGrup");
+
+            builder.Ignore("Id");
+
+            builder.HasKey(ur => new { ur.StenoId, ur.GrupId });
+
+            builder.HasOne(ur => ur.Stenograf)
+                            .WithMany(r => r.StenoGrups)
+                            .HasForeignKey(ur => ur.StenoId)
+                            .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(ur => ur.Grup)
+                            .WithMany(u => u.StenoGrups)
+                            .HasForeignKey(ur => ur.GrupId)
+                            .OnDelete(DeleteBehavior.Cascade);
+        }
     }
 }

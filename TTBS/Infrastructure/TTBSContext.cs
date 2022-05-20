@@ -20,6 +20,8 @@ namespace TTBS.Infrastructure
         public DbSet<StenoGorev> StenoGorevs { get; set; }
         public DbSet<StenoIzin> StenoIzin { get; set; }
         public DbSet<Stenograf> Stenografs { get; set; }
+        public DbSet<StenoGrup> StenoGrups { get; set; }
+        public DbSet<Grup> Grups { get; set; }
         public DbSet<ClaimEntity> Claims { get; set; }
         public DbSet<RoleClaimEntity> RoleClaims { get; set; }
         public DbSet<UserEntity> Users { get; set; }
@@ -34,6 +36,8 @@ namespace TTBS.Infrastructure
             builder.Entity<StenoGorev>(ConfigureStenoGorev);
             builder.Entity<Yasama>(ConfigureYasama);
             builder.Entity<Stenograf>(ConfigureStenograf);
+            builder.Entity<Grup>(ConfigureGrup);
+            builder.Entity<StenoGrup>(ConfigureStenoGrup);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
