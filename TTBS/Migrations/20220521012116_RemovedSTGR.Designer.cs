@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TTBS.Infrastructure;
 
@@ -11,9 +12,10 @@ using TTBS.Infrastructure;
 namespace TTBS.Migrations
 {
     [DbContext(typeof(TTBSContext))]
-    partial class TTBSContextModelSnapshot : ModelSnapshot
+    [Migration("20220521012116_RemovedSTGR")]
+    partial class RemovedSTGR
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -378,9 +380,6 @@ namespace TTBS.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("GrupId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -394,8 +393,6 @@ namespace TTBS.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("GrupId");
 
                     b.ToTable("Stenograf", (string)null);
                 });
@@ -690,17 +687,6 @@ namespace TTBS.Migrations
                     b.Navigation("Stenograf");
                 });
 
-            modelBuilder.Entity("TTBS.Core.Entities.Stenograf", b =>
-                {
-                    b.HasOne("TTBS.Core.Entities.Grup", "Grup")
-                        .WithMany("Stenografs")
-                        .HasForeignKey("GrupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Grup");
-                });
-
             modelBuilder.Entity("TTBS.Core.Entities.StenoIzin", b =>
                 {
                     b.HasOne("TTBS.Core.Entities.Stenograf", "Stenograf")
@@ -774,11 +760,6 @@ namespace TTBS.Migrations
             modelBuilder.Entity("TTBS.Core.Entities.Donem", b =>
                 {
                     b.Navigation("Yasamas");
-                });
-
-            modelBuilder.Entity("TTBS.Core.Entities.Grup", b =>
-                {
-                    b.Navigation("Stenografs");
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.Komisyon", b =>
