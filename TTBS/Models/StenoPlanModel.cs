@@ -32,7 +32,7 @@ namespace TTBS.Models
             get { return _groupList; }
             set { if (value != null) _groupList = value; _groupList = new SelectListItem { }; }
         }
-        public PlanTuru GorevTuru { get; set; }
+        public SelectListItem GorevList { get; set; }
         public PlanStatu GorevStatu { get; set; }
     }
 }
