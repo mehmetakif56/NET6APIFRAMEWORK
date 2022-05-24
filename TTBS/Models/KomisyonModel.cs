@@ -10,6 +10,7 @@ namespace TTBS.Models
         public DateTime? Tarih { get; set; }
         public string Yeri { get; set; }
         public KomisyonTipi KomisyonTipi { get; set; }
+        public IEnumerable<AltKomisyonModel> AltKomisyons { get; set; }
 
     }
 }

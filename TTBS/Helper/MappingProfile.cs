@@ -52,6 +52,9 @@ namespace TTBS.Helper
             CreateMap<StenoGrupModel, StenoGrup>();
             CreateMap <StenoGrup, StenoGrupModel>();
 
+            CreateMap<AltKomisyonModel, AltKomisyon>();
+            CreateMap<AltKomisyon, AltKomisyonModel>();
+
             CreateMap<StenoGorev, StenoGorevPlanModel>()
                  .ForMember(dest => dest.GorevYeri, opt => opt.MapFrom(src => src.StenoPlan.GorevYeri))
                  .ForMember(dest => dest.GorevAd, opt => opt.MapFrom(src => src.StenoPlan.GorevAd))

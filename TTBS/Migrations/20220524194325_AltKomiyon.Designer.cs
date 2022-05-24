@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TTBS.Infrastructure;
 
@@ -11,9 +12,10 @@ using TTBS.Infrastructure;
 namespace TTBS.Migrations
 {
     [DbContext(typeof(TTBSContext))]
-    partial class TTBSContextModelSnapshot : ModelSnapshot
+    [Migration("20220524194325_AltKomiyon")]
+    partial class AltKomiyon
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,7 +48,7 @@ namespace TTBS.Migrations
                     b.Property<string>("Kodu")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("KomisyonId")
+                    b.Property<Guid?>("KomisyonId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("ModifiedBy")
@@ -59,7 +61,7 @@ namespace TTBS.Migrations
 
                     b.HasIndex("KomisyonId");
 
-                    b.ToTable("AltKomisyon", (string)null);
+                    b.ToTable("AltKomisyon");
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.Birlesim", b =>
@@ -718,9 +720,7 @@ namespace TTBS.Migrations
                 {
                     b.HasOne("TTBS.Core.Entities.Komisyon", "Komisyon")
                         .WithMany("AltKomisyons")
-                        .HasForeignKey("KomisyonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("KomisyonId");
 
                     b.Navigation("Komisyon");
                 });

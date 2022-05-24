@@ -40,6 +40,10 @@ namespace TTBS.Infrastructure
         {
             builder.ToTable("Grup");
         }
+        private void ConfigurealtKom(EntityTypeBuilder<AltKomisyon> builder)
+        {
+            builder.ToTable("AltKomisyon");
+        }
 
         private void ConfigureStenoGrup(EntityTypeBuilder<StenoGrup> builder)
         {

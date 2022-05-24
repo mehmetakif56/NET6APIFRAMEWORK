@@ -130,6 +130,22 @@ namespace TTBS.Controllers
             return Ok(entity);
 
         }
+        [HttpPost("CreateAltKomisyon")]
+        public IActionResult CreateAltKomisyon(AltKomisyonModel model)
+        {
+            var entity = Mapper.Map<AltKomisyon>(model);
+            _globalService.CreateAltKomisyon(entity);
+            return Ok(entity);
+
+        }
+
+        [HttpGet("GetAllAltKomisyon")]
+        public IEnumerable<KomisyonModel> GetAllAltKomisyon()
+        {
+            var entity = _globalService.GetAllAltKomisyon();
+            var model = _mapper.Map<IEnumerable<KomisyonModel>>(entity);
+            return model;
+        }
 
         #endregion
 

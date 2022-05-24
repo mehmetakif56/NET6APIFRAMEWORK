@@ -20,6 +20,8 @@ namespace TTBS.Services
         void CreateGrup(Grup grup);
         IEnumerable<Grup> GetAllGrup();
         Grup GetGrupById(Guid id);
+        void CreateAltKomisyon(AltKomisyon komisyon);
+        IEnumerable<Komisyon> GetAllAltKomisyon();
     }
     public class GlobalService : BaseService, IGlobalService
     {
@@ -27,6 +29,7 @@ namespace TTBS.Services
         private IRepository<Yasama> _yasamaRepo;
         private IRepository<Birlesim> _birlesimRepo;
         private IRepository<Komisyon> _komisyonRepo;
+        private IRepository<AltKomisyon> _altkomisyonRepo;
         private IRepository<Grup> _grupRepo;
         private IUnitOfWork _unitWork;
         public GlobalService(IRepository<Donem> donemRepo,
@@ -34,6 +37,7 @@ namespace TTBS.Services
                              IRepository<Birlesim> birlesimRepo,
                              IRepository<Komisyon> komisyonRepo,
                              IRepository<Grup> grupRepo,
+                             IRepository<AltKomisyon> altkomisyonRepo,
                              IUnitOfWork unitWork,
                              IServiceProvider provider) : base(provider)
         {
@@ -43,6 +47,7 @@ namespace TTBS.Services
             _grupRepo = grupRepo;
             _unitWork = unitWork;
             _yasamaRepo = yasamaRepo;
+            _altkomisyonRepo = altkomisyonRepo;
         }
         public IEnumerable<Donem> GetAllDonem()
         {
@@ -91,6 +96,16 @@ namespace TTBS.Services
         {
             _komisyonRepo.Create(komisyon, CurrentUser.Id);
             _komisyonRepo.Save();
+        }
+        public void CreateAltKomisyon(AltKomisyon komisyon)
+        {
+            _altkomisyonRepo.Create(komisyon, CurrentUser.Id);
+            _altkomisyonRepo.Save();
+        }
+
+        public IEnumerable<Komisyon> GetAllAltKomisyon()
+        {
+            return _komisyonRepo.Get(includeProperties: "AltKomisyons");
         }
 
         public IEnumerable<Yasama> GetAllYasama()

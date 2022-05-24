@@ -8,15 +8,12 @@ using TTBS.Core.Enums;
 
 namespace TTBS.Core.Entities
 {
-    public class Komisyon:BaseEntity
+    public class AltKomisyon:BaseEntity
     {
         public Guid Id { get; set; }
         public string Ad { get; set; }
         public string Kodu { get; set; }
-        public DateTime? Tarih { get; set; }
-        public KomisyonTipi KomisyonTipi { get; set; }
-        public string Yeri { get; set; }
-        public virtual ICollection<StenoPlan> StenoPlans { get; set; }
-        public virtual ICollection<AltKomisyon> AltKomisyons { get; set; }
+        public Komisyon Komisyon { get; set; }
+        public Guid KomisyonId { get; set; }
     }
 }
