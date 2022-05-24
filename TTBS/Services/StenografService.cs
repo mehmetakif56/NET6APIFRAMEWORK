@@ -37,6 +37,8 @@ namespace TTBS.Services
         IEnumerable<Stenograf> GetAvaliableStenoBetweenDateByGroup(DateTime basTarihi, DateTime bitTarihi, Guid groupId);
 
         IEnumerable<Stenograf> GetAssignedStenoByPlanIdAndGrorevTur(Guid planId, int gorevturu);
+
+        void UpdateStenoSiraNo(List<Stenograf> steno);
     }
     public class StenografService : BaseService, IStenografService
     {
@@ -226,6 +228,15 @@ namespace TTBS.Services
             return _stenoGorevRepo.Get(x => x.StenoPlanId == planId && (int)x.Stenograf.StenoGorevTuru == gorevturu, includeProperties: "Stenograf").Select(x => x.Stenograf);
         }
 
-       
+        public void UpdateStenoSiraNo(List<Stenograf> stenoList)
+        {
+            foreach (var steno in stenoList)
+            {
+                _stenografRepo.Update(steno, CurrentUser.Id);
+                _stenografRepo.Save();
+            }
+           
+        }
+
     }
 }

@@ -306,6 +306,21 @@ namespace TTBS.Controllers
             var model = _mapper.Map<IEnumerable<StenoModel>>(stenoEntity);
             return model;
         }
+
+        [HttpPost("UpdateStenoSiraNo")]
+        public IActionResult UpdateStenoSiraNo(List<StenoModel> model)
+        {
+            try
+            {
+                var entityList = Mapper.Map<List<Stenograf>>(model);
+                _stenoService.UpdateStenoSiraNo(entityList);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            return Ok();
+        }
         #endregion
 
     }
