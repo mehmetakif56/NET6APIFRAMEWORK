@@ -92,7 +92,7 @@ namespace TTBS.Services
         public IEnumerable<StenoIzin> GetStenoIzinBetweenDateAndStenograf(DateTime basTarihi, DateTime bitTarihi,Guid? stenografId)
         {
             if(stenografId !=null)
-                 return _stenoIzinRepo.Get(x => x.StenografId == stenografId && x.BaslangicTarihi <= basTarihi && x.BitisTarihi >= bitTarihi, includeProperties: "Stenograf");
+                 return _stenoIzinRepo.Get(x => x.StenografId == stenografId && x.BaslangicTarihi >= basTarihi && x.BitisTarihi <= bitTarihi, includeProperties: "Stenograf");
             else
                 return _stenoIzinRepo.Get(x => x.BaslangicTarihi <= basTarihi && x.BitisTarihi >= bitTarihi, includeProperties: "Stenograf");
         }
