@@ -8,6 +8,6 @@ namespace TTBS.Core.Entities
     {
         public Guid Id { get; set; }
         public string Ad { get; set; }
-        public virtual ICollection<Stenograf> Stenografs { get; set; }
+        public virtual ICollection<StenoGrup> StenoGrups { get; set; }
     }
 }

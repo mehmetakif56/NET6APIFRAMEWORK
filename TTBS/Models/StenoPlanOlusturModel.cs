@@ -18,5 +18,6 @@ namespace TTBS.Models
         public Guid? YasamaId { get; set; }     
         public PlanTuru GorevTuru { get; set; }
         public PlanStatu GorevStatu { get; set; }
+
     }
 }

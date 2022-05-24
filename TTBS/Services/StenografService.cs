@@ -22,13 +22,21 @@ namespace TTBS.Services
         List<StenoPlan> GetStenoPlanByStatus(int status);
         IEnumerable<StenoPlan> GetStenoPlanByDateAndStatus(DateTime gorevTarihi, int gorevTuru);
         List<StenoGorev> GetStenoGorevBySatatus(int status);
-        IEnumerable<Stenograf> GetAllStenograf(Guid? groupId);
+        IEnumerable<Stenograf> GetAllStenografByGroupId(Guid? groupId);
         void CreateStenograf(Stenograf stenograf);
         IEnumerable<Stenograf> GetAllStenografByGorevTuru(int gorevTuru);
         void UpdateStenoGorev(StenoGorev stenoGorev);
         IEnumerable<StenoGorev> GetStenoGorevByGrupId(Guid id);
         IEnumerable<StenoGorev> GetStenoGorevByPlanDateAndStatus(DateTime gorevTarihi, int gorevturu);
+        void CreateStenoGroup(StenoGrup stenograf);
+        void DeleteStenoGroup(StenoGrup stenograf);
+        IEnumerable<Stenograf> GetAllStenoGrupNotInclueded();
+        IEnumerable<Stenograf> GetAvaliableStenoBetweenDateBySteno(DateTime basTarihi, DateTime bitTarihi, int stenografId);
+        void UpdateStenoPlan(StenoPlan plan);
 
+        IEnumerable<Stenograf> GetAvaliableStenoBetweenDateByGroup(DateTime basTarihi, DateTime bitTarihi, Guid groupId);
+
+        IEnumerable<Stenograf> GetAssignedStenoByPlanIdAndGrorevTur(Guid planId, int gorevturu);
     }
     public class StenografService : BaseService, IStenografService
     {
@@ -37,10 +45,12 @@ namespace TTBS.Services
         private IRepository<StenoGorev> _stenoGorevRepo;
         private IUnitOfWork _unitWork;
         private IRepository<Stenograf> _stenografRepo;
+        private IRepository<StenoGrup> _stenoGrupRepo;
         public StenografService(IRepository<StenoPlan> stenoPlanRepo,
                                 IRepository<StenoIzin> stenoIzinRepo, IRepository<StenoGorev> stenoGorevRepo,
                                 IUnitOfWork unitWork,
                                 IRepository<Stenograf> stenografRepo,
+                                IRepository<StenoGrup> stenoGrupRepo,  
                                 IServiceProvider provider) : base(provider)
         {
             _stenoPlanRepo = stenoPlanRepo;
@@ -48,6 +58,7 @@ namespace TTBS.Services
             _stenoGorevRepo = stenoGorevRepo;
             _unitWork = unitWork;
             _stenografRepo = stenografRepo;
+            _stenoGrupRepo = stenoGrupRepo;
         }
         public IEnumerable<StenoPlan> GetStenoPlan()
         {
@@ -121,12 +132,12 @@ namespace TTBS.Services
             return _stenoGorevRepo.Get(x => (int)x.GorevStatu == status, includeProperties: "Stenograf").ToList();
         }
 
-        public IEnumerable<Stenograf> GetAllStenograf(Guid? groupId)
+        public IEnumerable<Stenograf> GetAllStenografByGroupId(Guid? groupId)
         {
             if (groupId != null)
-                return _stenografRepo.Get(x => x.GrupId == groupId);
+                return _stenoGrupRepo.Get(x => x.GrupId == groupId, includeProperties: "Stenograf").Select(x=>x.Stenograf);
             else
-                return _stenografRepo.GetAll();
+                return _stenoGrupRepo.Get(includeProperties: "Stenograf").Select(x => x.Stenograf);
         }
 
         public IEnumerable<Stenograf> GetStenoGorevByTur(int gorevTuru)
@@ -172,11 +183,49 @@ namespace TTBS.Services
 
         public IEnumerable<StenoGorev> GetStenoGorevByGrupId(Guid id)
         {
-            return _stenoGorevRepo.Get(x=>x.Stenograf.Grup.Id == id,  includeProperties: "Stenograf.Grup");
+            return _stenoGrupRepo.Get(x=>x.GrupId == id,  includeProperties: "Stenograf.StenoGorevs").SelectMany(x=>x.Stenograf.StenoGorevs);
         }
         public IEnumerable<StenoGorev> GetStenoGorevByPlanDateAndStatus(DateTime gorevTarihi,int gorevturu)
         {
             return _stenoGorevRepo.Get(x => (int)x.StenoPlan.GorevTuru == gorevturu &&  x.StenoPlan.BaslangicTarihi <= gorevTarihi && x.StenoPlan.BitisTarihi >= gorevTarihi, includeProperties: "StenoPlan,Stenograf");
         }
+        
+        public void CreateStenoGroup(StenoGrup entity)
+        {
+            _stenoGrupRepo.Create(entity, CurrentUser.Id);
+            _stenoGrupRepo.Save();
+        }
+        public IEnumerable<Stenograf> GetAllStenoGrupNotInclueded()
+        {
+            return _stenografRepo.Get(x => !x.StenoGrups.Select(x=>x.StenoId).Contains(x.Id),   includeProperties: "StenoGrups");
+        }
+        public void DeleteStenoGroup(StenoGrup entity)
+        {
+            _stenoGrupRepo.Delete(entity);
+            _stenoGrupRepo.Save();
+        }
+
+        public IEnumerable<Stenograf> GetAvaliableStenoBetweenDateBySteno(DateTime basTarihi, DateTime bitTarihi, int gorevTuru)
+        {
+            return _stenoGorevRepo.Get(x => (int)x.Stenograf.StenoGorevTuru == gorevTuru &&  x.GörevTarihi >= basTarihi && x.GörevTarihi <= bitTarihi, includeProperties: "Stenograf").Select(x=>x.Stenograf);
+        }
+
+        public IEnumerable<Stenograf> GetAvaliableStenoBetweenDateByGroup(DateTime basTarihi, DateTime bitTarihi, Guid groupId)
+        {
+            return _stenoGorevRepo.Get(x => x.Stenograf.StenoGrups.Select(x=>x.GrupId).Contains(groupId) && x.GörevTarihi >= basTarihi && x.GörevTarihi <= bitTarihi, includeProperties: "Stenograf").Select(x => x.Stenograf);
+        }
+
+        public void UpdateStenoPlan(StenoPlan plan)
+        {
+            _stenoPlanRepo.Update(plan,CurrentUser.Id);
+            _stenoPlanRepo.Save();
+        }
+
+        public IEnumerable<Stenograf> GetAssignedStenoByPlanIdAndGrorevTur(Guid planId, int gorevturu)
+        {
+            return _stenoGorevRepo.Get(x => x.StenoPlanId == planId && (int)x.Stenograf.StenoGorevTuru == gorevturu, includeProperties: "Stenograf").Select(x => x.Stenograf);
+        }
+
+       
     }
 }

@@ -15,5 +15,6 @@ namespace TTBS.Models
         public int SiraNo { get; set; }
         public DateTime? SonGorevTarihi { get; set; }
         public int SonGorevSuresi { get; set; }
+        public GorevStatu GorevStatu { get; set; }
     }
 }

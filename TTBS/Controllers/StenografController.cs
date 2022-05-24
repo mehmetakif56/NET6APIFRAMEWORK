@@ -201,9 +201,9 @@ namespace TTBS.Controllers
 
         # region Stenograf
         [HttpGet("GetAllStenografByGroupId")]
-        public IEnumerable<StenoModel> GetAllStenograf(Guid? groupId)
+        public IEnumerable<StenoModel> GetAllStenografByGroupId(Guid? groupId)
         {
-            var stenoEntity = _stenoService.GetAllStenograf(groupId);
+            var stenoEntity = _stenoService.GetAllStenografByGroupId(groupId);
             var model = _mapper.Map<IEnumerable<StenoModel>>(stenoEntity);
             return model;
         }
@@ -248,6 +248,63 @@ namespace TTBS.Controllers
             { return BadRequest(ex.Message); }
 
             return Ok();
+        }
+
+        [HttpPost("CreateStenoGroup")]
+        public IActionResult CreateStenoGroup(StenoGrupModel model)
+        {
+
+            var entity = Mapper.Map<StenoGrup>(model);
+            _stenoService.CreateStenoGroup(entity);
+            return Ok();
+        }
+
+        [HttpPost("DeleteStenoGroup")]
+        public IActionResult DeleteStenoGroup(StenoGrupModel model)
+        {
+
+            var entity = Mapper.Map<StenoGrup>(model);
+            _stenoService.DeleteStenoGroup(entity);
+            return Ok();
+        }
+
+        [HttpGet("GetAllStenoGrupNotInclueded")]
+        public IEnumerable<Stenograf> GetAllStenoGrupNotInclueded()
+        {
+            var stenoGrpEntity = _stenoService.GetAllStenoGrupNotInclueded();
+            var model = _mapper.Map<IEnumerable<Stenograf>>(stenoGrpEntity);
+            return model;
+        }
+
+        [HttpGet("GetAvaliableStenoBetweenDateBySteno")]
+        public IEnumerable<StenoModel> GetAvaliableStenoBetweenDateBySteno(DateTime basTarihi, DateTime bitTarihi,int gorevTuru)
+        {
+            var stenoGrpEntity = _stenoService.GetAvaliableStenoBetweenDateBySteno(basTarihi, bitTarihi, gorevTuru);
+            var model = _mapper.Map<IEnumerable<StenoModel>>(stenoGrpEntity);
+            return model;
+        }
+
+        [HttpGet("GetAvaliableStenoBetweenDateByGroup")]
+        public IEnumerable<StenoModel> GetAvaliableStenoBetweenDateByGroup(DateTime basTarihi, DateTime bitTarihi, Guid groupId)
+        {
+            var stenoGrpEntity = _stenoService.GetAvaliableStenoBetweenDateByGroup(basTarihi, bitTarihi, groupId);
+            var model = _mapper.Map<IEnumerable<StenoModel>>(stenoGrpEntity);
+            return model;
+        }
+        [HttpPost("UpdateStenoPlan")]
+        public IActionResult UpdateStenoPlan(StenoPlanModel model)
+        {
+
+            var entity = Mapper.Map<StenoPlan>(model);
+            _stenoService.UpdateStenoPlan(entity);
+            return Ok();
+        }
+        [HttpGet("GetAssignedStenoByPlanIdAndGrorevTur")]
+        public IEnumerable<StenoModel> GetAssignedStenoByPlanIdAndGrorevTur(Guid planId, int gorevTuru)
+        {
+            var stenoEntity = _stenoService.GetAssignedStenoByPlanIdAndGrorevTur(planId, gorevTuru);
+            var model = _mapper.Map<IEnumerable<StenoModel>>(stenoEntity);
+            return model;
         }
         #endregion
 

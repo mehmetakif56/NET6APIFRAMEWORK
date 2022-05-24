@@ -8,6 +8,9 @@ namespace TTBS.Models
         public Guid Id { get; set; }
         public string AdSoyad { get; set; }
         public StenoGorevTuru StenoGorevTuru { get; set; }
+        public string SiraNo { get; set; }
+        public DateTime? SonGorevTarihi { get; set; }
+        public int SonGorevSuresi { get; set; }
 
     }
 }
