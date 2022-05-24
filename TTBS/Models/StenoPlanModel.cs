@@ -5,6 +5,7 @@ namespace TTBS.Models
 {
     public class StenoPlanModel
     {
+        public Guid Id { get; set; }
         public DateTime? BaslangicTarihi { get; set; }
         public DateTime? BitisTarihi { get; set; }
         public int StenoSayisi { get; set; }
