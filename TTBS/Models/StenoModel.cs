@@ -5,7 +5,7 @@ namespace TTBS.Models
 {
     public class StenoModel
     {
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
         public string AdSoyad { get; set; }
         public StenoGorevTuru StenoGorevTuru { get; set; }
         public string SiraNo { get; set; }
