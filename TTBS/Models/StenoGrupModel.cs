@@ -6,7 +6,5 @@ namespace TTBS.Models
     {
         public Guid StenoId { get; set; }
         public Guid GrupId { get; set; }
-        public string StenoAdSoyad { get; set; }
-        public string GrupAd { get; set; }
     }
 }
