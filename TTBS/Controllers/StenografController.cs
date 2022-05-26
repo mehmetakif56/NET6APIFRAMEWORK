@@ -269,10 +269,10 @@ namespace TTBS.Controllers
         }
 
         [HttpGet("GetAllStenoGrupNotInclueded")]
-        public IEnumerable<Stenograf> GetAllStenoGrupNotInclueded()
+        public IEnumerable<StenoModel> GetAllStenoGrupNotInclueded()
         {
             var stenoGrpEntity = _stenoService.GetAllStenoGrupNotInclueded();
-            var model = _mapper.Map<IEnumerable<Stenograf>>(stenoGrpEntity);
+            var model = _mapper.Map<IEnumerable<StenoModel>>(stenoGrpEntity);
             return model;
         }
 

@@ -199,7 +199,7 @@ namespace TTBS.Services
         }
         public IEnumerable<Stenograf> GetAllStenoGrupNotInclueded()
         {
-            return _stenografRepo.Get(x => !x.StenoGrups.Select(x=>x.StenoId).Contains(x.Id),   includeProperties: "StenoGrups");
+            return _stenografRepo.Get(x => !x.StenoGrups.Select(x=>x.StenoId).Contains(x.Id));
         }
         public void DeleteStenoGroup(StenoGrup entity)
         {
