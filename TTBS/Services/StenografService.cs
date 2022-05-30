@@ -1,5 +1,6 @@
 ﻿using TTBS.Core.Entities;
 using TTBS.Core.Interfaces;
+using System.Linq;
 
 
 namespace TTBS.Services
@@ -31,7 +32,7 @@ namespace TTBS.Services
         void CreateStenoGroup(StenoGrup stenograf);
         void DeleteStenoGroup(StenoGrup stenograf);
         IEnumerable<Stenograf> GetAllStenoGrupNotInclueded();
-        IEnumerable<Stenograf> GetAvaliableStenoBetweenDateBySteno(DateTime basTarihi, DateTime bitTarihi, int stenografId);
+        List<Stenograf> GetAvaliableStenoBetweenDateBySteno(DateTime basTarihi, DateTime bitTarihi, int stenografId);
         void UpdateStenoPlan(StenoPlan plan);
 
         IEnumerable<Stenograf> GetAvaliableStenoBetweenDateByGroup(DateTime basTarihi, DateTime bitTarihi, Guid groupId);
@@ -94,7 +95,7 @@ namespace TTBS.Services
             if(stenografId !=null)
                  return _stenoIzinRepo.Get(x => x.StenografId == stenografId && x.BaslangicTarihi >= basTarihi && x.BitisTarihi <= bitTarihi, includeProperties: "Stenograf");
             else
-                return _stenoIzinRepo.Get(x => x.BaslangicTarihi <= basTarihi && x.BitisTarihi >= bitTarihi, includeProperties: "Stenograf");
+                return _stenoIzinRepo.Get(x => x.BaslangicTarihi >= basTarihi && x.BitisTarihi <= bitTarihi, includeProperties: "Stenograf");
         }
 
         public IEnumerable<StenoGorev> GetStenoGorevById(Guid id)
@@ -207,9 +208,29 @@ namespace TTBS.Services
             _stenoGrupRepo.Save();
         }
 
-        public IEnumerable<Stenograf> GetAvaliableStenoBetweenDateBySteno(DateTime basTarihi, DateTime bitTarihi, int gorevTuru)
+        public List<Stenograf> GetAvaliableStenoBetweenDateBySteno(DateTime basTarihi, DateTime bitTarihi, int gorevTuru)
         {
-            return _stenoGorevRepo.Get(x => (int)x.Stenograf.StenoGorevTuru == gorevTuru &&  x.GörevTarihi >= basTarihi && x.GörevTarihi <= bitTarihi, includeProperties: "Stenograf").Select(x=>x.Stenograf);
+
+
+            //var innerJoinQuery =
+            //        from cust in _stenoGorevRepo.Get()
+            //        join dist in _stenoGorevRepo.Get on cust.Id equals dist.StenografId
+            //        select new { CustomerName = cust.Name, DistributorName = dist.Name };
+
+            //var ss = new List<Stenograf>();
+            //var stLidt = _stenoGorevRepo.Get();
+            //var lst = _stenografRepo.Get(includeProperties: "StenoGorevs")
+            //             .GroupJoin(_stenoGorevRepo.Get(x=>x.GörevTarihi == basTarihi), steno => steno.Id, grv => grv.StenografId, (x, y) => new { Stenos = x, Grvs = y }).SelectMany(x => x.Grvs.DefaultIfEmpty(), (x, y) => new { Steno = x.Stenos, Grv = y });
+            //foreach (var item in lst)
+            //{
+
+            //}
+            var list = _stenoGorevRepo.Get(x => x.GörevTarihi >= basTarihi && x.GörevTarihi <= bitTarihi);
+            return new List<Stenograf>();
+            //var stList= _stenografRepo.Get(x => (int)x.StenoGorevTuru== gorevTuru).Where(x=>list.Contains( x.Id); // _stenografRepo.Get(includeProperties: "StenoGorevs").Where(x => x.StenoGorevs.Select(x => x.StenografId).Contains(x.Id)).Select(x => x.StenoGorevs).DefaultIfEmpty().Select(s => new Stenograf { AdSoyad = s.First().Stenograf.AdSoyad }).ToList();
+
+
+
         }
 
         public IEnumerable<Stenograf> GetAvaliableStenoBetweenDateByGroup(DateTime basTarihi, DateTime bitTarihi, Guid groupId)
