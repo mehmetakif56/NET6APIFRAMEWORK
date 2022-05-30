@@ -27,12 +27,6 @@ namespace TTBS.Models
             get { return _altKomisyonList; }
             set { if (value != null) _altKomisyonList = value; _altKomisyonList = new SelectListItem { }; }
         }
-        private SelectListItem _groupList { get; set; }
-        public SelectListItem GroupList
-        {
-            get { return _groupList; }
-            set { if (value != null) _groupList = value; _groupList = new SelectListItem { }; }
-        }
         public PlanTuru GorevTuru { get; set; }
         public PlanStatu GorevStatu { get; set; }
     }
