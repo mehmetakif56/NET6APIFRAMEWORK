@@ -226,9 +226,15 @@ namespace TTBS.Services
 
         public IEnumerable<Stenograf> GetAvaliableStenoBetweenDateByGroup(DateTime basTarihi, DateTime bitTarihi, Guid groupId)
         {
-            var list = _stenoGorevRepo.Get(x => x.StenoPlan.BaslangicTarihi <= basTarihi && x.StenoPlan.BitisTarihi >= bitTarihi, includeProperties: "StenoPlan").SelectMany(x => x.Stenograf.StenoGrups).Select(x=>x.GrupId);
-
-            return _stenoGorevRepo.Get(x => !x.Stenograf.StenoGrups.Select(x=>x.GrupId).Contains(groupId) && x.GörevTarihi <= basTarihi && x.GörevTarihi >= bitTarihi, includeProperties: "Stenograf").Select(x => x.Stenograf);
+            var grpList = _stenoGorevRepo.Get(x => x.StenoPlan.BaslangicTarihi <= basTarihi && x.StenoPlan.BitisTarihi >= bitTarihi, includeProperties: "StenoPlan,Stenograf.StenoGrups").SelectMany(x => x.Stenograf.StenoGrups).Select(x=>x.GrupId);
+            var allList = new List<Stenograf>();
+            var stList = _stenografRepo.Get(includeProperties: "StenoGrups").SelectMany(x=>x.StenoGrups);
+            foreach (var st in stList)
+            {
+                if (!grpList.Contains(st.GrupId))
+                    allList.Add(st.Stenograf);
+            }
+            return allList;
         }
 
         public void UpdateStenoPlan(StenoPlan plan)

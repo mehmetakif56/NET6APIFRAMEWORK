@@ -31,6 +31,8 @@ namespace TTBS.Helper
 
             CreateMap<StenoPlan, StenoPlanOlusturModel>();
             CreateMap<StenoPlanOlusturModel, StenoPlan>();
+            CreateMap<StenoPlan, StenoPlanGüncelleModel>();
+            CreateMap<StenoPlanGüncelleModel, StenoPlan>();
 
             CreateMap<BirlesimModel, Birlesim>();
             CreateMap<Birlesim, BirlesimModel>();

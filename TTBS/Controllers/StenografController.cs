@@ -292,7 +292,7 @@ namespace TTBS.Controllers
             return model;
         }
         [HttpPost("UpdateStenoPlan")]
-        public IActionResult UpdateStenoPlan(StenoPlanModel model)
+        public IActionResult UpdateStenoPlan(StenoPlanGüncelleModel model)
         {
 
             var entity = Mapper.Map<StenoPlan>(model);
