@@ -22,6 +22,8 @@ namespace TTBS.Services
         Grup GetGrupById(Guid id);
         void CreateAltKomisyon(AltKomisyon komisyon);
         IEnumerable<Komisyon> GetAllAltKomisyon();
+        IEnumerable<AltKomisyon> GetAltKomisyon();
+        void DeleteGroup(Grup grup);
     }
     public class GlobalService : BaseService, IGlobalService
     {
@@ -108,6 +110,11 @@ namespace TTBS.Services
             return _komisyonRepo.Get(includeProperties: "AltKomisyons");
         }
 
+        public IEnumerable<AltKomisyon> GetAltKomisyon()
+        {
+            return _altkomisyonRepo.Get();
+        }
+
         public IEnumerable<Yasama> GetAllYasama()
         {
             return _yasamaRepo.GetAll();
@@ -138,6 +145,12 @@ namespace TTBS.Services
         public Grup GetGrupById(Guid id)
         {
             return _grupRepo.GetById(id);
+        }
+
+        public void DeleteGroup(Grup grup)
+        {
+            _grupRepo.Delete(grup);
+            _grupRepo.Save();
         }
     }
 }

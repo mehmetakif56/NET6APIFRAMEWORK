@@ -2,8 +2,9 @@
 {
     public  enum KomisyonTipi
     {
-        GenelKurul=1,
-        Komisyon=2, 
-        Toplantı =3
+        Yasama_Ve_Denetim=1,
+        Meclis_Denetim=2, 
+        KIT =3,
+        Alt =4
     }
 }

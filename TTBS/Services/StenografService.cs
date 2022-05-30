@@ -9,6 +9,7 @@ namespace TTBS.Services
     {
         IEnumerable<StenoPlan> GetStenoPlan();
         void CreateStenoPlan(StenoPlan stenoPlan);
+        void DeleteStenoPlan(Guid id);
         IEnumerable<StenoIzin> GetAllStenoIzin();
         IEnumerable<StenoIzin> GetStenoIzinByStenografId(Guid id);
         IEnumerable<StenoIzin> GetStenoIzinByName(string adSoyad);
@@ -26,7 +27,7 @@ namespace TTBS.Services
         IEnumerable<Stenograf> GetAllStenografByGroupId(Guid? groupId);
         void CreateStenograf(Stenograf stenograf);
         IEnumerable<Stenograf> GetAllStenografByGorevTuru(int gorevTuru);
-        void UpdateStenoGorev(StenoGorev stenoGorev);
+        void DeleteStenoGorev(Guid stenoGorevId);
         IEnumerable<StenoGorev> GetStenoGorevByGrupId(Guid id);
         IEnumerable<StenoGorev> GetStenoGorevByPlanDateAndStatus(DateTime gorevTarihi, int gorevturu);
         void CreateStenoGroup(StenoGrup stenograf);
@@ -74,7 +75,11 @@ namespace TTBS.Services
             _stenoPlanRepo.Create(entity, CurrentUser.Id);
             _stenoPlanRepo.Save();
         }
-
+        public void DeleteStenoPlan(Guid id)
+        {
+            _stenoPlanRepo.Delete(id);
+            _stenoPlanRepo.Save();
+        }
         public IEnumerable<StenoIzin> GetAllStenoIzin()
         {
             return _stenoIzinRepo.GetAll(includeProperties:"Stenograf");
@@ -168,10 +173,10 @@ namespace TTBS.Services
             return _stenografRepo.Get(x => (int)x.StenoGorevTuru == gorevTuru);
         }
       
-        public void UpdateStenoGorev(StenoGorev stenoGorev)
+        public void DeleteStenoGorev(Guid stenoGorevId)
         {
-            //_stenoGrupRepo.Create(entity, CurrentUser.Id);
-            //_stenoGrupRepo.Save();
+            _stenoGorevRepo.Delete(stenoGorevId);
+            _stenoGorevRepo.Save();
         }
 
         public IEnumerable<StenoGorev> GetStenoGorevByStenografAndDate(Guid stenografId, DateTime gorevAtamaTarihi)

@@ -40,9 +40,25 @@ namespace TTBS.Controllers
             }
             catch (Exception ex)
             {
-
+                return BadRequest(ex.Message);
             }
            
+            return Ok();
+
+        }
+
+        [HttpPost("DeleteStenoPlan")]
+        public IActionResult DeleteStenoPlan(Guid id)
+        {
+            try
+            {
+                _stenoService.DeleteStenoPlan(id);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
             return Ok();
 
         }
@@ -237,12 +253,11 @@ namespace TTBS.Controllers
             return model;
         }
         [HttpPost("DeleteStenoGorev")]
-        public IActionResult DeleteStenoGorev(StenoGorevGüncelleModel model)
+        public IActionResult DeleteStenoGorev(Guid stenoGorevId)
         {
             try
             {
-                //var entity = Mapper.Map<StenoGorev>(model);
-                //_stenoService.CreateStenoGrup(entity);
+                _stenoService.DeleteStenoGorev(stenoGorevId);
             }
             catch (Exception ex)
             { return BadRequest(ex.Message); }

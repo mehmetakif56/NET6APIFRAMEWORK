@@ -147,6 +147,14 @@ namespace TTBS.Controllers
             return model;
         }
 
+        [HttpGet("GetAltKomisyon")]
+        public IEnumerable<AltKomisyonModel> GetAltKomisyon()
+        {
+            var entity = _globalService.GetAltKomisyon();
+            var model = _mapper.Map<IEnumerable<AltKomisyonModel>>(entity);
+            return model;
+        }
+
         #endregion
 
         #region Grup
@@ -172,6 +180,15 @@ namespace TTBS.Controllers
             var entity = _globalService.GetAllGrup();
             var model = _mapper.Map<IEnumerable<GrupModel>>(entity);
             return model;
+        }
+
+        [HttpPost("DeleteGroup")]
+        public IActionResult DeleteStenoGroup(GrupModel model)
+        {
+
+            var entity = Mapper.Map<Grup>(model);
+            _globalService.DeleteGroup(entity);
+            return Ok();
         }
         #endregion
     }
