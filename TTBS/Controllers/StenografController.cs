@@ -315,10 +315,10 @@ namespace TTBS.Controllers
             return Ok();
         }
         [HttpGet("GetAssignedStenoByPlanIdAndGrorevTur")]
-        public IEnumerable<StenoModel> GetAssignedStenoByPlanIdAndGrorevTur(Guid planId, int gorevTuru)
+        public IEnumerable<StenoGorevModel> GetAssignedStenoByPlanIdAndGrorevTur(Guid planId, int gorevTuru)
         {
             var stenoEntity = _stenoService.GetAssignedStenoByPlanIdAndGrorevTur(planId, gorevTuru);
-            var model = _mapper.Map<IEnumerable<StenoModel>>(stenoEntity);
+            var model = _mapper.Map<IEnumerable<StenoGorevModel>>(stenoEntity);
             return model;
         }
 

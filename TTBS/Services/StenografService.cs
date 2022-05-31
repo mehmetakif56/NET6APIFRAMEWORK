@@ -38,7 +38,7 @@ namespace TTBS.Services
 
         IEnumerable<Stenograf> GetAvaliableStenoBetweenDateByGroup(DateTime basTarihi, DateTime bitTarihi, Guid groupId);
 
-        IEnumerable<Stenograf> GetAssignedStenoByPlanIdAndGrorevTur(Guid planId, int gorevturu);
+        IEnumerable<StenoGorev> GetAssignedStenoByPlanIdAndGrorevTur(Guid planId, int gorevturu);
 
         void UpdateStenoSiraNo(List<Stenograf> steno);
     }
@@ -251,9 +251,9 @@ namespace TTBS.Services
             _stenoPlanRepo.Save();
         }
 
-        public IEnumerable<Stenograf> GetAssignedStenoByPlanIdAndGrorevTur(Guid planId, int gorevturu)
+        public IEnumerable<StenoGorev> GetAssignedStenoByPlanIdAndGrorevTur(Guid planId, int gorevturu)
         {
-            return _stenoGorevRepo.Get(x => x.StenoPlanId == planId && (int)x.Stenograf.StenoGorevTuru == gorevturu, includeProperties: "Stenograf").Select(x => x.Stenograf);
+            return _stenoGorevRepo.Get(x => x.StenoPlanId == planId && (int)x.Stenograf.StenoGorevTuru == gorevturu, includeProperties: "Stenograf");
         }
 
         public void UpdateStenoSiraNo(List<Stenograf> stenoList)
