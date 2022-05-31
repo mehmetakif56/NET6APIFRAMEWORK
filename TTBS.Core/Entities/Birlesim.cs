@@ -13,5 +13,6 @@ namespace TTBS.Core.Entities
         public Yasama Yasaama { get; set; }
         public Guid YasamaId { get; set; }
         public virtual ICollection<StenoPlan> StenoPlans { get; set; }
+
     }
 }

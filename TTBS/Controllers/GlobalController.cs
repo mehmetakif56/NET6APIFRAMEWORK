@@ -169,11 +169,11 @@ namespace TTBS.Controllers
             return Ok();
         }
 
-        [HttpGet("GetAllAltKomisyon")]
-        public IEnumerable<KomisyonModel> GetAllAltKomisyon()
+        [HttpGet("GetAllKomisyonAltDetay")]
+        public IEnumerable<KomisyonAltModel> GetAllKomisyonAltDetay()
         {
             var entity = _globalService.GetAllAltKomisyon();
-            var model = _mapper.Map<IEnumerable<KomisyonModel>>(entity);
+            var model = _mapper.Map<IEnumerable<KomisyonAltModel>>(entity);
             return model;
         }
 

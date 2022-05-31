@@ -39,6 +39,10 @@ namespace TTBS.Helper
 
             CreateMap<KomisyonModel, Komisyon>();
             CreateMap<Komisyon, KomisyonModel>();
+
+            CreateMap<KomisyonAltModel, Komisyon>();
+            CreateMap<Komisyon, KomisyonAltModel>();
+
             CreateMap<GrupModel, Grup>();
             CreateMap<Grup, GrupModel>();
 
