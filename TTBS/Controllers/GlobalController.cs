@@ -139,6 +139,36 @@ namespace TTBS.Controllers
 
         }
 
+        [HttpPost("DeleteAltKomisyon")]
+        public IActionResult DeleteAltKomisyon(Guid id)
+        {
+            try
+            {
+                _globalService.DeleteAltKomisyon(id);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }           
+            return Ok();
+        }
+
+        [HttpPost("UpdateAltKomisyon")]
+        public IActionResult UpdateAltKomisyon(AltKomisyonModel model)
+        {
+            try
+            {
+                var entity = Mapper.Map<AltKomisyon>(model);
+                _globalService.UpdateAltKomisyon(entity);
+                            
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            return Ok();
+        }
+
         [HttpGet("GetAllAltKomisyon")]
         public IEnumerable<KomisyonModel> GetAllAltKomisyon()
         {
