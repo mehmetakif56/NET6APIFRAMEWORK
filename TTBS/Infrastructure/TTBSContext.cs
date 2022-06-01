@@ -25,6 +25,7 @@ namespace TTBS.Infrastructure
         public DbSet<ClaimEntity> Claims { get; set; }
         public DbSet<RoleClaimEntity> RoleClaims { get; set; }
         public DbSet<UserEntity> Users { get; set; }
+        public DbSet<StenografBeklemeSure> StenografBeklemeSures { get; set; }
 
         public DbSet<AltKomisyon> AltKomisyons { get; set; }
 
@@ -41,6 +42,7 @@ namespace TTBS.Infrastructure
             builder.Entity<Grup>(ConfigureGrup);
             builder.Entity<StenoGrup>(ConfigureStenoGrup);
             builder.Entity<AltKomisyon>(ConfigurealtKom);
+            builder.Entity<StenografBeklemeSure>(ConfigureBeklemeSure);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

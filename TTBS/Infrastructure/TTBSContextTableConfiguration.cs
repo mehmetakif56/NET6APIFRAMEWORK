@@ -45,6 +45,11 @@ namespace TTBS.Infrastructure
             builder.ToTable("AltKomisyon");
         }
 
+        private void ConfigureBeklemeSure(EntityTypeBuilder<StenografBeklemeSure> builder)
+        {
+            builder.ToTable("StenografBeklemeSure");
+        }
+
         private void ConfigureStenoGrup(EntityTypeBuilder<StenoGrup> builder)
         {
             builder.ToTable("StenoGrup");

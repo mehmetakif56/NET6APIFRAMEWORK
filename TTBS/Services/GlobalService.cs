@@ -27,6 +27,9 @@ namespace TTBS.Services
         IEnumerable<AltKomisyon> GetAltKomisyon();
         AltKomisyon GetAltKomisyonById(Guid id);
         void DeleteGroup(Grup grup);
+        void CreateStenografBeklemeSure(StenografBeklemeSure stenografBeklemeSure);
+        IEnumerable<StenografBeklemeSure> GetAllStenografBeklemeSure();
+        void UpdateStenografBeklemeSure(StenografBeklemeSure stenografBeklemeSure);
     }
     public class GlobalService : BaseService, IGlobalService
     {
@@ -35,7 +38,8 @@ namespace TTBS.Services
         private IRepository<Birlesim> _birlesimRepo;
         private IRepository<Komisyon> _komisyonRepo;
         private IRepository<AltKomisyon> _altkomisyonRepo;
-        private IRepository<Grup> _grupRepo;
+        private IRepository<Grup> _grupRepo;        
+        private IRepository<StenografBeklemeSure> _stenoBeklemeSure;
         private IUnitOfWork _unitWork;
         public GlobalService(IRepository<Donem> donemRepo,
                              IRepository<Yasama> yasamaRepo,
@@ -43,6 +47,7 @@ namespace TTBS.Services
                              IRepository<Komisyon> komisyonRepo,
                              IRepository<Grup> grupRepo,
                              IRepository<AltKomisyon> altkomisyonRepo,
+                             IRepository<StenografBeklemeSure> stenoBeklemeSure,
                              IUnitOfWork unitWork,
                              IServiceProvider provider) : base(provider)
         {
@@ -52,6 +57,7 @@ namespace TTBS.Services
             _grupRepo = grupRepo;
             _unitWork = unitWork;
             _yasamaRepo = yasamaRepo;
+            _stenoBeklemeSure = stenoBeklemeSure;
             _altkomisyonRepo = altkomisyonRepo;
         }
         public IEnumerable<Donem> GetAllDonem()
@@ -171,6 +177,24 @@ namespace TTBS.Services
         public AltKomisyon GetAltKomisyonById(Guid id)
         {
             return _altkomisyonRepo.GetById(id);
+        }
+
+        public void CreateStenografBeklemeSure(StenografBeklemeSure stenografBeklemeSure)
+        {
+            _stenoBeklemeSure.Create(stenografBeklemeSure);
+            _stenoBeklemeSure.Save();
+        }
+
+        public void UpdateStenografBeklemeSure(StenografBeklemeSure stenografBeklemeSure)
+        {
+            _stenoBeklemeSure.Update(stenografBeklemeSure);
+            _stenoBeklemeSure.Save();
+        }
+
+        public IEnumerable<StenografBeklemeSure> GetAllStenografBeklemeSure()
+        {
+            return _stenoBeklemeSure.GetAll();
+
         }
     }
 }

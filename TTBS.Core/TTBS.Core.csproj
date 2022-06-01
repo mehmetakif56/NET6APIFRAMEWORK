@@ -43,6 +43,7 @@
     <Compile Include="BaseEntities\BaseEntities.cs" />
     <Compile Include="Entities\Grup.cs" />
     <Compile Include="Entities\AltKomisyon.cs" />
+    <Compile Include="Entities\StenografBeklemeSure.cs" />
     <Compile Include="Entities\StenoGrup.cs" />
     <Compile Include="Entities\Stenograf.cs" />
     <Compile Include="Entities\Yasama.cs" />

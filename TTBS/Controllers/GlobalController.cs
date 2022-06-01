@@ -220,6 +220,28 @@ namespace TTBS.Controllers
             _globalService.DeleteGroup(entity);
             return Ok();
         }
+
+        [HttpPost("CreateStenografBeklemeSure")]
+        public IActionResult CreateStenografBeklemeSure(StenoBeklemeSureModel model)
+        {
+            var entity = Mapper.Map<StenografBeklemeSure>(model);
+            _globalService.CreateStenografBeklemeSure(entity);
+            return Ok(entity);
+        }
+        [HttpPost("UpdateStenografBeklemeSure")]
+        public IActionResult UpdateStenografBeklemeSure(StenoBeklemeSureModel model)
+        {
+            var entity = Mapper.Map<StenografBeklemeSure>(model);
+            _globalService.UpdateStenografBeklemeSure(entity);
+            return Ok(entity);
+        }
+        [HttpGet("GetAllStenografBeklemeSure")]
+        public IEnumerable<StenoBeklemeSureModel> GetAllStenografBeklemeSure()
+        {
+            var entity = _globalService.GetAllStenografBeklemeSure;
+            var model = _mapper.Map<IEnumerable<StenoBeklemeSureModel>>(entity);
+            return model;
+        }
         #endregion
     }
 }

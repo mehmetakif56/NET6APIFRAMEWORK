@@ -5,20 +5,30 @@ namespace TTBS.Services
 {
     public interface IReportService
     {
-        
+        IEnumerable<StenoGorev> GetReportStenoPlanBetweenDateGorevTur(DateTime gorevBasTarihi, DateTime gorevBitTarihi, int gorevTuru);
+        IEnumerable<StenoGorev> GetStenoGorevByStenografAndDate(Guid stenografId, DateTime gorevBasTarihi, DateTime gorevBitTarihi);
     }
     public class ReportService : BaseService, IReportService
     {
         private IRepository<StenoPlan> _stenoPlanRepo;
+        private IRepository<StenoGorev> _stenoGorevRepo;
 
-        private IUnitOfWork _unitWork;
         public ReportService(IRepository<StenoPlan> stenoPlanRepo,
-                             IUnitOfWork unitWork,
+                             IRepository<StenoGorev> stenoGorevRepo,
                              IServiceProvider provider) : base(provider)
         {
             _stenoPlanRepo = stenoPlanRepo;
+            _stenoGorevRepo = stenoGorevRepo;
         }
-       
-       
+
+        public IEnumerable<StenoGorev> GetReportStenoPlanBetweenDateGorevTur(DateTime gorevBasTarihi, DateTime gorevBitTarihi, int gorevTuru)
+        {
+            return _stenoGorevRepo.Get(x => x.StenoPlan.BaslangicTarihi <= gorevBasTarihi && x.StenoPlan.BitisTarihi >= gorevBitTarihi && (int)x.StenoPlan.GorevTuru == gorevTuru, includeProperties: "StenoPlan,Stenograf");
+        }
+
+        public IEnumerable<StenoGorev> GetStenoGorevByStenografAndDate(Guid stenografId, DateTime gorevBasTarihi, DateTime gorevBitTarihi)
+        {
+            return _stenoGorevRepo.Get(x => x.StenografId == stenografId && x.GörevTarihi <= gorevBasTarihi && x.GörevTarihi >= gorevBitTarihi, includeProperties: "Stenograf");
+        }
     }
 }

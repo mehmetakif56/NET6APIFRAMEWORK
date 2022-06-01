@@ -34,6 +34,13 @@ namespace TTBS.Helper
             CreateMap<StenoPlan, StenoPlanGüncelleModel>();
             CreateMap<StenoPlanGüncelleModel, StenoPlan>();
 
+            CreateMap<StenoGorev, ReportPlanModel>()
+                 .ForMember(dest => dest.AdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad))
+                 .ForMember(dest => dest.GorevTuru, opt => opt.MapFrom(src => src.StenoPlan.GorevTuru))
+                 .ForMember(dest => dest.GorevAd, opt => opt.MapFrom(src => src.StenoPlan.GorevAd))
+                 .ForMember(dest => dest.GorevYeri, opt => opt.MapFrom(src => src.StenoPlan.GorevYeri));
+            CreateMap<ReportPlanModel, StenoGorev>();
+
             CreateMap<BirlesimModel, Birlesim>();
             CreateMap<Birlesim, BirlesimModel>();
 
@@ -45,7 +52,7 @@ namespace TTBS.Helper
 
             CreateMap<GrupModel, Grup>();
             CreateMap<Grup, GrupModel>();
-
+          
             CreateMap<StenoGorev, StenoGorevGüncelleModel>();
             CreateMap<StenoGorevGüncelleModel, StenoGorev>();
 
@@ -61,15 +68,19 @@ namespace TTBS.Helper
             CreateMap<AltKomisyonModel, AltKomisyon>();
             CreateMap<AltKomisyon, AltKomisyonModel>();
 
+            CreateMap<StenoBeklemeSureModel, StenografBeklemeSure>();
+            CreateMap<StenografBeklemeSure, StenoBeklemeSureModel>();
+
+
             CreateMap<StenoGorev, StenoGorevPlanModel>()
                  .ForMember(dest => dest.GorevYeri, opt => opt.MapFrom(src => src.StenoPlan.GorevYeri))
                  .ForMember(dest => dest.GorevAd, opt => opt.MapFrom(src => src.StenoPlan.GorevAd))
                  .ForMember(dest => dest.AdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad));
             CreateMap<StenoGorevPlanModel, StenoGorev>();
 
-
             CreateMap<StenoGorev, StenoGorevModel>()
-               .ForMember(dest => dest.AdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad));
+               .ForMember(dest => dest.AdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad))
+               .ForMember(dest => dest.SiraNo, opt => opt.MapFrom(src => src.Stenograf.SiraNo));
             CreateMap<StenoGorevModel, StenoGorev>();
                  //.ForMember(dest => dest.GorevDakika, opt => opt.MapFrom(src => src.GorevDakika.HasValue ? src.GorevDakika.Value.Hour*60+ src.GorevDakika.Value.Minute:0));
         }
