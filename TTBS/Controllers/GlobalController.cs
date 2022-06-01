@@ -139,7 +139,7 @@ namespace TTBS.Controllers
 
         }
 
-        [HttpPost("DeleteAltKomisyon")]
+        [HttpDelete("DeleteAltKomisyon")]
         public IActionResult DeleteAltKomisyon(Guid id)
         {
             try
@@ -153,7 +153,7 @@ namespace TTBS.Controllers
             return Ok();
         }
 
-        [HttpPost("UpdateAltKomisyon")]
+        [HttpPut("UpdateAltKomisyon")]
         public IActionResult UpdateAltKomisyon(AltKomisyonModel model)
         {
             try
@@ -212,7 +212,7 @@ namespace TTBS.Controllers
             return model;
         }
 
-        [HttpPost("DeleteGroup")]
+        [HttpDelete("DeleteGroup")]
         public IActionResult DeleteStenoGroup(GrupModel model)
         {
 
@@ -222,23 +222,23 @@ namespace TTBS.Controllers
         }
 
         [HttpPost("CreateStenografBeklemeSure")]
-        public IActionResult CreateStenografBeklemeSure(StenoBeklemeSureModel model)
+        public IActionResult CreateStenografBeklemeSure(List<StenoBeklemeSureModel> model)
         {
-            var entity = Mapper.Map<StenografBeklemeSure>(model);
+            var entity = Mapper.Map<List<StenografBeklemeSure>>(model);
             _globalService.CreateStenografBeklemeSure(entity);
             return Ok(entity);
         }
-        [HttpPost("UpdateStenografBeklemeSure")]
-        public IActionResult UpdateStenografBeklemeSure(StenoBeklemeSureModel model)
+        [HttpPut("UpdateStenografBeklemeSure")]
+        public IActionResult UpdateStenografBeklemeSure(List<StenoBeklemeSureModel> model)
         {
-            var entity = Mapper.Map<StenografBeklemeSure>(model);
+            var entity = Mapper.Map<List<StenografBeklemeSure>>(model);
             _globalService.UpdateStenografBeklemeSure(entity);
             return Ok(entity);
         }
         [HttpGet("GetAllStenografBeklemeSure")]
         public IEnumerable<StenoBeklemeSureModel> GetAllStenografBeklemeSure()
         {
-            var entity = _globalService.GetAllStenografBeklemeSure;
+            var entity = _globalService.GetAllStenografBeklemeSure();
             var model = _mapper.Map<IEnumerable<StenoBeklemeSureModel>>(entity);
             return model;
         }

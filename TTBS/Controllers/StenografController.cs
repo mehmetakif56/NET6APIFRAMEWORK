@@ -251,7 +251,7 @@ namespace TTBS.Controllers
             var model = _mapper.Map<IEnumerable<StenoGorevModel>>(stenoGrpEntity);
             return model;
         }
-        [HttpPost("DeleteStenoGorev")]
+        [HttpDelete("DeleteStenoGorev")]
         public IActionResult DeleteStenoGorev(Guid stenoGorevId)
         {
             try
@@ -273,7 +273,7 @@ namespace TTBS.Controllers
             return Ok();
         }
 
-        [HttpPost("DeleteStenoGroup")]
+        [HttpDelete("DeleteStenoGroup")]
         public IActionResult DeleteStenoGroup(StenoGrupModel model)
         {
 
@@ -305,7 +305,7 @@ namespace TTBS.Controllers
             var model = _mapper.Map<IEnumerable<StenoModel>>(stenoGrpEntity);
             return model;
         }
-        [HttpPost("UpdateStenoPlan")]
+        [HttpPut("UpdateStenoPlan")]
         public IActionResult UpdateStenoPlan(StenoPlanGüncelleModel model)
         {
 
@@ -321,7 +321,7 @@ namespace TTBS.Controllers
             return model;
         }
 
-        [HttpPost("UpdateStenoSiraNo")]
+        [HttpPut("UpdateStenoSiraNo")]
         public IActionResult UpdateStenoSiraNo(List<StenoModel> model)
         {
             try

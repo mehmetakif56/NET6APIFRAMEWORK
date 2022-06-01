@@ -27,9 +27,9 @@ namespace TTBS.Services
         IEnumerable<AltKomisyon> GetAltKomisyon();
         AltKomisyon GetAltKomisyonById(Guid id);
         void DeleteGroup(Grup grup);
-        void CreateStenografBeklemeSure(StenografBeklemeSure stenografBeklemeSure);
+        void CreateStenografBeklemeSure(List<StenografBeklemeSure> stenografBeklemeSure);
         IEnumerable<StenografBeklemeSure> GetAllStenografBeklemeSure();
-        void UpdateStenografBeklemeSure(StenografBeklemeSure stenografBeklemeSure);
+        void UpdateStenografBeklemeSure(List<StenografBeklemeSure> stenografBeklemeSure);
     }
     public class GlobalService : BaseService, IGlobalService
     {
@@ -179,13 +179,13 @@ namespace TTBS.Services
             return _altkomisyonRepo.GetById(id);
         }
 
-        public void CreateStenografBeklemeSure(StenografBeklemeSure stenografBeklemeSure)
+        public void CreateStenografBeklemeSure(List<StenografBeklemeSure> stenografBeklemeSure)
         {
             _stenoBeklemeSure.Create(stenografBeklemeSure);
             _stenoBeklemeSure.Save();
         }
 
-        public void UpdateStenografBeklemeSure(StenografBeklemeSure stenografBeklemeSure)
+        public void UpdateStenografBeklemeSure(List<StenografBeklemeSure> stenografBeklemeSure)
         {
             _stenoBeklemeSure.Update(stenografBeklemeSure);
             _stenoBeklemeSure.Save();
@@ -196,5 +196,6 @@ namespace TTBS.Services
             return _stenoBeklemeSure.GetAll();
 
         }
+      
     }
 }
