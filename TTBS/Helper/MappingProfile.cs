@@ -34,12 +34,17 @@ namespace TTBS.Helper
             CreateMap<StenoPlan, StenoPlanGüncelleModel>();
             CreateMap<StenoPlanGüncelleModel, StenoPlan>();
 
-            CreateMap<StenoGorev, ReportPlanModel>()
-                 .ForMember(dest => dest.AdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad))
-                 .ForMember(dest => dest.GorevTuru, opt => opt.MapFrom(src => src.StenoPlan.GorevTuru))
-                 .ForMember(dest => dest.GorevAd, opt => opt.MapFrom(src => src.StenoPlan.GorevAd))
-                 .ForMember(dest => dest.GorevYeri, opt => opt.MapFrom(src => src.StenoPlan.GorevYeri));
+            CreateMap<StenoGorev, ReportPlanModel>();                
             CreateMap<ReportPlanModel, StenoGorev>();
+
+            CreateMap<StenoGorev, ReportPlanDetayModel>()
+                 .ForMember(dest => dest.GorevTarihi, opt => opt.MapFrom(src => src.StenoPlan.BaslangicTarihi.HasValue ? src.StenoPlan.BaslangicTarihi.Value.ToShortDateString() : ""))
+                 .ForMember(dest => dest.BasSaat, opt => opt.MapFrom(src => src.StenoPlan.BaslangicTarihi.HasValue ? src.StenoPlan.BaslangicTarihi.Value.ToShortTimeString() : ""))
+                 .ForMember(dest => dest.Bitissaat, opt => opt.MapFrom(src => src.StenoPlan.BitisTarihi.HasValue ? src.StenoPlan.BitisTarihi.Value.ToShortTimeString() : ""))
+                 .ForMember(dest => dest.ToplamSure, opt => opt.MapFrom(src => src.StenoPlan.BitisTarihi.HasValue && src.StenoPlan.BaslangicTarihi.HasValue ? (src.StenoPlan.BitisTarihi.Value - src.StenoPlan.BaslangicTarihi.Value).TotalMinutes : 0))
+                 .ForMember(dest => dest.NetSure, opt => opt.MapFrom(src => 0))
+                 .ForMember(dest => dest.Ara, opt => opt.MapFrom(src => 0));
+            CreateMap<ReportPlanDetayModel, StenoGorev>();
 
             CreateMap<BirlesimModel, Birlesim>();
             CreateMap<Birlesim, BirlesimModel>();

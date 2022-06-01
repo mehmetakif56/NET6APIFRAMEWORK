@@ -4,11 +4,10 @@ namespace TTBS.Models
 {
     public class ReportPlanModel
     {
-        public string AdSoyad { get; set; }
-        public DateTime? GorevTarihi { get; set; }
-        public DateTime? GorevDakika { get; set; }
-        public string GorevYeri { get; set; }
-        public string GorevAd { get; set; }
         public PlanTuru GorevTuru { get; set; }
+        public int  UzmGorevlendirmeSay { get; set; }
+        public int UzmGorevlendirmeSure { get; set; }
+        public int GorevlendirmeSure { get; set; }
+        public int GorevlendirmeSay { get; set; }
     }
 }
