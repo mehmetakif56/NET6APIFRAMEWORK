@@ -47,7 +47,7 @@ namespace TTBS.Controllers
 
         }
 
-        [HttpPost("DeleteStenoPlan")]
+        [HttpDelete("DeleteStenoPlan")]
         public IActionResult DeleteStenoPlan(Guid id)
         {
             try
