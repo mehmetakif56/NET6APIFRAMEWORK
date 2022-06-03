@@ -239,20 +239,18 @@ namespace TTBS.Services
 
         public IEnumerable<Stenograf> GetAvaliableStenoBetweenDateByGroup(DateTime basTarihi, DateTime bitTarihi, Guid groupId, int toplantiTur)
         {
-
             var lst = _stenoBeklemeSure.Get(x => (int)x.PlanTuru == toplantiTur);
-            if (lst != null && lst.Count() > 0)
-            {
-                basTarihi = basTarihi.AddMinutes(-lst.FirstOrDefault().GorevOnceBeklemeSuresi);
-                bitTarihi = bitTarihi.AddMinutes(lst.FirstOrDefault().GorevSonraBeklemeSuresi);
-            }
+            //if (lst != null && lst.Count() > 0)
+            //{
+            //    basTarihi = basTarihi.AddMinutes(-lst.FirstOrDefault().GorevOnceBeklemeSuresi);
+            //    bitTarihi = bitTarihi.AddMinutes(lst.FirstOrDefault().GorevSonraBeklemeSuresi);
+            //}
 
-            var list = _stenoGorevRepo.Get(x => x.StenoPlan.BaslangicTarihi <= basTarihi && x.StenoPlan.BitisTarihi >= bitTarihi, includeProperties: "StenoPlan").Select(x => x.StenografId);
             var allList = new List<Stenograf>();
             var stList = _stenografRepo.Get(x => x.StenoGrups.Select(x => x.GrupId).Contains(groupId), includeProperties: "StenoGrups");
             foreach (var st in stList)
             {
-                var cnt = _stenoGorevRepo.Get(x => x.StenografId == st.Id && x.StenoPlan.BaslangicTarihi <= basTarihi && x.StenoPlan.BitisTarihi >= bitTarihi, includeProperties: "StenoPlan");
+                var cnt = _stenoGorevRepo.Get(x => (basTarihi >= x.StenoPlan.BaslangicTarihi && basTarihi <= x.StenoPlan.BitisTarihi) || (bitTarihi >= x.StenoPlan.BaslangicTarihi && bitTarihi <= x.StenoPlan.BitisTarihi), includeProperties: "StenoPlan,Stenograf").Where(x => x.StenografId == st.Id);
                 st.StenoGorevDurum = cnt != null && cnt.Count() > 0 ? true : false;
                 allList.Add(st);
             }
