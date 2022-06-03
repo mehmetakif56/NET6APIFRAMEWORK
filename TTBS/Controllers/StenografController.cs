@@ -291,17 +291,17 @@ namespace TTBS.Controllers
         }
 
         [HttpGet("GetAvaliableStenoBetweenDateBySteno")]
-        public IEnumerable<StenoModel> GetAvaliableStenoBetweenDateBySteno(DateTime basTarihi, DateTime bitTarihi,int gorevTuru)
+        public IEnumerable<StenoModel> GetAvaliableStenoBetweenDateBySteno(DateTime basTarihi, DateTime bitTarihi,int gorevTuru, int toplantiTur)
         {
-            var stenoGrpEntity = _stenoService.GetAvaliableStenoBetweenDateBySteno(basTarihi, bitTarihi, gorevTuru);
+            var stenoGrpEntity = _stenoService.GetAvaliableStenoBetweenDateBySteno(basTarihi, bitTarihi, gorevTuru, toplantiTur);
             var model = _mapper.Map<IEnumerable<StenoModel>>(stenoGrpEntity);
             return model;
         }
 
         [HttpGet("GetAvaliableStenoBetweenDateByGroup")]
-        public IEnumerable<StenoModel> GetAvaliableStenoBetweenDateByGroup(DateTime basTarihi, DateTime bitTarihi, Guid groupId)
+        public IEnumerable<StenoModel> GetAvaliableStenoBetweenDateByGroup(DateTime basTarihi, DateTime bitTarihi, Guid groupId, int toplantiTur)
         {
-            var stenoGrpEntity = _stenoService.GetAvaliableStenoBetweenDateByGroup(basTarihi, bitTarihi, groupId);
+            var stenoGrpEntity = _stenoService.GetAvaliableStenoBetweenDateByGroup(basTarihi, bitTarihi, groupId, toplantiTur);
             var model = _mapper.Map<IEnumerable<StenoModel>>(stenoGrpEntity);
             return model;
         }
