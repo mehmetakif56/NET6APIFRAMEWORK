@@ -229,7 +229,11 @@ namespace TTBS.Services
             var stList = _stenografRepo.Get(x => (int)x.StenoGorevTuru == stenoGorevTuru);
             foreach (var st in stList)
             {
-                var cnt = _stenoGorevRepo.Get(x => (basTarihi >= x.StenoPlan.BaslangicTarihi && basTarihi <= x.StenoPlan.BitisTarihi) || (bitTarihi >= x.StenoPlan.BaslangicTarihi && bitTarihi <= x.StenoPlan.BitisTarihi), includeProperties: "StenoPlan,Stenograf").Where(x=>x.StenografId == st.Id);
+                var cnt = _stenoGorevRepo.Get(x => (basTarihi >= x.StenoPlan.BaslangicTarihi && basTarihi <= x.StenoPlan.BitisTarihi) || 
+                                                   (bitTarihi >= x.StenoPlan.BaslangicTarihi && bitTarihi <= x.StenoPlan.BitisTarihi) ||
+                                                   (x.StenoPlan.BaslangicTarihi>= basTarihi && x.StenoPlan.BaslangicTarihi <= bitTarihi) ||
+                                                   (x.StenoPlan.BitisTarihi >= basTarihi && x.StenoPlan.BitisTarihi <= bitTarihi),
+                                                   includeProperties: "StenoPlan,Stenograf").Where(x=>x.StenografId == st.Id);
                 st.StenoGorevDurum = cnt!=null && cnt.Count() > 0 ? true : false;
               allList.Add(st);
             }
@@ -250,7 +254,11 @@ namespace TTBS.Services
             var stList = _stenografRepo.Get(x => x.StenoGrups.Select(x => x.GrupId).Contains(groupId), includeProperties: "StenoGrups");
             foreach (var st in stList)
             {
-                var cnt = _stenoGorevRepo.Get(x => (basTarihi >= x.StenoPlan.BaslangicTarihi && basTarihi <= x.StenoPlan.BitisTarihi) || (bitTarihi >= x.StenoPlan.BaslangicTarihi && bitTarihi <= x.StenoPlan.BitisTarihi), includeProperties: "StenoPlan,Stenograf").Where(x => x.StenografId == st.Id);
+                var cnt = _stenoGorevRepo.Get(x => (basTarihi >= x.StenoPlan.BaslangicTarihi && basTarihi <= x.StenoPlan.BitisTarihi) ||
+                                                  (bitTarihi >= x.StenoPlan.BaslangicTarihi && bitTarihi <= x.StenoPlan.BitisTarihi) ||
+                                                  (x.StenoPlan.BaslangicTarihi >= basTarihi && x.StenoPlan.BaslangicTarihi <= bitTarihi) ||
+                                                  (x.StenoPlan.BitisTarihi >= basTarihi && x.StenoPlan.BitisTarihi <= bitTarihi),
+                                                  includeProperties: "StenoPlan,Stenograf").Where(x => x.StenografId == st.Id);
                 st.StenoGorevDurum = cnt != null && cnt.Count() > 0 ? true : false;
                 allList.Add(st);
             }
