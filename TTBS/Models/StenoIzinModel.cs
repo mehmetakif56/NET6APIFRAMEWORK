@@ -11,5 +11,6 @@ namespace TTBS.Models
         public IzınTuru IzinTuru { get; set; }
         public Guid StenografId { get; set; }
         public string StenografAdSoyad { get; set; }
+        public int StenografCount { get; set; }
     }
 }

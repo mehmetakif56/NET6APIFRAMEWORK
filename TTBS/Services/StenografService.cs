@@ -1,7 +1,7 @@
 ﻿using TTBS.Core.Entities;
 using TTBS.Core.Interfaces;
 using System.Linq;
-
+using TTBS.Core.Enums;
 
 namespace TTBS.Services
 {
@@ -13,7 +13,7 @@ namespace TTBS.Services
         IEnumerable<StenoIzin> GetAllStenoIzin();
         IEnumerable<StenoIzin> GetStenoIzinByStenografId(Guid id);
         IEnumerable<StenoIzin> GetStenoIzinByName(string adSoyad);
-        IEnumerable<StenoIzin> GetStenoIzinBetweenDateAndStenograf(DateTime basTarihi,DateTime bitTarihi ,Guid? stenografId);
+        IEnumerable<StenoIzin> GetStenoIzinBetweenDateAndStenograf(DateTime basTarihi, DateTime bitTarihi, int izinTur, Guid? stenografId, int firstRec, int lastRec);
         IEnumerable<StenoGorev> GetStenoGorevById(Guid id);
         IEnumerable<StenoGorev> GetStenoGorevByName(string adSoyad);
         IEnumerable<StenoGorev> GetStenoGorevByDateAndStatus(DateTime gorevBasTarihi,DateTime gorevBitTarihi, int status);
@@ -98,12 +98,19 @@ namespace TTBS.Services
             return _stenoIzinRepo.Get(x=>x.Stenograf.AdSoyad == adSoyad, includeProperties: "Stenograf");
         }
 
-        public IEnumerable<StenoIzin> GetStenoIzinBetweenDateAndStenograf(DateTime basTarihi, DateTime bitTarihi,Guid? stenografId)
+        public IEnumerable<StenoIzin> GetStenoIzinBetweenDateAndStenograf(DateTime basTarihi, DateTime bitTarihi, int izinTur, Guid? stenografId, int firstRec, int lastRec)
         {
-            if(stenografId !=null)
-                 return _stenoIzinRepo.Get(x => x.StenografId == stenografId && x.BaslangicTarihi >= basTarihi && x.BitisTarihi <= bitTarihi, includeProperties: "Stenograf");
-            else
-                return _stenoIzinRepo.Get(x => x.BaslangicTarihi >= basTarihi && x.BitisTarihi <= bitTarihi, includeProperties: "Stenograf");
+            var stenoIzinList = _stenoIzinRepo.Get(x => (int)x.IzinTuru == izinTur || 
+                                                        (stenografId != null && x.StenografId == stenografId) && 
+                                                        x.BaslangicTarihi >= basTarihi && x.BitisTarihi <= bitTarihi, 
+                                                        includeProperties: "Stenograf");
+            
+            if(stenoIzinList !=null && stenoIzinList.Count()>0)
+            {
+                stenoIzinList.ToList().ForEach(x => x.StenografCount = stenoIzinList.Count());
+            }
+
+            return stenoIzinList != null && stenoIzinList.Count() > 0 ? stenoIzinList.Skip(firstRec).Take(lastRec).ToList() : new List<StenoIzin> { };
         }
 
         public IEnumerable<StenoGorev> GetStenoGorevById(Guid id)
@@ -203,7 +210,7 @@ namespace TTBS.Services
         }
         public IEnumerable<Stenograf> GetAllStenoGrupNotInclueded()
         {
-            return _stenografRepo.Get(x => !x.StenoGrups.Select(x=>x.StenoId).Contains(x.Id));
+            return _stenografRepo.Get(x =>x.StenoGorevTuru == StenoGorevTuru.Stenograf && !x.StenoGrups.Select(x=>x.StenoId).Contains(x.Id));
         }
         public void DeleteStenoGroup(StenoGrup entity)
         {
