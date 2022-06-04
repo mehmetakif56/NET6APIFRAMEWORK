@@ -5,8 +5,10 @@ namespace TTBS.Models
 {
     public class StenoPlanOlusturModel
     {
-        public DateTime? BaslangicTarihi { get; set; }
-        public DateTime? BitisTarihi { get; set; }
+        public DateTime? PlanlananBaslangicTarihi { get; set; }
+        public DateTime? PlanlananBitisTarihi { get; set; }
+        public DateTime? GerceklesenBaslangicTarihi { get; set; }
+        public DateTime? GerceklesenBitisTarihi { get; set; }
         public int StenoSayisi { get; set; }
         public int StenoSure { get; set; }
         public int UzmanStenoSure { get; set; }

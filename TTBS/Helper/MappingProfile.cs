@@ -38,10 +38,10 @@ namespace TTBS.Helper
             CreateMap<ReportPlanModel, StenoGorev>();
 
             CreateMap<StenoGorev, ReportPlanDetayModel>()
-                 .ForMember(dest => dest.GorevTarihi, opt => opt.MapFrom(src => src.StenoPlan.BaslangicTarihi.HasValue ? src.StenoPlan.BaslangicTarihi.Value.ToShortDateString() : ""))
-                 .ForMember(dest => dest.BasSaat, opt => opt.MapFrom(src => src.StenoPlan.BaslangicTarihi.HasValue ? src.StenoPlan.BaslangicTarihi.Value.ToShortTimeString() : ""))
-                 .ForMember(dest => dest.Bitissaat, opt => opt.MapFrom(src => src.StenoPlan.BitisTarihi.HasValue ? src.StenoPlan.BitisTarihi.Value.ToShortTimeString() : ""))
-                 .ForMember(dest => dest.ToplamSure, opt => opt.MapFrom(src => src.StenoPlan.BitisTarihi.HasValue && src.StenoPlan.BaslangicTarihi.HasValue ? (src.StenoPlan.BitisTarihi.Value - src.StenoPlan.BaslangicTarihi.Value).TotalMinutes : 0))
+                 .ForMember(dest => dest.GorevTarihi, opt => opt.MapFrom(src => src.StenoPlan.PlanlananBaslangicTarihi.HasValue ? src.StenoPlan.PlanlananBaslangicTarihi.Value.ToShortDateString() : ""))
+                 .ForMember(dest => dest.BasSaat, opt => opt.MapFrom(src => src.StenoPlan.PlanlananBaslangicTarihi.HasValue ? src.StenoPlan.PlanlananBaslangicTarihi.Value.ToShortTimeString() : ""))
+                 .ForMember(dest => dest.Bitissaat, opt => opt.MapFrom(src => src.StenoPlan.PlanlananBitisTarihi.HasValue ? src.StenoPlan.PlanlananBitisTarihi.Value.ToShortTimeString() : ""))
+                 .ForMember(dest => dest.ToplamSure, opt => opt.MapFrom(src => src.StenoPlan.PlanlananBitisTarihi.HasValue && src.StenoPlan.PlanlananBaslangicTarihi.HasValue ? (src.StenoPlan.PlanlananBitisTarihi.Value - src.StenoPlan.PlanlananBaslangicTarihi.Value).TotalMinutes : 0))
                  .ForMember(dest => dest.NetSure, opt => opt.MapFrom(src => 0))
                  .ForMember(dest => dest.Ara, opt => opt.MapFrom(src => 0));
             CreateMap<ReportPlanDetayModel, StenoGorev>();

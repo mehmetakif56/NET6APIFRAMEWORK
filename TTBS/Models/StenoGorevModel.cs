@@ -6,7 +6,8 @@ namespace TTBS.Models
     public class StenoGorevModel
     {
         public Guid? Id { get; set; }
-        public DateTime? GorevTarihi { get; set; }
+        public DateTime? GorevBasTarihi { get; set; }
+        public DateTime? GorevBitisTarihi { get; set; }
         public DateTime? GorevDakika { get; set; }
         public int GorevSaniye { get; set; }
         public Guid StenografId { get; set; }

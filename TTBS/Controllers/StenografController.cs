@@ -150,9 +150,9 @@ namespace TTBS.Controllers
         }
 
         [HttpGet("GetStenoGorevByDateAndStatus")]
-        public IEnumerable<StenoGorevModel> GetStenoGorevByDateAndStatus(DateTime gorevAtamaTarihi, int status)
+        public IEnumerable<StenoGorevModel> GetStenoGorevByDateAndStatus(DateTime gorevBasTarihi, DateTime gorevBitTarihi,int status)
         {
-            var stenoEntity = _stenoService.GetStenoGorevByDateAndStatus(gorevAtamaTarihi, status);
+            var stenoEntity = _stenoService.GetStenoGorevByDateAndStatus(gorevBasTarihi, gorevBitTarihi, status);
             var model = _mapper.Map<IEnumerable<StenoGorevModel>>(stenoEntity);
             return model;
         }
