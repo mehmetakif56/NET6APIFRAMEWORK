@@ -13,7 +13,7 @@ namespace TTBS.Services
         IEnumerable<StenoIzin> GetAllStenoIzin();
         IEnumerable<StenoIzin> GetStenoIzinByStenografId(Guid id);
         IEnumerable<StenoIzin> GetStenoIzinByName(string adSoyad);
-        IEnumerable<StenoIzin> GetStenoIzinBetweenDateAndStenograf(DateTime basTarihi, DateTime bitTarihi, int izinTur, Guid? stenografId, int firstRec, int lastRec);
+        IEnumerable<StenoIzin> GetStenoIzinBetweenDateAndStenograf(DateTime basTarihi, DateTime bitTarihi,  string field, string sortOrder, int? izinTur, Guid? stenografId, int firstRec, int lastRec);
         IEnumerable<StenoGorev> GetStenoGorevById(Guid id);
         IEnumerable<StenoGorev> GetStenoGorevByName(string adSoyad);
         IEnumerable<StenoGorev> GetStenoGorevByDateAndStatus(DateTime gorevBasTarihi,DateTime gorevBitTarihi, int status);
@@ -98,15 +98,32 @@ namespace TTBS.Services
             return _stenoIzinRepo.Get(x=>x.Stenograf.AdSoyad == adSoyad, includeProperties: "Stenograf");
         }
 
-        public IEnumerable<StenoIzin> GetStenoIzinBetweenDateAndStenograf(DateTime basTarihi, DateTime bitTarihi, int izinTur, Guid? stenografId, int firstRec, int lastRec)
+        public IEnumerable<StenoIzin> GetStenoIzinBetweenDateAndStenograf(DateTime basTarihi, DateTime bitTarihi, string field, string sortOrder, int? izinTur, Guid? stenografId, int firstRec, int lastRec)
         {
-            var stenoIzinList = _stenoIzinRepo.Get(x => (int)x.IzinTuru == izinTur || 
-                                                        (stenografId != null && x.StenografId == stenografId) && 
-                                                        x.BaslangicTarihi >= basTarihi && x.BitisTarihi <= bitTarihi, 
+
+            var stenoIzinList = _stenoIzinRepo.Get(x =>  
+                                                        x.BaslangicTarihi <= basTarihi && x.BitisTarihi >= bitTarihi, 
                                                         includeProperties: "Stenograf");
             
-            if(stenoIzinList !=null && stenoIzinList.Count()>0)
+            if (stenoIzinList !=null && stenoIzinList.Count()>0)
             {
+                if(!string.IsNullOrEmpty(field))
+                {
+                    if (field == "baslangicTarihi")
+                    {
+                        stenoIzinList = sortOrder == "desc" ? stenoIzinList.OrderByDescending(x => x.BaslangicTarihi) : stenoIzinList.OrderBy(x => x.BaslangicTarihi);
+                    }
+                    if (field == "bitisTarihi")
+                    {
+                        stenoIzinList = sortOrder == "desc" ? stenoIzinList.OrderByDescending(x => x.BitisTarihi) : stenoIzinList.OrderBy(x => x.BitisTarihi);
+                    }
+                    if (field == "izinTuru")
+                    {
+                        stenoIzinList = sortOrder == "desc" ? stenoIzinList.OrderByDescending(x => x.IzinTuru) : stenoIzinList.OrderBy(x => x.IzinTuru);
+                    }
+                }
+              
+
                 stenoIzinList.ToList().ForEach(x => x.StenografCount = stenoIzinList.Count());
             }
 

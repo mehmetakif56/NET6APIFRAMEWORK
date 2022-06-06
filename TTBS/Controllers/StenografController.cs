@@ -106,9 +106,9 @@ namespace TTBS.Controllers
         }
 
         [HttpGet("GetStenoIzinBetweenDateAndStenograf")]
-        public IEnumerable<StenoIzinModel> GetStenoIzinBetweenDateAndStenograf(DateTime basTarihi,DateTime bitTarihi, int izinTur,Guid? stenograf, int firstRec, int lastRec)
+        public IEnumerable<StenoIzinModel> GetStenoIzinBetweenDateAndStenograf(DateTime basTarihi,DateTime bitTarihi,string field,string sortOrder, int? izinTur,Guid? stenograf, int firstRec, int lastRec)
         {
-            var stenoEntity = _stenoService.GetStenoIzinBetweenDateAndStenograf(basTarihi, bitTarihi, izinTur, stenograf, firstRec, lastRec);
+            var stenoEntity = _stenoService.GetStenoIzinBetweenDateAndStenograf(basTarihi, bitTarihi, field, sortOrder, izinTur, stenograf, firstRec, lastRec);
             var model = _mapper.Map<IEnumerable<StenoIzinModel>>(stenoEntity);
             return model;
         }
