@@ -79,6 +79,15 @@ namespace TTBS.Controllers
             return model;
         }
 
+
+        [HttpGet("GetIntersectStenoPlan")]
+        public List<StenoGorevPlanModel> GetIntersectStenoPlan(Guid stenoPlanId, Guid stenoId)
+        {
+            var stenoEntity = _stenoService.GetIntersectStenoPlan(stenoPlanId, stenoId);
+            var model = _mapper.Map<List<StenoGorevPlanModel>>(stenoEntity);
+            return model;
+        }
+
         #endregion 
         #region StenoIzin
         [HttpGet("GetAllStenoIzin")]

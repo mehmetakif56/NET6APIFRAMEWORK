@@ -34,11 +34,9 @@ namespace TTBS.Services
         IEnumerable<Stenograf> GetAllStenoGrupNotInclueded();
         List<Stenograf> GetAvaliableStenoBetweenDateBySteno(DateTime basTarihi, DateTime bitTarihi, int stenografId, int toplantiTur);
         void UpdateStenoPlan(StenoPlan plan);
-
         IEnumerable<Stenograf> GetAvaliableStenoBetweenDateByGroup(DateTime basTarihi, DateTime bitTarihi, Guid groupId, int toplantiTur);
-
         IEnumerable<StenoGorev> GetAssignedStenoByPlanIdAndGrorevTur(Guid planId, int gorevturu);
-
+        IEnumerable<StenoGorev> GetIntersectStenoPlan(Guid stenoPlanId, Guid stenoId);
         void UpdateStenoSiraNo(List<Stenograf> steno);
     }
     public class StenografService : BaseService, IStenografService
@@ -253,6 +251,15 @@ namespace TTBS.Services
               allList.Add(st);
             }
             return allList;
+
+        }
+
+        public IEnumerable<StenoGorev> GetIntersectStenoPlan(Guid stenoPlanId,Guid stenoId)
+        {
+            var plan = _stenoPlanRepo.GetById(stenoPlanId);
+           
+            return _stenoGorevRepo.Get(x => x.StenoPlan.PlanlananBaslangicTarihi >= plan.PlanlananBaslangicTarihi && x.StenoPlan.PlanlananBitisTarihi <= plan.PlanlananBitisTarihi,
+                                                   includeProperties: "StenoPlan,Stenograf").Where(x => x.StenografId == stenoId); 
 
         }
 

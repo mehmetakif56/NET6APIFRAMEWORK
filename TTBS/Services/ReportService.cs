@@ -23,12 +23,12 @@ namespace TTBS.Services
 
         public IEnumerable<StenoGorev> GetReportStenoPlanBetweenDateGorevTur(DateTime gorevBasTarihi, DateTime gorevBitTarihi, int gorevTuru)
         {
-            return _stenoGorevRepo.Get(x => x.StenoPlan.PlanlananBaslangicTarihi <= gorevBasTarihi && x.StenoPlan.PlanlananBitisTarihi >= gorevBitTarihi && (int)x.StenoPlan.GorevTuru == gorevTuru, includeProperties: "StenoPlan");
+            return _stenoGorevRepo.Get(x => x.StenoPlan.PlanlananBaslangicTarihi >= gorevBasTarihi && x.StenoPlan.PlanlananBitisTarihi <= gorevBitTarihi && (int)x.StenoPlan.GorevTuru == gorevTuru, includeProperties: "StenoPlan");
         }
 
         public IEnumerable<StenoGorev> GetStenoGorevByStenografAndDate(Guid stenografId, DateTime gorevBasTarihi, DateTime gorevBitTarihi)
         {
-            return _stenoGorevRepo.Get(x => x.StenografId == stenografId && x.StenoPlan.PlanlananBaslangicTarihi <= gorevBasTarihi && x.StenoPlan.PlanlananBitisTarihi >= gorevBitTarihi, includeProperties: "StenoPlan");
+            return _stenoGorevRepo.Get(x => x.StenografId == stenografId && x.StenoPlan.PlanlananBaslangicTarihi >= gorevBasTarihi && x.StenoPlan.PlanlananBitisTarihi <= gorevBitTarihi, includeProperties: "StenoPlan");
         }
     }
 }
