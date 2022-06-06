@@ -49,6 +49,14 @@ namespace TTBS.Infrastructure
         {
             builder.ToTable("StenografBeklemeSure");
         }
+        private void ConfigureOzelGorevTur(EntityTypeBuilder<OzelGorevTur> builder)
+        {
+            builder.ToTable("OzelGorevTur");
+        }
+        private void ConfigureOzelGorev(EntityTypeBuilder<OzelGorev> builder)
+        {
+            builder.ToTable("OzelGorev");
+        }
 
         private void ConfigureStenoGrup(EntityTypeBuilder<StenoGrup> builder)
         {

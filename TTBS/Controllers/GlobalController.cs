@@ -242,6 +242,43 @@ namespace TTBS.Controllers
             var model = _mapper.Map<IEnumerable<StenoBeklemeSureModel>>(entity);
             return model;
         }
+
+        [HttpPost("CreateOzelGorevTur")]
+        public IActionResult CreateOzelGorevTur(OzelGorevTurModel model)
+        {
+            var entity = Mapper.Map<OzelGorevTur>(model);
+            _globalService.CreateOzelGorevTur(entity);
+            return Ok(entity);
+        }
+        [HttpPut("UpdateOzelGorevTur")]
+        public IActionResult UpdateOzelGorevTur(OzelGorevTurModel model)
+        {
+            var entity = Mapper.Map<OzelGorevTur>(model);
+            _globalService.UpdateOzelGorevTur(entity);
+            return Ok(entity);
+        }
+        [HttpGet("GetAllOzelGorevTur")]
+        public IEnumerable<OzelGorevTurModel> GetAllOzelGorevTur()
+        {
+            var entity = _globalService.GetAllOzelGorevTur();
+            var model = _mapper.Map<IEnumerable<OzelGorevTurModel>>(entity);
+            return model;
+        }
+        [HttpGet("GetOzelGorevTurById")]
+        public OzelGorevTurModel GetOzelGorevTurById(Guid id)
+        {
+            var entity = _globalService.GetOzelGorevTurById(id);
+            var model = _mapper.Map<OzelGorevTurModel>(entity);
+            return model;
+        }
+        [HttpDelete("DeleteOzelGorevTur")]
+        public IActionResult DeleteOzelGorevTur(OzelGorevTurModel model)
+        {
+
+            var entity = Mapper.Map<OzelGorevTur>(model);
+            _globalService.DeleteOzelGorevTur(entity);
+            return Ok();
+        }
         #endregion
     }
 }

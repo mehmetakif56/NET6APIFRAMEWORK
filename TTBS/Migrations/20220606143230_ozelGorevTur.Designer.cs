@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TTBS.Infrastructure;
 
@@ -11,9 +12,10 @@ using TTBS.Infrastructure;
 namespace TTBS.Migrations
 {
     [DbContext(typeof(TTBSContext))]
-    partial class TTBSContextModelSnapshot : ModelSnapshot
+    [Migration("20220606143230_ozelGorevTur")]
+    partial class ozelGorevTur
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -273,84 +275,6 @@ namespace TTBS.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Komisyon");
-                });
-
-            modelBuilder.Entity("TTBS.Core.Entities.OzelGorev", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Ad")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Kodu")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("ModifiedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("OzelGorevTurId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("Tarih")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Yeri")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OzelGorevTurId");
-
-                    b.ToTable("OzelGorev", (string)null);
-                });
-
-            modelBuilder.Entity("TTBS.Core.Entities.OzelGorevTur", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Ad")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid?>("ModifiedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("OzelGorevTur", (string)null);
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.RoleClaimEntity", b =>
@@ -859,17 +783,6 @@ namespace TTBS.Migrations
                         .IsRequired();
 
                     b.Navigation("Yasaama");
-                });
-
-            modelBuilder.Entity("TTBS.Core.Entities.OzelGorev", b =>
-                {
-                    b.HasOne("TTBS.Core.Entities.OzelGorevTur", "OzelGorevTur")
-                        .WithMany()
-                        .HasForeignKey("OzelGorevTurId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("OzelGorevTur");
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.RoleClaimEntity", b =>

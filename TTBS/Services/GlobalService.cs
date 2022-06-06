@@ -30,6 +30,11 @@ namespace TTBS.Services
         void CreateStenografBeklemeSure(List<StenografBeklemeSure> stenografBeklemeSure);
         IEnumerable<StenografBeklemeSure> GetAllStenografBeklemeSure();
         void UpdateStenografBeklemeSure(List<StenografBeklemeSure> stenografBeklemeSure);
+        void DeleteOzelGorevTur(OzelGorevTur ozelGorev);
+        void CreateOzelGorevTur(OzelGorevTur ozelGorev);
+        IEnumerable<OzelGorevTur> GetAllOzelGorevTur();
+        void UpdateOzelGorevTur(OzelGorevTur ozelGorev);
+        OzelGorevTur GetOzelGorevTurById(Guid id);
     }
     public class GlobalService : BaseService, IGlobalService
     {
@@ -40,6 +45,7 @@ namespace TTBS.Services
         private IRepository<AltKomisyon> _altkomisyonRepo;
         private IRepository<Grup> _grupRepo;        
         private IRepository<StenografBeklemeSure> _stenoBeklemeSure;
+        private IRepository<OzelGorevTur> _ozelGorevTurRepo;
         private IUnitOfWork _unitWork;
         public GlobalService(IRepository<Donem> donemRepo,
                              IRepository<Yasama> yasamaRepo,
@@ -48,6 +54,7 @@ namespace TTBS.Services
                              IRepository<Grup> grupRepo,
                              IRepository<AltKomisyon> altkomisyonRepo,
                              IRepository<StenografBeklemeSure> stenoBeklemeSure,
+                             IRepository<OzelGorevTur> ozelGorevTurRepo,
                              IUnitOfWork unitWork,
                              IServiceProvider provider) : base(provider)
         {
@@ -59,6 +66,7 @@ namespace TTBS.Services
             _yasamaRepo = yasamaRepo;
             _stenoBeklemeSure = stenoBeklemeSure;
             _altkomisyonRepo = altkomisyonRepo;
+            _ozelGorevTurRepo = ozelGorevTurRepo;
         }
         public IEnumerable<Donem> GetAllDonem()
         {
@@ -196,6 +204,33 @@ namespace TTBS.Services
             return _stenoBeklemeSure.GetAll();
 
         }
-      
+
+        public void DeleteOzelGorevTur(OzelGorevTur ozelGorevTur)
+        {
+            _ozelGorevTurRepo.Delete(ozelGorevTur);
+            _ozelGorevTurRepo.Save();
+        }
+
+        public void CreateOzelGorevTur(OzelGorevTur ozelGorevTur)
+        {
+            _ozelGorevTurRepo.Create(ozelGorevTur, CurrentUser.Id);
+            _ozelGorevTurRepo.Save();
+        }
+
+        public IEnumerable<OzelGorevTur> GetAllOzelGorevTur()
+        {
+            return _ozelGorevTurRepo.Get();
+        }
+
+        public void UpdateOzelGorevTur(OzelGorevTur ozelGorevTur)
+        {
+            _ozelGorevTurRepo.Update(ozelGorevTur, CurrentUser.Id);
+            _ozelGorevTurRepo.Save();
+        }
+
+        public OzelGorevTur GetOzelGorevTurById(Guid id)
+        {
+            return _ozelGorevTurRepo.GetById(id);
+        }
     }
 }

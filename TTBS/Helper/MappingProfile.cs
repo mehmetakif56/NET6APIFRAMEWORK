@@ -77,6 +77,10 @@ namespace TTBS.Helper
             CreateMap<StenografBeklemeSure, StenoBeklemeSureModel>();
 
 
+            CreateMap<OzelGorevTurModel, OzelGorevTur>();
+            CreateMap<OzelGorevTur, OzelGorevTurModel>();
+
+
             CreateMap<StenoGorev, StenoGorevPlanModel>()
                  .ForMember(dest => dest.GorevYeri, opt => opt.MapFrom(src => src.StenoPlan.GorevYeri))
                  .ForMember(dest => dest.GorevAd, opt => opt.MapFrom(src => src.StenoPlan.GorevAd))
