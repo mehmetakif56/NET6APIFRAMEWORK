@@ -164,13 +164,6 @@ namespace TTBS.Controllers
             var model = _mapper.Map<IEnumerable<StenoGorevModel>>(stenoEntity);
             return model;
         }
-        [HttpGet("GetStenoGorevByPlanDateAndStatus")]
-        public IEnumerable<StenoGorevPlanModel> GetStenoGorevByPlanDateAndStatus(DateTime gorevTarihi, int gorevturu)
-        {
-            var stenoEntity = _stenoService.GetStenoGorevByPlanDateAndStatus(gorevTarihi, gorevturu);
-            var model = _mapper.Map<IEnumerable<StenoGorevPlanModel>>(stenoEntity);
-            return model;
-        }
 
         //[HttpPost("CreateStenoGorev")]
         //public IActionResult CreateStenoGorev(List<StenoGorevModel> model)

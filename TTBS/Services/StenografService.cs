@@ -29,7 +29,6 @@ namespace TTBS.Services
         IEnumerable<Stenograf> GetAllStenografByGorevTuru(int gorevTuru);
         void DeleteStenoGorev(Guid stenoGorevId);
         IEnumerable<StenoGorev> GetStenoGorevByGrupId(Guid id);
-        IEnumerable<StenoGorev> GetStenoGorevByPlanDateAndStatus(DateTime gorevTarihi, int gorevturu);
         void CreateStenoGroup(StenoGrup stenograf);
         void DeleteStenoGroup(StenoGrup stenograf);
         IEnumerable<Stenograf> GetAllStenoGrupNotInclueded();
@@ -101,11 +100,13 @@ namespace TTBS.Services
         public IEnumerable<StenoIzin> GetStenoIzinBetweenDateAndStenograf(DateTime basTarihi, DateTime bitTarihi, string? field, string? sortOrder, int? izinTur, Guid? stenografId, int pageIndex,int pagesize)
         {
 
-            var stenoIzinList = _stenoIzinRepo.Get(x =>  
-                                                        x.BaslangicTarihi <= basTarihi && x.BitisTarihi >= bitTarihi, 
-              
+            var stenoIzinList = _stenoIzinRepo.Get(x =>  x.BaslangicTarihi >= basTarihi && x.BitisTarihi <= bitTarihi,               
                                                         includeProperties: "Stenograf");
-            
+            if (izinTur != null)
+                stenoIzinList = stenoIzinList.Where(x => (int)x.IzinTuru == izinTur);
+            if (stenografId != null && stenografId !=Guid.Empty)
+                stenoIzinList = stenoIzinList.Where(x => x.StenografId == stenografId);
+
             if (stenoIzinList !=null && stenoIzinList.Count()>0)
             {
                 if(!string.IsNullOrEmpty(field))
@@ -186,7 +187,7 @@ namespace TTBS.Services
 
         public IEnumerable<StenoPlan> GetStenoPlanByDateAndStatus(DateTime gorevBasTarihi, DateTime gorevBitTarihi,int gorevTuru)
         {
-            return _stenoPlanRepo.Get(x => x.PlanlananBaslangicTarihi <= gorevBasTarihi && x.PlanlananBitisTarihi >= gorevBitTarihi && (int)x.GorevTuru == gorevTuru);
+            return _stenoPlanRepo.Get(x => x.PlanlananBaslangicTarihi >= gorevBasTarihi && x.PlanlananBitisTarihi <= gorevBitTarihi && (int)x.GorevTuru == gorevTuru);
         }
 
         public void CreateStenograf(Stenograf entity)
@@ -207,16 +208,12 @@ namespace TTBS.Services
 
         public IEnumerable<StenoGorev> GetStenoGorevByStenografAndDate(Guid stenografId, DateTime gorevBasTarihi, DateTime gorevBitTarihi)
         {
-            return _stenoGorevRepo.Get(x=>x.StenografId == stenografId && x.GorevBasTarihi <= gorevBasTarihi && x.GorevBitisTarihi >= gorevBitTarihi, includeProperties: "Stenograf");
+            return _stenoGorevRepo.Get(x=>x.StenografId == stenografId && x.GorevBasTarihi >= gorevBasTarihi && x.GorevBitisTarihi <= gorevBitTarihi, includeProperties: "Stenograf");
         }
 
         public IEnumerable<StenoGorev> GetStenoGorevByGrupId(Guid id)
         {
             return _stenoGrupRepo.Get(x=>x.GrupId == id,  includeProperties: "Stenograf.StenoGorevs").SelectMany(x=>x.Stenograf.StenoGorevs);
-        }
-        public IEnumerable<StenoGorev> GetStenoGorevByPlanDateAndStatus(DateTime gorevTarihi,int gorevturu)
-        {
-            return _stenoGorevRepo.Get(x => (int)x.StenoPlan.GorevTuru == gorevturu &&  x.StenoPlan.PlanlananBaslangicTarihi <= gorevTarihi && x.StenoPlan.PlanlananBitisTarihi >= gorevTarihi, includeProperties: "StenoPlan,Stenograf");
         }
         
         public void CreateStenoGroup(StenoGrup entity)
