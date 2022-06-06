@@ -16,6 +16,7 @@ namespace TTBS.Services
         void CreateDonem(Donem donem);
         void CreateYasama(Yasama donem);
         void CreateBirlesim(Birlesim birlesim);
+        void CreateOturum(Oturum oturum);
         void CreateKomisyon(Komisyon komisyon);
         void CreateGrup(Grup grup);
         IEnumerable<Grup> GetAllGrup();
@@ -35,6 +36,9 @@ namespace TTBS.Services
         IEnumerable<OzelGorevTur> GetAllOzelGorevTur();
         void UpdateOzelGorevTur(OzelGorevTur ozelGorev);
         OzelGorevTur GetOzelGorevTurById(Guid id);
+        void DeleteOturum(Oturum oturum);
+        void UpdateOturum(Oturum oturum);
+        IEnumerable<Oturum> GetOturumByBirlesimId(Guid id);
     }
     public class GlobalService : BaseService, IGlobalService
     {
@@ -46,6 +50,7 @@ namespace TTBS.Services
         private IRepository<Grup> _grupRepo;        
         private IRepository<StenografBeklemeSure> _stenoBeklemeSure;
         private IRepository<OzelGorevTur> _ozelGorevTurRepo;
+        private IRepository<Oturum> _oturumRepo;
         private IUnitOfWork _unitWork;
         public GlobalService(IRepository<Donem> donemRepo,
                              IRepository<Yasama> yasamaRepo,
@@ -55,6 +60,7 @@ namespace TTBS.Services
                              IRepository<AltKomisyon> altkomisyonRepo,
                              IRepository<StenografBeklemeSure> stenoBeklemeSure,
                              IRepository<OzelGorevTur> ozelGorevTurRepo,
+                             IRepository<Oturum> oturumRepo,
                              IUnitOfWork unitWork,
                              IServiceProvider provider) : base(provider)
         {
@@ -67,6 +73,7 @@ namespace TTBS.Services
             _stenoBeklemeSure = stenoBeklemeSure;
             _altkomisyonRepo = altkomisyonRepo;
             _ozelGorevTurRepo = ozelGorevTurRepo;
+            _oturumRepo = oturumRepo;
         }
         public IEnumerable<Donem> GetAllDonem()
         {
@@ -231,6 +238,29 @@ namespace TTBS.Services
         public OzelGorevTur GetOzelGorevTurById(Guid id)
         {
             return _ozelGorevTurRepo.GetById(id);
+        }
+
+        public void CreateOturum(Oturum oturum)
+        {
+            _oturumRepo.Create(oturum, CurrentUser.Id);
+            _oturumRepo.Save();
+        }
+
+        public void UpdateOturum(Oturum oturum)
+        {
+            _oturumRepo.Update(oturum, CurrentUser.Id);
+            _oturumRepo.Save();
+        }
+
+        public IEnumerable<Oturum> GetOturumByBirlesimId(Guid id)
+        {
+            return _oturumRepo.Get(x => x.StenoPlanId == id,includeProperties:"StenoPlan");
+        }
+
+        public void DeleteOturum(Oturum oturum)
+        {
+            _oturumRepo.Delete(oturum);
+            _oturumRepo.Save();
         }
     }
 }

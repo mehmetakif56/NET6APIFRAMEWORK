@@ -26,8 +26,9 @@ namespace TTBS.Infrastructure
         public DbSet<RoleClaimEntity> RoleClaims { get; set; }
         public DbSet<UserEntity> Users { get; set; }
         public DbSet<StenografBeklemeSure> StenografBeklemeSures { get; set; }
-        public DbSet<OzelGorevTur> OzelGorevTur { get; set; }
-        public DbSet<OzelGorev> OzelGorev { get; set; }
+        public DbSet<OzelGorevTur> OzelGorevTurs { get; set; }
+        public DbSet<OzelGorev> OzelGorevs { get; set; }
+        public DbSet<Oturum> Oturums { get; set; }
 
         public DbSet<AltKomisyon> AltKomisyons { get; set; }
 
@@ -47,6 +48,7 @@ namespace TTBS.Infrastructure
             builder.Entity<StenografBeklemeSure>(ConfigureBeklemeSure);
             builder.Entity<OzelGorevTur>(ConfigureOzelGorevTur);
             builder.Entity<OzelGorev>(ConfigureOzelGorev);
+            builder.Entity<Oturum>(ConfigureOturum);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

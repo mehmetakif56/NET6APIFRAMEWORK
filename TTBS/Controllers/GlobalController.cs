@@ -105,6 +105,27 @@ namespace TTBS.Controllers
         }
         #endregion
 
+        #region Oturum
+
+        [HttpPost("CreateOturum")]
+        public IActionResult CreateOturum(OturumModel model)
+        {
+            var entity = Mapper.Map<Oturum>(model);
+            _globalService.CreateOturum(entity);
+            return Ok(entity);
+
+        }
+
+        [HttpGet("GetOturumByBirlesimId")]
+        public IEnumerable<OturumModel> GetOturumByBirlesimId(Guid id)
+        {
+            var entity = _globalService.GetOturumByBirlesimId(id);
+            var model = _mapper.Map<IEnumerable<OturumModel>>(entity);
+            return model;
+        }
+
+        #endregion
+
         #region Komisyon
         [HttpGet("GetKomisyonById")]
         public KomisyonModel GetKomisyonById(Guid id)

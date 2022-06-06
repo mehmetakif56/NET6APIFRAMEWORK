@@ -10,7 +10,7 @@ namespace TTBS.Core.Entities
         public string BirlesimNo { get; set; }         
         public DateTime? BaslangicTarihi { get; set; }
         public DateTime? BitisTarihi { get; set; }
-        public Yasama Yasaama { get; set; }
+        public Yasama Yasama { get; set; }
         public Guid YasamaId { get; set; }
         public virtual ICollection<StenoPlan> StenoPlans { get; set; }
 

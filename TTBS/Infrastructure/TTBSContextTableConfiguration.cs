@@ -57,6 +57,10 @@ namespace TTBS.Infrastructure
         {
             builder.ToTable("OzelGorev");
         }
+        private void ConfigureOturum(EntityTypeBuilder<Oturum> builder)
+        {
+            builder.ToTable("Oturum");
+        }
 
         private void ConfigureStenoGrup(EntityTypeBuilder<StenoGrup> builder)
         {
