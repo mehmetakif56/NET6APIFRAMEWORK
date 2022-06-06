@@ -257,9 +257,14 @@ namespace TTBS.Services
         public IEnumerable<StenoGorev> GetIntersectStenoPlan(Guid stenoPlanId,Guid stenoId)
         {
             var plan = _stenoPlanRepo.GetById(stenoPlanId);
-           
-            return _stenoGorevRepo.Get(x => x.StenoPlan.PlanlananBaslangicTarihi >= plan.PlanlananBaslangicTarihi && x.StenoPlan.PlanlananBitisTarihi <= plan.PlanlananBitisTarihi,
-                                                   includeProperties: "StenoPlan,Stenograf").Where(x => x.StenografId == stenoId); 
+            var basTarihi = plan.PlanlananBaslangicTarihi;
+            var bitTarihi =plan.PlanlananBitisTarihi;
+
+            return _stenoGorevRepo.Get(x => (basTarihi >= x.StenoPlan.PlanlananBaslangicTarihi && basTarihi <= x.StenoPlan.PlanlananBitisTarihi) ||
+                                                   (bitTarihi >= x.StenoPlan.PlanlananBaslangicTarihi && bitTarihi <= x.StenoPlan.PlanlananBitisTarihi) ||
+                                                   (x.StenoPlan.PlanlananBaslangicTarihi >= basTarihi && x.StenoPlan.PlanlananBaslangicTarihi <= bitTarihi) ||
+                                                   (x.StenoPlan.PlanlananBitisTarihi >= basTarihi && x.StenoPlan.PlanlananBitisTarihi <= bitTarihi),
+                                                   includeProperties: "StenoPlan,Stenograf").Where(x => x.StenografId == stenoId);
 
         }
 

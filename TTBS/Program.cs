@@ -1,7 +1,9 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.IdentityModel.Tokens;
+using System.Globalization;
 using System.Text;
 using TTBS;
 using TTBS.Core.Interfaces;
@@ -22,6 +24,21 @@ builder.Services.AddDbContext<TTBSContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 
 });
+
+var culture = CultureInfo.CreateSpecificCulture("tr-TR");
+var dateformat = new DateTimeFormatInfo
+{
+    ShortDatePattern = "dd/MM/yyyy",
+    LongDatePattern = "dd/MM/yyyy hh:mm:ss tt"
+};
+culture.DateTimeFormat = dateformat;
+
+var supportedCultures = new[]
+{
+    culture
+};
+
+
 
 builder.Services.AddCors(options =>
 {
@@ -84,6 +101,13 @@ builder.Services.AddAuth();
 ;
 
 var app = builder.Build();
+
+app.UseRequestLocalization(new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture(culture),
+    SupportedCultures = supportedCultures,
+    SupportedUICultures = supportedCultures
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
