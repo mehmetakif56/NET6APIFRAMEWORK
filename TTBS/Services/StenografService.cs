@@ -13,7 +13,7 @@ namespace TTBS.Services
         IEnumerable<StenoIzin> GetAllStenoIzin();
         IEnumerable<StenoIzin> GetStenoIzinByStenografId(Guid id);
         IEnumerable<StenoIzin> GetStenoIzinByName(string adSoyad);
-        IEnumerable<StenoIzin> GetStenoIzinBetweenDateAndStenograf(DateTime basTarihi, DateTime bitTarihi,  string field, string sortOrder, int? izinTur, Guid? stenografId, int pageIndex, int pagesize);
+        IEnumerable<StenoIzin> GetStenoIzinBetweenDateAndStenograf(DateTime basTarihi, DateTime bitTarihi,  string? field, string? sortOrder, int? izinTur, Guid? stenografId, int pageIndex, int pagesize);
         IEnumerable<StenoGorev> GetStenoGorevById(Guid id);
         IEnumerable<StenoGorev> GetStenoGorevByName(string adSoyad);
         IEnumerable<StenoGorev> GetStenoGorevByDateAndStatus(DateTime gorevBasTarihi,DateTime gorevBitTarihi, int status);
@@ -98,7 +98,7 @@ namespace TTBS.Services
             return _stenoIzinRepo.Get(x=>x.Stenograf.AdSoyad == adSoyad, includeProperties: "Stenograf");
         }
 
-        public IEnumerable<StenoIzin> GetStenoIzinBetweenDateAndStenograf(DateTime basTarihi, DateTime bitTarihi, string field, string sortOrder, int? izinTur, Guid? stenografId, int pageIndex,int pagesize)
+        public IEnumerable<StenoIzin> GetStenoIzinBetweenDateAndStenograf(DateTime basTarihi, DateTime bitTarihi, string? field, string? sortOrder, int? izinTur, Guid? stenografId, int pageIndex,int pagesize)
         {
 
             var stenoIzinList = _stenoIzinRepo.Get(x =>  
