@@ -31,7 +31,7 @@ namespace TTBS.Services
         void CreateStenografBeklemeSure(List<StenografBeklemeSure> stenografBeklemeSure);
         IEnumerable<StenografBeklemeSure> GetAllStenografBeklemeSure();
         void UpdateStenografBeklemeSure(List<StenografBeklemeSure> stenografBeklemeSure);
-        void DeleteOzelGorevTur(OzelGorevTur ozelGorev);
+        void DeleteOzelGorevTur(Guid Id);
         void CreateOzelGorevTur(OzelGorevTur ozelGorev);
         IEnumerable<OzelGorevTur> GetAllOzelGorevTur();
         void UpdateOzelGorevTur(OzelGorevTur ozelGorev);
@@ -212,9 +212,9 @@ namespace TTBS.Services
 
         }
 
-        public void DeleteOzelGorevTur(OzelGorevTur ozelGorevTur)
+        public void DeleteOzelGorevTur(Guid Id)
         {
-            _ozelGorevTurRepo.Delete(ozelGorevTur);
+            _ozelGorevTurRepo.Delete(Id);
             _ozelGorevTurRepo.Save();
         }
 

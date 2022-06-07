@@ -293,11 +293,9 @@ namespace TTBS.Controllers
             return model;
         }
         [HttpDelete("DeleteOzelGorevTur")]
-        public IActionResult DeleteOzelGorevTur(OzelGorevTurModel model)
+        public IActionResult DeleteOzelGorevTur(Guid id)
         {
-
-            var entity = Mapper.Map<OzelGorevTur>(model);
-            _globalService.DeleteOzelGorevTur(entity);
+           _globalService.DeleteOzelGorevTur(id);
             return Ok();
         }
         #endregion
