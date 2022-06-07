@@ -207,6 +207,20 @@ namespace TTBS.Controllers
             return Ok();
         }
 
+        [HttpPut("UpdateStenoGorevAtama")]
+        public IActionResult UpdateStenoGorevAtama(List<StenoGorevGüncelleModel> model)
+        {
+            try
+            {
+                var entity = Mapper.Map<List<StenoGorev>>(model);
+                _stenoService.UpdateStenoGorev(entity);
+            }
+            catch (Exception ex)
+            { return BadRequest(ex.Message); }
+
+            return Ok();
+        }
+
         [HttpGet("GetStenoGorevByStatus")]
         public List<StenoGorevModel> GetStenoGorevByStatus(int status=0)
         {

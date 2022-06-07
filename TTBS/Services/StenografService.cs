@@ -19,6 +19,7 @@ namespace TTBS.Services
         IEnumerable<StenoGorev> GetStenoGorevByDateAndStatus(DateTime gorevBasTarihi,DateTime gorevBitTarihi, int status);
         IEnumerable<StenoGorev> GetStenoGorevByStenografAndDate(Guid stenografId, DateTime gorevBasTarihi, DateTime gorevBitTarihi);
         void CreateStenoGorev(StenoGorev stenoGorev);
+        void UpdateStenoGorev(List<StenoGorev> stenoGorev);
         void CreateStenoIzin(StenoIzin stenoGorev);
         IEnumerable<StenoGorev> GetStenoGorevByPlanId(Guid id);
         List<StenoPlan> GetStenoPlanByStatus(int status);
@@ -141,6 +142,12 @@ namespace TTBS.Services
         public void CreateStenoGorev(StenoGorev entity)
         {
             _stenoGorevRepo.Create(entity, CurrentUser.Id);
+            _stenoGorevRepo.Save();
+        }
+
+        public void UpdateStenoGorev(List<StenoGorev> entityList)
+        {
+            _stenoGorevRepo.Update(entityList, CurrentUser.Id);
             _stenoGorevRepo.Save();
         }
 
