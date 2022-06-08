@@ -202,7 +202,7 @@ namespace TTBS.Services
         }
         public IEnumerable<Stenograf> GetAllStenografByGorevTuru(int gorevTuru)
         {
-            return _stenografRepo.Get(x => (int)x.StenoGorevTuru == gorevTuru);
+            return _stenografRepo.Get(x => (int)x.StenoGorevTuru == gorevTuru,includeProperties:"StenoGorevs");
         }
       
         public void DeleteStenoGorev(Guid stenoGorevId)
