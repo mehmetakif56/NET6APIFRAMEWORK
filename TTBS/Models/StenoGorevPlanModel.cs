@@ -15,5 +15,6 @@ namespace TTBS.Models
         public Guid StenoPlanId { get; set; }
         public string GorevYeri { get; set; }
         public string GorevAd { get; set; }
+        public PlanTuru GorevTuru { get; set; }
     }
 }
