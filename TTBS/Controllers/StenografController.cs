@@ -239,6 +239,14 @@ namespace TTBS.Controllers
             return model;
         }
 
+        [HttpGet("GetAllStenografGroup")]
+        public IEnumerable<StenoGrupViewModel> GetAllStenografGroup()
+        {
+            var stenoEntity = _stenoService.GetAllStenografGroup();
+            var model = _mapper.Map<IEnumerable<StenoGrupViewModel>>(stenoEntity);
+            return model;
+        }
+
         [HttpGet("GetAllStenografByGorevTuru")]
         public IEnumerable<StenoModel> GetAllStenografByGorevTuru(int gorevTuru)
         {

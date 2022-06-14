@@ -39,6 +39,7 @@ namespace TTBS.Services
         IEnumerable<StenoGorev> GetAssignedStenoByPlanIdAndGrorevTur(Guid planId, int gorevturu);
         IEnumerable<StenoGorev> GetIntersectStenoPlan(Guid stenoPlanId, Guid stenoId);
         void UpdateStenoSiraNo(List<Stenograf> steno);
+        IEnumerable<StenoGrup> GetAllStenografGroup();
     }
     public class StenografService : BaseService, IStenografService
     {
@@ -49,12 +50,14 @@ namespace TTBS.Services
         private IRepository<Stenograf> _stenografRepo;
         private IRepository<StenoGrup> _stenoGrupRepo;
         private IRepository<StenografBeklemeSure> _stenoBeklemeSure;
+        private IRepository<Grup> _grupRepo;
         public StenografService(IRepository<StenoPlan> stenoPlanRepo,
                                 IRepository<StenoIzin> stenoIzinRepo, IRepository<StenoGorev> stenoGorevRepo,
                                 IUnitOfWork unitWork,
                                 IRepository<Stenograf> stenografRepo,
                                 IRepository<StenoGrup> stenoGrupRepo,
                                 IRepository<StenografBeklemeSure> stenoBeklemeSure,
+                                IRepository<Grup> grupRepo,
                                 IServiceProvider provider) : base(provider)
         {
             _stenoPlanRepo = stenoPlanRepo;
@@ -64,6 +67,7 @@ namespace TTBS.Services
             _stenografRepo = stenografRepo;
             _stenoGrupRepo = stenoGrupRepo;
             _stenoBeklemeSure = stenoBeklemeSure;
+            _grupRepo = grupRepo;
         }
         public IEnumerable<StenoPlan> GetStenoPlan()
         {
@@ -321,5 +325,9 @@ namespace TTBS.Services
            
         }
 
+        public IEnumerable<StenoGrup> GetAllStenografGroup()
+        {
+            return _stenoGrupRepo.Get(includeProperties: "Grup,Stenograf");
+        }
     }
 }
