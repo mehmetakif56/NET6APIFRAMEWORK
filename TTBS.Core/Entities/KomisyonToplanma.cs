@@ -12,7 +12,7 @@ namespace TTBS.Core.Entities
     {
         public Guid Id { get; set; }
         public Guid KomisYonId { get; set; }
-        public Guid AltKomisYonId { get; set; }
+        public Guid AltKomisYonId { get; set; } = Guid.Empty;
         public DateTime? PlanlananBaslangicTarihi { get; set; }
         public DateTime? PlanlananBitisTarihi { get; set; }
         public DateTime? GerceklesenBaslangicTarihi { get; set; }
