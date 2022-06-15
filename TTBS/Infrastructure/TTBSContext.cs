@@ -18,8 +18,8 @@ namespace TTBS.Infrastructure
         public DbSet<Yasama> Yasamas { get; set; }
         public DbSet<Birlesim> Birlesims { get; set; }
         public DbSet<Komisyon> Komisyons { get; set; }
-        public DbSet<StenoPlan> StenoPlans { get; set; }
-        public DbSet<StenoGorev> StenoGorevs { get; set; }
+        public DbSet<KomisyonToplanma> KomisyonToplanmas { get; set; }
+        public DbSet<GorevAtama> GorevAtamas { get; set; }
         public DbSet<StenoIzin> StenoIzin { get; set; }
         public DbSet<Stenograf> Stenografs { get; set; }
         public DbSet<StenoGrup> StenoGrups { get; set; }
@@ -29,7 +29,7 @@ namespace TTBS.Infrastructure
         public DbSet<UserEntity> Users { get; set; }
         public DbSet<StenografBeklemeSure> StenografBeklemeSures { get; set; }
         public DbSet<OzelGorevTur> OzelGorevTurs { get; set; }
-        public DbSet<OzelGorev> OzelGorevs { get; set; }
+        public DbSet<OzelToplanma> OzelGorevs { get; set; }
         public DbSet<Oturum> Oturums { get; set; }
 
         public DbSet<AltKomisyon> AltKomisyons { get; set; }
@@ -39,10 +39,10 @@ namespace TTBS.Infrastructure
             builder.ApplyBaseEntityConfiguration();
             builder.Entity<Birlesim>(ConfigureBirlesim);
             builder.Entity<Komisyon>(ConfigureKomisyon);
+            builder.Entity<KomisyonToplanma>(ConfigureKomisyonToplanma);
             builder.Entity<Donem>(ConfigureDonem);
-            builder.Entity<StenoPlan>(ConfigureStenoPlan);
             builder.Entity<StenoIzin>(ConfigureStenoIzin);
-            builder.Entity<StenoGorev>(ConfigureStenoGorev);
+            builder.Entity<GorevAtama>(ConfigureStenoGorev);
             builder.Entity<Yasama>(ConfigureYasama);
             builder.Entity<Stenograf>(ConfigureStenograf);
             builder.Entity<Grup>(ConfigureGrup);
@@ -50,7 +50,7 @@ namespace TTBS.Infrastructure
             builder.Entity<AltKomisyon>(ConfigurealtKom);
             builder.Entity<StenografBeklemeSure>(ConfigureBeklemeSure);
             builder.Entity<OzelGorevTur>(ConfigureOzelGorevTur);
-            builder.Entity<OzelGorev>(ConfigureOzelGorev);
+            builder.Entity<OzelToplanma>(ConfigureOzelGorev);
             builder.Entity<Oturum>(ConfigureOturum);
         }
 

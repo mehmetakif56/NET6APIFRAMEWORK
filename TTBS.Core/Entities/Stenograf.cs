@@ -13,7 +13,7 @@ namespace TTBS.Core.Entities
         public StenoGorevTuru StenoGorevTuru { get; set; }
         public int SiraNo { get; set; }
         public virtual ICollection<StenoGrup> StenoGrups { get; set; }
-        public virtual ICollection<StenoGorev> StenoGorevs { get; set; }
+        public virtual ICollection<GorevAtama> GorevAtamas { get; set; }
         [NotMapped]
         public bool StenoGorevDurum { get; set;}
     }

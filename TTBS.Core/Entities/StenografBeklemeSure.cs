@@ -8,7 +8,7 @@ namespace TTBS.Core.Entities
     public class StenografBeklemeSure : BaseEntity
     {
         public Guid Id { get; set; }   
-        public PlanTuru PlanTuru { get; set; }
+        public ToplanmaTuru PlanTuru { get; set; }
         public int GorevOnceBeklemeSuresi { get; set; }
         public int GorevSonraBeklemeSuresi { get; set; }
     }

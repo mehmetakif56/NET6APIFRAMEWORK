@@ -8,7 +8,7 @@ using TTBS.Core.Enums;
 
 namespace TTBS.Core.Entities
 {
-    public class OzelGorev : BaseEntity
+    public class OzelToplanma : BaseEntity
     {
         public Guid Id { get; set; }
         public string Ad { get; set; }

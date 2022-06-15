@@ -6,7 +6,7 @@ namespace TTBS.Models
     public class StenoBeklemeSureModel
     {
         public Guid Id { get; set; }
-        public PlanTuru PlanTuru { get; set; }
+        public ToplanmaTuru ToplanmaTuru { get; set; }
         public int GorevOnceBeklemeSuresi { get; set; }
         public int GorevSonraBeklemeSuresi { get; set; }
 

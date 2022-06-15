@@ -41,10 +41,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseEntities\BaseEntities.cs" />
+    <Compile Include="Entities\KomisyonToplanma.cs" />
     <Compile Include="Entities\Oturum.cs" />
     <Compile Include="Entities\Grup.cs" />
     <Compile Include="Entities\AltKomisyon.cs" />
-    <Compile Include="Entities\OzelGorev.cs" />
+    <Compile Include="Entities\OzelToplanma.cs" />
     <Compile Include="Entities\OzelGorevTur.cs" />
     <Compile Include="Entities\StenografBeklemeSure.cs" />
     <Compile Include="Entities\StenoGrup.cs" />
@@ -53,19 +54,17 @@
     <Compile Include="Entities\Birlesim.cs" />
     <Compile Include="Entities\ClaimEntity.cs" />
     <Compile Include="Entities\Komisyon.cs" />
-    <Compile Include="Entities\StenoGorev.cs" />
+    <Compile Include="Entities\GorevAtama.cs" />
     <Compile Include="Entities\StenoIzin.cs" />
-    <Compile Include="Entities\StenoPlan.cs" />
     <Compile Include="Entities\UserRoleEntity.cs" />
     <Compile Include="Entities\RoleEntity.cs" />
     <Compile Include="Entities\RoleClaimEntity.cs" />
     <Compile Include="Entities\Donem.cs" />
     <Compile Include="Entities\UserEntity.cs" />
-    <Compile Include="Enums\PlanStatu.cs" />
     <Compile Include="Enums\GorevStatu.cs" />
     <Compile Include="Enums\IzınTuru.cs" />
     <Compile Include="Enums\KomisyonTipi.cs" />
-    <Compile Include="Enums\PlanTuru.cs" />
+    <Compile Include="Enums\ToplanmaTuru.cs" />
     <Compile Include="Enums\StenoGorevTuru.cs" />
     <Compile Include="Interfaces\IEntity.cs" />
     <Compile Include="Interfaces\IUnitOfWork.cs" />

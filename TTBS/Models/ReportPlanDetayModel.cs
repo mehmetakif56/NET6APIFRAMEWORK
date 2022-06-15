@@ -4,7 +4,7 @@ namespace TTBS.Models
 {
     public class ReportPlanDetayModel
     {
-        public PlanTuru GorevTuru { get; set; }
+        public ToplanmaTuru ToplanmaTuru { get; set; }
         public string  GorevAd { get; set; }
         public string GorevTarihi { get; set; }
         public string BasSaat { get; set; }

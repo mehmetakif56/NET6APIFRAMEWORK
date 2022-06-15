@@ -15,7 +15,7 @@ namespace TTBS.Core.Entities
         public string KatipUye_2 { get; set; }
         public bool KapaliOturum { get; set; }
         public bool YoklamaliMi { get; set; }
-        public StenoPlan StenoPlan { get; set; }
-        public Guid StenoPlanId { get; set; }
+        public Birlesim Birlesim { get; set; }
+        public Guid BirlesimId { get; set; }
     }
 }

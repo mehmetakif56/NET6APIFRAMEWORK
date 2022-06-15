@@ -13,8 +13,8 @@ namespace TTBS.Models
         public Guid StenografId { get; set; }
         public string AdSoyad { get; set; }
         public Guid StenoPlanId { get; set; }
-        public string GorevYeri { get; set; }
-        public string GorevAd { get; set; }
-        public PlanTuru GorevTuru { get; set; }
+        public string ToplanmaYeri { get; set; }
+        public string ToplanmaAd { get; set; }
+        public ToplanmaTuru ToplanmaTuru { get; set; }
     }
 }

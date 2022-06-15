@@ -26,14 +26,14 @@ namespace TTBS.Infrastructure
             builder.ToTable("Komisyon");
         }
 
-        private void ConfigureStenoPlan(EntityTypeBuilder<StenoPlan> builder)
+        private void ConfigureKomisyonToplanma(EntityTypeBuilder<KomisyonToplanma> builder)
         {
-            builder.ToTable("StenoPlan");
+            builder.ToTable("KomisyonToplanma");
         }
 
-        private void ConfigureStenoGorev(EntityTypeBuilder<StenoGorev> builder)
+        private void ConfigureStenoGorev(EntityTypeBuilder<GorevAtama> builder)
         {
-            builder.ToTable("StenoGorev");
+            builder.ToTable("GorevAtama");
         }
 
         private void ConfigureStenoIzin(EntityTypeBuilder<StenoIzin> builder)
@@ -63,7 +63,7 @@ namespace TTBS.Infrastructure
         {
             builder.ToTable("OzelGorevTur");
         }
-        private void ConfigureOzelGorev(EntityTypeBuilder<OzelGorev> builder)
+        private void ConfigureOzelGorev(EntityTypeBuilder<OzelToplanma> builder)
         {
             builder.ToTable("OzelGorev");
         }
