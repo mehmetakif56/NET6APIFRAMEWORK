@@ -18,10 +18,6 @@ namespace TTBS.Core.Entities
         public int UzmanStenoSayisi { get; set; }
         public string GorevYeri { get; set; }       
         public string GorevAd { get; set; }
-        public Birlesim Birlesim { get; set; }
-        public Guid? BirlesimId { get; set; }
-        public Komisyon Komisyon { get; set; }
-        public Guid? KomisyonId { get; set; }
         public virtual ICollection<StenoGorev> StenoGorevs { get; set; }
         public PlanTuru GorevTuru { get; set; }
         public PlanStatu GorevStatu { get; set; }

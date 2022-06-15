@@ -16,6 +16,8 @@ namespace TTBS.Infrastructure
 
         public DbSet<Donem> Donems { get; set; }
         public DbSet<Yasama> Yasamas { get; set; }
+        public DbSet<Birlesim> Birlesims { get; set; }
+        public DbSet<Komisyon> Komisyons { get; set; }
         public DbSet<StenoPlan> StenoPlans { get; set; }
         public DbSet<StenoGorev> StenoGorevs { get; set; }
         public DbSet<StenoIzin> StenoIzin { get; set; }
@@ -35,7 +37,8 @@ namespace TTBS.Infrastructure
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyBaseEntityConfiguration();
-
+            builder.Entity<Birlesim>(ConfigureBirlesim);
+            builder.Entity<Komisyon>(ConfigureKomisyon);
             builder.Entity<Donem>(ConfigureDonem);
             builder.Entity<StenoPlan>(ConfigureStenoPlan);
             builder.Entity<StenoIzin>(ConfigureStenoIzin);

@@ -9,7 +9,7 @@ namespace TTBS.Services
         IEnumerable<Yasama> GetAllYasama();
         IEnumerable<Birlesim> GetAllBirlesim();
         IEnumerable<Komisyon> GetAllKomisyon();
-        Birlesim GetBirlesimById(Guid id);
+        IEnumerable<Birlesim> GetBirlesimById(Guid id);
         Komisyon GetKomisyonById(Guid id);
         Donem GetDonemById(Guid id);
         Yasama GetYasamaById(Guid id);
@@ -82,7 +82,7 @@ namespace TTBS.Services
 
         public IEnumerable<Birlesim> GetAllBirlesim()
         {
-            return _birlesimRepo.GetAll();
+            return _birlesimRepo.GetAll(includeProperties: "Yasama");
         }
 
         public IEnumerable<Komisyon> GetAllKomisyon()
@@ -90,9 +90,9 @@ namespace TTBS.Services
             return _komisyonRepo.GetAll();
         }
 
-        public Birlesim GetBirlesimById(Guid id)
+        public IEnumerable<Birlesim> GetBirlesimById(Guid id)
         {
-            return _birlesimRepo.GetById(id);
+            return _birlesimRepo.Get(x=>x.Id ==id, includeProperties: "Yasama");
         }
 
         public Komisyon GetKomisyonById(Guid id)

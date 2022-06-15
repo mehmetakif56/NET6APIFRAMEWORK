@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TTBS.Infrastructure;
 
@@ -11,9 +12,10 @@ using TTBS.Infrastructure;
 namespace TTBS.Migrations
 {
     [DbContext(typeof(TTBSContext))]
-    partial class TTBSContextModelSnapshot : ModelSnapshot
+    [Migration("20220614130057_Birlesim")]
+    partial class Birlesim
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -703,6 +705,9 @@ namespace TTBS.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("BirlesimId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
@@ -733,6 +738,9 @@ namespace TTBS.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<Guid?>("KomisyonId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("ModifiedBy")
                         .HasColumnType("uniqueidentifier");
 
@@ -761,6 +769,10 @@ namespace TTBS.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BirlesimId");
+
+                    b.HasIndex("KomisyonId");
 
                     b.HasIndex("YasamaId");
 
@@ -1005,9 +1017,21 @@ namespace TTBS.Migrations
 
             modelBuilder.Entity("TTBS.Core.Entities.StenoPlan", b =>
                 {
+                    b.HasOne("TTBS.Core.Entities.Birlesim", "Birlesim")
+                        .WithMany("StenoPlans")
+                        .HasForeignKey("BirlesimId");
+
+                    b.HasOne("TTBS.Core.Entities.Komisyon", "Komisyon")
+                        .WithMany("StenoPlans")
+                        .HasForeignKey("KomisyonId");
+
                     b.HasOne("TTBS.Core.Entities.Yasama", null)
                         .WithMany("StenoPlans")
                         .HasForeignKey("YasamaId");
+
+                    b.Navigation("Birlesim");
+
+                    b.Navigation("Komisyon");
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.UserRoleEntity", b =>
@@ -1040,6 +1064,11 @@ namespace TTBS.Migrations
                     b.Navigation("Donem");
                 });
 
+            modelBuilder.Entity("TTBS.Core.Entities.Birlesim", b =>
+                {
+                    b.Navigation("StenoPlans");
+                });
+
             modelBuilder.Entity("TTBS.Core.Entities.ClaimEntity", b =>
                 {
                     b.Navigation("RoleClaims");
@@ -1058,6 +1087,8 @@ namespace TTBS.Migrations
             modelBuilder.Entity("TTBS.Core.Entities.Komisyon", b =>
                 {
                     b.Navigation("AltKomisyons");
+
+                    b.Navigation("StenoPlans");
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.RoleEntity", b =>

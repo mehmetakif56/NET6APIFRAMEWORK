@@ -13,6 +13,5 @@ namespace TTBS.Core.Entities
         public Donem Donem { get; set; }
         public Guid DonemId { get; set; }
         public virtual ICollection<Birlesim> Birlesims { get; set; }
-        public virtual ICollection<StenoPlan> StenoPlans { get; set; }
     }
 }

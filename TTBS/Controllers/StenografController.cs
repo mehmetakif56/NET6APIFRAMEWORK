@@ -240,11 +240,37 @@ namespace TTBS.Controllers
         }
 
         [HttpGet("GetAllStenografGroup")]
-        public IEnumerable<StenoGrupViewModel> GetAllStenografGroup()
+        public List<StenoGrupViewModel> GetAllStenografGroup()
         {
             var stenoEntity = _stenoService.GetAllStenografGroup();
-            var model = _mapper.Map<IEnumerable<StenoGrupViewModel>>(stenoEntity);
-            return model;
+            var lst =new List<StenoGrupViewModel>();
+
+            foreach (var item in stenoEntity.GroupBy(c => new {
+                c.GrupId,
+                c.Grup.Ad
+            }).Select(gcs => new StenoGrupViewModel()
+            {
+                GrupId = gcs.Key.GrupId,
+                GrupName = gcs.Key.Ad
+            }))
+            {
+                lst.Add(new StenoGrupViewModel { GrupId =item.GrupId,GrupName =item.GrupName} );
+            }
+            foreach (var item in lst) 
+            {
+                var steno = stenoEntity.Where(x => x.GrupId == item.GrupId).Select(cl => new StenoViewModel
+                {
+                    AdSoyad = cl.Stenograf.AdSoyad,
+                    Id = cl.Stenograf.Id,
+                    SonGorevSuresi = cl.Stenograf.StenoGorevs.Where(x=>x.GorevBasTarihi>=DateTime.Now.AddDays(-7)).Sum(c => c.GorevDakika)
+                }).ToList();
+                item.StenoViews = new List<StenoViewModel>();
+                foreach (var item2 in steno)
+                {
+                    item.StenoViews.Add(item2);
+                }
+            }
+            return lst;
         }
 
         [HttpGet("GetAllStenografByGorevTuru")]

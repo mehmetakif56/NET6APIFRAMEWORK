@@ -16,6 +16,16 @@ namespace TTBS.Infrastructure
             builder.ToTable("Yasama");
         }
 
+        private void ConfigureBirlesim(EntityTypeBuilder<Birlesim> builder)
+        {
+            builder.ToTable("Birlesim");
+        }
+
+        private void ConfigureKomisyon(EntityTypeBuilder<Komisyon> builder)
+        {
+            builder.ToTable("Komisyon");
+        }
+
         private void ConfigureStenoPlan(EntityTypeBuilder<StenoPlan> builder)
         {
             builder.ToTable("StenoPlan");

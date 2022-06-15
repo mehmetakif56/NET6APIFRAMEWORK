@@ -16,7 +16,6 @@ namespace TTBS.Core.Entities
         public DateTime? Tarih { get; set; }
         public KomisyonTipi KomisyonTipi { get; set; }
         public string Yeri { get; set; }
-        public virtual ICollection<StenoPlan> StenoPlans { get; set; }
         public virtual ICollection<AltKomisyon> AltKomisyons { get; set; }
     }
 }

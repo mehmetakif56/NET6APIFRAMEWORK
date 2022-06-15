@@ -17,12 +17,12 @@ namespace TTBS.Helper
                 .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.UserRoles.Select(x => x.Role.Name)));
             CreateMap<UserModel, UserEntity>();
 
-            CreateMap<StenoPlan, StenoPlanModel>()
-                 .ForMember(dest => dest.BirlesimList, opt => opt.MapFrom(src => new SelectListItem { Text = src.Birlesim.BirlesimNo, Value = src.BirlesimId.ToString() }))
-                 .ForMember(dest => dest.KomisyonList, opt => opt.MapFrom(src => new SelectListItem { Text = src.Komisyon.Ad, Value = src.KomisyonId.ToString() }));
-            CreateMap<StenoPlanModel, StenoPlan>()
-               .ForMember(dest => dest.BirlesimId, opt => opt.MapFrom(src => new Guid(src.BirlesimList.Value)))
-              .ForMember(dest => dest.KomisyonId, opt => opt.MapFrom(src => new Guid(src.KomisyonList.Value)));
+            //CreateMap<StenoPlan, StenoPlanModel>()
+            //     .ForMember(dest => dest.BirlesimList, opt => opt.MapFrom(src => new SelectListItem { Text = src.Birlesim.BirlesimNo, Value = src.BirlesimId.ToString() }))
+            //     .ForMember(dest => dest.KomisyonList, opt => opt.MapFrom(src => new SelectListItem { Text = src.Komisyon.Ad, Value = src.KomisyonId.ToString() }));
+            //CreateMap<StenoPlanModel, StenoPlan>()
+            //   .ForMember(dest => dest.BirlesimId, opt => opt.MapFrom(src => new Guid(src.BirlesimList.Value)))
+            //  .ForMember(dest => dest.KomisyonId, opt => opt.MapFrom(src => new Guid(src.KomisyonList.Value)));
 
 
             CreateMap<StenoIzinModel, StenoIzin>();
@@ -100,16 +100,16 @@ namespace TTBS.Helper
             //.ForMember(dest => dest.GorevDakika, opt => opt.MapFrom(src => src.GorevDakika.HasValue ? src.GorevDakika.Value.Hour*60+ src.GorevDakika.Value.Minute:0));
 
 
-            CreateMap<StenoGrupViewModel, StenoGrup>();
-            CreateMap<StenoGrup, StenoGrupViewModel>()
-                .ForMember(x => x.StenoViews, c => c.MapFrom(x => new[] { 
-                                                                         new StenoViewModel 
-                                                                         {
-                                                                             Id = x.Stenograf.Id,
-                                                                             AdSoyad =x.Stenograf.AdSoyad
-                                                                             //SonGorevSuresi =x.Stenograf.StenoGorevs.Where(x =>x.GorevBasTarihi.HasValue && x.GorevBasTarihi.Value >=DateTime.Now.AddDays(-7)).Sum(x=>x.GorevDakika)
-                                                                         } }))
-                .ForMember(x => x.GrupName, c => c.MapFrom(x => x.Grup.Ad));
+            //CreateMap<StenoGrupViewModel, StenoGrup>();
+            //CreateMap<StenoGrup, StenoGrupViewModel>()
+            //    .ForMember(x => x.StenoViews, c => c.MapFrom(x => new[] { 
+            //                                                             new StenoViewModel 
+            //                                                             {
+            //                                                                 Id = x.Stenograf.Id,
+            //                                                                 AdSoyad =x.Stenograf.AdSoyad
+            //                                                                 //SonGorevSuresi =x.Stenograf.StenoGorevs.Where(x =>x.GorevBasTarihi.HasValue && x.GorevBasTarihi.Value >=DateTime.Now.AddDays(-7)).Sum(x=>x.GorevDakika)
+            //                                                             } }))
+            //    .ForMember(x => x.GrupName, c => c.MapFrom(x => x.Grup.Ad));
 
         }
     }

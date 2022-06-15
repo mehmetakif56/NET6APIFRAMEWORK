@@ -76,7 +76,7 @@ namespace TTBS.Services
 
         public void CreateStenoPlan(StenoPlan entity)
         {
-            entity.KomisyonId = entity.KomisyonId ==Guid.Empty ? null : entity.KomisyonId;
+            //entity.KomisyonId = entity.KomisyonId ==Guid.Empty ? null : entity.KomisyonId;
             _stenoPlanRepo.Create(entity, CurrentUser.Id);
             _stenoPlanRepo.Save();
         }
@@ -305,7 +305,7 @@ namespace TTBS.Services
 
         public void UpdateStenoPlan(StenoPlan plan)
         {
-            plan.KomisyonId = plan.KomisyonId == Guid.Empty ? null : plan.KomisyonId;
+            //plan.KomisyonId = plan.KomisyonId == Guid.Empty ? null : plan.KomisyonId;
             _stenoPlanRepo.Update(plan,CurrentUser.Id);
             _stenoPlanRepo.Save();
         }
@@ -327,7 +327,7 @@ namespace TTBS.Services
 
         public IEnumerable<StenoGrup> GetAllStenografGroup()
         {
-            return _stenoGrupRepo.Get(includeProperties: "Grup,Stenograf");
+            return _stenoGrupRepo.Get(includeProperties: "Grup,Stenograf.StenoGorevs");
         }
     }
 }
