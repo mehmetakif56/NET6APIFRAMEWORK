@@ -246,11 +246,11 @@ namespace TTBS.Controllers
             var lst =new List<StenoGrupViewModel>();
 
             foreach (var item in stenoEntity.GroupBy(c => new {
-                c.GrupId,
-                c.Grup.Ad
+                c.Id,
+                c.Ad
             }).Select(gcs => new StenoGrupViewModel()
             {
-                GrupId = gcs.Key.GrupId,
+                GrupId = gcs.Key.Id,
                 GrupName = gcs.Key.Ad
             }))
             {
@@ -258,7 +258,7 @@ namespace TTBS.Controllers
             }
             foreach (var item in lst) 
             {
-                var steno = stenoEntity.Where(x => x.GrupId == item.GrupId).Select(cl => new StenoViewModel
+                var steno = stenoEntity.SelectMany(x=>x.StenoGrups).Where(x => x.GrupId == item.GrupId).Select(cl => new StenoViewModel
                 {
                     AdSoyad = cl.Stenograf.AdSoyad,
                     Id = cl.Stenograf.Id,

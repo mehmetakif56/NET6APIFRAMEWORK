@@ -39,7 +39,7 @@ namespace TTBS.Services
         IEnumerable<StenoGorev> GetAssignedStenoByPlanIdAndGrorevTur(Guid planId, int gorevturu);
         IEnumerable<StenoGorev> GetIntersectStenoPlan(Guid stenoPlanId, Guid stenoId);
         void UpdateStenoSiraNo(List<Stenograf> steno);
-        IEnumerable<StenoGrup> GetAllStenografGroup();
+        IEnumerable<Grup> GetAllStenografGroup();
     }
     public class StenografService : BaseService, IStenografService
     {
@@ -325,9 +325,9 @@ namespace TTBS.Services
            
         }
 
-        public IEnumerable<StenoGrup> GetAllStenografGroup()
+        public IEnumerable<Grup> GetAllStenografGroup()
         {
-            return _stenoGrupRepo.Get(includeProperties: "Grup,Stenograf.StenoGorevs");
+            return _grupRepo.Get(includeProperties: "StenoGrups.Stenograf.StenoGorevs");
         }
     }
 }
