@@ -244,7 +244,7 @@ namespace TTBS.Services
         public Guid CreateOturum(Oturum oturum)
         {
             var otr = _oturumRepo.Get(x => x.BirlesimId == oturum.BirlesimId);
-            if (otr != null)
+            if (otr != null && otr.Count()>0)
                 oturum.OturumNo = otr.Max(x => x.OturumNo) + 1;
             _oturumRepo.Create(oturum, CurrentUser.Id);
             _oturumRepo.Save();
