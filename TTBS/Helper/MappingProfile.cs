@@ -17,26 +17,9 @@ namespace TTBS.Helper
                 .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.UserRoles.Select(x => x.Role.Name)));
             CreateMap<UserModel, UserEntity>();
 
-
-            CreateMap<KomisyonToplanmaModel, KomisyonToplanma>();
-            CreateMap<KomisyonToplanma, KomisyonToplanmaModel>();
-
-            //CreateMap<StenoPlan, StenoPlanModel>()
-            //     .ForMember(dest => dest.BirlesimList, opt => opt.MapFrom(src => new SelectListItem { Text = src.Birlesim.BirlesimNo, Value = src.BirlesimId.ToString() }))
-            //     .ForMember(dest => dest.KomisyonList, opt => opt.MapFrom(src => new SelectListItem { Text = src.Komisyon.Ad, Value = src.KomisyonId.ToString() }));
-            //CreateMap<StenoPlanModel, StenoPlan>()
-            //   .ForMember(dest => dest.BirlesimId, opt => opt.MapFrom(src => new Guid(src.BirlesimList.Value)))
-            //  .ForMember(dest => dest.KomisyonId, opt => opt.MapFrom(src => new Guid(src.KomisyonList.Value)));
-
-
             CreateMap<StenoIzinModel, StenoIzin>();
             CreateMap<StenoIzin, StenoIzinModel>()
                 .ForMember(dest => dest.StenografAdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad));
-
-            //CreateMap<StenoPlan, StenoPlanOlusturModel>();
-            //CreateMap<StenoPlanOlusturModel, StenoPlan>();
-            //CreateMap<StenoPlan, StenoPlanGüncelleModel>();
-            //CreateMap<StenoPlanGüncelleModel, StenoPlan>();
 
             //CreateMap<GorevAtama, ReportPlanModel>();
             //CreateMap<ReportPlanModel, GorevAtama>();
@@ -52,6 +35,9 @@ namespace TTBS.Helper
 
             CreateMap<BirlesimModel, Birlesim>();
             CreateMap<Birlesim, BirlesimModel>();
+
+            CreateMap<OturumModel, Oturum>();
+            CreateMap<Oturum, OturumModel>();
 
             CreateMap<KomisyonModel, Komisyon>();
             CreateMap<Komisyon, KomisyonModel>();

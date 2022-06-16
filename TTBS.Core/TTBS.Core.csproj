@@ -41,7 +41,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseEntities\BaseEntities.cs" />
-    <Compile Include="Entities\KomisyonToplanma.cs" />
     <Compile Include="Entities\Oturum.cs" />
     <Compile Include="Entities\Grup.cs" />
     <Compile Include="Entities\AltKomisyon.cs" />

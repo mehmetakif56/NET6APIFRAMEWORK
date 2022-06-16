@@ -16,7 +16,7 @@ namespace TTBS.Services
         void CreateDonem(Donem donem);
         void CreateYasama(Yasama donem);
         void CreateBirlesim(Birlesim birlesim);
-        void CreateOturum(Oturum oturum);
+        Guid CreateOturum(Oturum oturum);
         void CreateKomisyon(Komisyon komisyon);
         void CreateGrup(Grup grup);
         IEnumerable<Grup> GetAllGrup();
@@ -38,6 +38,7 @@ namespace TTBS.Services
         OzelGorevTur GetOzelGorevTurById(Guid id);
         void DeleteOturum(Oturum oturum);
         void UpdateOturum(Oturum oturum);
+        void UpdateBirlesim(Birlesim birlesim);
         IEnumerable<Oturum> GetOturumByBirlesimId(Guid id);
     }
     public class GlobalService : BaseService, IGlobalService
@@ -240,10 +241,14 @@ namespace TTBS.Services
             return _ozelGorevTurRepo.GetById(id);
         }
 
-        public void CreateOturum(Oturum oturum)
+        public Guid CreateOturum(Oturum oturum)
         {
+            var otr = _oturumRepo.Get(x => x.BirlesimId == oturum.BirlesimId);
+            if (otr != null)
+                oturum.OturumNo = otr.Max(x => x.OturumNo) + 1;
             _oturumRepo.Create(oturum, CurrentUser.Id);
             _oturumRepo.Save();
+            return oturum.Id;
         }
 
         public void UpdateOturum(Oturum oturum)
@@ -261,6 +266,12 @@ namespace TTBS.Services
         {
             _oturumRepo.Delete(oturum);
             _oturumRepo.Save();
+        }
+
+        public void UpdateBirlesim(Birlesim birlesim)
+        {
+            _birlesimRepo.Update(birlesim, CurrentUser.Id);
+            _birlesimRepo.Save();
         }
     }
 }

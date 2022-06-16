@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TTBS.Infrastructure;
 
@@ -11,9 +12,10 @@ using TTBS.Infrastructure;
 namespace TTBS.Migrations
 {
     [DbContext(typeof(TTBSContext))]
-    partial class TTBSContextModelSnapshot : ModelSnapshot
+    [Migration("20220616083824_BirleimKomm")]
+    partial class BirleimKomm
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -398,8 +400,8 @@ namespace TTBS.Migrations
                     b.Property<string>("OturumBaskan")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("OturumNo")
-                        .HasColumnType("int");
+                    b.Property<string>("OturumNo")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("YoklamaliMi")
                         .HasColumnType("bit");

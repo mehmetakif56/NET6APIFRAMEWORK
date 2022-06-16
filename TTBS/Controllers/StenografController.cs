@@ -11,44 +11,21 @@ namespace TTBS.Controllers
     public class StenografController : BaseController<StenografController>
     {
         private readonly IStenografService _stenoService;
+        private readonly IGlobalService _globalService;
         private readonly ILogger<StenografController> _logger;
         public readonly IMapper _mapper;
 
-        public StenografController(IStenografService stenoService, ILogger<StenografController> logger, IMapper mapper)
+        public StenografController(IStenografService stenoService, IGlobalService globalService, ILogger<StenografController> logger, IMapper mapper)
         {
             _stenoService = stenoService;
+            _globalService = globalService;
             _logger = logger;
             _mapper = mapper;
         }
         #region KomisyonToplanma
 
 
-        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
-        [HttpGet("GetKomisyonToplanma")]
-        public IEnumerable<KomisyonToplanmaModel> GetKomisyonToplanma()
-        {
-            var stenoEntity = _stenoService.GetKomisyonToplanma();
-            var model = _mapper.Map<IEnumerable<KomisyonToplanmaModel>>(stenoEntity);
-            return model;
-        }
-
-        [HttpPost("CreateKomisyonToplanma")]
-        public IActionResult CreateKomisyonToplanma(KomisyonToplanmaModel model)
-        {
-            try
-            {
-                var entity = Mapper.Map<KomisyonToplanma>(model);
-                _stenoService.CreateKomisyonToplanma(entity);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-
-            return Ok();
-
-        }
-
+      
         //[HttpGet("GetStenoPlanByStatus")]
         //public List<StenoPlanModel> GetStenoPlanByStatus(int status=0)
         //{
@@ -182,10 +159,18 @@ namespace TTBS.Controllers
         [HttpPost("CreateStenoGorevAtama")]
         public IActionResult CreateStenoGorevAtama(StenoGorevAtamaModel model)
         {
+            if(model.StenografIds == null)
+                return BadRequest("Stenograf Listesi Dolu Olmalıdır!");
             try
             {
-                    var entity = Mapper.Map<GorevAtama>(model);
-                    _stenoService.CreateStenoGorev(entity);             
+                var birlesim = _globalService.GetBirlesimById(model.BirlesimId).FirstOrDefault();
+                birlesim.TurAdedi = model.TurAdedi;
+                _globalService.UpdateBirlesim(birlesim);
+
+                model.OturumId = model.OturumId == Guid.Empty ? _globalService.CreateOturum(new Oturum { BirlesimId = model.BirlesimId, BaslangicTarihi = DateTime.Now }): model.OturumId;
+
+                var entity = Mapper.Map<GorevAtama>(model);
+               _stenoService.CreateStenoGorevAtama(entity);             
             }
             catch (Exception ex)
             { return BadRequest(ex.Message); }

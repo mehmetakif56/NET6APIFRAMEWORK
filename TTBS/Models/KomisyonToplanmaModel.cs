@@ -9,6 +9,6 @@ namespace TTBS.Models
         public string Yeri { get; set; }
         public decimal StenoSure { get; set; }
         public decimal UzmanStenoSure { get; set; }
-        public DateTime? PlanlananBaslangicTarihi { get; set; }
+        public DateTime? BaslangicTarihi { get; set; }
     }
 }

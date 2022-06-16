@@ -7,9 +7,6 @@ namespace TTBS.Services
 {
     public interface IStenografService
     {
-        IEnumerable<KomisyonToplanma> GetKomisyonToplanma();
-        void CreateKomisyonToplanma(KomisyonToplanma komisyonToplanma);
-        //void DeleteStenoPlan(Guid id);
         IEnumerable<StenoIzin> GetAllStenoIzin();
         IEnumerable<StenoIzin> GetStenoIzinByStenografId(Guid id);
         IEnumerable<StenoIzin> GetStenoIzinByName(string adSoyad);
@@ -18,7 +15,7 @@ namespace TTBS.Services
         IEnumerable<GorevAtama> GetStenoGorevByName(string adSoyad);
         IEnumerable<GorevAtama> GetStenoGorevByDateAndStatus(DateTime gorevBasTarihi,DateTime gorevBitTarihi, int status);
         //IEnumerable<GorevAtama> GetStenoGorevByStenografAndDate(Guid stenografId, DateTime gorevBasTarihi, DateTime gorevBitTarihi);
-        void CreateStenoGorev(GorevAtama stenoGorev);
+        void CreateStenoGorevAtama(GorevAtama stenoGorev);
         void UpdateStenoGorev(List<GorevAtama> stenoGorev);
         void CreateStenoIzin(StenoIzin stenoGorev);
         //IEnumerable<GorevAtama> GetStenoGorevByPlanId(Guid id);
@@ -43,7 +40,6 @@ namespace TTBS.Services
     }
     public class StenografService : BaseService, IStenografService
     {
-        private IRepository<KomisyonToplanma> _komisyonToplanmaRepo;
         private IRepository<StenoIzin> _stenoIzinRepo;
         private IRepository<GorevAtama> _stenoGorevRepo;
         private IUnitOfWork _unitWork;
@@ -51,7 +47,7 @@ namespace TTBS.Services
         private IRepository<StenoGrup> _stenoGrupRepo;
         private IRepository<StenografBeklemeSure> _stenoBeklemeSure;
         private IRepository<Grup> _grupRepo;
-        public StenografService(IRepository<KomisyonToplanma> komisyonToplanmaRepo,IRepository<StenoIzin> stenoIzinRepo, IRepository<GorevAtama> stenoGorevRepo,
+        public StenografService(IRepository<StenoIzin> stenoIzinRepo, IRepository<GorevAtama> stenoGorevRepo,
                                 IUnitOfWork unitWork,
                                 IRepository<Stenograf> stenografRepo,
                                 IRepository<StenoGrup> stenoGrupRepo,
@@ -59,7 +55,6 @@ namespace TTBS.Services
                                 IRepository<Grup> grupRepo,
                                 IServiceProvider provider) : base(provider)
         {
-            _komisyonToplanmaRepo = komisyonToplanmaRepo;
             _stenoIzinRepo = stenoIzinRepo;
             _stenoGorevRepo = stenoGorevRepo;
             _unitWork = unitWork;
@@ -127,10 +122,18 @@ namespace TTBS.Services
             return _stenoGorevRepo.Get(x => x.GorevBasTarihi>= gorevBasTarihi && x.GorevBitisTarihi <= gorevBitTarihi && (int)x.GorevStatu == statu, includeProperties: "Stenograf");
         }
 
-        public void CreateStenoGorev(GorevAtama entity)
+        public void CreateStenoGorevAtama(GorevAtama entity)
         {
-            _stenoGorevRepo.Create(entity, CurrentUser.Id);
-            _stenoGorevRepo.Save();
+            foreach (var item in entity.StenografIds)
+            {
+                var newEntity = new GorevAtama();
+                newEntity.BirlesimId = entity.BirlesimId;
+                newEntity.OturumId = entity.OturumId;
+                newEntity.StenografId = item;
+                newEntity.GorevStatu = GorevStatu.Planlandı;
+                _stenoGorevRepo.Create(newEntity, CurrentUser.Id);
+                _stenoGorevRepo.Save();
+            }
         }
 
         public void UpdateStenoGorev(List<GorevAtama> entityList)
@@ -190,7 +193,7 @@ namespace TTBS.Services
         }
         public IEnumerable<Stenograf> GetAllStenografByGorevTuru(int gorevTuru)
         {
-            return _stenografRepo.Get(x => (int)x.StenoGorevTuru == gorevTuru,includeProperties:"StenoGorevs");
+            return _stenografRepo.Get(x => (int)x.StenoGorevTuru == gorevTuru,includeProperties:"GorevAtamas");
         }
       
         public void DeleteStenoGorev(Guid stenoGorevId)
@@ -206,7 +209,7 @@ namespace TTBS.Services
 
         public IEnumerable<GorevAtama> GetStenoGorevByGrupId(Guid id)
         {
-            return _stenoGrupRepo.Get(x=>x.GrupId == id,  includeProperties: "Stenograf.StenoGorevs").SelectMany(x=>x.Stenograf.GorevAtamas);
+            return _stenoGrupRepo.Get(x=>x.GrupId == id,  includeProperties: "Stenograf.GorevAtamas").SelectMany(x=>x.Stenograf.GorevAtamas);
         }
         
         public void CreateStenoGroup(StenoGrup entity)
@@ -287,13 +290,6 @@ namespace TTBS.Services
         //    return allList;
         //}
 
-        //public void UpdateStenoPlan(StenoPlan plan)
-        //{
-        //    //plan.KomisyonId = plan.KomisyonId == Guid.Empty ? null : plan.KomisyonId;
-        //    _stenoPlanRepo.Update(plan,CurrentUser.Id);
-        //    _stenoPlanRepo.Save();
-        //}
-
         //public IEnumerable<GorevAtama> GetAssignedStenoByPlanIdAndGrorevTur(Guid planId, int gorevturu)
         //{
         //    return _stenoGorevRepo.Get(x => x.StenoPlanId == planId && (int)x.Stenograf.StenoGorevTuru == gorevturu, includeProperties: "Stenograf");
@@ -311,18 +307,9 @@ namespace TTBS.Services
 
         public IEnumerable<Grup> GetAllStenografGroup()
         {
-            return _grupRepo.Get(includeProperties: "StenoGrups.Stenograf.StenoGorevs");
+            return _grupRepo.Get(includeProperties: "StenoGrups.Stenograf.GorevAtamas");
         }
 
-        public IEnumerable<KomisyonToplanma> GetKomisyonToplanma()
-        {
-            return _komisyonToplanmaRepo.GetAll();
-        }
-
-        public void CreateKomisyonToplanma(KomisyonToplanma komisyonToplanma)
-        {
-            _komisyonToplanmaRepo.Create(komisyonToplanma);
-            _komisyonToplanmaRepo.Save();
-        }
+       
     }
 }

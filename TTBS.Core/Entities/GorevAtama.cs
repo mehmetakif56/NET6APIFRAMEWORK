@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using TTBS.Core.BaseEntities;
 using TTBS.Core.Enums;
 
@@ -15,12 +17,10 @@ namespace TTBS.Core.Entities
         public Guid StenografId { get; set; }
         public Stenograf Stenograf { get; set; }
         public GorevStatu GorevStatu { get; set; }
-        public KomisyonToplanma KomisyonToplanma { get; set; }
-        public Guid KomisyonToplanmaId { get; set; } = Guid.Empty;
+        public Guid OturumId { get; set; }
         public Birlesim Birlesim { get; set; }
-        public Guid BirlesimId { get; set; } = Guid.Empty;
-        public OzelToplanma OzelToplanma { get; set; }
-        public Guid OzelToplanmaId { get; set; } = Guid.Empty;
-        public ToplanmaTuru ToplanmaTuru { get; set; }
+        public Guid BirlesimId { get; set; }
+        [NotMapped]
+        public List<Guid> StenografIds { get; set; }
     }
 }

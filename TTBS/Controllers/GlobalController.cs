@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using TTBS.Core.Entities;
+using TTBS.Core.Enums;
 using TTBS.Models;
 using TTBS.Services;
 
@@ -11,12 +12,14 @@ namespace TTBS.Controllers
     public class GlobalController : BaseController<GlobalController>
     {
         private readonly IGlobalService _globalService;
+        private readonly IStenografService _stenoService;
         private readonly ILogger<GlobalController> _logger;
         public readonly IMapper _mapper;
 
-        public GlobalController(IGlobalService globalService, ILogger<GlobalController> logger, IMapper mapper)
+        public GlobalController(IGlobalService globalService, IStenografService stenoService,ILogger<GlobalController> logger, IMapper mapper)
         {
             _globalService = globalService;
+            _stenoService = stenoService;
             _logger = logger;
             _mapper = mapper;
         }
@@ -98,10 +101,26 @@ namespace TTBS.Controllers
         [HttpPost("CreateBirlesim")]
         public IActionResult CreateBirlesim(BirlesimModel model)
         {
-            var entity = Mapper.Map<Birlesim>(model);
-            _globalService.CreateBirlesim(entity);
-            return Ok(entity);
-
+            try
+            {
+                var entity = Mapper.Map<Birlesim>(model);
+                _globalService.CreateBirlesim(entity);
+                if (model.ToplanmaTuru == ToplanmaTuru.GenelKurul)
+                {
+                    var stenoGorevAtamaModel = new StenoGorevAtamaModel()
+                    {
+                        BirlesimId = entity.Id,
+                        OturumId = _globalService.CreateOturum(new Oturum { BirlesimId = entity.Id,  BaslangicTarihi = DateTime.Now }),
+                        StenografIds = _stenoService.GetAllStenografByGroupId(null).Select(x => x.Id).ToList()
+                    };
+                    var atamaEntity = Mapper.Map<GorevAtama>(stenoGorevAtamaModel);
+                    _stenoService.CreateStenoGorevAtama(atamaEntity);
+                }
+            }
+            catch (Exception ex)
+            { return BadRequest(ex.Message); }
+            
+            return Ok();
         }
         #endregion
 
@@ -113,7 +132,7 @@ namespace TTBS.Controllers
             var entity = Mapper.Map<Oturum>(model);
             _globalService.CreateOturum(entity);
             return Ok(entity);
-
+            
         }
 
         [HttpGet("GetOturumByBirlesimId")]
