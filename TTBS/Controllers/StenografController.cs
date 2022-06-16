@@ -105,13 +105,13 @@ namespace TTBS.Controllers
             return model;
         }
 
-        //[HttpGet("GetStenoGorevByPlanId")]
-        //public List<StenoGorevModel> GetStenoGorevByPlanId(Guid planId)
-        //{
-        //    var stenoEntity = _stenoService.GetStenoGorevByPlanId(planId);
-        //    var model = _mapper.Map<List<StenoGorevModel>>(stenoEntity);
-        //    return model;
-        //}
+        [HttpGet("GetStenoGorevByBirlesimId")]
+        public List<StenoGorevModel> GetStenoGorevByBirlesimId(Guid birlesimId)
+        {
+            var stenoEntity = _stenoService.GetStenoGorevByBirlesimId(birlesimId);
+            var model = _mapper.Map<List<StenoGorevModel>>(stenoEntity);
+            return model;
+        }
 
         [HttpGet("GetStenoGorevByName")]
         public IEnumerable<StenoGorevModel> GetStenoGorevByName(string adSoyad)
@@ -137,24 +137,7 @@ namespace TTBS.Controllers
         //    return model;
         //}
 
-        //[HttpPost("CreateStenoGorev")]
-        //public IActionResult CreateStenoGorev(List<StenoGorevModel> model)
-        //{
-        //    try
-        //    {
-        //        foreach (var item in model)
-        //        {
-        //            var entity = Mapper.Map<StenoGorev>(item);
-        //            _stenoService.CreateStenoGorev(entity);                   
-        //        }
-        //    }
-        //    catch(Exception ex)
-        //    { return BadRequest(ex.Message); }
-
-        //    return Ok();
-
-
-        //}
+      
 
         [HttpPost("CreateStenoGorevAtama")]
         public IActionResult CreateStenoGorevAtama(StenoGorevAtamaModel model)

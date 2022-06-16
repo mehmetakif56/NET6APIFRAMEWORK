@@ -18,7 +18,7 @@ namespace TTBS.Services
         void CreateStenoGorevAtama(GorevAtama stenoGorev);
         void UpdateStenoGorev(List<GorevAtama> stenoGorev);
         void CreateStenoIzin(StenoIzin stenoGorev);
-        //IEnumerable<GorevAtama> GetStenoGorevByPlanId(Guid id);
+        IEnumerable<GorevAtama> GetStenoGorevByBirlesimId(Guid id);
         //List<StenoPlan> GetStenoPlanByStatus(int status);
         //IEnumerable<StenoPlan> GetStenoPlanByDateAndStatus(DateTime gorevTarihi, DateTime gorevBitTarihi, int gorevTuru);
         List<GorevAtama> GetStenoGorevBySatatus(int status);
@@ -148,10 +148,10 @@ namespace TTBS.Services
             _stenoIzinRepo.Save();
         }
 
-        //public IEnumerable<GorevAtama> GetStenoGorevByPlanId(Guid id)
-        //{
-        //    return _stenoGorevRepo.Get(x=>x.StenoPlanId == id,includeProperties: "StenoPlan,Stenograf");
-        //}
+        public IEnumerable<GorevAtama> GetStenoGorevByBirlesimId(Guid id)
+        {
+            return _stenoGorevRepo.Get(x => x.BirlesimId == id, includeProperties: "Stenograf,Oturum,Birlesim");
+        }
 
         //public List<StenoPlan> GetStenoPlanByStatus(int status)
         //{

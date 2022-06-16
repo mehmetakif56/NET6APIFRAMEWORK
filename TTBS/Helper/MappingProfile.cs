@@ -21,17 +21,17 @@ namespace TTBS.Helper
             CreateMap<StenoIzin, StenoIzinModel>()
                 .ForMember(dest => dest.StenografAdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad));
 
-            //CreateMap<GorevAtama, ReportPlanModel>();
-            //CreateMap<ReportPlanModel, GorevAtama>();
+            CreateMap<GorevAtama, ReportPlanModel>();
+            CreateMap<ReportPlanModel, GorevAtama>();
 
-            //CreateMap<GorevAtama, ReportPlanDetayModel>()
-            //     .ForMember(dest => dest.GorevTarihi, opt => opt.MapFrom(src => src.StenoPlan.PlanlananBaslangicTarihi.HasValue ? src.StenoPlan.PlanlananBaslangicTarihi.Value.ToShortDateString() : ""))
-            //     .ForMember(dest => dest.BasSaat, opt => opt.MapFrom(src => src.StenoPlan.PlanlananBaslangicTarihi.HasValue ? src.StenoPlan.PlanlananBaslangicTarihi.Value.ToShortTimeString() : ""))
-            //     .ForMember(dest => dest.Bitissaat, opt => opt.MapFrom(src => src.StenoPlan.PlanlananBitisTarihi.HasValue ? src.StenoPlan.PlanlananBitisTarihi.Value.ToShortTimeString() : ""))
-            //     .ForMember(dest => dest.ToplamSure, opt => opt.MapFrom(src => src.StenoPlan.PlanlananBitisTarihi.HasValue && src.StenoPlan.PlanlananBaslangicTarihi.HasValue ? (src.StenoPlan.PlanlananBitisTarihi.Value - src.StenoPlan.PlanlananBaslangicTarihi.Value).TotalMinutes : 0))
-            //     .ForMember(dest => dest.NetSure, opt => opt.MapFrom(src => 0))
-            //     .ForMember(dest => dest.Ara, opt => opt.MapFrom(src => 0));
-            //CreateMap<ReportPlanDetayModel, GorevAtama>();
+            CreateMap<Birlesim, ReportPlanDetayModel>()
+                 .ForMember(dest => dest.GorevTarihi, opt => opt.MapFrom(src => src.BaslangicTarihi.HasValue ? src.BaslangicTarihi.Value.ToShortDateString() : ""))
+                 .ForMember(dest => dest.BasSaat, opt => opt.MapFrom(src => src.BaslangicTarihi.HasValue ? src.BaslangicTarihi.Value.ToShortTimeString() : ""))
+                 .ForMember(dest => dest.Bitissaat, opt => opt.MapFrom(src => src.BitisTarihi.HasValue ? src.BitisTarihi.Value.ToShortTimeString() : ""))
+                 .ForMember(dest => dest.ToplamSure, opt => opt.MapFrom(src => src.BitisTarihi.HasValue && src.BaslangicTarihi.HasValue ? (src.BitisTarihi.Value - src.BaslangicTarihi.Value).TotalMinutes : 0))
+                 .ForMember(dest => dest.NetSure, opt => opt.MapFrom(src => 0))
+                 .ForMember(dest => dest.Ara, opt => opt.MapFrom(src => 0));
+            CreateMap<ReportPlanDetayModel, Birlesim>();
 
             CreateMap<BirlesimModel, Birlesim>();
             CreateMap<Birlesim, BirlesimModel>();

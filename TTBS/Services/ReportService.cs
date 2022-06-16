@@ -5,30 +5,30 @@ namespace TTBS.Services
 {
     public interface IReportService
     {
-        //IEnumerable<GorevAtama> GetReportStenoPlanBetweenDateGorevTur(DateTime gorevBasTarihi, DateTime gorevBitTarihi, int gorevTuru);
-        //IEnumerable<GorevAtama> GetStenoGorevByStenografAndDate(Guid stenografId, DateTime gorevBasTarihi, DateTime gorevBitTarihi);
+        IEnumerable<Birlesim> GetReportStenoPlanBetweenDateGorevTur(DateTime gorevBasTarihi, DateTime gorevBitTarihi, int gorevTuru);
+        IEnumerable<GorevAtama> GetStenoGorevByStenografAndDate(Guid stenografId, DateTime gorevBasTarihi, DateTime gorevBitTarihi);
     }
     public class ReportService : BaseService, IReportService
     {
-        //private IRepository<StenoPlan> _stenoPlanRepo;
+        private IRepository<Birlesim> _birlesimRepo;
         private IRepository<GorevAtama> _stenoGorevRepo;
 
-        public ReportService(/*IRepository<StenoPlan> stenoPlanRepo,*/
+        public ReportService(IRepository<Birlesim> birlesimRepo, 
                              IRepository<GorevAtama> stenoGorevRepo,
                              IServiceProvider provider) : base(provider)
         {
-            //_stenoPlanRepo = stenoPlanRepo;
+           _birlesimRepo=birlesimRepo;
             _stenoGorevRepo = stenoGorevRepo;
         }
 
-        //public IEnumerable<GorevAtama> GetReportStenoPlanBetweenDateGorevTur(DateTime gorevBasTarihi, DateTime gorevBitTarihi, int gorevTuru)
-        //{
-        //    return _stenoGorevRepo.Get(x => x.StenoPlan.PlanlananBaslangicTarihi >= gorevBasTarihi && x.StenoPlan.PlanlananBitisTarihi <= gorevBitTarihi && (int)x.StenoPlan.GorevTuru == gorevTuru, includeProperties: "StenoPlan");
-        //}
+        public IEnumerable<Birlesim> GetReportStenoPlanBetweenDateGorevTur(DateTime gorevBasTarihi, DateTime gorevBitTarihi, int gorevTuru)
+        {
+            return _birlesimRepo.Get(x => x.BaslangicTarihi >= gorevBasTarihi && x.BitisTarihi <= gorevBitTarihi && (int)x.ToplanmaTuru == gorevTuru);
+        }
 
-        //public IEnumerable<GorevAtama> GetStenoGorevByStenografAndDate(Guid stenografId, DateTime gorevBasTarihi, DateTime gorevBitTarihi)
-        //{
-        //    return _stenoGorevRepo.Get(x => x.StenografId == stenografId && x.StenoPlan.PlanlananBaslangicTarihi >= gorevBasTarihi && x.StenoPlan.PlanlananBitisTarihi <= gorevBitTarihi, includeProperties: "StenoPlan");
-        //}
+        public IEnumerable<GorevAtama> GetStenoGorevByStenografAndDate(Guid stenografId, DateTime gorevBasTarihi, DateTime gorevBitTarihi)
+        {
+            return _stenoGorevRepo.Get(x => x.StenografId == stenografId && x.Birlesim.BaslangicTarihi >= gorevBasTarihi && x.Birlesim.BitisTarihi <= gorevBitTarihi, includeProperties: "Oturum.Birlesim");
+        }
     }
 }

@@ -19,6 +19,7 @@ namespace TTBS.Core.Entities
         public GorevStatu GorevStatu { get; set; }
         public Guid OturumId { get; set; }
         public Birlesim Birlesim { get; set; }
+        public Oturum Oturum { get; set; }
         public Guid BirlesimId { get; set; }
         [NotMapped]
         public List<Guid> StenografIds { get; set; }

@@ -12,7 +12,7 @@ namespace TTBS.Models
         public int GorevSaniye { get; set; }
         public Guid StenografId { get; set; }
         public string AdSoyad { get; set; }
-        public Guid StenoPlanId { get; set; }  
+        public Guid BirlesimId { get; set; }  
         public int SiraNo { get; set; }
         public DateTime? SonGorevTarihi { get; set; }
         public int SonGorevSuresi { get; set; }
