@@ -12,6 +12,5 @@ namespace TTBS.Models
         public DateTime? SonGorevTarihi { get; set; }
         public int SonGorevSuresi { get; set; }
         public bool StenoGorevDurum { get; set; }
-
     }
 }

@@ -33,7 +33,7 @@ namespace TTBS.Services
         //List<Stenograf> GetAvaliableStenoBetweenDateBySteno(DateTime basTarihi, DateTime bitTarihi, int stenografId, int toplantiTur);
         //void UpdateStenoPlan(StenoPlan plan);
         //IEnumerable<Stenograf> GetAvaliableStenoBetweenDateByGroup(DateTime basTarihi, DateTime bitTarihi, Guid groupId, int toplantiTur);
-        //IEnumerable<GorevAtama> GetAssignedStenoByPlanIdAndGrorevTur(Guid planId, int gorevturu);
+        IEnumerable<GorevAtama> GetAssignedStenoByBirlesimId(Guid birlesimId);
         //IEnumerable<GorevAtama> GetIntersectStenoPlan(Guid stenoPlanId, Guid stenoId);
         void UpdateStenoSiraNo(List<Stenograf> steno);
         IEnumerable<Grup> GetAllStenografGroup();
@@ -171,6 +171,7 @@ namespace TTBS.Services
                 return _stenoGrupRepo.Get(includeProperties: "Stenograf").Select(x => x.Stenograf);
         }
 
+
         public IEnumerable<Stenograf> GetStenoGorevByTur(int gorevTuru)
         {
             return _stenografRepo.Get(x => (int)x.StenoGorevTuru == gorevTuru);
@@ -290,10 +291,10 @@ namespace TTBS.Services
         //    return allList;
         //}
 
-        //public IEnumerable<GorevAtama> GetAssignedStenoByPlanIdAndGrorevTur(Guid planId, int gorevturu)
-        //{
-        //    return _stenoGorevRepo.Get(x => x.StenoPlanId == planId && (int)x.Stenograf.StenoGorevTuru == gorevturu, includeProperties: "Stenograf");
-        //}
+        public IEnumerable<GorevAtama> GetAssignedStenoByBirlesimId(Guid birlesimId)
+        {
+            return _stenoGorevRepo.Get(x => x.BirlesimId == birlesimId, includeProperties: "Stenograf");
+        }
 
         public void UpdateStenoSiraNo(List<Stenograf> stenoList)
         {
@@ -310,6 +311,6 @@ namespace TTBS.Services
             return _grupRepo.Get(includeProperties: "StenoGrups.Stenograf.GorevAtamas");
         }
 
-       
+      
     }
 }

@@ -90,6 +90,13 @@ namespace TTBS.Helper
             //.ForMember(dest => dest.GorevDakika, opt => opt.MapFrom(src => src.GorevDakika.HasValue ? src.GorevDakika.Value.Hour*60+ src.GorevDakika.Value.Minute:0));
 
 
+
+            CreateMap<GorevAtama, StenoModel>()
+               .ForMember(dest => dest.AdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad))
+               .ForMember(dest => dest.SiraNo, opt => opt.MapFrom(src => src.Stenograf.SiraNo));
+            CreateMap<StenoModel, GorevAtama>();
+            //.ForMember(dest => dest.GorevDakika, opt 
+
             //CreateMap<StenoGrupViewModel, StenoGrup>();
             //CreateMap<StenoGrup, StenoGrupViewModel>()
             //    .ForMember(x => x.StenoViews, c => c.MapFrom(x => new[] { 
