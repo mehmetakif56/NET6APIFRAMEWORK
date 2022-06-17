@@ -268,6 +268,19 @@ namespace TTBS.Controllers
             return Ok();
         }
 
+        [HttpDelete("DeleteGorevByBirlesimIdAndStenoId")]
+        public IActionResult DeleteGorevByBirlesimIdAndStenoId(Guid birlesimId,Guid stenografId)
+        {
+            try
+            {
+                _stenoService.DeleteGorevByBirlesimIdAndStenoId(birlesimId, stenografId);
+            }
+            catch (Exception ex)
+            { return BadRequest(ex.Message); }
+
+            return Ok();
+        }
+
         [HttpPost("CreateStenoGroup")]
         public IActionResult CreateStenoGroup(StenoGrupModel model)
         {

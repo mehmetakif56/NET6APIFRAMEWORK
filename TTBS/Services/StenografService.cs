@@ -26,6 +26,7 @@ namespace TTBS.Services
         void CreateStenograf(Stenograf stenograf);
         IEnumerable<Stenograf> GetAllStenografByGorevTuru(int gorevTuru);
         void DeleteStenoGorev(Guid stenoGorevId);
+        void DeleteGorevByBirlesimIdAndStenoId(Guid birlesimId, Guid stenografId);
         IEnumerable<GorevAtama> GetStenoGorevByGrupId(Guid id);
         void CreateStenoGroup(StenoGrup stenograf);
         void DeleteStenoGroup(StenoGrup stenograf);
@@ -311,6 +312,15 @@ namespace TTBS.Services
             return _grupRepo.Get(includeProperties: "StenoGrups.Stenograf.GorevAtamas");
         }
 
-      
+        public void DeleteGorevByBirlesimIdAndStenoId(Guid birlesimId, Guid stenografId)
+        {
+            var gorev = _stenoGorevRepo.Get(x => x.BirlesimId == birlesimId && x.StenografId == stenografId && x.Birlesim.BitisTarihi == null, includeProperties: "Birlesim");
+            if(gorev!= null && gorev.Count() > 0)
+            {
+                _stenoGorevRepo.Delete(gorev.FirstOrDefault());
+                _stenoGorevRepo.Save();
+            }
+           
+        }
     }
 }
