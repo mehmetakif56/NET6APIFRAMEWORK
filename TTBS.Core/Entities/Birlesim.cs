@@ -23,5 +23,6 @@ namespace TTBS.Core.Entities
         public string Yeri { get; set; }
         public ToplanmaTuru ToplanmaTuru { get; set; }
         public int TurAdedi { get; set; }
+        public GorevStatu ToplanmaDurumu { get; set; }
     }
 }

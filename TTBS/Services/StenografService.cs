@@ -14,13 +14,13 @@ namespace TTBS.Services
         IEnumerable<GorevAtama> GetStenoGorevById(Guid id);
         IEnumerable<GorevAtama> GetStenoGorevByName(string adSoyad);
         IEnumerable<GorevAtama> GetStenoGorevByDateAndStatus(DateTime gorevBasTarihi,DateTime gorevBitTarihi, int status);
-        //IEnumerable<GorevAtama> GetStenoGorevByStenografAndDate(Guid stenografId, DateTime gorevBasTarihi, DateTime gorevBitTarihi);
+        IEnumerable<GorevAtama> GetStenoGorevByStenografAndDate(Guid stenografId, DateTime gorevBasTarihi, DateTime gorevBitTarihi);
         void CreateStenoGorevAtama(GorevAtama stenoGorev);
         void UpdateStenoGorev(List<GorevAtama> stenoGorev);
         void CreateStenoIzin(StenoIzin stenoGorev);
         IEnumerable<GorevAtama> GetStenoGorevByBirlesimId(Guid id);
         //List<StenoPlan> GetStenoPlanByStatus(int status);
-        //IEnumerable<StenoPlan> GetStenoPlanByDateAndStatus(DateTime gorevTarihi, DateTime gorevBitTarihi, int gorevTuru);
+        IEnumerable<Birlesim> GetBirlesimByDateAndTur(DateTime gorevTarihi, DateTime gorevBitTarihi, int gorevTuru);
         List<GorevAtama> GetStenoGorevBySatatus(int status);
         IEnumerable<Stenograf> GetAllStenografByGroupId(Guid? groupId);
         void CreateStenograf(Stenograf stenograf);
@@ -42,6 +42,7 @@ namespace TTBS.Services
     public class StenografService : BaseService, IStenografService
     {
         private IRepository<StenoIzin> _stenoIzinRepo;
+        private IRepository<Birlesim> _birlesimRepo;
         private IRepository<GorevAtama> _stenoGorevRepo;
         private IUnitOfWork _unitWork;
         private IRepository<Stenograf> _stenografRepo;
@@ -54,6 +55,7 @@ namespace TTBS.Services
                                 IRepository<StenoGrup> stenoGrupRepo,
                                 IRepository<StenografBeklemeSure> stenoBeklemeSure,
                                 IRepository<Grup> grupRepo,
+                                IRepository<Birlesim> birlesimRepo,
                                 IServiceProvider provider) : base(provider)
         {
             _stenoIzinRepo = stenoIzinRepo;
@@ -62,6 +64,7 @@ namespace TTBS.Services
             _stenografRepo = stenografRepo;
             _stenoGrupRepo = stenoGrupRepo;
             _stenoBeklemeSure = stenoBeklemeSure;
+            _birlesimRepo = birlesimRepo;
             _grupRepo = grupRepo;
         }
        
@@ -183,10 +186,10 @@ namespace TTBS.Services
             return _stenoGorevRepo.Get(x=>x.Stenograf.AdSoyad == adSoyad,includeProperties: "Stenograf");
         }
 
-        //public IEnumerable<StenoPlan> GetStenoPlanByDateAndStatus(DateTime gorevBasTarihi, DateTime gorevBitTarihi,int gorevTuru)
-        //{
-        //    return _stenoPlanRepo.Get(x => x.PlanlananBaslangicTarihi >= gorevBasTarihi && x.PlanlananBitisTarihi <= gorevBitTarihi && (int)x.GorevTuru == gorevTuru);
-        //}
+        public IEnumerable<Birlesim> GetBirlesimByDateAndTur(DateTime basTarihi, DateTime bitTarihi, int toplanmaTuru)
+        {
+            return _birlesimRepo.Get(x => x.BaslangicTarihi >= basTarihi && x.BitisTarihi <= bitTarihi && (int)x.ToplanmaTuru == toplanmaTuru);
+        }
 
         public void CreateStenograf(Stenograf entity)
         {

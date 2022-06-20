@@ -25,7 +25,7 @@ namespace TTBS.Controllers
         #region KomisyonToplanma
 
 
-      
+
         //[HttpGet("GetStenoPlanByStatus")]
         //public List<StenoPlanModel> GetStenoPlanByStatus(int status=0)
         //{
@@ -34,13 +34,13 @@ namespace TTBS.Controllers
         //    return model;
         //}
 
-        //[HttpGet("GetStenoPlanByDateAndStatus")]
-        //public List<StenoPlanModel> GetStenoPlanByDateAndStatus(DateTime gorevTarihi, DateTime gorevBitTarihi, int gorevTuru)
-        //{
-        //    var stenoEntity = _stenoService.GetStenoPlanByDateAndStatus(gorevTarihi, gorevBitTarihi, gorevTuru);
-        //    var model = _mapper.Map<List<StenoPlanModel>>(stenoEntity);
-        //    return model;
-        //}
+        [HttpGet("GetStenoPlanByDateAndStatus")]
+        public List<BirlesimViewModel> GetBirlesimByDateAndTur(DateTime gorevTarihi, DateTime gorevBitTarihi, int gorevTuru)
+        {
+            var stenoEntity = _stenoService.GetBirlesimByDateAndTur(gorevTarihi, gorevBitTarihi, gorevTuru);
+            var model = _mapper.Map<List<BirlesimViewModel>>(stenoEntity);
+            return model;
+        }
 
 
         //[HttpGet("GetIntersectStenoPlan")]
@@ -129,15 +129,15 @@ namespace TTBS.Controllers
             return model;
         }
 
-        //[HttpGet("GetStenoGorevByStenografAndDate")]
-        //public IEnumerable<StenoGorevModel> GetStenoGorevByStenografAndDate(Guid stenografId, DateTime gorevBasTarihi, DateTime gorevBitTarihi)
-        //{
-        //    var stenoEntity = _stenoService.GetStenoGorevByStenografAndDate(stenografId, gorevBasTarihi, gorevBitTarihi);
-        //    var model = _mapper.Map<IEnumerable<StenoGorevModel>>(stenoEntity);
-        //    return model;
-        //}
+        [HttpGet("GetStenoGorevByStenografAndDate")]
+        public IEnumerable<StenoGorevModel> GetStenoGorevByStenografAndDate(Guid stenografId, DateTime gorevBasTarihi, DateTime gorevBitTarihi)
+        {
+            var stenoEntity = _stenoService.GetStenoGorevByStenografAndDate(stenografId, gorevBasTarihi, gorevBitTarihi);
+            var model = _mapper.Map<IEnumerable<StenoGorevModel>>(stenoEntity);
+            return model;
+        }
 
-      
+
 
         [HttpPost("CreateStenoGorevAtama")]
         public IActionResult CreateStenoGorevAtama(StenoGorevAtamaModel model)

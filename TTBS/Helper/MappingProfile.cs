@@ -72,6 +72,9 @@ namespace TTBS.Helper
             CreateMap<OzelGorevTurModel, OzelGorevTur>();
             CreateMap<OzelGorevTur, OzelGorevTurModel>();
 
+            CreateMap<Birlesim, BirlesimViewModel>();
+            CreateMap<BirlesimViewModel, Birlesim>();
+
             //CreateMap<OturumModel, Oturum>();
             //CreateMap<Oturum, OturumModel>()
             //     .ForMember(dest => dest.GorevAd, opt => opt.MapFrom(src => src.StenoPlan.GorevAd));
@@ -85,8 +88,7 @@ namespace TTBS.Helper
 
             CreateMap<GorevAtama, StenoGorevModel>()
                .ForMember(dest => dest.AdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad))
-               .ForMember(dest => dest.SiraNo, opt => opt.MapFrom(src => src.Stenograf.SiraNo))
-               .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Stenograf.Id));
+               .ForMember(dest => dest.SiraNo, opt => opt.MapFrom(src => src.Stenograf.SiraNo));
             CreateMap<StenoGorevModel, GorevAtama>();
             //.ForMember(dest => dest.GorevDakika, opt => opt.MapFrom(src => src.GorevDakika.HasValue ? src.GorevDakika.Value.Hour*60+ src.GorevDakika.Value.Minute:0));
 
@@ -94,7 +96,8 @@ namespace TTBS.Helper
 
             CreateMap<GorevAtama, StenoModel>()
                .ForMember(dest => dest.AdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad))
-               .ForMember(dest => dest.SiraNo, opt => opt.MapFrom(src => src.Stenograf.SiraNo));
+               .ForMember(dest => dest.SiraNo, opt => opt.MapFrom(src => src.Stenograf.SiraNo))
+               .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Stenograf.Id));
             CreateMap<StenoModel, GorevAtama>();
             //.ForMember(dest => dest.GorevDakika, opt 
 
