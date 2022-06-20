@@ -314,7 +314,7 @@ namespace TTBS.Services
 
         public void DeleteGorevByBirlesimIdAndStenoId(Guid birlesimId, Guid stenografId)
         {
-            var gorev = _stenoGorevRepo.Get(x => x.BirlesimId == birlesimId && x.StenografId == stenografId && x.Birlesim.BitisTarihi == null, includeProperties: "Birlesim");
+            var gorev = _stenoGorevRepo.Get(x => x.BirlesimId == birlesimId && x.StenografId == stenografId && x.Birlesim.BitisTarihi == null);
             if(gorev!= null && gorev.Count() > 0)
             {
                 _stenoGorevRepo.Delete(gorev.FirstOrDefault());

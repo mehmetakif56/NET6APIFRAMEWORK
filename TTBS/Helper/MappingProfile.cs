@@ -85,7 +85,8 @@ namespace TTBS.Helper
 
             CreateMap<GorevAtama, StenoGorevModel>()
                .ForMember(dest => dest.AdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad))
-               .ForMember(dest => dest.SiraNo, opt => opt.MapFrom(src => src.Stenograf.SiraNo));
+               .ForMember(dest => dest.SiraNo, opt => opt.MapFrom(src => src.Stenograf.SiraNo))
+               .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Stenograf.Id));
             CreateMap<StenoGorevModel, GorevAtama>();
             //.ForMember(dest => dest.GorevDakika, opt => opt.MapFrom(src => src.GorevDakika.HasValue ? src.GorevDakika.Value.Hour*60+ src.GorevDakika.Value.Minute:0));
 
