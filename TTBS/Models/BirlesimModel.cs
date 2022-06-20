@@ -13,7 +13,7 @@ namespace TTBS.Models
         public Guid KomisyonId { get; set; } = Guid.Empty;
         public Guid? AltKomisyonId { get; set; } = Guid.Empty;
         public string Yeri { get; set; }
-        public ToplanmaTuru ToplanmaTuru { get; set; } 
-
+        public ToplanmaTuru ToplanmaTuru { get; set; }
+        public GorevStatu ToplanmaDurumu { get; set; }
     }
 }
