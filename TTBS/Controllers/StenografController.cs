@@ -153,7 +153,7 @@ namespace TTBS.Controllers
                 model.OturumId = model.OturumId == Guid.Empty ? _globalService.CreateOturum(new Oturum { BirlesimId = model.BirlesimId, BaslangicTarihi = DateTime.Now }): model.OturumId;
 
                 var entity = Mapper.Map<GorevAtama>(model);
-               _stenoService.CreateStenoGorevAtama(entity);             
+               _stenoService.CreateStenoGorevAtama(entity,birlesim);             
             }
             catch (Exception ex)
             { return BadRequest(ex.Message); }

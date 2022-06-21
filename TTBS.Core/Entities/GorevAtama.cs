@@ -23,5 +23,11 @@ namespace TTBS.Core.Entities
         public Guid BirlesimId { get; set; }
         [NotMapped]
         public List<Guid> StenografIds { get; set; }
+
+        [NotMapped]
+        public double DifMin { get; set; }
+        [NotMapped]
+        public bool ToplantiVar { get; set; }
+
     }
 }

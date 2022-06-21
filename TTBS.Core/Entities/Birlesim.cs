@@ -15,9 +15,9 @@ namespace TTBS.Core.Entities
         public Yasama Yasama { get; set; }
         public Guid YasamaId { get; set; }
         [Column(TypeName = "decimal(18,2)")]
-        public decimal StenoSure { get; set; }
+        public double StenoSure { get; set; }
         [Column(TypeName = "decimal(18,2)")]
-        public decimal UzmanStenoSure { get; set; }
+        public double UzmanStenoSure { get; set; }
         public Guid KomisyonId { get; set; } = Guid.Empty;
         public Guid? AltKomisyonId { get; set; } = Guid.Empty;
         public string Yeri { get; set; }

@@ -103,18 +103,18 @@ namespace TTBS.Controllers
         {
             try
             {
-                var entity = Mapper.Map<Birlesim>(model);
-                _globalService.CreateBirlesim(entity);
+                var birlesimEntity = Mapper.Map<Birlesim>(model);
+                _globalService.CreateBirlesim(birlesimEntity);
                 if (model.ToplanmaTuru == ToplanmaTuru.GenelKurul)
                 {
                     var stenoGorevAtamaModel = new StenoGorevAtamaModel()
                     {
-                        BirlesimId = entity.Id,
-                        OturumId = _globalService.CreateOturum(new Oturum { BirlesimId = entity.Id,  BaslangicTarihi = DateTime.Now }),
+                        BirlesimId = birlesimEntity.Id,
+                        OturumId = _globalService.CreateOturum(new Oturum { BirlesimId = birlesimEntity.Id,  BaslangicTarihi = DateTime.Now }),
                         StenografIds = _stenoService.GetAllStenografByGroupId(null).Select(x => x.Id).ToList()
                     };
                     var atamaEntity = Mapper.Map<GorevAtama>(stenoGorevAtamaModel);
-                    _stenoService.CreateStenoGorevAtama(atamaEntity);
+                    _stenoService.CreateStenoGorevAtama(atamaEntity, birlesimEntity);
                 }
             }
             catch (Exception ex)

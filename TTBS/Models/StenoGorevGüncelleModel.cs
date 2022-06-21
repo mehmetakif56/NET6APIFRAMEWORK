@@ -9,6 +9,6 @@ namespace TTBS.Models
         public DateTime? GorevBasTarihi { get; set; }
         public DateTime? GorevBitisTarihi { get; set; }
         public Guid StenografId { get; set; }
-        public Guid StenoPlanId { get; set; }
+        public Guid BirlesimId { get; set; }
     }
 }

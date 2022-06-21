@@ -17,5 +17,8 @@ namespace TTBS.Models
         public DateTime? SonGorevTarihi { get; set; }
         public int SonGorevSuresi { get; set; }
         public GorevStatu GorevStatu { get; set; }
+        public double DifMin { get; set; }
+        public bool StenoToplantiVar { get; set; }
+        public bool UzmanStenoToplantiVar { get; set; }
     }
 }

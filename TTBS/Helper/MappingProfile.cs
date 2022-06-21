@@ -2,6 +2,7 @@
 using TTBS.Core.Entities;
 using TTBS.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using TTBS.Core.Enums;
 
 namespace TTBS.Helper
 {
@@ -88,7 +89,10 @@ namespace TTBS.Helper
 
             CreateMap<GorevAtama, StenoGorevModel>()
                .ForMember(dest => dest.AdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad))
-               .ForMember(dest => dest.SiraNo, opt => opt.MapFrom(src => src.Stenograf.SiraNo));
+               .ForMember(dest => dest.SiraNo, opt => opt.MapFrom(src => src.Stenograf.SiraNo))
+                .ForMember(dest => dest.StenoToplantiVar, opt => 
+                                                       opt.MapFrom(src => src.Birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul &&  src.DifMin<=60 && src.DifMin>0 ? true:
+                                                       (src.Birlesim.ToplanmaTuru == ToplanmaTuru.Komisyon && src.DifMin<=src.Birlesim.StenoSure*9 && src.DifMin > 0) ? true:false));
             CreateMap<StenoGorevModel, GorevAtama>();
             //.ForMember(dest => dest.GorevDakika, opt => opt.MapFrom(src => src.GorevDakika.HasValue ? src.GorevDakika.Value.Hour*60+ src.GorevDakika.Value.Minute:0));
 
