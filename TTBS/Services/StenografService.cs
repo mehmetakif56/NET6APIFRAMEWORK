@@ -161,29 +161,25 @@ namespace TTBS.Services
 
         public IEnumerable<GorevAtama> GetStenoGorevByBirlesimId(Guid id)
         {
-            var stenoList = _stenoGorevRepo.Get(x => x.BirlesimId == id, includeProperties: "Stenograf,Oturum,Birlesim");
-            var stenoOtherList = _stenoGorevRepo.Get(includeProperties: "Stenograf,Oturum,Birlesim");
+            var joinList = _stenoGorevRepo.Get(x => x.BirlesimId == id, includeProperties: "Stenograf,Oturum,Birlesim");
+            //var Bar = _stenoGorevRepo.Get(includeProperties: "Stenograf,Oturum,Birlesim");
 
-            var joinList = from steno in stenoList
-                       join st in stenoOtherList on steno.StenografId equals st.StenografId
-                       into stenoAll
-                       from st in stenoAll.DefaultIfEmpty()
-                       select   new GorevAtama 
-                                { 
-                                 Id=steno.Id, 
-                                 GorevBasTarihi = steno.GorevBasTarihi,
-                                 GorevBitisTarihi = steno.GorevBitisTarihi,
-                                 GorevStatu = steno.GorevStatu,
-                                 OturumId=steno.OturumId,
-                                 BirlesimId=steno.BirlesimId,
-                                 StenografId =steno.StenografId,
-                                 Stenograf =steno.Stenograf,
-                                 Oturum =steno.Oturum,
-                                 Birlesim =steno.Birlesim,
-                                 DifMin = st.GorevBasTarihi.HasValue ?  st.GorevBasTarihi.Value.Subtract(steno.GorevBasTarihi.Value).TotalMinutes :-1                               
-                               };
+            //var qry = Foo.GroupJoin(
+            //          Bar,
+            //          foo => foo.StenografId,
+            //          bar => bar.StenografId,
+            //          (x, y) => new { Foo = x, Bars = y })
+            //       .SelectMany(
+            //           x => x.Bars.DefaultIfEmpty(),
+            //           (x, y) => new { Foo = x.Foo}).Select(x=>x.Foo);
+
+            //var joinList = from steno in Foo
+            //               join st in Bar on steno.StenografId equals st.StenografId
+            //               into stenoAll
+            //               from subst in stenoAll.DefaultIfEmpty()
+            //               select steno;
             //var result = stenoList.Join(stenoList, sc => sc.StenografId, soc => soc.StenografId, (sc, soc) => new { sc, soc })
-            //                      .Where(z=>z.soc.StenografId == z.sc.StenografId && z.soc.BirlesimId != id).Select(z=>new {lst =z.sc}).Select(x=>x.lst);
+            //                      .Where(z => z.soc.StenografId == z.sc.StenografId && z.soc.BirlesimId != id).Select(z => new { lst = z.sc }).Select(x => x.lst);
             return joinList;
         }
 
