@@ -19,6 +19,6 @@ namespace TTBS.Models
         public GorevStatu GorevStatu { get; set; }
         public double DifMin { get; set; }
         public bool StenoToplantiVar { get; set; }
-        public bool UzmanStenoToplantiVar { get; set; }
+        public IzınTuru StenoIzinTuru { get; set; }
     }
 }

@@ -28,6 +28,8 @@ namespace TTBS.Core.Entities
         public double DifMin { get; set; }
         [NotMapped]
         public bool ToplantiVar { get; set; }
+        [NotMapped]
+        public IzınTuru StenoIzinTuru { get; set; }
 
     }
 }

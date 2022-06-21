@@ -14,6 +14,7 @@ namespace TTBS.Core.Entities
         public int SiraNo { get; set; }
         public virtual ICollection<StenoGrup> StenoGrups { get; set; }
         public virtual ICollection<GorevAtama> GorevAtamas { get; set; }
+        public virtual ICollection<StenoIzin> StenoIzins { get; set; }
         [NotMapped]
         public bool StenoGorevDurum { get; set;}
     }

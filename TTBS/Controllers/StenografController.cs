@@ -106,10 +106,10 @@ namespace TTBS.Controllers
         }
 
         [HttpGet("GetStenoGorevByBirlesimId")]
-        public List<StenoGorevModel> GetStenoGorevByBirlesimId(Guid birlesimId)
+        public List<StenoGorevModel> GetStenoGorevByBirlesimId(Guid birlesimId, int gorevTuru)
         {
             var lst = new List<StenoGorevModel>();
-            var stenoEntity = _stenoService.GetStenoGorevByBirlesimId(birlesimId);
+            var stenoEntity = _stenoService.GetStenoGorevByBirlesimId(gorevTuru);
             var model = _mapper.Map<List<StenoGorevModel>>(stenoEntity);
 
             foreach (var item in model.Where(x=>x.BirlesimId == birlesimId))
@@ -118,8 +118,12 @@ namespace TTBS.Controllers
                                             x.GorevBasTarihi.Value.Subtract(item.GorevBasTarihi.Value).TotalMinutes>0 &&
                                             x.GorevBasTarihi.Value.Subtract(item.GorevBasTarihi.Value).TotalMinutes <= 60);
                 item.StenoToplantiVar =rs !=null && rs.Count()>0 ?true : false;
+                var iz = stenoEntity.Where(x => x.BirlesimId == item.BirlesimId && x.StenografId == item.StenografId).SelectMany(x => x.Stenograf.StenoIzins)
+                                   .Where(x => x.BaslangicTarihi.Value <= item.GorevBasTarihi.Value &&
+                                             x.BitisTarihi.Value >= item.GorevBasTarihi.Value);
+                item.StenoIzinTuru =iz!=null && iz.Count()>0 ? iz.Select(x=>x.IzinTuru).FirstOrDefault() : 0;
+  
                 lst.Add(item);
-
             }
        
             return lst;

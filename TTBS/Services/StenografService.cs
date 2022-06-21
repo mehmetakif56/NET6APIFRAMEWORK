@@ -18,7 +18,7 @@ namespace TTBS.Services
         void CreateStenoGorevAtama(GorevAtama stenoGorev,Birlesim birlesim);
         void UpdateStenoGorev(List<GorevAtama> stenoGorev);
         void CreateStenoIzin(StenoIzin stenoGorev);
-        IEnumerable<GorevAtama> GetStenoGorevByBirlesimId(Guid id);
+        IEnumerable<GorevAtama> GetStenoGorevByBirlesimId(int gorevTuru);
         //List<StenoPlan> GetStenoPlanByStatus(int status);
         IEnumerable<Birlesim> GetBirlesimByDateAndTur(DateTime gorevTarihi, DateTime gorevBitTarihi, int gorevTuru);
         List<GorevAtama> GetStenoGorevBySatatus(int status);
@@ -159,9 +159,12 @@ namespace TTBS.Services
             _stenoIzinRepo.Save();
         }
 
-        public IEnumerable<GorevAtama> GetStenoGorevByBirlesimId(Guid id)
+        public IEnumerable<GorevAtama> GetStenoGorevByBirlesimId(int gorevTuru)
         {
-            return _stenoGorevRepo.Get(x => x.Birlesim.ToplanmaDurumu == GorevStatu.Planlandı || x.Birlesim.ToplanmaDurumu == GorevStatu.DevamEdiyor  , includeProperties: "Stenograf,Oturum,Birlesim");
+            return _stenoGorevRepo.Get(x => (int)x.Stenograf.StenoGorevTuru == gorevTuru && 
+                                       (x.Birlesim.ToplanmaDurumu == GorevStatu.Planlandı || 
+                                       x.Birlesim.ToplanmaDurumu == GorevStatu.DevamEdiyor)  , 
+                                       includeProperties: "Stenograf.StenoIzins,Birlesim");
             //var Bar = _stenoGorevRepo.Get(includeProperties: "Stenograf,Oturum,Birlesim");
 
             //var joinList = from steno in Foo
