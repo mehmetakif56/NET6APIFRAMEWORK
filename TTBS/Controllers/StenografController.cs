@@ -108,9 +108,21 @@ namespace TTBS.Controllers
         [HttpGet("GetStenoGorevByBirlesimId")]
         public List<StenoGorevModel> GetStenoGorevByBirlesimId(Guid birlesimId)
         {
+            var lst = new List<StenoGorevModel>();
             var stenoEntity = _stenoService.GetStenoGorevByBirlesimId(birlesimId);
             var model = _mapper.Map<List<StenoGorevModel>>(stenoEntity);
-            return model;
+
+            foreach (var item in model.Where(x=>x.BirlesimId == birlesimId))
+            {
+                var rs = stenoEntity.Where(x=>x.BirlesimId !=item.BirlesimId && x.StenografId == item.StenografId &&
+                                            x.GorevBasTarihi.Value.Subtract(item.GorevBasTarihi.Value).TotalMinutes>0 &&
+                                            x.GorevBasTarihi.Value.Subtract(item.GorevBasTarihi.Value).TotalMinutes <= 60);
+                item.StenoToplantiVar =rs !=null && rs.Count()>0 ?true : false;
+                lst.Add(item);
+
+            }
+       
+            return lst;
         }
 
         [HttpGet("GetStenoGorevByName")]
