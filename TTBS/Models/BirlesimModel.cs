@@ -15,5 +15,6 @@ namespace TTBS.Models
         public string Yeri { get; set; }
         public ToplanmaTuru ToplanmaTuru { get; set; }
         public GorevStatu ToplanmaDurumu { get; set; }
+
     }
 }

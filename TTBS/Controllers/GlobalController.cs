@@ -104,6 +104,7 @@ namespace TTBS.Controllers
             try
             {
                 var birlesimEntity = Mapper.Map<Birlesim>(model);
+                birlesimEntity.TurAdedi = 3;
                 _globalService.CreateBirlesim(birlesimEntity);
                 if (model.ToplanmaTuru == ToplanmaTuru.GenelKurul)
                 {

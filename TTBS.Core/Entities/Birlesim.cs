@@ -22,7 +22,7 @@ namespace TTBS.Core.Entities
         public Guid? AltKomisyonId { get; set; } = Guid.Empty;
         public string Yeri { get; set; }
         public ToplanmaTuru ToplanmaTuru { get; set; }
-        public int TurAdedi { get; set; }
+        public int TurAdedi { get; set; } = 3;
         public GorevStatu ToplanmaDurumu { get; set; }
     }
 }

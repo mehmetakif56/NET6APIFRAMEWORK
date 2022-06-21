@@ -129,18 +129,22 @@ namespace TTBS.Services
         public void CreateStenoGorevAtama(GorevAtama entity, Birlesim birlesim)
         {
             int firstRec = 0;
-            foreach (var item in entity.StenografIds)
+            for (int i = 0; i < birlesim.TurAdedi; i++)
             {
-                var newEntity = new GorevAtama();
-                newEntity.BirlesimId = entity.BirlesimId;
-                newEntity.OturumId = entity.OturumId;
-                newEntity.StenografId = item;
-                newEntity.GorevStatu = GorevStatu.Planlandı;
-                newEntity.GorevBasTarihi = birlesim.BaslangicTarihi.HasValue? birlesim.BaslangicTarihi.Value.AddMinutes(firstRec * birlesim.StenoSure) :null;
-                _stenoGorevRepo.Create(newEntity, CurrentUser.Id);
-                _stenoGorevRepo.Save();
-                firstRec++;
+                foreach (var item in entity.StenografIds)
+                {
+                    var newEntity = new GorevAtama();
+                    newEntity.BirlesimId = entity.BirlesimId;
+                    newEntity.OturumId = entity.OturumId;
+                    newEntity.StenografId = item;
+                    newEntity.GorevStatu = GorevStatu.Planlandı;
+                    newEntity.GorevBasTarihi = birlesim.BaslangicTarihi.HasValue ? birlesim.BaslangicTarihi.Value.AddMinutes(firstRec * birlesim.StenoSure) : null;
+                    _stenoGorevRepo.Create(newEntity, CurrentUser.Id);
+                    _stenoGorevRepo.Save();
+                    firstRec++;
+                }
             }
+          
         }
 
         public void UpdateStenoGorev(List<GorevAtama> entityList)
