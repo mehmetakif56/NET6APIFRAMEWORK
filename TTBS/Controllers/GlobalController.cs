@@ -103,7 +103,7 @@ namespace TTBS.Controllers
         {
             try
             {
-                var mevcutBirlesim = _globalService.GetBirlesimByDate(model.BaslangicTarihi);
+                var mevcutBirlesim = model.ToplanmaTuru == ToplanmaTuru.GenelKurul ? _globalService.GetBirlesimByDate(model.BaslangicTarihi) :false;
                 if(!mevcutBirlesim)
                 {
                     var birlesimEntity = Mapper.Map<Birlesim>(model);
