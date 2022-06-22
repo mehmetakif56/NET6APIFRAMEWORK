@@ -17,5 +17,9 @@ namespace TTBS.Core.Entities
         public virtual ICollection<StenoIzin> StenoIzins { get; set; }
         [NotMapped]
         public bool StenoGorevDurum { get; set;}
+        [NotMapped]
+        public DateTime? SonGorevTarihi { get; set; }
+        [NotMapped]
+        public int SonGorevSuresi { get; set; }
     }
 }

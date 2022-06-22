@@ -12,7 +12,8 @@ namespace TTBS.Models
         public decimal UzmanStenoSure { get; set; }
         public Guid KomisyonId { get; set; } = Guid.Empty;
         public Guid? AltKomisyonId { get; set; } = Guid.Empty;
-        public string Yeri { get; set; }
+        public Guid? OzelToplanmaId { get; set; } = Guid.Empty;
+        public string Yeri { get; set; } = String.Empty;
         public ToplanmaTuru ToplanmaTuru { get; set; }
         public GorevStatu ToplanmaDurumu { get; set; }
 

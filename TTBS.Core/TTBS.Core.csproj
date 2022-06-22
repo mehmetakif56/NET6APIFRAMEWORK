@@ -63,6 +63,7 @@
     <Compile Include="Enums\GorevStatu.cs" />
     <Compile Include="Enums\IzınTuru.cs" />
     <Compile Include="Enums\KomisyonTipi.cs" />
+    <Compile Include="Enums\ToplanmaBaslatmaStatu.cs" />
     <Compile Include="Enums\ToplanmaTuru.cs" />
     <Compile Include="Enums\StenoGorevTuru.cs" />
     <Compile Include="Interfaces\IEntity.cs" />

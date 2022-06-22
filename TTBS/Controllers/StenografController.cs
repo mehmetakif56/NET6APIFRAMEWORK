@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using TTBS.Core.Entities;
+using TTBS.Core.Enums;
 using TTBS.Models;
 using TTBS.Services;
 
@@ -106,21 +107,29 @@ namespace TTBS.Controllers
         }
 
         [HttpGet("GetStenoGorevByBirlesimId")]
-        public List<StenoGorevModel> GetStenoGorevByBirlesimId(Guid birlesimId, int gorevTuru)
+        public List<StenoGorevModel> GetStenoGorevByBirlesimId(Guid birlesimId,int gorevturu)
         {
             var lst = new List<StenoGorevModel>();
-            var stenoEntity = _stenoService.GetStenoGorevByBirlesimId(gorevTuru);
-            var model = _mapper.Map<List<StenoGorevModel>>(stenoEntity);
+            var stenoEntity = _stenoService.GetStenoGorevByBirlesimId(gorevturu);
+            var birlesimList = stenoEntity.Where(x=>x.BirlesimId == birlesimId).ToList();
+            var model = _mapper.Map<List<StenoGorevModel>>(birlesimList);
 
-            foreach (var item in model.Where(x=>x.BirlesimId == birlesimId))
+            foreach (var item in model)
             {
-                var rs = stenoEntity.Where(x=>x.BirlesimId !=item.BirlesimId && x.StenografId == item.StenografId &&
-                                            x.GorevBasTarihi.Value.Subtract(item.GorevBasTarihi.Value).TotalMinutes>0 &&
-                                            x.GorevBasTarihi.Value.Subtract(item.GorevBasTarihi.Value).TotalMinutes <= 60);
-                item.StenoToplantiVar =rs !=null && rs.Count()>0 ?true : false;
-                var iz = stenoEntity.Where(x => x.BirlesimId == item.BirlesimId && x.StenografId == item.StenografId).SelectMany(x => x.Stenograf.StenoIzins)
-                                   .Where(x => x.BaslangicTarihi.Value <= item.GorevBasTarihi.Value &&
-                                             x.BitisTarihi.Value >= item.GorevBasTarihi.Value);
+                var birlesim = birlesimList.FirstOrDefault().Birlesim;
+                var limit = birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul ? 60 : 
+                            (gorevturu ==(int)StenoGorevTuru.Stenograf ?   birlesim.StenoSure * 9 : birlesim.UzmanStenoSure*9);
+                var query = stenoEntity.Where(x => x.BirlesimId != item.BirlesimId && 
+                                                   x.StenografId == item.StenografId && 
+                                                   x.GorevBasTarihi.Value.Subtract(item.GorevBasTarihi.Value).TotalMinutes > 0 &&
+                                                   x.GorevBasTarihi.Value.Subtract(item.GorevBasTarihi.Value).TotalMinutes <= limit);
+
+        
+                item.StenoToplantiVar = query != null && query.Count()>0 ?true : false;
+
+                var iz = birlesimList.Where(x=>  x.StenografId == item.StenografId).SelectMany(x => x.Stenograf.StenoIzins)
+                                     .Where(x => x.BaslangicTarihi.Value <= item.GorevBasTarihi.Value &&
+                                                 x.BitisTarihi.Value >= item.GorevBasTarihi.Value);
                 item.StenoIzinTuru =iz!=null && iz.Count()>0 ? iz.Select(x=>x.IzinTuru).FirstOrDefault() : 0;
   
                 lst.Add(item);
@@ -153,6 +162,18 @@ namespace TTBS.Controllers
             return model;
         }
 
+        [HttpPut("UpdateBirlesimStenoGorev")]
+        public IActionResult UpdateBirlesimStenoGorev(BirlesimStenoGorevModel model)
+        {
+            try
+            {
+                _stenoService.UpdateBirlesimStenoGorev(model.BirlesimId);
+            }
+            catch (Exception ex)
+            { return BadRequest(ex.Message); }
+
+            return Ok();
+        }
 
 
         [HttpPost("CreateStenoGorevAtama")]
@@ -210,9 +231,9 @@ namespace TTBS.Controllers
         }
 
         [HttpGet("GetAllStenografGroup")]
-        public List<StenoGrupViewModel> GetAllStenografGroup()
+        public List<StenoGrupViewModel> GetAllStenografGroup(int gorevTur)
         {
-            var stenoEntity = _stenoService.GetAllStenografGroup();
+            var stenoEntity = _stenoService.GetAllStenografGroup(gorevTur);
             var lst =new List<StenoGrupViewModel>();
 
             foreach (var item in stenoEntity.GroupBy(c => new {
@@ -343,7 +364,25 @@ namespace TTBS.Controllers
         public IEnumerable<StenoModel> GetAssignedStenoByBirlesimId(Guid birlesimId)
         {
             var stenoEntity = _stenoService.GetAssignedStenoByBirlesimId(birlesimId);
-            var model = _mapper.Map<IEnumerable<StenoModel>>(stenoEntity);
+            var stenoGroup = stenoEntity.GroupBy(x => new
+            {
+                x.StenografId,
+                x.Stenograf.AdSoyad,
+                x.Stenograf.StenoGorevTuru,
+                x.Stenograf.SiraNo,
+                x.Stenograf.SonGorevSuresi,
+                x.Stenograf.StenoGorevDurum
+            }).Select(z => new Stenograf
+            {
+                Id = z.Key.StenografId,
+                AdSoyad = z.Key.AdSoyad,
+                StenoGorevTuru = z.Key.StenoGorevTuru,
+                SiraNo = z.Key.SiraNo,
+                SonGorevSuresi = z.Key.SonGorevSuresi,
+                StenoGorevDurum = z.Key.StenoGorevDurum
+            });
+
+            var model = _mapper.Map<IEnumerable<StenoModel>>(stenoGroup);
             return model;
         }
 
