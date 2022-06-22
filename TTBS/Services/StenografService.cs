@@ -40,7 +40,7 @@ namespace TTBS.Services
         void UpdateStenoSiraNo(List<Stenograf> steno);
         IEnumerable<Grup> GetAllStenografGroup(int gorevTur);
 
-        void UpdateBirlesimStenoGorev(Guid birlesimId);
+        void UpdateBirlesimStenoGorev(Guid birlesimId,DateTime basTarih);
     }
     public class StenografService : BaseService, IStenografService
     {
@@ -362,13 +362,13 @@ namespace TTBS.Services
            
         }
 
-        public void UpdateBirlesimStenoGorev(Guid birlesimId)
+        public void UpdateBirlesimStenoGorev(Guid birlesimId, DateTime basTarih)
         {
             var result = _stenoGorevRepo.Get(x => x.BirlesimId == birlesimId,includeProperties:"Birlesim").OrderBy(x => x.GorevBasTarihi);
             var resultFirst = result.FirstOrDefault();
             var mindate = resultFirst.GorevBasTarihi.Value;
             var gorevId = resultFirst.Id;
-            var mindateDiff = DateTime.Now.Subtract(result.Min(x => x.GorevBasTarihi).Value).TotalMinutes;
+            var mindateDiff = basTarih.Subtract(result.Min(x => x.GorevBasTarihi).Value).TotalMinutes;
 
             var birlesim = result.Select(x=>x.Birlesim).FirstOrDefault();
             birlesim.BaslangicTarihi = birlesim.BaslangicTarihi.Value.AddMinutes(mindateDiff);

@@ -5,6 +5,7 @@ namespace TTBS.Models
 {
     public class BirlesimStenoGorevModel
     {
+        public DateTime BasTarihi { get; set; }
         public Guid OturumId { get; set; }
         public Guid BirlesimId { get; set; }
         public ToplanmaBaslatmaStatu ToplanmaBaslatmaStatu { get; set; }
