@@ -9,6 +9,7 @@ namespace TTBS.Core.Enums
     public enum ToplanmaBaslatmaStatu
     {
         Baslama=0,
-        Tamamlama=1
+        Tamamlama=1,
+        Ekleme=2
     }
 }
