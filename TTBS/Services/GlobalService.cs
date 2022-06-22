@@ -40,6 +40,7 @@ namespace TTBS.Services
         void UpdateOturum(Oturum oturum);
         void UpdateBirlesim(Birlesim birlesim);
         IEnumerable<Oturum> GetOturumByBirlesimId(Guid id);
+        bool GetBirlesimByDate(DateTime? baslangicTarihi);
     }
     public class GlobalService : BaseService, IGlobalService
     {
@@ -272,6 +273,13 @@ namespace TTBS.Services
         {
             _birlesimRepo.Update(birlesim, CurrentUser.Id);
             _birlesimRepo.Save();
+        }
+
+        public bool GetBirlesimByDate(DateTime? baslangicTarihi)
+        {
+            var result = _birlesimRepo.Get(x => x.BaslangicTarihi <= baslangicTarihi && (x.ToplanmaDurumu == Core.Enums.GorevStatu.DevamEdiyor || x.ToplanmaDurumu == Core.Enums.GorevStatu.Planlandı));
+             
+            return result!=null && result.Count()>0 ? true : false;                
         }
     }
 }

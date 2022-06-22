@@ -399,7 +399,6 @@ namespace TTBS.Services
                     _stenoGorevRepo.Update(item);
                     _stenoGorevRepo.Save();
                 }
-
             }
         }
     }

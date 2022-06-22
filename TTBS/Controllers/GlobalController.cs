@@ -103,20 +103,29 @@ namespace TTBS.Controllers
         {
             try
             {
-                var birlesimEntity = Mapper.Map<Birlesim>(model);
-                birlesimEntity.TurAdedi = 3;
-                _globalService.CreateBirlesim(birlesimEntity);
-                if (model.ToplanmaTuru == ToplanmaTuru.GenelKurul)
+                var mevcutBirlesim = _globalService.GetBirlesimByDate(model.BaslangicTarihi);
+                if(!mevcutBirlesim)
                 {
-                    var stenoGorevAtamaModel = new StenoGorevAtamaModel()
+                    var birlesimEntity = Mapper.Map<Birlesim>(model);
+                    birlesimEntity.TurAdedi = 3;
+                    _globalService.CreateBirlesim(birlesimEntity);
+                    if (model.ToplanmaTuru == ToplanmaTuru.GenelKurul)
                     {
-                        BirlesimId = birlesimEntity.Id,
-                        OturumId = _globalService.CreateOturum(new Oturum { BirlesimId = birlesimEntity.Id,  BaslangicTarihi = DateTime.Now }),
-                        StenografIds = _stenoService.GetAllStenografByGroupId(null).Select(x => x.Id).ToList()
-                    };
-                    var atamaEntity = Mapper.Map<GorevAtama>(stenoGorevAtamaModel);
-                    _stenoService.CreateStenoGorevAtama(atamaEntity, birlesimEntity);
+                        var stenoGorevAtamaModel = new StenoGorevAtamaModel()
+                        {
+                            BirlesimId = birlesimEntity.Id,
+                            OturumId = _globalService.CreateOturum(new Oturum { BirlesimId = birlesimEntity.Id, BaslangicTarihi = DateTime.Now }),
+                            StenografIds = _stenoService.GetAllStenografByGroupId(null).Select(x => x.Id).ToList()
+                        };
+                        var atamaEntity = Mapper.Map<GorevAtama>(stenoGorevAtamaModel);
+                        _stenoService.CreateStenoGorevAtama(atamaEntity, birlesimEntity);
+                    }
                 }
+                else
+                {
+                    return BadRequest("Devam eden birlesim olduğundan yeni birlesim oluşturulamaz!");
+                }
+               
             }
             catch (Exception ex)
             { return BadRequest(ex.Message); }
