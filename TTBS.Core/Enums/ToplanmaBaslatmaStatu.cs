@@ -10,6 +10,7 @@ namespace TTBS.Core.Enums
     {
         Baslama=0,
         Tamamlama=1,
-        Ekleme=2
+        AraVerme =2,
+        Sonladırma=3
     }
 }

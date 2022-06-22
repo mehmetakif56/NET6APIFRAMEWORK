@@ -167,7 +167,8 @@ namespace TTBS.Controllers
         {
             try
             {
-                _stenoService.UpdateBirlesimStenoGorev(model.BirlesimId);
+                if(ToplanmaBaslatmaStatu.Baslama == model.ToplanmaBaslatmaStatu)
+                      _stenoService.UpdateBirlesimStenoGorev(model.BirlesimId);
             }
             catch (Exception ex)
             { return BadRequest(ex.Message); }
