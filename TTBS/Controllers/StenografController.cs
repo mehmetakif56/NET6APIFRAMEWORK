@@ -156,7 +156,8 @@ namespace TTBS.Controllers
 
               
                 item.StenoToplantiVar = query != null && query.Count()>0 ?true : false;
-                if (item.StenoToplantiVar)
+               
+                if (item.StenoToplantiVar || item.GorevStatu == GorevStatu.Iptal)
                 {
                     ////if(checkTrue)
                     ////{
