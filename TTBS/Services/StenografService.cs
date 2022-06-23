@@ -132,6 +132,7 @@ namespace TTBS.Services
         public void CreateStenoGorevAtama(GorevAtama entity, Birlesim birlesim)
         {
             int firstRec = 0;
+            double sure = entity.Stenograf?.StenoGorevTuru== StenoGorevTuru.Stenograf ? birlesim.StenoSure: birlesim.UzmanStenoSure;
             for (int i = 0; i < birlesim.TurAdedi; i++)
             {
                 foreach (var item in entity.StenografIds)
@@ -141,7 +142,7 @@ namespace TTBS.Services
                     newEntity.OturumId = entity.OturumId;
                     newEntity.StenografId = item;
                     newEntity.GorevStatu = GorevStatu.Planlandı;
-                    newEntity.GorevBasTarihi = birlesim.BaslangicTarihi.HasValue ? birlesim.BaslangicTarihi.Value.AddMinutes(firstRec * birlesim.StenoSure) : null;
+                    newEntity.GorevBasTarihi = birlesim.BaslangicTarihi.HasValue ? birlesim.BaslangicTarihi.Value.AddMinutes(firstRec * sure) : null;
                     _stenoGorevRepo.Create(newEntity, CurrentUser.Id);
                     _stenoGorevRepo.Save();
                     firstRec++;
@@ -401,5 +402,6 @@ namespace TTBS.Services
                 }
             }
         }
+
     }
 }
