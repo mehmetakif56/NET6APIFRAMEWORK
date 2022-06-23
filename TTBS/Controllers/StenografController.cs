@@ -111,7 +111,7 @@ namespace TTBS.Controllers
         {
             var lst = new List<StenoGorevModel>();
             var stenoEntity = _stenoService.GetStenoGorevByBirlesimId(gorevturu);
-            var birlesimList = stenoEntity.Where(x=>x.BirlesimId == birlesimId).ToList();
+            var birlesimList = stenoEntity.Where(x=>x.BirlesimId == birlesimId).OrderBy(x=>x.GorevBasTarihi).ToList();
             var model = _mapper.Map<List<StenoGorevModel>>(birlesimList);
             var gorevBasTarihi = DateTime.MinValue;
             var gorevBitTarihi = DateTime.MinValue;
@@ -144,16 +144,15 @@ namespace TTBS.Controllers
                 else
                 {
 
-
-
                     //checkTrue = true;
-                    if (item.GorevBasTarihi != gorevBasTarihi && gorevBasTarihi != DateTime.MinValue)
+                    if (item.GorevBasTarihi != gorevBasTarihi && gorevBasTarihi != DateTime.MinValue )
                     {
-                        item.GorevBasTarihi = gorevBasTarihi.AddMinutes(sure);
+                        item.GorevBasTarihi = gorevBitTarihi;
                     }
-                    if (item.GorevBitisTarihi != gorevBitTarihi && gorevBitTarihi != DateTime.MinValue)
+                    if (item.GorevBitisTarihi != gorevBitTarihi && gorevBitTarihi != DateTime.MinValue )
                     {
                         item.GorevBitisTarihi = gorevBitTarihi.AddMinutes(sure);
+   
                     }
 
                     gorevBasTarihi = item.GorevBasTarihi.Value;

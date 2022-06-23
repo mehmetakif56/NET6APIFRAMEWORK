@@ -277,7 +277,7 @@ namespace TTBS.Services
 
         public bool GetBirlesimByDate(DateTime? baslangicTarihi)
         {
-            var result = _birlesimRepo.Get(x => x.BaslangicTarihi <= baslangicTarihi && (x.ToplanmaDurumu == Core.Enums.GorevStatu.DevamEdiyor || x.ToplanmaDurumu == Core.Enums.GorevStatu.Planlandı));
+            var result = _birlesimRepo.Get(x => x.ToplanmaTuru == Core.Enums.ToplanmaTuru.GenelKurul && x.BaslangicTarihi <= baslangicTarihi && (x.ToplanmaDurumu == Core.Enums.GorevStatu.DevamEdiyor || x.ToplanmaDurumu == Core.Enums.GorevStatu.Planlandı));
              
             return result!=null && result.Count()>0 ? true : false;                
         }
