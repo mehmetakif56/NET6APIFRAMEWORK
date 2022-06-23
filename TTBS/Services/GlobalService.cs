@@ -260,7 +260,7 @@ namespace TTBS.Services
 
         public IEnumerable<Oturum> GetOturumByBirlesimId(Guid id)
         {
-            return _oturumRepo.Get(x => x.BirlesimId == id,includeProperties:"StenoPlan");
+            return _oturumRepo.Get(x => x.BirlesimId == id,includeProperties: "Birlesim");
         }
 
         public void DeleteOturum(Oturum oturum)
