@@ -143,6 +143,7 @@ namespace TTBS.Services
                     newEntity.StenografId = item;
                     newEntity.GorevStatu = GorevStatu.Planlandı;
                     newEntity.GorevBasTarihi = birlesim.BaslangicTarihi.HasValue ? birlesim.BaslangicTarihi.Value.AddMinutes(firstRec * sure) : null;
+                    newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.Value.AddMinutes(sure) ;
                     _stenoGorevRepo.Create(newEntity, CurrentUser.Id);
                     _stenoGorevRepo.Save();
                     firstRec++;
