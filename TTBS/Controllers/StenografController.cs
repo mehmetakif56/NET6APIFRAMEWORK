@@ -114,6 +114,7 @@ namespace TTBS.Controllers
             var birlesimList = stenoEntity.Where(x=>x.BirlesimId == birlesimId).ToList();
             var model = _mapper.Map<List<StenoGorevModel>>(birlesimList);
             var gorevBasTarihi = DateTime.MinValue;
+            var gorevBitTarihi = DateTime.MinValue;
             bool checkTrue = true;
             foreach (var item in model)
             {
@@ -130,19 +131,33 @@ namespace TTBS.Controllers
                 item.StenoToplantiVar = query != null && query.Count()>0 ?true : false;
                 if (item.StenoToplantiVar)
                 {
-                    if(checkTrue)
-                      gorevBasTarihi = item.GorevBasTarihi.Value;
+                    ////if(checkTrue)
+                    ////{
+                    //    gorevBasTarihi = item.GorevBasTarihi.Value;
+                    //    gorevBitTarihi = item.GorevBitisTarihi.Value;
+                    ////}
+                      
 
                     item.GorevStatu = GorevStatu.Iptal;
                     checkTrue = false;
                 }
                 else
                 {
-                    checkTrue = true;
-                    if (item.GorevBasTarihi != gorevBasTarihi)
+
+
+
+                    //checkTrue = true;
+                    if (item.GorevBasTarihi != gorevBasTarihi && gorevBasTarihi != DateTime.MinValue)
                     {
-                        item.GorevBasTarihi = gorevBasTarihi;
+                        item.GorevBasTarihi = gorevBasTarihi.AddMinutes(sure);
                     }
+                    if (item.GorevBitisTarihi != gorevBitTarihi && gorevBitTarihi != DateTime.MinValue)
+                    {
+                        item.GorevBitisTarihi = gorevBitTarihi.AddMinutes(sure);
+                    }
+
+                    gorevBasTarihi = item.GorevBasTarihi.Value;
+                    gorevBitTarihi = item.GorevBitisTarihi.Value;
                 }
 
                 var iz = birlesimList.Where(x=>  x.StenografId == item.StenografId).SelectMany(x => x.Stenograf.StenoIzins)
