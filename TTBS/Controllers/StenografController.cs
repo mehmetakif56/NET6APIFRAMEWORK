@@ -156,7 +156,7 @@ namespace TTBS.Controllers
                     }
 
                     gorevBasTarihi = item.GorevBasTarihi.Value;
-                    gorevBitTarihi = item.GorevBitisTarihi.Value;
+                    gorevBitTarihi = item.GorevBitisTarihi.HasValue ? item.GorevBitisTarihi.Value:DateTime.MinValue;
                 }
 
                 var iz = birlesimList.Where(x=>  x.StenografId == item.StenografId).SelectMany(x => x.Stenograf.StenoIzins)
