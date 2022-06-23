@@ -146,6 +146,15 @@ namespace TTBS.Controllers
             
         }
 
+        [HttpPost("UpdateOturum")]
+        public IActionResult UpdateOturum(OturumModel model)
+        {
+            var entity = Mapper.Map<Oturum>(model);
+            _globalService.UpdateOturum(entity);
+            return Ok(entity);
+
+        }
+
         [HttpGet("GetOturumByBirlesimId")]
         public IEnumerable<OturumModel> GetOturumByBirlesimId(Guid id)
         {

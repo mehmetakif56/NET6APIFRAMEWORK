@@ -159,20 +159,12 @@ namespace TTBS.Controllers
                
                 if (item.StenoToplantiVar || item.GorevStatu == GorevStatu.Iptal)
                 {
-                    ////if(checkTrue)
-                    ////{
-                    //    gorevBasTarihi = item.GorevBasTarihi.Value;
-                    //    gorevBitTarihi = item.GorevBitisTarihi.Value;
-                    ////}
-                      
-
                     item.GorevStatu = GorevStatu.Iptal;
                     checkTrue = false;
                 }
                 else
                 {
 
-                    //checkTrue = true;
                     if (item.GorevBasTarihi != gorevBasTarihi && gorevBasTarihi != DateTime.MinValue )
                     {
                         item.GorevBasTarihi = gorevBitTarihi;
@@ -231,6 +223,32 @@ namespace TTBS.Controllers
             {
                 if(ToplanmaBaslatmaStatu.Baslama == model.ToplanmaBaslatmaStatu)
                       _stenoService.UpdateBirlesimStenoGorev(model.BirlesimId,model.BasTarihi);
+                else if(ToplanmaBaslatmaStatu.AraVerme == model.ToplanmaBaslatmaStatu)
+                {
+                    var oturum = _globalService.GetOturumByBirlesimId(model.BirlesimId).Where(x => x.BitisTarihi == null);
+                    if(oturum!= null && oturum.Count()>0)
+                    {
+                        oturum.FirstOrDefault().BitisTarihi = model.BasTarihi;
+                        _globalService.UpdateOturum(oturum.FirstOrDefault());
+
+                    }
+                }
+                else if(ToplanmaBaslatmaStatu.DevamEtme == model.ToplanmaBaslatmaStatu)
+                {
+                    _globalService.CreateOturum(new Oturum { BirlesimId = model.BirlesimId, BaslangicTarihi = model.BasTarihi });
+                }
+                else if(ToplanmaBaslatmaStatu.Sonladırma == model.ToplanmaBaslatmaStatu)
+                {
+                    var oturum = _globalService.GetOturumByBirlesimId(model.BirlesimId).Where(x => x.BitisTarihi == null);
+                    if (oturum != null && oturum.Count() > 0)
+                    {
+                        oturum.FirstOrDefault().BitisTarihi = model.BasTarihi;
+                        _globalService.UpdateOturum(oturum.FirstOrDefault());
+
+                    }
+
+                }
+
             }
             catch (Exception ex)
             { return BadRequest(ex.Message); }

@@ -408,7 +408,7 @@ namespace TTBS.Services
 
         public void UpdateGorevDurumByBirlesimAndSteno(Guid birlesimId, Guid stenoId)
         {
-            var result =_stenoGorevRepo.Get(x=>x.BirlesimId == birlesimId && x.StenografId == stenoId && x.GorevBasTarihi>=DateTime.Now);
+            var result =_stenoGorevRepo.Get(x=>x.BirlesimId == birlesimId && x.StenografId == stenoId && x.GorevBasTarihi>=DateTime.Now.AddHours(1));
             if(result!= null && result.Count()>0)
             {
                 result.ToList().ForEach(x => x.GorevStatu = GorevStatu.Iptal);
