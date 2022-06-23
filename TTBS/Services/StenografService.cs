@@ -132,7 +132,7 @@ namespace TTBS.Services
         public void CreateStenoGorevAtama(GorevAtama entity, Birlesim birlesim)
         {
             int firstRec = 0;
-            double sure = entity.Stenograf?.StenoGorevTuru== StenoGorevTuru.Stenograf ? birlesim.StenoSure: birlesim.UzmanStenoSure;
+            double sure = entity.Stenograf?.StenoGorevTuru== StenoGorevTuru.Uzman ? birlesim.UzmanStenoSure: birlesim.StenoSure;
             for (int i = 0; i < birlesim.TurAdedi; i++)
             {
                 foreach (var item in entity.StenografIds)

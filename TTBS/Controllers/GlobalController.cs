@@ -111,11 +111,12 @@ namespace TTBS.Controllers
                     _globalService.CreateBirlesim(birlesimEntity);
                     if (model.ToplanmaTuru == ToplanmaTuru.GenelKurul)
                     {
+                        var steno = _stenoService.GetAllStenografByGroupId(null);
                         var stenoGorevAtamaModel = new StenoGorevAtamaModel()
                         {
                             BirlesimId = birlesimEntity.Id,
                             OturumId = _globalService.CreateOturum(new Oturum { BirlesimId = birlesimEntity.Id, BaslangicTarihi = DateTime.Now }),
-                            StenografIds = _stenoService.GetAllStenografByGroupId(null).Select(x => x.Id).ToList()
+                            StenografIds = steno.Select(x => x.Id).ToList()
                         };
                         var atamaEntity = Mapper.Map<GorevAtama>(stenoGorevAtamaModel);
                         _stenoService.CreateStenoGorevAtama(atamaEntity, birlesimEntity);
