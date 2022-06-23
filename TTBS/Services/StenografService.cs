@@ -19,7 +19,6 @@ namespace TTBS.Services
         void UpdateStenoGorev(List<GorevAtama> stenoGorev);
         void CreateStenoIzin(StenoIzin stenoGorev);
         IEnumerable<GorevAtama> GetStenoGorevByBirlesimId(int gorevTuru);
-
         //List<StenoPlan> GetStenoPlanByStatus(int status);
         IEnumerable<Birlesim> GetBirlesimByDateAndTur(DateTime gorevTarihi, DateTime gorevBitTarihi, int gorevTuru);
         List<GorevAtama> GetStenoGorevBySatatus(int status);
@@ -39,8 +38,11 @@ namespace TTBS.Services
         //IEnumerable<GorevAtama> GetIntersectStenoPlan(Guid stenoPlanId, Guid stenoId);
         void UpdateStenoSiraNo(List<Stenograf> steno);
         IEnumerable<Grup> GetAllStenografGroup(int gorevTur);
-
         void UpdateBirlesimStenoGorev(Guid birlesimId,DateTime basTarih);
+
+        void UpdateGorevDurumByBirlesimAndSteno(Guid birlesimId, Guid stenoId);
+        void UpdateGorevDurumById(Guid id);
+
     }
     public class StenografService : BaseService, IStenografService
     {
@@ -404,5 +406,26 @@ namespace TTBS.Services
             }
         }
 
+        public void UpdateGorevDurumByBirlesimAndSteno(Guid birlesimId, Guid stenoId)
+        {
+            var result =_stenoGorevRepo.Get(x=>x.BirlesimId == birlesimId && x.StenografId == stenoId && x.GorevBasTarihi>=DateTime.Now);
+            if(result!= null && result.Count()>0)
+            {
+                result.ToList().ForEach(x => x.GorevStatu = GorevStatu.Iptal);
+                _stenoGorevRepo.Update(result, CurrentUser.Id);
+                _stenoGorevRepo.Save();
+            }
+        }
+
+        public void UpdateGorevDurumById(Guid id)
+        {
+            var result = _stenoGorevRepo.Get(x => x.Id == id && x.GorevBasTarihi >= DateTime.Now.AddHours(1));
+            if (result != null && result.Count() > 0)
+            {
+                result.ToList().ForEach(x => x.GorevStatu = GorevStatu.Iptal);
+                _stenoGorevRepo.Update(result, CurrentUser.Id);
+                _stenoGorevRepo.Save();
+            }
+        }
     }
 }

@@ -106,6 +106,33 @@ namespace TTBS.Controllers
             return model;
         }
 
+        [HttpPut("UpdateGorevDurumByBirlesimAndSteno")]
+        public IActionResult UpdateGorevDurumByBirlesimAndSteno(Guid birlesimId, Guid stenoId)
+        {
+            try
+            {
+                _stenoService.UpdateGorevDurumByBirlesimAndSteno(birlesimId, stenoId);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            return Ok();
+        }
+        [HttpPut("UpdateGorevDurumById")]
+        public IActionResult UpdateGorevDurumById(Guid id)
+        {
+            try
+            {
+                _stenoService.UpdateGorevDurumById(id);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            return Ok();
+        }
+
         [HttpGet("GetStenoGorevByBirlesimId")]
         public List<StenoGorevModel> GetStenoGorevByBirlesimId(Guid birlesimId,int gorevturu)
         {
