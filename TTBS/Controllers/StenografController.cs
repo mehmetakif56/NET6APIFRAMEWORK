@@ -225,12 +225,11 @@ namespace TTBS.Controllers
                       _stenoService.UpdateBirlesimStenoGorev(model.BirlesimId,model.BasTarihi);
                 else if(ToplanmaBaslatmaStatu.AraVerme == model.ToplanmaBaslatmaStatu)
                 {
-                    var oturum = _globalService.GetOturumByBirlesimId(model.BirlesimId).Where(x => x.BitisTarihi == null);
-                    if(oturum!= null && oturum.Count()>0)
+                    var oturum = _globalService.GetOturumByBirlesimId(model.BirlesimId).Where(x => x.BitisTarihi == null).FirstOrDefault();
+                    if(oturum!= null)
                     {
-                        oturum.FirstOrDefault().BitisTarihi = model.BasTarihi;
-                        _globalService.UpdateOturum(oturum.FirstOrDefault());
-
+                        oturum.BitisTarihi = model.BasTarihi;
+                        _globalService.UpdateOturum(oturum);
                     }
                 }
                 else if(ToplanmaBaslatmaStatu.DevamEtme == model.ToplanmaBaslatmaStatu)
@@ -239,16 +238,21 @@ namespace TTBS.Controllers
                 }
                 else if(ToplanmaBaslatmaStatu.Sonladırma == model.ToplanmaBaslatmaStatu)
                 {
-                    var oturum = _globalService.GetOturumByBirlesimId(model.BirlesimId).Where(x => x.BitisTarihi == null);
-                    if (oturum != null && oturum.Count() > 0)
+                    var oturum = _globalService.GetOturumByBirlesimId(model.BirlesimId).Where(x => x.BitisTarihi == null).FirstOrDefault();
+                    if (oturum != null)
                     {
-                        oturum.FirstOrDefault().BitisTarihi = model.BasTarihi;
-                        _globalService.UpdateOturum(oturum.FirstOrDefault());
+                        oturum.BitisTarihi = model.BasTarihi;
+                        _globalService.UpdateOturum(oturum);
 
                     }
 
+                    var birlesim = _globalService.GetBirlesimById(model.BirlesimId).FirstOrDefault();
+                    if(birlesim !=null)
+                    {
+                        birlesim.BitisTarihi = model.BasTarihi;
+                        birlesim.ToplanmaDurumu = GorevStatu.Tamamlandı;
+                    }
                 }
-
             }
             catch (Exception ex)
             { return BadRequest(ex.Message); }
