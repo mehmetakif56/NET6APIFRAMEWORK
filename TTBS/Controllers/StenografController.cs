@@ -154,10 +154,16 @@ namespace TTBS.Controllers
                                                    x.GorevBasTarihi.Value.Subtract(item.GorevBasTarihi.Value).TotalMinutes > 0 &&
                                                    x.GorevBasTarihi.Value.Subtract(item.GorevBasTarihi.Value).TotalMinutes <= limit);
 
-              
+                var iz = birlesimList.Where(x => x.StenografId == item.StenografId).SelectMany(x => x.Stenograf.StenoIzins)
+                                    .Where(x => x.BaslangicTarihi.Value <= item.GorevBasTarihi.Value &&
+                                                x.BitisTarihi.Value >= item.GorevBasTarihi.Value);
+                item.StenoIzinTuru = iz != null && iz.Count() > 0 ? iz.Select(x => x.IzinTuru).FirstOrDefault() : 0;
+
+
+
                 item.StenoToplantiVar = query != null && query.Count()>0 ?true : false;
                
-                if (item.StenoToplantiVar || item.GorevStatu == GorevStatu.Iptal)
+                if (item.StenoToplantiVar || item.GorevStatu == GorevStatu.Iptal || (iz != null && iz.Count() > 0))
                 {
                     item.GorevStatu = GorevStatu.Iptal;
                     checkTrue = false;
@@ -179,11 +185,7 @@ namespace TTBS.Controllers
                     gorevBitTarihi = item.GorevBitisTarihi.HasValue ? item.GorevBitisTarihi.Value:DateTime.MinValue;
                 }
 
-                var iz = birlesimList.Where(x=>  x.StenografId == item.StenografId).SelectMany(x => x.Stenograf.StenoIzins)
-                                     .Where(x => x.BaslangicTarihi.Value <= item.GorevBasTarihi.Value &&
-                                                 x.BitisTarihi.Value >= item.GorevBasTarihi.Value);
-                item.StenoIzinTuru =iz!=null && iz.Count()>0 ? iz.Select(x=>x.IzinTuru).FirstOrDefault() : 0;
-
+               
                 lst.Add(item);
             }
 
