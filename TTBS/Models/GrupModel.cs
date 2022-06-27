@@ -6,5 +6,6 @@ namespace TTBS.Models
     {
         public Guid? Id { get; set; }
         public string Ad { get; set; }
+        public StenoGorevTuru StenoGorevTuru { get; set; }
     }
 }

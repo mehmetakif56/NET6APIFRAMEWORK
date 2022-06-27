@@ -165,7 +165,7 @@ namespace TTBS.Services
 
         public IEnumerable<Grup> GetAllGrup()
         {
-            return _grupRepo.GetAll();
+            return _grupRepo.GetAll(includeProperties: "StenoGrups.Stenograf");
         }
 
         public Grup GetGrupById(Guid id)
