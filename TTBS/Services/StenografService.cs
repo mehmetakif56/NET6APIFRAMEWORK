@@ -409,14 +409,14 @@ namespace TTBS.Services
             var result =_stenoGorevRepo.Get(x=>x.BirlesimId == birlesimId && x.StenografId == stenoId && x.GorevBasTarihi>=DateTime.Now);
             if(result!= null && result.Count()>0)
             {
-                var statuDevam = result.Where(x => x.GorevStatu == GorevStatu.DevamEdiyor);
+                var statuDevam = result.Where(x => x.GorevStatu == GorevStatu.DevamEdiyor || x.GorevStatu == GorevStatu.Planlandı);
                 if(statuDevam != null && statuDevam.Count()>0)
                      result.ToList().ForEach(x => x.GorevStatu = GorevStatu.Iptal);
                 else
                 {
                     var statuIptal = result.Where(x => x.GorevStatu == GorevStatu.Iptal);
                     if (statuIptal != null && statuIptal.Count() > 0)
-                        result.ToList().ForEach(x => x.GorevStatu = GorevStatu.DevamEdiyor);
+                        result.ToList().ForEach(x => x.GorevStatu = GorevStatu.Planlandı);
                 }
                 _stenoGorevRepo.Update(result, CurrentUser.Id);
                 _stenoGorevRepo.Save();
@@ -429,8 +429,8 @@ namespace TTBS.Services
             if (result != null && result.GorevBasTarihi>= DateTime.Now)
             {
                 if(result.GorevStatu == GorevStatu.Iptal)
-                    result.GorevStatu = GorevStatu.DevamEdiyor;
-                else if(result.GorevStatu == GorevStatu.DevamEdiyor)
+                    result.GorevStatu = GorevStatu.Planlandı;
+                else if(result.GorevStatu == GorevStatu.DevamEdiyor || result.GorevStatu == GorevStatu.Planlandı)
                     result.GorevStatu = GorevStatu.Iptal;
                 _stenoGorevRepo.Update(result, CurrentUser.Id);
                 _stenoGorevRepo.Save();
