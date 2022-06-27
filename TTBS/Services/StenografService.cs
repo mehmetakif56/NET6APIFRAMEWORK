@@ -406,7 +406,7 @@ namespace TTBS.Services
 
         public void UpdateGorevDurumByBirlesimAndSteno(Guid birlesimId, Guid stenoId)
         {
-            var result =_stenoGorevRepo.Get(x=>x.BirlesimId == birlesimId && x.StenografId == stenoId && x.GorevBasTarihi>=DateTime.Now.AddHours(1));
+            var result =_stenoGorevRepo.Get(x=>x.BirlesimId == birlesimId && x.StenografId == stenoId && x.GorevBasTarihi>=DateTime.Now);
             if(result!= null && result.Count()>0)
             {
                 var statuDevam = result.Where(x => x.GorevStatu == GorevStatu.DevamEdiyor);
@@ -426,7 +426,7 @@ namespace TTBS.Services
         public void UpdateGorevDurumById(Guid id)
         {
             var result = _stenoGorevRepo.GetById(id);
-            if (result != null && result.GorevBasTarihi>= DateTime.Now.AddHours(1))
+            if (result != null && result.GorevBasTarihi>= DateTime.Now)
             {
                 if(result.GorevStatu == GorevStatu.Iptal)
                     result.GorevStatu = GorevStatu.DevamEdiyor;

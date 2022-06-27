@@ -147,12 +147,14 @@ namespace TTBS.Controllers
             {
                 var birlesim = birlesimList.FirstOrDefault().Birlesim;
                 var sure = gorevturu == (int)StenoGorevTuru.Stenograf ? birlesim.StenoSure  : birlesim.UzmanStenoSure;
-                           
+
+                var maxBitis = stenoEntity.Where(x => x.BirlesimId != item.BirlesimId && x.StenografId == item.StenografId).Max(x => x.GorevBitisTarihi);
+
                 var query = stenoEntity.Where(x => x.BirlesimId != item.BirlesimId && 
                                                    x.StenografId == item.StenografId && 
-                                                   x.GorevBasTarihi.Value.Subtract(item.GorevBasTarihi.Value).TotalMinutes > 0 &&
-                                                   (x.GorevBasTarihi.Value.Subtract(item.GorevBasTarihi.Value).TotalMinutes <= 60 ||
-                                                   x.GorevBasTarihi.Value.Subtract(item.GorevBasTarihi.Value).TotalMinutes >= sure * 9));
+                                                   ((x.GorevBasTarihi.Value.Subtract(item.GorevBasTarihi.Value).TotalMinutes > 0 &&
+                                                   x.GorevBasTarihi.Value.Subtract(item.GorevBasTarihi.Value).TotalMinutes <= 60) ||
+                                                   x.GorevBitisTarihi.Value.AddMinutes(sure * 9) >= item.GorevBasTarihi.Value));
 
                 var iz = birlesimList.Where(x => x.StenografId == item.StenografId).SelectMany(x => x.Stenograf.StenoIzins)
                                     .Where(x => x.BaslangicTarihi.Value <= item.GorevBasTarihi.Value &&
