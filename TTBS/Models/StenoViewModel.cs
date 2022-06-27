@@ -9,5 +9,7 @@ namespace TTBS.Models
         public string AdSoyad { get; set; }
         public int SonGorevSuresi { get; set; }
 
+        public StenoGorevTuru StenoGorevTuru { get; set; }
+
     }
 }

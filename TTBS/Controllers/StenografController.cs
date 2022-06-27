@@ -151,6 +151,7 @@ namespace TTBS.Controllers
                            
                 var query = stenoEntity.Where(x => x.BirlesimId != item.BirlesimId && 
                                                    x.StenografId == item.StenografId && 
+                                                   x.Birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul &&
                                                    x.GorevBasTarihi.Value.Subtract(item.GorevBasTarihi.Value).TotalMinutes > 0 &&
                                                    x.GorevBasTarihi.Value.Subtract(item.GorevBasTarihi.Value).TotalMinutes <= limit);
 
@@ -336,14 +337,15 @@ namespace TTBS.Controllers
             }
             foreach (var item in lst) 
             {
-                var steno = stenoEntity.SelectMany(x=>x.StenoGrups).Where(x => x.GrupId == item.GrupId).Select(cl => new StenoViewModel
+                var steno = stenoEntity.SelectMany(x => x.StenoGrups).Where(x => x.GrupId == item.GrupId).Select(cl => new StenoViewModel
                 {
                     AdSoyad = cl.Stenograf.AdSoyad,
                     Id = cl.Stenograf.Id,
-                    SonGorevSuresi = cl.Stenograf.GorevAtamas.Where(x=>x.GorevBasTarihi>=DateTime.Now.AddDays(-7)).Sum(c => c.GorevDakika)
+                    SonGorevSuresi = cl.Stenograf.GorevAtamas.Where(x => x.GorevBasTarihi >= DateTime.Now.AddDays(-7)).Sum(c => c.GorevDakika),
+                    StenoGorevTuru = cl.Stenograf.StenoGorevTuru
                 }).ToList();
                 item.StenoViews = new List<StenoViewModel>();
-                foreach (var item2 in steno)
+                foreach (var item2 in steno.Where(x=>(int)x.StenoGorevTuru == gorevTur))
                 {
                     item.StenoViews.Add(item2);
                 }

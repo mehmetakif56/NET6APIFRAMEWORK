@@ -37,7 +37,7 @@ namespace TTBS.Services
         IEnumerable<GorevAtama> GetAssignedStenoByBirlesimId(Guid birlesimId);
         //IEnumerable<GorevAtama> GetIntersectStenoPlan(Guid stenoPlanId, Guid stenoId);
         void UpdateStenoSiraNo(List<Stenograf> steno);
-        IEnumerable<Grup> GetAllStenografGroup(int gorevTur);
+        IEnumerable<Grup> GetAllStenografGroup(int gorevTuru);
         void UpdateBirlesimStenoGorev(Guid birlesimId,DateTime basTarih);
 
         void UpdateGorevDurumByBirlesimAndSteno(Guid birlesimId, Guid stenoId);
