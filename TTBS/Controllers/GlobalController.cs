@@ -115,7 +115,7 @@ namespace TTBS.Controllers
                         var stenoGorevAtamaModel = new StenoGorevAtamaModel()
                         {
                             BirlesimId = birlesimEntity.Id,
-                            OturumId = _globalService.CreateOturum(new Oturum { BirlesimId = birlesimEntity.Id, BaslangicTarihi = DateTime.Now }),
+                            OturumId = _globalService.CreateOturum(new Oturum { BirlesimId = birlesimEntity.Id, BaslangicTarihi = model.BaslangicTarihi }),
                             StenografIds = steno.Select(x => x.Id).ToList()
                         };
                         var atamaEntity = Mapper.Map<GorevAtama>(stenoGorevAtamaModel);

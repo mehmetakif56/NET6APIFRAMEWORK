@@ -147,12 +147,12 @@ namespace TTBS.Controllers
             {
                 var birlesim = birlesimList.FirstOrDefault().Birlesim;
                 var sure = gorevturu == (int)StenoGorevTuru.Stenograf ? birlesim.StenoSure  : birlesim.UzmanStenoSure;
-                var limit = birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul ? 60 : sure * 9;
                            
                 var query = stenoEntity.Where(x => x.BirlesimId != item.BirlesimId && 
                                                    x.StenografId == item.StenografId && 
                                                    x.GorevBasTarihi.Value.Subtract(item.GorevBasTarihi.Value).TotalMinutes > 0 &&
-                                                   x.GorevBasTarihi.Value.Subtract(item.GorevBasTarihi.Value).TotalMinutes <= limit);
+                                                   (x.GorevBasTarihi.Value.Subtract(item.GorevBasTarihi.Value).TotalMinutes <= 60 ||
+                                                   x.GorevBasTarihi.Value.Subtract(item.GorevBasTarihi.Value).TotalMinutes >= sure * 9));
 
                 var iz = birlesimList.Where(x => x.StenografId == item.StenografId).SelectMany(x => x.Stenograf.StenoIzins)
                                     .Where(x => x.BaslangicTarihi.Value <= item.GorevBasTarihi.Value &&
@@ -223,7 +223,16 @@ namespace TTBS.Controllers
             try
             {
                 if(ToplanmaBaslatmaStatu.Baslama == model.ToplanmaBaslatmaStatu)
-                      _stenoService.UpdateBirlesimStenoGorev(model.BirlesimId,model.BasTarihi);
+                {
+                    _stenoService.UpdateBirlesimStenoGorev(model.BirlesimId, model.BasTarihi);
+                    var oturum = _globalService.GetOturumByBirlesimId(model.BirlesimId).Where(x => x.BitisTarihi == null).FirstOrDefault();
+                    if (oturum != null)
+                    {
+                        oturum.BaslangicTarihi = model.BasTarihi;
+                        _globalService.UpdateOturum(oturum);
+
+                    }
+                }
                 else if(ToplanmaBaslatmaStatu.AraVerme == model.ToplanmaBaslatmaStatu)
                 {
                     var oturum = _globalService.GetOturumByBirlesimId(model.BirlesimId).Where(x => x.BitisTarihi == null).FirstOrDefault();

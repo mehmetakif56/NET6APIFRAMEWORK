@@ -168,10 +168,8 @@ namespace TTBS.Services
 
         public IEnumerable<GorevAtama> GetStenoGorevByBirlesimId(int gorevTuru)
         {
-            return _stenoGorevRepo.Get(x => (int)x.Stenograf.StenoGorevTuru == gorevTuru && 
-                                       (x.Birlesim.ToplanmaDurumu == GorevStatu.Planlandı || 
-                                       x.Birlesim.ToplanmaDurumu == GorevStatu.DevamEdiyor)  , 
-                                       includeProperties: "Stenograf.StenoIzins,Birlesim");
+            return _stenoGorevRepo.Get(x => (int)x.Stenograf.StenoGorevTuru == gorevTuru ,includeProperties: "Stenograf.StenoIzins,Birlesim");
+
             //var Bar = _stenoGorevRepo.Get(includeProperties: "Stenograf,Oturum,Birlesim");
 
             //var joinList = from steno in Foo
@@ -378,7 +376,7 @@ namespace TTBS.Services
             birlesim.BaslangicTarihi = birlesim.BaslangicTarihi.Value.AddMinutes(mindateDiff);
             birlesim.ToplanmaDurumu = GorevStatu.DevamEdiyor;
             _birlesimRepo.Update(birlesim);
-            _birlesimRepo.Save();
+            _birlesimRepo.Save();  
      
             var modResult = result.Select(x => x.Birlesim.StenoSure);
             if(modResult!=null && modResult.Count() > 0)
@@ -411,7 +409,15 @@ namespace TTBS.Services
             var result =_stenoGorevRepo.Get(x=>x.BirlesimId == birlesimId && x.StenografId == stenoId && x.GorevBasTarihi>=DateTime.Now.AddHours(1));
             if(result!= null && result.Count()>0)
             {
-                result.ToList().ForEach(x => x.GorevStatu = GorevStatu.Iptal);
+                var statuDevam = result.Where(x => x.GorevStatu == GorevStatu.DevamEdiyor);
+                if(statuDevam != null && statuDevam.Count()>0)
+                     result.ToList().ForEach(x => x.GorevStatu = GorevStatu.Iptal);
+                else
+                {
+                    var statuIptal = result.Where(x => x.GorevStatu == GorevStatu.Iptal);
+                    if (statuIptal != null && statuIptal.Count() > 0)
+                        result.ToList().ForEach(x => x.GorevStatu = GorevStatu.DevamEdiyor);
+                }
                 _stenoGorevRepo.Update(result, CurrentUser.Id);
                 _stenoGorevRepo.Save();
             }
@@ -419,10 +425,13 @@ namespace TTBS.Services
 
         public void UpdateGorevDurumById(Guid id)
         {
-            var result = _stenoGorevRepo.Get(x => x.Id == id && x.GorevBasTarihi >= DateTime.Now.AddHours(1));
-            if (result != null && result.Count() > 0)
+            var result = _stenoGorevRepo.GetById(id);
+            if (result != null && result.GorevBasTarihi>= DateTime.Now.AddHours(1))
             {
-                result.ToList().ForEach(x => x.GorevStatu = GorevStatu.Iptal);
+                if(result.GorevStatu == GorevStatu.Iptal)
+                    result.GorevStatu = GorevStatu.DevamEdiyor;
+                else if(result.GorevStatu == GorevStatu.DevamEdiyor)
+                    result.GorevStatu = GorevStatu.Iptal;
                 _stenoGorevRepo.Update(result, CurrentUser.Id);
                 _stenoGorevRepo.Save();
             }
