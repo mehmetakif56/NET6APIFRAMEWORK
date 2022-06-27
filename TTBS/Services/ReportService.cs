@@ -6,7 +6,7 @@ namespace TTBS.Services
     public interface IReportService
     {
         IEnumerable<Birlesim> GetReportStenoPlanBetweenDateGorevTur(DateTime gorevBasTarihi, DateTime gorevBitTarihi, int gorevTuru);
-        IEnumerable<GorevAtama> GetStenoGorevByStenografAndDate(Guid stenografId, DateTime gorevBasTarihi, DateTime gorevBitTarihi);
+        IEnumerable<GorevAtama> GetStenoGorevByStenografAndDate(Guid? stenografId, DateTime gorevBasTarihi, DateTime gorevBitTarihi);
     }
     public class ReportService : BaseService, IReportService
     {
@@ -26,9 +26,11 @@ namespace TTBS.Services
             return _birlesimRepo.Get(x => x.BaslangicTarihi >= gorevBasTarihi && x.BitisTarihi <= gorevBitTarihi && (int)x.ToplanmaTuru == gorevTuru);
         }
 
-        public IEnumerable<GorevAtama> GetStenoGorevByStenografAndDate(Guid stenografId, DateTime gorevBasTarihi, DateTime gorevBitTarihi)
+        public IEnumerable<GorevAtama> GetStenoGorevByStenografAndDate(Guid? stenografId, DateTime gorevBasTarihi, DateTime gorevBitTarihi)
         {
-            return _stenoGorevRepo.Get(x => x.StenografId == stenografId && x.Birlesim.BaslangicTarihi >= gorevBasTarihi && x.Birlesim.BitisTarihi <= gorevBitTarihi, includeProperties: "Oturum.Birlesim");
+            if(stenografId!=null)
+                 return _stenoGorevRepo.Get(x => x.StenografId == stenografId && x.Birlesim.BaslangicTarihi >= gorevBasTarihi && x.Birlesim.BitisTarihi <= gorevBitTarihi, includeProperties: "Oturum.Birlesim");
+            return  _stenoGorevRepo.Get(x => x.Birlesim.BaslangicTarihi >= gorevBasTarihi && x.Birlesim.BitisTarihi <= gorevBitTarihi, includeProperties: "Oturum.Birlesim");
         }
     }
 }
