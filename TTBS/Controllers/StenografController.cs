@@ -151,7 +151,6 @@ namespace TTBS.Controllers
                            
                 var query = stenoEntity.Where(x => x.BirlesimId != item.BirlesimId && 
                                                    x.StenografId == item.StenografId && 
-                                                   x.Birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul &&
                                                    x.GorevBasTarihi.Value.Subtract(item.GorevBasTarihi.Value).TotalMinutes > 0 &&
                                                    x.GorevBasTarihi.Value.Subtract(item.GorevBasTarihi.Value).TotalMinutes <= limit);
 
@@ -161,8 +160,7 @@ namespace TTBS.Controllers
                 item.StenoIzinTuru = iz != null && iz.Count() > 0 ? iz.Select(x => x.IzinTuru).FirstOrDefault() : 0;
 
 
-
-                item.StenoToplantiVar = query != null && query.Count()>0 ?true : false;
+                item.StenoToplantiVar = query != null && query.Count()>0 && birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul ? true : false;
                
                 if (item.StenoToplantiVar || item.GorevStatu == GorevStatu.Iptal || (iz != null && iz.Count() > 0))
                 {
@@ -254,6 +252,7 @@ namespace TTBS.Controllers
                     {
                         birlesim.BitisTarihi = model.BasTarihi;
                         birlesim.ToplanmaDurumu = GorevStatu.Tamamlandı;
+                        _globalService.UpdateBirlesim(birlesim);
                     }
                 }
             }
