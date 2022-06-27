@@ -265,9 +265,9 @@ namespace TTBS.Controllers
         }
 
         [HttpGet("GetAllGrup")]
-        public IEnumerable<GrupModel> GetAllGrup()
+        public IEnumerable<GrupModel> GetAllGrup(int grupTuru)
         {
-            var entity = _globalService.GetAllGrup();
+            var entity = _globalService.GetAllGrup(grupTuru);
             var model = _mapper.Map<IEnumerable<GrupModel>>(entity);
             return model;
         }

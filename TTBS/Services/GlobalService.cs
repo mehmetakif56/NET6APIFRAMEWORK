@@ -19,7 +19,7 @@ namespace TTBS.Services
         Guid CreateOturum(Oturum oturum);
         void CreateKomisyon(Komisyon komisyon);
         void CreateGrup(Grup grup);
-        IEnumerable<Grup> GetAllGrup();
+        IEnumerable<Grup> GetAllGrup(int grupTuru);
         Grup GetGrupById(Guid id);
         void CreateAltKomisyon(AltKomisyon komisyon);
         void DeleteAltKomisyon(Guid id);
@@ -163,9 +163,9 @@ namespace TTBS.Services
             _grupRepo.Save();
         }
 
-        public IEnumerable<Grup> GetAllGrup()
+        public IEnumerable<Grup> GetAllGrup(int grupTuru)
         {
-            return _grupRepo.GetAll(includeProperties: "StenoGrups.Stenograf");
+            return _grupRepo.Get(x=>(int)x.StenoGrupTuru == grupTuru);
         }
 
         public Grup GetGrupById(Guid id)

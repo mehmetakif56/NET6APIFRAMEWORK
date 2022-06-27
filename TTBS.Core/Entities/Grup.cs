@@ -11,7 +11,6 @@ namespace TTBS.Core.Entities
         public Guid Id { get; set; }
         public string Ad { get; set; }
         public virtual ICollection<StenoGrup> StenoGrups { get; set; }
-        [NotMapped]
-        public StenoGorevTuru StenoGorevTuru { get; set; }
+        public StenoGorevTuru StenoGrupTuru { get; set; }
     }
 }

@@ -48,7 +48,6 @@ namespace TTBS.Helper
 
             CreateMap<GrupModel, Grup>();
             CreateMap<Grup, GrupModel>();
-                   //.ForMember(dest => dest.StenoGorevTuru, opt => opt.MapFrom(src => src.StenoGrups.Select(x=>x.Stenograf.StenoGorevTuru)));
 
             CreateMap<GorevAtama, StenoGorevGüncelleModel>();
             CreateMap<StenoGorevGüncelleModel, GorevAtama>();
