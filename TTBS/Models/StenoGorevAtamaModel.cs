@@ -10,7 +10,7 @@ namespace TTBS.Models
         public Guid BirlesimId { get; set; }
         public Guid OturumId { get; set; } = Guid.Empty;
         public int TurAdedi { get; set; }
-        public Dictionary<Guid,string> StenoIdGorevList { get; set; }
+        public StenoGorevTuru StenoGorevTuru { get; set; }
 
 
     }
