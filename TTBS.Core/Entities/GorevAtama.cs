@@ -19,7 +19,6 @@ namespace TTBS.Core.Entities
         public GorevStatu GorevStatu { get; set; }
         public Guid OturumId { get; set; }
         public Birlesim Birlesim { get; set; }
-        public Oturum Oturum { get; set; }
         public Guid BirlesimId { get; set; }
         [NotMapped]
         public List<Guid> StenografIds { get; set; }
@@ -32,6 +31,9 @@ namespace TTBS.Core.Entities
         public IzınTuru StenoIzinTuru { get; set; }
         [NotMapped]
         public StenoGorevTuru StenoGorevTuru { get; set; }
+        [NotMapped]
+        public int TurAdedi { get; set; }
+
 
     }
 }

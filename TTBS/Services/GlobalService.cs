@@ -1,4 +1,6 @@
 ﻿using TTBS.Core.Entities;
+using TTBS.Core.Enums;
+using TTBS.Core.Extensions;
 using TTBS.Core.Interfaces;
 
 namespace TTBS.Services
@@ -16,6 +18,7 @@ namespace TTBS.Services
         void CreateDonem(Donem donem);
         void CreateYasama(Yasama donem);
         void CreateBirlesim(Birlesim birlesim);
+        Result CreateBirlesimGorevAtama(Birlesim birlesim);
         Guid CreateOturum(Oturum oturum);
         void CreateKomisyon(Komisyon komisyon);
         void CreateGrup(Grup grup);
@@ -40,7 +43,6 @@ namespace TTBS.Services
         void UpdateOturum(Oturum oturum);
         void UpdateBirlesim(Birlesim birlesim);
         IEnumerable<Oturum> GetOturumByBirlesimId(Guid id);
-        bool GetBirlesimByDate(DateTime? baslangicTarihi);
     }
     public class GlobalService : BaseService, IGlobalService
     {
@@ -54,6 +56,8 @@ namespace TTBS.Services
         private IRepository<OzelGorevTur> _ozelGorevTurRepo;
         private IRepository<Oturum> _oturumRepo;
         private IUnitOfWork _unitWork;
+        private IRepository<GorevAtama> _stenoGorevRepo;
+        private IRepository<Stenograf> _stenografRepo;
         public GlobalService(IRepository<Donem> donemRepo,
                              IRepository<Yasama> yasamaRepo,
                              IRepository<Birlesim> birlesimRepo,
@@ -64,6 +68,8 @@ namespace TTBS.Services
                              IRepository<OzelGorevTur> ozelGorevTurRepo,
                              IRepository<Oturum> oturumRepo,
                              IUnitOfWork unitWork,
+                             IRepository<GorevAtama> stenoGorevRepo,
+                             IRepository<Stenograf> stenografRepo,
                              IServiceProvider provider) : base(provider)
         {
             _donemRepo = donemRepo;
@@ -76,6 +82,8 @@ namespace TTBS.Services
             _altkomisyonRepo = altkomisyonRepo;
             _ozelGorevTurRepo = ozelGorevTurRepo;
             _oturumRepo = oturumRepo;
+            _stenoGorevRepo = stenoGorevRepo;
+            _stenografRepo = stenografRepo;
         }
         public IEnumerable<Donem> GetAllDonem()
         {
@@ -114,10 +122,70 @@ namespace TTBS.Services
             _donemRepo.Save();
         }
 
+        public Result CreateBirlesimGorevAtama(Birlesim birlesim)
+        {
+            var result = new Result();  
+            try
+            {
+                if(!GetBirlesimByDate())
+                {
+                    birlesim.ToplanmaDurumu = ToplanmaStatu.Planlandı;
+                    CreateBirlesim(birlesim);
+
+                    var oturumId = CreateOturum(new Oturum
+                    {
+                        BirlesimId = birlesim.Id,
+                        BaslangicTarihi = birlesim.BaslangicTarihi
+                    });
+
+                    CreateStenoGorevAtamaGenelKurul(birlesim, oturumId);
+                   
+                    result.HasError = false;
+                }
+                else
+                {
+                    result.HasError = true;
+                    result.Message = "Devam eden birlesim olduğundan yeni birlesim oluşturulamaz!";
+                }
+
+            }
+            catch(Exception ex)
+            {
+                result.HasError = true;
+                result.Message = ex.Message;
+            }
+            return result;
+        }
+
         public void CreateBirlesim(Birlesim birlesim)
         {
             _birlesimRepo.Create(birlesim, CurrentUser.Id);
             _birlesimRepo.Save();
+        }
+
+        public void CreateStenoGorevAtamaGenelKurul(Birlesim birlesim,Guid oturumId)
+        {
+            var stenoList = _stenografRepo.GetAll().Select(x=> new {Id =x.Id,GorevTuru =x.StenoGorevTuru,SıraNo=x.SiraNo}).OrderBy(x=>x.SıraNo);
+            int firstRec = 0;
+            for (int i = 0; i < birlesim.TurAdedi; i++)
+            {
+                var atamaList = new List<GorevAtama>();
+                foreach (var item in stenoList)
+                {
+                    var newEntity = new GorevAtama();
+                    newEntity.BirlesimId = birlesim.Id;
+                    newEntity.OturumId = oturumId;
+                    newEntity.StenografId = item.Id;
+                    newEntity.GorevStatu = GorevStatu.Planlandı;
+                    var sure = item.GorevTuru == StenoGorevTuru.Uzman ? birlesim.UzmanStenoSure : birlesim.StenoSure;
+                    newEntity.GorevBasTarihi = birlesim.BaslangicTarihi.HasValue ? birlesim.BaslangicTarihi.Value.AddMinutes(firstRec * sure) : null;
+                    newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.HasValue ? newEntity.GorevBasTarihi.Value.AddMinutes(sure):null;
+                    atamaList.Add(newEntity);
+                    firstRec++;
+                }
+                _stenoGorevRepo.Create(atamaList, CurrentUser.Id);
+                _stenoGorevRepo.Save();
+            }
         }
 
         public void CreateKomisyon(Komisyon komisyon)
@@ -275,10 +343,9 @@ namespace TTBS.Services
             _birlesimRepo.Save();
         }
 
-        public bool GetBirlesimByDate(DateTime? baslangicTarihi)
+        public bool GetBirlesimByDate()
         {
-            var result = _birlesimRepo.Get(x => x.ToplanmaTuru == Core.Enums.ToplanmaTuru.GenelKurul && x.BaslangicTarihi <= baslangicTarihi && (x.ToplanmaDurumu == Core.Enums.GorevStatu.DevamEdiyor || x.ToplanmaDurumu == Core.Enums.GorevStatu.Planlandı));
-             
+            var result = _birlesimRepo.Get(x => x.ToplanmaDurumu == Core.Enums.ToplanmaStatu.DevamEdiyor || x.ToplanmaDurumu == Core.Enums.ToplanmaStatu.Planlandı || x.ToplanmaDurumu == Core.Enums.ToplanmaStatu.Oluşturuldu);
             return result!=null && result.Count()>0 ? true : false;                
         }
     }

@@ -15,7 +15,7 @@ namespace TTBS.Services
         IEnumerable<GorevAtama> GetStenoGorevByName(string adSoyad);
         IEnumerable<GorevAtama> GetStenoGorevByDateAndStatus(DateTime gorevBasTarihi,DateTime gorevBitTarihi, int status);
         IEnumerable<GorevAtama> GetStenoGorevByStenografAndDate(Guid? stenografId, DateTime gorevBasTarihi, DateTime gorevBitTarihi);
-        void CreateStenoGorevAtama(GorevAtama stenoGorev,Birlesim birlesim);
+        void CreateStenoGorevAtama(GorevAtama stenoGorev);
         void UpdateStenoGorev(List<GorevAtama> stenoGorev);
         void CreateStenoIzin(StenoIzin stenoGorev);
         IEnumerable<GorevAtama> GetStenoGorevByBirlesimId(int gorevTuru);
@@ -54,6 +54,7 @@ namespace TTBS.Services
         private IRepository<StenoGrup> _stenoGrupRepo;
         private IRepository<StenografBeklemeSure> _stenoBeklemeSure;
         private IRepository<Grup> _grupRepo;
+        private IRepository<Oturum> _oturumRepo;
         public StenografService(IRepository<StenoIzin> stenoIzinRepo, IRepository<GorevAtama> stenoGorevRepo,
                                 IUnitOfWork unitWork,
                                 IRepository<Stenograf> stenografRepo,
@@ -61,6 +62,7 @@ namespace TTBS.Services
                                 IRepository<StenografBeklemeSure> stenoBeklemeSure,
                                 IRepository<Grup> grupRepo,
                                 IRepository<Birlesim> birlesimRepo,
+                                IRepository<Oturum> oturumRepo,
                                 IServiceProvider provider) : base(provider)
         {
             _stenoIzinRepo = stenoIzinRepo;
@@ -70,6 +72,7 @@ namespace TTBS.Services
             _stenoGrupRepo = stenoGrupRepo;
             _stenoBeklemeSure = stenoBeklemeSure;
             _birlesimRepo = birlesimRepo;
+            _oturumRepo = oturumRepo;
             _grupRepo = grupRepo;
         }
        
@@ -131,28 +134,56 @@ namespace TTBS.Services
             return _stenoGorevRepo.Get(x => x.GorevBasTarihi>= gorevBasTarihi && x.GorevBitisTarihi <= gorevBitTarihi && (int)x.GorevStatu == statu, includeProperties: "Stenograf");
         }
 
-        public void CreateStenoGorevAtama(GorevAtama entity, Birlesim birlesim)
+        private void UpdateBirlesimGorevAtama(Birlesim birlesim)
+        {
+            birlesim.TurAdedi = birlesim.TurAdedi;
+            _birlesimRepo.Update(birlesim);
+            _birlesimRepo.Save();
+        }
+
+        private Guid CreateOturumGorevAtama(Oturum oturum)
+        {
+            _oturumRepo.Create(oturum, CurrentUser.Id);
+            _oturumRepo.Save();
+            return oturum.Id;
+        }
+
+        private void CreateStenoGorev(Birlesim birlesim, Guid oturumId, List<Guid> stenoList)
         {
             int firstRec = 0;
-            double sure = entity.Stenograf?.StenoGorevTuru== StenoGorevTuru.Uzman ? birlesim.UzmanStenoSure: birlesim.StenoSure;
             for (int i = 0; i < birlesim.TurAdedi; i++)
             {
-                foreach (var item in entity.StenografIds)
+                var atamaList = new List<GorevAtama>();
+                foreach (var item in stenoList)
                 {
                     var newEntity = new GorevAtama();
-                    newEntity.BirlesimId = entity.BirlesimId;
-                    newEntity.OturumId = entity.OturumId;
+                    newEntity.BirlesimId = birlesim.Id;
+                    newEntity.OturumId = oturumId;
                     newEntity.StenografId = item;
                     newEntity.GorevStatu = GorevStatu.Planlandı;
-                    newEntity.GorevBasTarihi = birlesim.BaslangicTarihi.HasValue ? birlesim.BaslangicTarihi.Value.AddMinutes(firstRec * sure) : null;
-                    newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.Value.AddMinutes(sure) ;
-                    _stenoGorevRepo.Create(newEntity, CurrentUser.Id);
-                    _stenoGorevRepo.Save();
+                    newEntity.GorevBasTarihi = birlesim.BaslangicTarihi.HasValue ? birlesim.BaslangicTarihi.Value.AddMinutes(firstRec * birlesim.StenoSure) : null;
+                    newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.HasValue ? newEntity.GorevBasTarihi.Value.AddMinutes(birlesim.StenoSure) : null;
+                    atamaList.Add(newEntity);
                     firstRec++;
                 }
+                _stenoGorevRepo.Create(atamaList, CurrentUser.Id);
+                _stenoGorevRepo.Save();
             }
-          
         }
+
+        public void CreateStenoGorevAtama(GorevAtama entity)
+        {
+            var birlesim =_birlesimRepo.GetById(entity.BirlesimId);
+            UpdateBirlesimGorevAtama(birlesim);
+
+            var oturumId = CreateOturumGorevAtama(new Oturum
+            {
+                BirlesimId = birlesim.Id,
+                BaslangicTarihi = birlesim.BaslangicTarihi
+            });
+
+            CreateStenoGorev(birlesim,oturumId,entity.StenografIds);
+        }       
 
         public void UpdateStenoGorev(List<GorevAtama> entityList)
         {
@@ -377,7 +408,7 @@ namespace TTBS.Services
 
             var birlesim = result.Select(x=>x.Birlesim).FirstOrDefault();
             birlesim.BaslangicTarihi = birlesim.BaslangicTarihi.Value.AddMinutes(mindateDiff);
-            birlesim.ToplanmaDurumu = GorevStatu.DevamEdiyor;
+            birlesim.ToplanmaDurumu = ToplanmaStatu.DevamEdiyor;
             _birlesimRepo.Update(birlesim);
             _birlesimRepo.Save();  
      

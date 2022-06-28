@@ -186,7 +186,6 @@ namespace TTBS.Controllers
                     gorevBitTarihi = item.GorevBitisTarihi.HasValue ? item.GorevBitisTarihi.Value:DateTime.MinValue;
                 }
 
-               
                 lst.Add(item);
             }
 
@@ -232,7 +231,6 @@ namespace TTBS.Controllers
                     {
                         oturum.BaslangicTarihi = model.BasTarihi;
                         _globalService.UpdateOturum(oturum);
-
                     }
                 }
                 else if(ToplanmaBaslatmaStatu.AraVerme == model.ToplanmaBaslatmaStatu)
@@ -247,6 +245,7 @@ namespace TTBS.Controllers
                 else if(ToplanmaBaslatmaStatu.DevamEtme == model.ToplanmaBaslatmaStatu)
                 {
                     _globalService.CreateOturum(new Oturum { BirlesimId = model.BirlesimId, BaslangicTarihi = model.BasTarihi });
+                    //_stenoService.UpdateBirlesimStenoGorev(model.BirlesimId, model.BasTarihi);
                 }
                 else if(ToplanmaBaslatmaStatu.Sonladırma == model.ToplanmaBaslatmaStatu)
                 {
@@ -257,12 +256,11 @@ namespace TTBS.Controllers
                         _globalService.UpdateOturum(oturum);
 
                     }
-
                     var birlesim = _globalService.GetBirlesimById(model.BirlesimId).FirstOrDefault();
                     if(birlesim !=null)
                     {
                         birlesim.BitisTarihi = model.BasTarihi;
-                        birlesim.ToplanmaDurumu = GorevStatu.Tamamlandı;
+                        birlesim.ToplanmaDurumu = ToplanmaStatu.Tamamlandı;
                         _globalService.UpdateBirlesim(birlesim);
                     }
                 }
@@ -281,14 +279,8 @@ namespace TTBS.Controllers
                 return BadRequest("Stenograf Listesi Dolu Olmalıdır!");
             try
             {
-                var birlesim = _globalService.GetBirlesimById(model.BirlesimId).FirstOrDefault();
-                birlesim.TurAdedi = model.TurAdedi;
-                _globalService.UpdateBirlesim(birlesim);
-
-                model.OturumId = model.OturumId == Guid.Empty ? _globalService.CreateOturum(new Oturum { BirlesimId = model.BirlesimId, BaslangicTarihi = DateTime.Now }): model.OturumId;
-
                 var entity = Mapper.Map<GorevAtama>(model);
-               _stenoService.CreateStenoGorevAtama(entity,birlesim);             
+               _stenoService.CreateStenoGorevAtama(entity);             
             }
             catch (Exception ex)
             { return BadRequest(ex.Message); }

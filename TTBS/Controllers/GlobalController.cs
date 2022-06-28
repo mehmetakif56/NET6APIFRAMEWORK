@@ -42,7 +42,7 @@ namespace TTBS.Controllers
         }
 
         [HttpPost("CreateDonem")]
-        public IActionResult CreateDonem(Donem model)
+        public IActionResult CreateDonem(DonemModel model)
         {
             var entity = Mapper.Map<Donem>(model);
             _globalService.CreateDonem(entity);
@@ -70,7 +70,7 @@ namespace TTBS.Controllers
         }
 
         [HttpPost("CreateYasama")]
-        public IActionResult CreateYasama(Yasama model)
+        public IActionResult CreateYasama(YasamaModel model)
         {
             var entity = Mapper.Map<Yasama>(model);
             _globalService.CreateYasama(entity);
@@ -103,35 +103,28 @@ namespace TTBS.Controllers
         {
             try
             {
-                var mevcutBirlesim = model.ToplanmaTuru == ToplanmaTuru.GenelKurul ? _globalService.GetBirlesimByDate(model.BaslangicTarihi) :false;
-                if(!mevcutBirlesim)
+                if (model.ToplanmaTuru == ToplanmaTuru.GenelKurul)
                 {
-                    var birlesimEntity = Mapper.Map<Birlesim>(model);
-                    birlesimEntity.TurAdedi = 3;
-                    _globalService.CreateBirlesim(birlesimEntity);
-                    if (model.ToplanmaTuru == ToplanmaTuru.GenelKurul)
-                    {
-                        var steno = _stenoService.GetAllStenografByGroupId(null);
-                        var stenoGorevAtamaModel = new StenoGorevAtamaModel()
-                        {
-                            BirlesimId = birlesimEntity.Id,
-                            OturumId = _globalService.CreateOturum(new Oturum { BirlesimId = birlesimEntity.Id, BaslangicTarihi = model.BaslangicTarihi }),
-                            StenografIds = steno.Select(x => x.Id).ToList()
-                        };
-                        var atamaEntity = Mapper.Map<GorevAtama>(stenoGorevAtamaModel);
-                        _stenoService.CreateStenoGorevAtama(atamaEntity, birlesimEntity);
-                    }
+                    var result = _globalService.CreateBirlesimGorevAtama(SetBirlesimWithMap(model));
+                    if (result.HasError)
+                        return BadRequest(result.Message);
                 }
                 else
                 {
-                    return BadRequest("Devam eden birlesim olduğundan yeni birlesim oluşturulamaz!");
+                    _globalService.CreateBirlesim(SetBirlesimWithMap(model));
                 }
-               
             }
             catch (Exception ex)
             { return BadRequest(ex.Message); }
             
             return Ok();
+        }
+        private Birlesim SetBirlesimWithMap(BirlesimModel model)
+        {
+            var birlesimEntity = Mapper.Map<Birlesim>(model);
+            birlesimEntity.TurAdedi = 3;
+            birlesimEntity.ToplanmaDurumu = ToplanmaStatu.Oluşturuldu;
+           return birlesimEntity;
         }
         #endregion
 

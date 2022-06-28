@@ -60,20 +60,20 @@
     <Compile Include="Entities\RoleClaimEntity.cs" />
     <Compile Include="Entities\Donem.cs" />
     <Compile Include="Entities\UserEntity.cs" />
+    <Compile Include="Enums\ToplanmaStatu.cs" />
     <Compile Include="Enums\GorevStatu.cs" />
     <Compile Include="Enums\IzınTuru.cs" />
     <Compile Include="Enums\KomisyonTipi.cs" />
     <Compile Include="Enums\ToplanmaBaslatmaStatu.cs" />
     <Compile Include="Enums\ToplanmaTuru.cs" />
     <Compile Include="Enums\StenoGorevTuru.cs" />
+    <Compile Include="Extensions\Result.cs" />
     <Compile Include="Interfaces\IEntity.cs" />
     <Compile Include="Interfaces\IUnitOfWork.cs" />
     <Compile Include="Interfaces\ISessionHelper.cs" />
     <Compile Include="Interfaces\IRepository.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Extensions\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Reference Include="Microsoft.AspNetCore.Http.Features, Version=5.0.16.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNetCore.Http.Features.5.0.16\lib\net461\Microsoft.AspNetCore.Http.Features.dll</HintPath>
