@@ -165,7 +165,13 @@ namespace TTBS.Services
 
         public void CreateStenoGorevAtamaGenelKurul(Birlesim birlesim,Guid oturumId)
         {
-            var stenoList = _stenografRepo.GetAll().Select(x=> new {Id =x.Id,GorevTuru =x.StenoGorevTuru,SıraNo=x.SiraNo}).OrderBy(x=>x.SıraNo);
+            CreateSteno(birlesim, oturumId);
+            CreateUzmanSteno(birlesim, oturumId);
+        }
+
+        private void CreateUzmanSteno(Birlesim birlesim, Guid oturumId)
+        {
+            var stenoList = _stenografRepo.Get(x => x.StenoGorevTuru == StenoGorevTuru.Uzman).OrderBy(x => x.SiraNo);
             int firstRec = 0;
             for (int i = 0; i < birlesim.TurAdedi; i++)
             {
@@ -177,9 +183,8 @@ namespace TTBS.Services
                     newEntity.OturumId = oturumId;
                     newEntity.StenografId = item.Id;
                     newEntity.GorevStatu = GorevStatu.Planlandı;
-                    var sure = item.GorevTuru == StenoGorevTuru.Uzman ? birlesim.UzmanStenoSure : birlesim.StenoSure;
-                    newEntity.GorevBasTarihi = birlesim.BaslangicTarihi.HasValue ? birlesim.BaslangicTarihi.Value.AddMinutes(firstRec * sure) : null;
-                    newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.HasValue ? newEntity.GorevBasTarihi.Value.AddMinutes(sure):null;
+                    newEntity.GorevBasTarihi = birlesim.BaslangicTarihi.HasValue ? birlesim.BaslangicTarihi.Value.AddMinutes(firstRec * birlesim.UzmanStenoSure) : null;
+                    newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.HasValue ? newEntity.GorevBasTarihi.Value.AddMinutes(birlesim.UzmanStenoSure) : null;
                     atamaList.Add(newEntity);
                     firstRec++;
                 }
@@ -188,6 +193,31 @@ namespace TTBS.Services
             }
         }
 
+        private void CreateSteno(Birlesim birlesim, Guid oturumId)
+        {
+            var stenoList = _stenografRepo.Get(x=>x.StenoGorevTuru == StenoGorevTuru.Stenograf).OrderBy(x => x.SiraNo);
+            int firstRec = 0;
+            for (int i = 0; i < birlesim.TurAdedi; i++)
+            {
+                var atamaList = new List<GorevAtama>();
+                foreach (var item in stenoList)
+                {
+                    var newEntity = new GorevAtama();
+                    newEntity.BirlesimId = birlesim.Id;
+                    newEntity.OturumId = oturumId;
+                    newEntity.StenografId = item.Id;
+                    newEntity.GorevStatu = GorevStatu.Planlandı;
+                    newEntity.GorevBasTarihi = birlesim.BaslangicTarihi.HasValue ? birlesim.BaslangicTarihi.Value.AddMinutes(firstRec * birlesim.StenoSure) : null;
+                    newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.HasValue ? newEntity.GorevBasTarihi.Value.AddMinutes(birlesim.StenoSure) : null;
+                    atamaList.Add(newEntity);
+                    firstRec++;
+                }
+                _stenoGorevRepo.Create(atamaList, CurrentUser.Id);
+                _stenoGorevRepo.Save();
+            }
+        }
+
+      
         public void CreateKomisyon(Komisyon komisyon)
         {
             _komisyonRepo.Create(komisyon, CurrentUser.Id);

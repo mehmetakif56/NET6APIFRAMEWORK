@@ -167,22 +167,20 @@ namespace TTBS.Controllers
                 if (birlesimList!=null && birlesimList.Count()>0)
                 {
                     var model = _mapper.Map<List<StenoGorevModel>>(birlesimList);
-                    var gorevBasTarihi = DateTime.MinValue;
-                    var gorevBitTarihi = DateTime.MinValue;
-                    bool checkTrue = true;
-                    var grpList = birlesimList.GroupBy(c => new {
-                        c.StenografId,
-                        c.BirlesimId
-                    }).Count();
+                    var gorevBasTarihi = model.FirstOrDefault().GorevBasTarihi.Value;
+                    var gorevBitTarihi = model.FirstOrDefault().GorevBitisTarihi.Value;
+                   
                     var birlesim = birlesimList.FirstOrDefault().Birlesim;
                     var sure = gorevturu == (int)StenoGorevTuru.Stenograf ? birlesim.StenoSure : birlesim.UzmanStenoSure;
-                    var stenoToplamSureAsım = sure * grpList <= 50;
-
+                    var ste = model.Where(x => x.StenografId == model.FirstOrDefault().StenografId);     
+                    var stenoToplamSureAsım =  ste.Max(x=>x.GorevBitisTarihi.Value).Subtract(ste.Min(x => x.GorevBasTarihi.Value)).TotalMinutes <= 50;
+       
                     foreach (var item in model)
                     {
+
                         var iz = birlesimList.Where(x => x.StenografId == item.StenografId).SelectMany(x => x.Stenograf.StenoIzins)
-                                            .Where(x => x.BaslangicTarihi.Value <= item.GorevBasTarihi.Value &&
-                                                        x.BitisTarihi.Value >= item.GorevBasTarihi.Value);
+                                            .Where(x => x.BaslangicTarihi.Value <= gorevBasTarihi &&
+                                                        x.BitisTarihi.Value >= gorevBasTarihi);
                         item.StenoIzinTuru = iz != null && iz.Count() > 0 ? iz.Select(x => x.IzinTuru).FirstOrDefault() : 0;
 
                         if(birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul)
@@ -191,10 +189,10 @@ namespace TTBS.Controllers
 
                             var query = stenoEntity.Where(x => x.BirlesimId != item.BirlesimId &&
                                                                x.StenografId == item.StenografId &&
-                                                               x.GorevBasTarihi.Value.Subtract(item.GorevBasTarihi.Value).TotalMinutes > 0 &&
-                                                               x.GorevBasTarihi.Value.Subtract(item.GorevBasTarihi.Value).TotalMinutes <= 60);
+                                                               x.GorevBasTarihi.Value.Subtract(gorevBasTarihi).TotalMinutes > 0 &&
+                                                               x.GorevBasTarihi.Value.Subtract(gorevBasTarihi).TotalMinutes <= 60);
 
-                            item.StenoToplantiVar = (query != null && query.Count() > 0) || (maxBitis.HasValue && maxBitis.Value.AddMinutes(sure * 9) >= item.GorevBasTarihi.Value) ? true : false;
+                            item.StenoToplantiVar = (query != null && query.Count() > 0) || (maxBitis.HasValue && maxBitis.Value.AddMinutes(sure * 9) >= gorevBasTarihi) ? true : false;
                         }
                          else
                         {
@@ -205,16 +203,15 @@ namespace TTBS.Controllers
                         if (item.StenoToplantiVar || item.GorevStatu == GorevStatu.Iptal || (iz != null && iz.Count() > 0) )
                         {
                             item.GorevStatu = GorevStatu.Iptal;
-                            checkTrue = false;
-                        }
+                            }
                         else
                         {
 
-                            if (item.GorevBasTarihi != gorevBasTarihi && gorevBasTarihi != DateTime.MinValue)
+                            if (item.GorevBasTarihi != gorevBasTarihi)
                             {
                                 item.GorevBasTarihi = gorevBitTarihi;
                             }
-                            if (item.GorevBitisTarihi != gorevBitTarihi && gorevBitTarihi != DateTime.MinValue)
+                            if (item.GorevBitisTarihi != gorevBitTarihi)
                             {
                                 item.GorevBitisTarihi = gorevBitTarihi.AddMinutes(sure);
 
