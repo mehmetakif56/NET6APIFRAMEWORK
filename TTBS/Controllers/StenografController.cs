@@ -143,11 +143,16 @@ namespace TTBS.Controllers
             var gorevBasTarihi = DateTime.MinValue;
             var gorevBitTarihi = DateTime.MinValue;
             bool checkTrue = true;
+            var grpList = birlesimList.GroupBy(c => new {
+                c.StenografId,
+                c.BirlesimId
+            }).Count();
+            var birlesim = birlesimList.FirstOrDefault().Birlesim;
+            var sure = gorevturu == (int)StenoGorevTuru.Stenograf ? birlesim.StenoSure : birlesim.UzmanStenoSure;
+            var stenoToplamSureAsım = sure * grpList<=50;
 
             foreach (var item in model)
             {
-                var birlesim = birlesimList.FirstOrDefault().Birlesim;
-                var sure = gorevturu == (int)StenoGorevTuru.Stenograf ? birlesim.StenoSure  : birlesim.UzmanStenoSure;
 
                 var maxBitis = stenoEntity.Where(x => x.BirlesimId != item.BirlesimId && x.StenografId == item.StenografId).Max(x => x.GorevBitisTarihi);
 
@@ -187,6 +192,7 @@ namespace TTBS.Controllers
                     gorevBitTarihi = item.GorevBitisTarihi.HasValue ? item.GorevBitisTarihi.Value:DateTime.MinValue;
                 }
 
+                item.StenoToplamSureAsım = stenoToplamSureAsım;
                 lst.Add(item);
             }
 

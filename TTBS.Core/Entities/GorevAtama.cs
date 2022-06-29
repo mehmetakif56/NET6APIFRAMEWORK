@@ -33,6 +33,9 @@ namespace TTBS.Core.Entities
         public StenoGorevTuru StenoGorevTuru { get; set; }
         [NotMapped]
         public int TurAdedi { get; set; }
+        [NotMapped]
+        public bool StenoToplamSureAsım { get; set; }
+  
 
 
     }

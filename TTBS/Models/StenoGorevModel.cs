@@ -20,5 +20,6 @@ namespace TTBS.Models
         public double DifMin { get; set; }
         public bool StenoToplantiVar { get; set; }
         public IzınTuru StenoIzinTuru { get; set; }
+        public bool StenoToplamSureAsım { get; set; }
     }
 }
