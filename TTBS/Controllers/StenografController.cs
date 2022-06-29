@@ -133,12 +133,21 @@ namespace TTBS.Controllers
             return Ok();
         }
 
-        [HttpPut("UpdateStenoGorevDonguEkle")]
-        public IActionResult UpdateStenoGorevDonguEkle(Guid birlesimId,Guid oturumId, int gorevturu)
+        [HttpPut("CreateStenoGorevDonguEkle")]
+        public IActionResult CreateStenoGorevDonguEkle(Guid birlesimId,Guid oturumId, int gorevturu)
         {
             try
             {
-                var stenoEntity = _stenoService.GetStenoGorevByBirlesimId(gorevturu);
+                var stenoEntity = _stenoService.GetStenoGorevByBirlesimIdAndGorevTuru(birlesimId,gorevturu);
+                if (stenoEntity != null && stenoEntity.Count() > 0)
+                {
+                    var grpList = stenoEntity.GroupBy(c => new {
+                        c.StenografId
+                      }).Select(x=>x.Key.StenografId).ToList();
+                    var maxDate = stenoEntity.Max(x => x.GorevBitisTarihi);
+                    var sure = gorevturu == (int)StenoGorevTuru.Stenograf ? stenoEntity.Select(x=>x.Birlesim).FirstOrDefault().StenoSure : stenoEntity.Select(x => x.Birlesim).FirstOrDefault().UzmanStenoSure;
+                    _stenoService.CreateStenoGorevDonguEkle(birlesimId, oturumId, grpList, maxDate, sure);
+                }
             }
             catch (Exception ex)
             {
@@ -151,7 +160,7 @@ namespace TTBS.Controllers
         public List<StenoGorevModel> GetStenoGorevByBirlesimId(Guid birlesimId,int gorevturu)
         {
             var lst = new List<StenoGorevModel>();
-            var stenoEntity = _stenoService.GetStenoGorevByBirlesimId(gorevturu);
+            var stenoEntity = _stenoService.GetStenoGorevByGorevTuru(gorevturu);
             if(stenoEntity!=null && stenoEntity.Count()>0)
             {
                 var birlesimList = stenoEntity.Where(x => x.BirlesimId == birlesimId).OrderBy(x => x.GorevBasTarihi).ToList();
