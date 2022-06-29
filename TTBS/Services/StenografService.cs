@@ -136,6 +136,7 @@ namespace TTBS.Services
 
         private void UpdateBirlesimGorevAtama(Birlesim birlesim)
         {
+            birlesim.ToplanmaDurumu = ToplanmaStatu.Planlandı;
             birlesim.TurAdedi = birlesim.TurAdedi;
             _birlesimRepo.Update(birlesim);
             _birlesimRepo.Save();
