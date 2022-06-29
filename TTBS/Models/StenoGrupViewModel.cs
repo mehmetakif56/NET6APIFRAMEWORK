@@ -6,6 +6,7 @@ namespace TTBS.Models
     {
         public Guid GrupId { get; set; }
         public string GrupName { get; set; }
+        public StenoGorevTuru StenoGrupTuru { get; set; }
         public List<StenoViewModel> StenoViews { get; set; }
     }
 }

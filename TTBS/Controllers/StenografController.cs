@@ -163,8 +163,8 @@ namespace TTBS.Controllers
             var stenoEntity = _stenoService.GetStenoGorevByGorevTuru(gorevturu);
             if(stenoEntity!=null && stenoEntity.Count()>0)
             {
-                var birlesimList = stenoEntity.Where(x => x.BirlesimId == birlesimId).OrderBy(x => x.GorevBasTarihi).ToList();
-                if(birlesimList!=null && birlesimList.Count()>0)
+                var birlesimList = stenoEntity.Where(x => x.BirlesimId == birlesimId ).OrderBy(x => x.GorevBasTarihi).ToList();
+                if (birlesimList!=null && birlesimList.Count()>0)
                 {
                     var model = _mapper.Map<List<StenoGorevModel>>(birlesimList);
                     var gorevBasTarihi = DateTime.MinValue;
@@ -181,12 +181,12 @@ namespace TTBS.Controllers
                     foreach (var item in model)
                     {
                         var maxBitis = stenoEntity.Where(x => x.BirlesimId != item.BirlesimId && x.StenografId == item.StenografId).Max(x => x.GorevBitisTarihi);
+                        var komTarih = maxBitis.HasValue ? maxBitis.Value.AddMinutes(sure * 9) >= item.GorevBasTarihi.Value:false;
 
                         var query = stenoEntity.Where(x => x.BirlesimId != item.BirlesimId &&
                                                            x.StenografId == item.StenografId &&
-                                                           ((x.GorevBasTarihi.Value.Subtract(item.GorevBasTarihi.Value).TotalMinutes > 0 &&
-                                                           x.GorevBasTarihi.Value.Subtract(item.GorevBasTarihi.Value).TotalMinutes <= 60) ||
-                                                           x.GorevBitisTarihi.Value.AddMinutes(sure * 9) >= item.GorevBasTarihi.Value));
+                                                           x.GorevBasTarihi.Value.Subtract(item.GorevBasTarihi.Value).TotalMinutes > 0 &&
+                                                           x.GorevBasTarihi.Value.Subtract(item.GorevBasTarihi.Value).TotalMinutes <= 60);
 
                         var iz = birlesimList.Where(x => x.StenografId == item.StenografId).SelectMany(x => x.Stenograf.StenoIzins)
                                             .Where(x => x.BaslangicTarihi.Value <= item.GorevBasTarihi.Value &&
@@ -194,9 +194,11 @@ namespace TTBS.Controllers
                         item.StenoIzinTuru = iz != null && iz.Count() > 0 ? iz.Select(x => x.IzinTuru).FirstOrDefault() : 0;
 
 
-                        item.StenoToplantiVar = query != null && query.Count() > 0 && birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul ? true : false;
+                        item.StenoToplantiVar = (query != null && query.Count() > 0 && birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul) ||
+                                                 (komTarih && birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul)
+                                                ? true : false;
 
-                        if (item.StenoToplantiVar || item.GorevStatu == GorevStatu.Iptal || (iz != null && iz.Count() > 0))
+                        if (item.StenoToplantiVar || item.GorevStatu == GorevStatu.Iptal || (iz != null && iz.Count() > 0) || komTarih)
                         {
                             item.GorevStatu = GorevStatu.Iptal;
                             checkTrue = false;
@@ -362,14 +364,16 @@ namespace TTBS.Controllers
 
             foreach (var item in stenoEntity.GroupBy(c => new {
                 c.Id,
-                c.Ad
+                c.Ad,
+                c.StenoGrupTuru
             }).Select(gcs => new StenoGrupViewModel()
             {
                 GrupId = gcs.Key.Id,
-                GrupName = gcs.Key.Ad
+                GrupName = gcs.Key.Ad,
+                StenoGrupTuru = gcs.Key.StenoGrupTuru
             }))
             {
-                lst.Add(new StenoGrupViewModel { GrupId =item.GrupId,GrupName =item.GrupName} );
+                lst.Add(new StenoGrupViewModel { GrupId =item.GrupId,GrupName =item.GrupName,StenoGrupTuru =item.StenoGrupTuru} );
             }
             foreach (var item in lst) 
             {
