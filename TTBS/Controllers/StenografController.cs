@@ -143,6 +143,7 @@ namespace TTBS.Controllers
             var gorevBasTarihi = DateTime.MinValue;
             var gorevBitTarihi = DateTime.MinValue;
             bool checkTrue = true;
+
             foreach (var item in model)
             {
                 var birlesim = birlesimList.FirstOrDefault().Birlesim;
