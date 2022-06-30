@@ -262,7 +262,7 @@ namespace TTBS.Controllers
             {
                 if(ToplanmaBaslatmaStatu.Baslama == model.ToplanmaBaslatmaStatu)
                 {
-                    _stenoService.UpdateBirlesimStenoGorev(model.BirlesimId, model.BasTarihi);
+                    _stenoService.UpdateBirlesimStenoGorevBaslama(model.BirlesimId, model.BasTarihi);
                     var oturum = _globalService.GetOturumByBirlesimId(model.BirlesimId).Where(x => x.BitisTarihi == null).FirstOrDefault();
                     if (oturum != null)
                     {
@@ -281,8 +281,9 @@ namespace TTBS.Controllers
                 }
                 else if(ToplanmaBaslatmaStatu.DevamEtme == model.ToplanmaBaslatmaStatu)
                 {
+                    var oturum = _globalService.GetOturumByBirlesimId(model.BirlesimId).Where(x => x.BitisTarihi != null).LastOrDefault();
                     _globalService.CreateOturum(new Oturum { BirlesimId = model.BirlesimId, BaslangicTarihi = model.BasTarihi });
-                    //_stenoService.UpdateBirlesimStenoGorev(model.BirlesimId, model.BasTarihi);
+                    _stenoService.UpdateBirlesimStenoGorevDevamEtme(model.BirlesimId, model.BasTarihi, oturum.BitisTarihi.Value);
                 }
                 else if(ToplanmaBaslatmaStatu.Sonladırma == model.ToplanmaBaslatmaStatu)
                 {
