@@ -179,8 +179,8 @@ namespace TTBS.Controllers
                     {
 
                         var iz = birlesimList.Where(x => x.StenografId == item.StenografId).SelectMany(x => x.Stenograf.StenoIzins)
-                                            .Where(x => x.BaslangicTarihi.Value <= gorevBasTarihi &&
-                                                        x.BitisTarihi.Value >= gorevBasTarihi);
+                                            .Where(x => x.BaslangicTarihi.Value <= gorevBitTarihi &&
+                                                        x.BitisTarihi.Value >= gorevBitTarihi);
                         item.StenoIzinTuru = iz != null && iz.Count() > 0 ? iz.Select(x => x.IzinTuru).FirstOrDefault() : 0;
 
                         if(birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul)
@@ -189,10 +189,10 @@ namespace TTBS.Controllers
 
                             var query = stenoEntity.Where(x => x.BirlesimId != item.BirlesimId &&
                                                                x.StenografId == item.StenografId &&
-                                                               x.GorevBasTarihi.Value.Subtract(gorevBasTarihi).TotalMinutes > 0 &&
-                                                               x.GorevBasTarihi.Value.Subtract(gorevBasTarihi).TotalMinutes <= 60);
+                                                               x.GorevBasTarihi.Value.Subtract(gorevBitTarihi).TotalMinutes > 0 &&
+                                                               x.GorevBasTarihi.Value.Subtract(gorevBitTarihi).TotalMinutes <= 60);
 
-                            item.StenoToplantiVar = (query != null && query.Count() > 0) || (maxBitis.HasValue && maxBitis.Value.AddMinutes(sure * 9) >= gorevBasTarihi) ? true : false;
+                            item.StenoToplantiVar = (query != null && query.Count() > 0) || (maxBitis.HasValue && maxBitis.Value.AddMinutes(sure * 9) >= gorevBitTarihi) ? true : false;
                         }
                          else
                         {
