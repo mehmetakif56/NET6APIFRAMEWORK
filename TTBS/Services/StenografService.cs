@@ -190,7 +190,7 @@ namespace TTBS.Services
 
         public void CreateStenoGorevDonguEkle(Guid birlesimId, Guid oturumId, List<Guid> stenoList, DateTime? maxDate, double sure)
         {
-            int firsRec = 1;
+            int firsRec = 0;
             var atamaList = new List<GorevAtama>();
             foreach (var item in stenoList)
             {
