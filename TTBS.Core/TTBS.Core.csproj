@@ -60,6 +60,7 @@
     <Compile Include="Entities\RoleClaimEntity.cs" />
     <Compile Include="Entities\Donem.cs" />
     <Compile Include="Entities\UserEntity.cs" />
+    <Compile Include="Enums\GidenGrupDurumu.cs" />
     <Compile Include="Enums\ToplanmaStatu.cs" />
     <Compile Include="Enums\GorevStatu.cs" />
     <Compile Include="Enums\IzınTuru.cs" />
