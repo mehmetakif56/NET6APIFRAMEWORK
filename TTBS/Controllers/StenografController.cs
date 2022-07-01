@@ -262,7 +262,7 @@ namespace TTBS.Controllers
             {
                 if(ToplanmaBaslatmaStatu.Baslama == model.ToplanmaBaslatmaStatu)
                 {
-                    _stenoService.UpdateBirlesimStenoGorevBaslama(model.BirlesimId, model.BasTarihi);
+                    _stenoService.UpdateBirlesimStenoGorevBaslama(model.BirlesimId, model.BasTarihi,model.StenoGorevTuru);
                     var oturum = _globalService.GetOturumByBirlesimId(model.BirlesimId).Where(x => x.BitisTarihi == null).FirstOrDefault();
                     if (oturum != null)
                     {
@@ -281,9 +281,9 @@ namespace TTBS.Controllers
                 }
                 else if(ToplanmaBaslatmaStatu.DevamEtme == model.ToplanmaBaslatmaStatu)
                 {
-                    var oturum = _globalService.GetOturumByBirlesimId(model.BirlesimId).Where(x => x.BitisTarihi != null).LastOrDefault();
-                    _globalService.CreateOturum(new Oturum { BirlesimId = model.BirlesimId, BaslangicTarihi = model.BasTarihi });
-                    _stenoService.UpdateBirlesimStenoGorevDevamEtme(model.BirlesimId, model.BasTarihi, oturum.BitisTarihi.Value);
+                   var oturum = _globalService.GetOturumByBirlesimId(model.BirlesimId).Where(x => x.BitisTarihi != null).LastOrDefault();
+                   var oturumId= _globalService.CreateOturum(new Oturum { BirlesimId = model.BirlesimId, BaslangicTarihi = model.BasTarihi });
+                   _stenoService.UpdateBirlesimStenoGorevDevamEtme(model.BirlesimId, model.BasTarihi,model.StenoGorevTuru, oturum.BitisTarihi.Value, oturumId);
                 }
                 else if(ToplanmaBaslatmaStatu.Sonladırma == model.ToplanmaBaslatmaStatu)
                 {
@@ -301,6 +301,7 @@ namespace TTBS.Controllers
                         birlesim.ToplanmaDurumu = ToplanmaStatu.Tamamlandı;
                         _globalService.UpdateBirlesim(birlesim);
                     }
+                    _stenoService.UpdateStenoGorevTamamla(model.BirlesimId, model.StenoGorevTuru);
                 }
             }
             catch (Exception ex)
