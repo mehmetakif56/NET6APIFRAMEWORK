@@ -35,7 +35,7 @@ namespace TTBS.Controllers
         //    return model;
         //}
 
-        [HttpGet("GetStenoPlanByDateAndStatus")]
+        [HttpGet("GetBirlesimByDateAndTur")]
         public List<BirlesimViewModel> GetBirlesimByDateAndTur(DateTime gorevTarihi, DateTime gorevBitTarihi, int gorevTuru)
         {
             var stenoEntity = _stenoService.GetBirlesimByDateAndTur(gorevTarihi, gorevBitTarihi, gorevTuru);
@@ -200,10 +200,10 @@ namespace TTBS.Controllers
                         }
                     
 
-                        if (item.StenoToplantiVar || item.GorevStatu == GorevStatu.Iptal || (iz != null && iz.Count() > 0) )
+                        if (item.StenoToplantiVar || item.GorevStatu == GorevStatu.Iptal  || item.GorevStatu == GorevStatu.YerDegistirme || (iz != null && iz.Count() > 0) )
                         {
-                            item.GorevStatu = GorevStatu.Iptal;
-                            }
+                            item.GorevStatu = item.GorevStatu == GorevStatu.YerDegistirme ? GorevStatu.YerDegistirme: GorevStatu.Iptal;
+                        }
                         else
                         {
 
@@ -222,7 +222,8 @@ namespace TTBS.Controllers
                         }
 
                         item.StenoToplamSureAsım = stenoToplamSureAsım;
-                        lst.Add(item);
+                        if(item.GorevStatu != GorevStatu.YerDegistirme)
+                             lst.Add(item);
                     }
                 }
             }
@@ -320,6 +321,19 @@ namespace TTBS.Controllers
             {
                 var entity = Mapper.Map<GorevAtama>(model);
                _stenoService.CreateStenoGorevAtama(entity);             
+            }
+            catch (Exception ex)
+            { return BadRequest(ex.Message); }
+
+            return Ok();
+        }
+
+        [HttpPost("ChangeOrderStenografKomisyon")]
+        public IActionResult ChangeOrderStenografKomisyon(Guid kaynakBirlesimId, Guid kaynakStenografId, Guid hedefBirlesimId, Guid hedefStenografId)
+        {
+            try
+            {
+                _stenoService.ChangeOrderStenografKomisyon(kaynakBirlesimId, kaynakStenografId, hedefBirlesimId, hedefStenografId);
             }
             catch (Exception ex)
             { return BadRequest(ex.Message); }

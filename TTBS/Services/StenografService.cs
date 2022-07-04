@@ -46,6 +46,7 @@ namespace TTBS.Services
         void UpdateGorevDurumById(Guid id);
         void CreateStenoGorevDonguEkle(Guid birlesimId, Guid oturumId, List<Guid> grpList, DateTime? maxDate, double sure);
         void UpdateStenoGorevTamamla(Guid birlesimId, StenoGorevTuru stenoGorevTur);
+        void ChangeOrderStenografKomisyon(Guid kaynakBirlesimId, Guid kaynakStenografId, Guid hedefBirlesimId, Guid hedefStenografId);
     }
     public class StenografService : BaseService, IStenografService
     {
@@ -150,6 +151,41 @@ namespace TTBS.Services
             _oturumRepo.Create(oturum, CurrentUser.Id);
             _oturumRepo.Save();
             return oturum.Id;
+        }
+
+        public void ChangeOrderStenografKomisyon(Guid kaynakBirlesimId,Guid kaynakStenografId,Guid hedefBirlesimId,Guid hedefStenografId)
+        {
+            var stenoGrevKaynak = _stenoGorevRepo.Get(x => x.BirlesimId == kaynakBirlesimId && x.StenografId == kaynakStenografId);
+            if(stenoGrevKaynak != null && stenoGrevKaynak.Count()>0)
+            {
+                stenoGrevKaynak.ToList().ForEach(x => x.GorevStatu = GorevStatu.YerDegistirme);
+                _stenoGorevRepo.Update(stenoGrevKaynak);
+                _stenoGorevRepo.Save();
+            }
+
+            var stenoGrevHedef = _stenoGorevRepo.Get(x=>x.BirlesimId == hedefBirlesimId).OrderBy(x => x.GorevBasTarihi);
+            if(stenoGrevHedef !=null && stenoGrevHedef.Count()>0)
+            {
+                var minStenoGorev = stenoGrevHedef.Where(x => x.StenografId == hedefStenografId).FirstOrDefault();
+                var newEntity = new GorevAtama();
+                newEntity.BirlesimId = hedefBirlesimId;
+                newEntity.OturumId = minStenoGorev.OturumId;
+                newEntity.StenografId = kaynakStenografId;
+                newEntity.GorevStatu = GorevStatu.Planlandı;
+                newEntity.GorevBasTarihi = minStenoGorev.GorevBasTarihi;
+                newEntity.GorevBitisTarihi = minStenoGorev.GorevBitisTarihi;
+                _stenoGorevRepo.Create(newEntity);
+                _stenoGorevRepo.Save();
+
+                var hedefStenoGorev = stenoGrevHedef.Where(x => x.GorevBasTarihi <= minStenoGorev.GorevBasTarihi);
+                foreach (var item in hedefStenoGorev)
+                {
+                    item.GorevBasTarihi = item.GorevBasTarihi.Value.AddMinutes(item.KomisyonStenoSure);
+                    item.GorevBitisTarihi =item.GorevBasTarihi.Value.AddMinutes(item.KomisyonStenoSure);
+                    _stenoGorevRepo.Update(item);
+                    _stenoGorevRepo.Save();
+                }
+            }
         }
 
         private void CreateStenoGorev(Birlesim birlesim, Guid oturumId, List<Guid> stenoList,int turAdedi)
