@@ -47,6 +47,8 @@ namespace TTBS.Services
         void CreateStenoGorevDonguEkle(Guid birlesimId, Guid oturumId, List<Guid> grpList, DateTime? maxDate, double sure);
         void UpdateStenoGorevTamamla(Guid birlesimId, StenoGorevTuru stenoGorevTur);
         void ChangeOrderStenografKomisyon(Guid kaynakBirlesimId, Guid kaynakStenografId, Guid hedefBirlesimId, Guid hedefStenografId);
+
+        IEnumerable<Birlesim> GetBirlesimByDate(DateTime basTarihi, int toplanmaTuru);
     }
     public class StenografService : BaseService, IStenografService
     {
@@ -301,6 +303,11 @@ namespace TTBS.Services
         public IEnumerable<Birlesim> GetBirlesimByDateAndTur(DateTime basTarihi, DateTime bitTarihi, int toplanmaTuru)
         {
             return _birlesimRepo.Get(x => x.BaslangicTarihi >= basTarihi && x.BitisTarihi <= bitTarihi && (int)x.ToplanmaTuru == toplanmaTuru);
+        }
+
+        public IEnumerable<Birlesim> GetBirlesimByDate(DateTime basTarihi, int toplanmaTuru)
+        {
+            return _birlesimRepo.Get(x => (int)x.ToplanmaTuru == toplanmaTuru,includeProperties: "Komisyon,AltKomisyon").Where(x => x.BaslangicTarihi.Value.ToShortDateString() == basTarihi.ToShortDateString()); 
         }
 
         public void CreateStenograf(Stenograf entity)

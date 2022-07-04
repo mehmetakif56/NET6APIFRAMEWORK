@@ -73,7 +73,9 @@ namespace TTBS.Helper
             CreateMap<OzelGorevTurModel, OzelGorevTur>();
             CreateMap<OzelGorevTur, OzelGorevTurModel>();
 
-            CreateMap<Birlesim, BirlesimViewModel>();
+            CreateMap<Birlesim, BirlesimViewModel>()
+                .ForMember(dest => dest.KomisyonAdı, opt => opt.MapFrom(src => src.Komisyon.Ad))
+                .ForMember(dest => dest.AltKomisyonAdı, opt => opt.MapFrom(src => src.AltKomisyon.Ad));
             CreateMap<BirlesimViewModel, Birlesim>();
 
             //CreateMap<OturumModel, Oturum>();

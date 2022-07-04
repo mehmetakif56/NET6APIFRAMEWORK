@@ -18,6 +18,9 @@ namespace TTBS.Core.Entities
         public double StenoSure { get; set; }
         [Column(TypeName = "decimal(18,2)")]
         public double UzmanStenoSure { get; set; }
+        public Komisyon Komisyon { get; set; }
+        public AltKomisyon AltKomisyon { get; set; }    
+        public OzelToplanma OzelToplanma { get; set; }
         public Guid KomisyonId { get; set; } = Guid.Empty;
         public Guid? AltKomisyonId { get; set; } = Guid.Empty;
         public Guid? OzelToplanmaId { get; set; } = Guid.Empty;
