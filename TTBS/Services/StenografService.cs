@@ -434,7 +434,7 @@ namespace TTBS.Services
 
         public IEnumerable<Grup> GetAllStenografGroup(int gorevTuru)
         {
-            return _grupRepo.Get(includeProperties: "StenoGrups.Stenograf.GorevAtamas");
+            return _grupRepo.Get(x=>(int)x.StenoGrupTuru == gorevTuru,includeProperties: "StenoGrups.Stenograf.GorevAtamas");
         }
 
         public void DeleteGorevByBirlesimIdAndStenoId(Guid birlesimId, Guid stenografId)
