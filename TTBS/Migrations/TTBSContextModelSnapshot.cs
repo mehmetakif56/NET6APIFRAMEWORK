@@ -170,7 +170,7 @@ namespace TTBS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Claims");
+                    b.ToTable("Claims", (string)null);
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.Donem", b =>
@@ -552,7 +552,7 @@ namespace TTBS.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("RoleClaims");
+                    b.ToTable("RoleClaims", (string)null);
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.RoleEntity", b =>
@@ -587,7 +587,7 @@ namespace TTBS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RoleEntity");
+                    b.ToTable("RoleEntity", (string)null);
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.Stenograf", b =>
@@ -783,7 +783,7 @@ namespace TTBS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.UserRoleEntity", b =>
@@ -822,7 +822,7 @@ namespace TTBS.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserRoleEntity");
+                    b.ToTable("UserRoleEntity", (string)null);
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.Yasama", b =>
