@@ -49,7 +49,7 @@ namespace TTBS.Services
         void ChangeOrderStenografKomisyon(Guid kaynakBirlesimId, Guid kaynakStenografId, Guid hedefBirlesimId, Guid hedefStenografId);
 
         IEnumerable<Birlesim> GetBirlesimByDate(DateTime basTarihi, int toplanmaTuru);
-        void ChangeSureStenografKomisyon(Guid gorevAtamaId, double sure);
+        void ChangeSureStenografKomisyon(Guid gorevAtamaId, double sure, bool digerAtamalarDahil=false);
     }
     public class StenografService : BaseService, IStenografService
     {
@@ -194,22 +194,42 @@ namespace TTBS.Services
             }
         }
 
-        public async void ChangeSureStenografKomisyon(Guid gorevAtamaId, double sure)
+        public async void ChangeSureStenografKomisyon(Guid gorevAtamaId, double sure,bool digerAtamalarDahil =false)
         {
             var stenoGorev =_stenoGorevRepo.GetById(gorevAtamaId);
             var hedefStenoGorev = await GetHedefStenoGorevs(stenoGorev);
             var gorevBas = hedefStenoGorev.FirstOrDefault().GorevBasTarihi;
+            var gorevBit = hedefStenoGorev.FirstOrDefault().GorevBitisTarihi;
             int firstRec = 0;
-            foreach (var item in hedefStenoGorev)
+            if(digerAtamalarDahil)
             {
-                item.StenoSure = sure;
-                item.GorevBasTarihi = firstRec ==0 ? gorevBas :gorevBas.Value.AddMinutes(sure);
-                item.GorevBitisTarihi = item.GorevBasTarihi.Value.AddMinutes(sure);
-                gorevBas = item.GorevBasTarihi;
-                _stenoGorevRepo.Update(item);
-                _stenoGorevRepo.Save();
-                firstRec++;
+              
+                foreach (var item in hedefStenoGorev)
+                {
+                    item.StenoSure = sure;
+                    item.GorevBasTarihi = firstRec == 0 ? gorevBas : gorevBas.Value.AddMinutes(sure);
+                    item.GorevBitisTarihi = item.GorevBasTarihi.Value.AddMinutes(sure);
+                    gorevBas = item.GorevBasTarihi;
+                    _stenoGorevRepo.Update(item);
+                    _stenoGorevRepo.Save();
+                    firstRec++;
+                }
             }
+            else
+            {
+               
+                foreach (var item in hedefStenoGorev)
+                {
+                    item.StenoSure = firstRec == 0 ? sure : item.StenoSure;
+                    item.GorevBasTarihi = firstRec == 0 ? gorevBas : gorevBit;
+                    item.GorevBitisTarihi = item.GorevBasTarihi.Value.AddMinutes(item.StenoSure);
+                    gorevBit = item.GorevBitisTarihi;
+                    _stenoGorevRepo.Update(item);
+                    _stenoGorevRepo.Save();
+                    firstRec++;
+                }
+            }
+           
         }
 
         public async Task<List<GorevAtama>> GetHedefStenoGorevs(GorevAtama atama)

@@ -356,11 +356,11 @@ namespace TTBS.Controllers
         }
 
         [HttpPost("ChangeSureStenografKomisyon")]
-        public IActionResult ChangeSureStenografKomisyon(Guid gorevAtamaId,  double sure)
+        public IActionResult ChangeSureStenografKomisyon(Guid gorevAtamaId,  double sure,bool digerAtamalarDahil =false)
         {
             try
             {
-                _stenoService.ChangeSureStenografKomisyon(gorevAtamaId, sure);
+                _stenoService.ChangeSureStenografKomisyon(gorevAtamaId, sure, digerAtamalarDahil);
             }
             catch (Exception ex)
             { return BadRequest(ex.Message); }
