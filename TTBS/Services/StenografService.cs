@@ -49,6 +49,7 @@ namespace TTBS.Services
         void ChangeOrderStenografKomisyon(Guid kaynakBirlesimId, Guid kaynakStenografId, Guid hedefBirlesimId, Guid hedefStenografId);
 
         IEnumerable<Birlesim> GetBirlesimByDate(DateTime basTarihi, int toplanmaTuru);
+        void ChangeSureStenografKomisyon(Guid gorevAtamaId, double sure);
     }
     public class StenografService : BaseService, IStenografService
     {
@@ -178,6 +179,7 @@ namespace TTBS.Services
                 newEntity.GorevStatu = GorevStatu.Planlandı;
                 newEntity.GorevBasTarihi = minStenoGorev.GorevBasTarihi;
                 newEntity.GorevBitisTarihi = minStenoGorev.GorevBitisTarihi;
+                newEntity.StenoSure = minStenoGorev.StenoSure;
                 _stenoGorevRepo.Create(newEntity);
                 _stenoGorevRepo.Save();
 
@@ -190,6 +192,25 @@ namespace TTBS.Services
                     _stenoGorevRepo.Save();
                 }
             }
+        }
+
+        public async void ChangeSureStenografKomisyon(Guid gorevAtamaId, double sure)
+        {
+            var stenoGorev =_stenoGorevRepo.GetById(gorevAtamaId);
+            var hedefStenoGorev = await GetHedefStenoGorevs(stenoGorev);
+            foreach (var item in hedefStenoGorev)
+            {
+                item.StenoSure = sure;
+                item.GorevBasTarihi = item.GorevBasTarihi.Value.AddMinutes(sure);
+                item.GorevBitisTarihi = item.GorevBasTarihi.Value.AddMinutes(sure);
+                _stenoGorevRepo.Update(item);
+                _stenoGorevRepo.Save();
+            }
+        }
+
+        public async Task<List<GorevAtama>> GetHedefStenoGorevs(GorevAtama atama)
+        {
+            return  _stenoGorevRepo.Get(x => x.BirlesimId == atama.BirlesimId && x.GorevBasTarihi >= atama.GorevBasTarihi).ToList();
         }
 
         private void CreateStenoGorev(Birlesim birlesim, Guid oturumId, List<Guid> stenoList,int turAdedi)

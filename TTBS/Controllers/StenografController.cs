@@ -348,6 +348,19 @@ namespace TTBS.Controllers
             return Ok();
         }
 
+        [HttpPost("ChangeSureStenografKomisyon")]
+        public IActionResult ChangeSureStenografKomisyon(Guid gorevAtamaId,  double sure)
+        {
+            try
+            {
+                _stenoService.ChangeSureStenografKomisyon(gorevAtamaId, sure);
+            }
+            catch (Exception ex)
+            { return BadRequest(ex.Message); }
+
+            return Ok();
+        }
+
         [HttpPut("UpdateStenoGorevAtama")]
         public IActionResult UpdateStenoGorevAtama(List<StenoGorevGüncelleModel> model)
         {
