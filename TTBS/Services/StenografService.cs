@@ -169,6 +169,8 @@ namespace TTBS.Services
             if(stenoGrevHedef !=null && stenoGrevHedef.Count()>0)
             {
                 var minStenoGorev = stenoGrevHedef.Where(x => x.StenografId == hedefStenografId).FirstOrDefault();
+                var hedefStenoGorev = stenoGrevHedef.Where(x => x.GorevBasTarihi >= minStenoGorev.GorevBasTarihi);
+
                 var newEntity = new GorevAtama();
                 newEntity.BirlesimId = hedefBirlesimId;
                 newEntity.OturumId = minStenoGorev.OturumId;
@@ -179,11 +181,11 @@ namespace TTBS.Services
                 _stenoGorevRepo.Create(newEntity);
                 _stenoGorevRepo.Save();
 
-                var hedefStenoGorev = stenoGrevHedef.Where(x => x.GorevBasTarihi <= minStenoGorev.GorevBasTarihi);
+               
                 foreach (var item in hedefStenoGorev)
                 {
-                    item.GorevBasTarihi = item.GorevBasTarihi.Value.AddMinutes(item.KomisyonStenoSure);
-                    item.GorevBitisTarihi =item.GorevBasTarihi.Value.AddMinutes(item.KomisyonStenoSure);
+                    item.GorevBasTarihi = item.GorevBasTarihi.Value.AddMinutes(item.StenoSure);
+                    item.GorevBitisTarihi =item.GorevBasTarihi.Value.AddMinutes(item.StenoSure);
                     _stenoGorevRepo.Update(item);
                     _stenoGorevRepo.Save();
                 }
@@ -205,6 +207,7 @@ namespace TTBS.Services
                     newEntity.GorevStatu = GorevStatu.Planlandı;
                     newEntity.GorevBasTarihi = birlesim.BaslangicTarihi.HasValue ? birlesim.BaslangicTarihi.Value.AddMinutes(firstRec * birlesim.StenoSure) : null;
                     newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.HasValue ? newEntity.GorevBasTarihi.Value.AddMinutes(birlesim.StenoSure) : null;
+                    newEntity.StenoSure = birlesim.StenoSure;
                     atamaList.Add(newEntity);
                     firstRec++;
                 }
@@ -240,6 +243,7 @@ namespace TTBS.Services
                 newEntity.GorevStatu = GorevStatu.Planlandı;
                 newEntity.GorevBasTarihi = maxDate.HasValue ? maxDate.Value.AddMinutes(firsRec*sure) : null;
                 newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.HasValue ? newEntity.GorevBasTarihi.Value.AddMinutes(sure) : null;
+                newEntity.StenoSure = sure;
                 atamaList.Add(newEntity);
                 firsRec++;
 

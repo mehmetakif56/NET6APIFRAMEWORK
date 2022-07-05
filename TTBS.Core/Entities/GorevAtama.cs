@@ -18,7 +18,7 @@ namespace TTBS.Core.Entities
         public Stenograf Stenograf { get; set; }
         public GorevStatu GorevStatu { get; set; }
         [Column(TypeName = "decimal(18,2)")]
-        public double KomisyonStenoSure { get; set; }
+        public double StenoSure { get; set; }
         public Guid OturumId { get; set; }
         public Birlesim Birlesim { get; set; }
         public Guid BirlesimId { get; set; }
