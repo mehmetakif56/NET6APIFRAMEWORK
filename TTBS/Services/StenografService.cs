@@ -198,19 +198,23 @@ namespace TTBS.Services
         {
             var stenoGorev =_stenoGorevRepo.GetById(gorevAtamaId);
             var hedefStenoGorev = await GetHedefStenoGorevs(stenoGorev);
+            var gorevBas = hedefStenoGorev.FirstOrDefault().GorevBasTarihi;
+            int firstRec = 0;
             foreach (var item in hedefStenoGorev)
             {
                 item.StenoSure = sure;
-                item.GorevBasTarihi = item.GorevBasTarihi.Value.AddMinutes(sure);
+                item.GorevBasTarihi = firstRec ==0 ? gorevBas :gorevBas.Value.AddMinutes(sure);
                 item.GorevBitisTarihi = item.GorevBasTarihi.Value.AddMinutes(sure);
+                gorevBas = item.GorevBasTarihi;
                 _stenoGorevRepo.Update(item);
                 _stenoGorevRepo.Save();
+                firstRec++;
             }
         }
 
         public async Task<List<GorevAtama>> GetHedefStenoGorevs(GorevAtama atama)
         {
-            return  _stenoGorevRepo.Get(x => x.BirlesimId == atama.BirlesimId && x.GorevBasTarihi >= atama.GorevBasTarihi).ToList();
+            return  _stenoGorevRepo.Get(x => x.BirlesimId == atama.BirlesimId && x.GorevBasTarihi >= atama.GorevBasTarihi).OrderBy(x=>x.GorevBasTarihi).ToList();
         }
 
         private void CreateStenoGorev(Birlesim birlesim, Guid oturumId, List<Guid> stenoList,int turAdedi)
