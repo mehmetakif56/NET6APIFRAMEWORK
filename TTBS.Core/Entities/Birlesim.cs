@@ -19,7 +19,7 @@ namespace TTBS.Core.Entities
         [Column(TypeName = "decimal(18,2)")]
         public double UzmanStenoSure { get; set; }
         public Komisyon Komisyon { get; set; }
-        public AltKomisyon AltKomisyon { get; set; }    
+        public AltKomisyon AltKomisyon { get; set; }
         public OzelToplanma OzelToplanma { get; set; }
         public Guid KomisyonId { get; set; } = Guid.Empty;
         public Guid? AltKomisyonId { get; set; } = Guid.Empty;
@@ -28,5 +28,6 @@ namespace TTBS.Core.Entities
         public ToplanmaTuru ToplanmaTuru { get; set; }
         public int TurAdedi { get; set; } = 3;
         public ToplanmaStatu ToplanmaDurumu { get; set; }
+        public virtual ICollection<Oturum> Oturums { get; set; }
     }
 }
