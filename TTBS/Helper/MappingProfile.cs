@@ -75,7 +75,9 @@ namespace TTBS.Helper
 
             CreateMap<Birlesim, BirlesimViewModel>()
                 .ForMember(dest => dest.KomisyonAdı, opt => opt.MapFrom(src => src.Komisyon.Ad))
-                .ForMember(dest => dest.AltKomisyonAdı, opt => opt.MapFrom(src => src.AltKomisyon.Ad));
+                .ForMember(dest => dest.AltKomisyonAdı, opt => opt.MapFrom(src => src.AltKomisyon.Ad))
+                .ForMember(dest => dest.OturumId, opt => 
+                opt.MapFrom(src => src.Oturums.Where(x=>!x.BitisTarihi.HasValue).FirstOrDefault().Id));
             CreateMap<BirlesimViewModel, Birlesim>();
 
             //CreateMap<OturumModel, Oturum>();

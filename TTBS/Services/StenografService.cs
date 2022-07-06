@@ -158,40 +158,60 @@ namespace TTBS.Services
 
         public void ChangeOrderStenografKomisyon(Guid kaynakBirlesimId,Guid kaynakStenografId,Guid hedefBirlesimId,Guid hedefStenografId)
         {
-            var stenoGrevKaynak = _stenoGorevRepo.Get(x => x.BirlesimId == kaynakBirlesimId && x.StenografId == kaynakStenografId);
-            if(stenoGrevKaynak != null && stenoGrevKaynak.Count()>0)
+            if(kaynakBirlesimId !=hedefBirlesimId)
             {
-                stenoGrevKaynak.ToList().ForEach(x => x.GorevStatu = GorevStatu.YerDegistirme);
-                _stenoGorevRepo.Update(stenoGrevKaynak);
-                _stenoGorevRepo.Save();
-            }
-
-            var stenoGrevHedef = _stenoGorevRepo.Get(x=>x.BirlesimId == hedefBirlesimId).OrderBy(x => x.GorevBasTarihi);
-            if(stenoGrevHedef !=null && stenoGrevHedef.Count()>0)
-            {
-                var minStenoGorev = stenoGrevHedef.Where(x => x.StenografId == hedefStenografId).FirstOrDefault();
-                var hedefStenoGorev = stenoGrevHedef.Where(x => x.GorevBasTarihi >= minStenoGorev.GorevBasTarihi);
-
-                var newEntity = new GorevAtama();
-                newEntity.BirlesimId = hedefBirlesimId;
-                newEntity.OturumId = minStenoGorev.OturumId;
-                newEntity.StenografId = kaynakStenografId;
-                newEntity.GorevStatu = GorevStatu.Planlandı;
-                newEntity.GorevBasTarihi = minStenoGorev.GorevBasTarihi;
-                newEntity.GorevBitisTarihi = minStenoGorev.GorevBitisTarihi;
-                newEntity.StenoSure = minStenoGorev.StenoSure;
-                _stenoGorevRepo.Create(newEntity);
-                _stenoGorevRepo.Save();
-
-               
-                foreach (var item in hedefStenoGorev)
+                var stenoGrevKaynak = _stenoGorevRepo.Get(x => x.BirlesimId == kaynakBirlesimId && x.StenografId == kaynakStenografId);
+                if (stenoGrevKaynak != null && stenoGrevKaynak.Count() > 0)
                 {
-                    item.GorevBasTarihi = item.GorevBasTarihi.Value.AddMinutes(item.StenoSure);
-                    item.GorevBitisTarihi =item.GorevBasTarihi.Value.AddMinutes(item.StenoSure);
-                    _stenoGorevRepo.Update(item);
+                    stenoGrevKaynak.ToList().ForEach(x => x.GorevStatu = GorevStatu.YerDegistirme);
+                    _stenoGorevRepo.Update(stenoGrevKaynak);
                     _stenoGorevRepo.Save();
                 }
+
+                var stenoGrevHedef = _stenoGorevRepo.Get(x => x.BirlesimId == hedefBirlesimId).OrderBy(x => x.GorevBasTarihi);
+                if (stenoGrevHedef != null && stenoGrevHedef.Count() > 0)
+                {
+                    var minStenoGorev = stenoGrevHedef.Where(x => x.StenografId == hedefStenografId).FirstOrDefault();
+                    var hedefStenoGorev = stenoGrevHedef.Where(x => x.GorevBasTarihi >= minStenoGorev.GorevBasTarihi);
+
+                    var newEntity = new GorevAtama();
+                    newEntity.BirlesimId = hedefBirlesimId;
+                    newEntity.OturumId = minStenoGorev.OturumId;
+                    newEntity.StenografId = kaynakStenografId;
+                    newEntity.GorevStatu = GorevStatu.Planlandı;
+                    newEntity.GorevBasTarihi = minStenoGorev.GorevBasTarihi;
+                    newEntity.GorevBitisTarihi = minStenoGorev.GorevBitisTarihi;
+                    newEntity.StenoSure = minStenoGorev.StenoSure;
+                    _stenoGorevRepo.Create(newEntity);
+                    _stenoGorevRepo.Save();
+
+
+                    foreach (var item in hedefStenoGorev)
+                    {
+                        item.GorevBasTarihi = item.GorevBasTarihi.Value.AddMinutes(item.StenoSure);
+                        item.GorevBitisTarihi = item.GorevBasTarihi.Value.AddMinutes(item.StenoSure);
+                        _stenoGorevRepo.Update(item);
+                        _stenoGorevRepo.Save();
+                    }
+                }
             }
+            else
+            {
+                var stenoGrevHedef = _stenoGorevRepo.Get(x => x.BirlesimId == hedefBirlesimId).OrderBy(x => x.GorevBasTarihi);
+                if (stenoGrevHedef != null && stenoGrevHedef.Count() > 0)
+                {
+                    var minStenoGorev = stenoGrevHedef.Where(x => x.StenografId == hedefStenografId).FirstOrDefault();
+                    var hedefStenoGorev = stenoGrevHedef.Where(x => x.GorevBasTarihi >= minStenoGorev.GorevBasTarihi);
+                    foreach (var item in hedefStenoGorev)
+                    {
+                        item.GorevBasTarihi = item.GorevBasTarihi.Value.AddMinutes(item.StenoSure);
+                        item.GorevBitisTarihi = item.GorevBasTarihi.Value.AddMinutes(item.StenoSure);
+                        _stenoGorevRepo.Update(item);
+                        _stenoGorevRepo.Save();
+                    }
+                }
+            }
+           
         }
 
         public async void ChangeSureStenografKomisyon(Guid gorevAtamaId, double sure,bool digerAtamalarDahil =false)
@@ -351,12 +371,12 @@ namespace TTBS.Services
 
         public IEnumerable<Birlesim> GetBirlesimByDateAndTur(DateTime basTarihi, DateTime bitTarihi, int toplanmaTuru)
         {
-            return _birlesimRepo.Get(x => x.BaslangicTarihi >= basTarihi && x.BitisTarihi <= bitTarihi && (int)x.ToplanmaTuru == toplanmaTuru);
+            return _birlesimRepo.Get(x => x.BaslangicTarihi >= basTarihi && x.BitisTarihi <= bitTarihi && (int)x.ToplanmaTuru == toplanmaTuru,includeProperties:"Oturums");
         }
 
         public IEnumerable<Birlesim> GetBirlesimByDate(DateTime basTarihi, int toplanmaTuru)
         {
-            return _birlesimRepo.Get(x => (int)x.ToplanmaTuru == toplanmaTuru,includeProperties: "Komisyon,AltKomisyon").Where(x => x.BaslangicTarihi.Value.ToShortDateString() == basTarihi.ToShortDateString()); 
+            return _birlesimRepo.Get(x => (int)x.ToplanmaTuru == toplanmaTuru,includeProperties: "Oturums").Where(x => x.BaslangicTarihi.Value.ToShortDateString() == basTarihi.ToShortDateString()); 
         }
 
         public void CreateStenograf(Stenograf entity)
