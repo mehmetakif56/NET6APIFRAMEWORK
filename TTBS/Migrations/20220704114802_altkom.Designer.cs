@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TTBS.Infrastructure;
 
@@ -11,9 +12,10 @@ using TTBS.Infrastructure;
 namespace TTBS.Migrations
 {
     [DbContext(typeof(TTBSContext))]
-    partial class TTBSContextModelSnapshot : ModelSnapshot
+    [Migration("20220704114802_altkom")]
+    partial class altkom
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -268,6 +270,9 @@ namespace TTBS.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<decimal>("KomisyonStenoSure")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<Guid?>("ModifiedBy")
                         .HasColumnType("uniqueidentifier");
 
@@ -276,9 +281,6 @@ namespace TTBS.Migrations
 
                     b.Property<Guid>("OturumId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("StenoSure")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid>("StenografId")
                         .HasColumnType("uniqueidentifier");
@@ -623,12 +625,7 @@ namespace TTBS.Migrations
                     b.Property<int>("StenoGorevTuru")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Stenograf", (string)null);
                 });
@@ -973,17 +970,6 @@ namespace TTBS.Migrations
                     b.Navigation("Claim");
 
                     b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("TTBS.Core.Entities.Stenograf", b =>
-                {
-                    b.HasOne("TTBS.Core.Entities.UserEntity", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.StenoGrup", b =>

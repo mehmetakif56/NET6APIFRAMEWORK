@@ -11,6 +11,7 @@ namespace TTBS.Core.Enums
         Planlandı=0,
         DevamEdiyor =1,
         Tamamlandı=2,
-        Iptal=3
+        Iptal=3,
+        YerDegistirme=4
     }
 }

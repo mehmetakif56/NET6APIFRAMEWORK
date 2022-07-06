@@ -8,6 +8,8 @@ namespace TTBS.Models
         public string Yeri { get; set; }
         public ToplanmaTuru ToplanmaTuru { get; set; }
         public string ToplanmaDurumu { get; set; }
-
+        public string KomisyonAdı { get; set; }
+        public string AltKomisyonAdı { get; set; }
+        public Guid Id { get; set; }
     }
 }

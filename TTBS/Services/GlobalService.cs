@@ -185,6 +185,7 @@ namespace TTBS.Services
                     newEntity.GorevStatu = GorevStatu.Planlandı;
                     newEntity.GorevBasTarihi = birlesim.BaslangicTarihi.HasValue ? birlesim.BaslangicTarihi.Value.AddMinutes(firstRec * birlesim.UzmanStenoSure) : null;
                     newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.HasValue ? newEntity.GorevBasTarihi.Value.AddMinutes(birlesim.UzmanStenoSure) : null;
+                    newEntity.StenoSure = birlesim.UzmanStenoSure;
                     atamaList.Add(newEntity);
                     firstRec++;
                 }
@@ -209,6 +210,7 @@ namespace TTBS.Services
                     newEntity.GorevStatu = GorevStatu.Planlandı;
                     newEntity.GorevBasTarihi = birlesim.BaslangicTarihi.HasValue ? birlesim.BaslangicTarihi.Value.AddMinutes(firstRec * birlesim.StenoSure) : null;
                     newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.HasValue ? newEntity.GorevBasTarihi.Value.AddMinutes(birlesim.StenoSure) : null;
+                    newEntity.StenoSure = birlesim.StenoSure;
                     atamaList.Add(newEntity);
                     firstRec++;
                 }
