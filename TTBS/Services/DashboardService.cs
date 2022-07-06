@@ -17,19 +17,7 @@ namespace TTBS.Services
 
         public IEnumerable<GorevAtama> GetActiveGorevler()
         {
-            System.Console.WriteLine("USER ID : " + CurrentUser.Id);
-            System.Console.WriteLine(System.DateTime.Today);
-            var gorevList = _stenoGorevRepo.Get(x => x.Stenograf.UserId == CurrentUser.Id && x.IsDeleted == false);
-            List<GorevAtama> list = new List<GorevAtama>();
-            foreach(var gorev in gorevList)
-            {
-                string[] date = gorev.GorevBasTarihi.ToString().Split(" ");
-                if (date[0].Equals(DateTime.Now.ToString("dd/MM/yyyy")))
-                {
-                    list.Add(gorev);
-                }
-            }
-            return list;
+            return _stenoGorevRepo.Get(x => x.Stenograf.UserId == CurrentUser.Id && x.GorevBasTarihi >= DateTime.Now.Date && x.GorevBasTarihi < DateTime.Now.AddDays(1).Date);
         }
     }
 }
