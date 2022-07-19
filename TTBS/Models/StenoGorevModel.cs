@@ -21,5 +21,6 @@ namespace TTBS.Models
         public bool StenoToplantiVar { get; set; }
         public IzınTuru StenoIzinTuru { get; set; }
         public bool StenoToplamSureAsım { get; set; }
+        public double StenoSure { get; set; }
     }
 }
