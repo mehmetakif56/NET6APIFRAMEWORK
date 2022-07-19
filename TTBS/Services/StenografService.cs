@@ -170,28 +170,35 @@ namespace TTBS.Services
                 var stenoGrevHedef = _stenoGorevRepo.Get(x => x.BirlesimId == hedefBirlesimId).OrderBy(x => x.GorevBasTarihi);
                 if (stenoGrevHedef != null && stenoGrevHedef.Count() > 0)
                 {
-                    var minStenoGorev = stenoGrevHedef.Where(x => x.StenografId == hedefStenografId).FirstOrDefault();
-                    var hedefStenoGorev = stenoGrevHedef.Where(x => x.GorevBasTarihi >= minStenoGorev.GorevBasTarihi);
+                    var minStenoGorev = stenoGrevHedef.Where(x => x.StenografId == hedefStenografId);
+                    //var hedefStenoGorev = stenoGrevHedef.Where(x => x.GorevBasTarihi >= minStenoGorev.GorevBasTarihi);
 
-                    var newEntity = new GorevAtama();
-                    newEntity.BirlesimId = hedefBirlesimId;
-                    newEntity.OturumId = minStenoGorev.OturumId;
-                    newEntity.StenografId = kaynakStenografId;
-                    newEntity.GorevStatu = GorevStatu.Planlandı;
-                    newEntity.GorevBasTarihi = minStenoGorev.GorevBasTarihi;
-                    newEntity.GorevBitisTarihi = minStenoGorev.GorevBitisTarihi;
-                    newEntity.StenoSure = minStenoGorev.StenoSure;
-                    _stenoGorevRepo.Create(newEntity);
-                    _stenoGorevRepo.Save();
-
-
-                    foreach (var item in hedefStenoGorev)
+                    foreach (var item in minStenoGorev)
                     {
-                        item.GorevBasTarihi = item.GorevBasTarihi.Value.AddMinutes(item.StenoSure);
-                        item.GorevBitisTarihi = item.GorevBasTarihi.Value.AddMinutes(item.StenoSure);
-                        _stenoGorevRepo.Update(item);
+                        var newEntity = new GorevAtama();
+                        newEntity.BirlesimId = hedefBirlesimId;
+                        newEntity.OturumId = item.OturumId;
+                        newEntity.StenografId = kaynakStenografId;
+                        newEntity.GorevStatu = GorevStatu.Planlandı;
+                        newEntity.GorevBasTarihi = item.GorevBasTarihi;
+                        newEntity.GorevBitisTarihi = item.GorevBitisTarihi;
+                        newEntity.StenoSure = item.StenoSure;
+                        _stenoGorevRepo.Create(newEntity);
                         _stenoGorevRepo.Save();
+
+                        var hedefStenoGorev = stenoGrevHedef.Where(x => x.GorevBasTarihi >= item.GorevBasTarihi);
+                        foreach (var hedef in hedefStenoGorev)
+                        {
+                            hedef.GorevBasTarihi = hedef.GorevBasTarihi.Value.AddMinutes(hedef.StenoSure);
+                            hedef.GorevBitisTarihi = hedef.GorevBasTarihi.Value.AddMinutes(hedef.StenoSure);
+                            _stenoGorevRepo.Update(hedef);
+                            _stenoGorevRepo.Save();
+                        }
                     }
+                  
+
+
+                    
                 }
             }
             else
