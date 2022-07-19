@@ -297,10 +297,10 @@ namespace TTBS.Services
         public void CreateStenoGorevDonguEkle(Guid birlesimId, Guid oturumId, IEnumerable<GorevAtama> stenoList, int gorevturu)
         {
             int firsRec = 0;
-            var grpList = stenoList.GroupBy(c => new {
+            var grpListCnt = stenoList.GroupBy(c => new {
                 c.StenografId,
-                c.StenoSure
-            }).Select(x => new { StenografId = x.Key.StenografId, Sure = x.Key.StenoSure }).ToList();
+            }).Count();
+            var grpList = stenoList.TakeLast(grpListCnt);
             var maxDate = stenoList.Max(x => x.GorevBitisTarihi);
             var birlesimtur = stenoList.Select(x => x.Birlesim).FirstOrDefault().ToplanmaTuru;
             var sure = gorevturu == (int)StenoGorevTuru.Stenograf ? stenoList.Select(x => x.Birlesim).FirstOrDefault().StenoSure : stenoList.Select(x => x.Birlesim).FirstOrDefault().UzmanStenoSure;
@@ -312,7 +312,7 @@ namespace TTBS.Services
                 newEntity.OturumId = oturumId;
                 newEntity.StenografId = item.StenografId;
                 newEntity.GorevStatu = GorevStatu.Planlandı;
-                sure = birlesimtur == ToplanmaTuru.GenelKurul ? sure : item.Sure;
+                sure = birlesimtur == ToplanmaTuru.GenelKurul ? sure : item.StenoSure;
                 newEntity.GorevBasTarihi = maxDate.HasValue ? maxDate.Value.AddMinutes(firsRec*sure) : null;
                 newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.HasValue ? newEntity.GorevBasTarihi.Value.AddMinutes(sure) : null;
                 newEntity.StenoSure = sure;
