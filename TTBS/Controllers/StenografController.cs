@@ -50,6 +50,14 @@ namespace TTBS.Controllers
             return model;
         }
 
+        [HttpGet("GetKomisyonByDate")]
+        public List<StenoGrupSureModel> GetKomisyonByDateAndGroup(DateTime baslangic, DateTime bitis, Guid grup)
+        {
+            var komisyonEntity = _stenoService.GetKomisyonByDate(baslangic, bitis, grup);
+            var model = _mapper.Map<List<StenoGrupSureModel>>(komisyonEntity);
+            return model;
+        }
+
 
         //[HttpGet("GetIntersectStenoPlan")]
         //public List<StenoGorevPlanModel> GetIntersectStenoPlan(Guid stenoPlanId, Guid stenoId)
