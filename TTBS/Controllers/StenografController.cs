@@ -178,7 +178,7 @@ namespace TTBS.Controllers
                     var gorevBitTarihi = model.FirstOrDefault().GorevBitisTarihi.Value;
 
                     var birlesim = birlesimList.FirstOrDefault().Birlesim;
-                    var sure = gorevturu == (int)StenoGorevTuru.Stenograf ? birlesim.StenoSure : birlesim.UzmanStenoSure;
+                    double sure = 0;
                     var ste = model.Where(x => x.StenografId == model.FirstOrDefault().StenografId);
                     var stenoToplamSureAsım = ste.Max(x => x.GorevBitisTarihi.Value).Subtract(ste.Min(x => x.GorevBasTarihi.Value)).TotalMinutes <= 50;
 
@@ -200,10 +200,12 @@ namespace TTBS.Controllers
                                                                x.GorevBasTarihi.Value.Subtract(gorevBitTarihi).TotalMinutes <= 60);
 
                             item.StenoToplantiVar = (query != null && query.Count() > 0) || (maxBitis.HasValue && maxBitis.Value.AddMinutes(sure * 9) >= gorevBitTarihi) ? true : false;
+                            sure = gorevturu == (int)StenoGorevTuru.Stenograf ? birlesim.StenoSure : birlesim.UzmanStenoSure;
                         }
                         else
                         {
                             item.StenoToplantiVar = false;
+                            sure = item.StenoSure;
                         }
 
 
