@@ -148,12 +148,8 @@ namespace TTBS.Controllers
                 var stenoEntity = _stenoService.GetStenoGorevByBirlesimIdAndGorevTuru(birlesimId,gorevturu);
                 if (stenoEntity != null && stenoEntity.Count() > 0)
                 {
-                    var grpList = stenoEntity.GroupBy(c => new {
-                        c.StenografId
-                      }).Select(x=>x.Key.StenografId).ToList();
-                    var maxDate = stenoEntity.Max(x => x.GorevBitisTarihi);
-                    var sure = gorevturu == (int)StenoGorevTuru.Stenograf ? stenoEntity.Select(x=>x.Birlesim).FirstOrDefault().StenoSure : stenoEntity.Select(x => x.Birlesim).FirstOrDefault().UzmanStenoSure;
-                    _stenoService.CreateStenoGorevDonguEkle(birlesimId, oturumId, grpList, maxDate, sure);
+
+                    _stenoService.CreateStenoGorevDonguEkle(birlesimId, oturumId, stenoEntity, gorevturu);
                 }
             }
             catch (Exception ex)

@@ -44,12 +44,12 @@ namespace TTBS.Services
 
         void UpdateGorevDurumByBirlesimAndSteno(Guid birlesimId, Guid stenoId);
         void UpdateGorevDurumById(Guid id);
-        void CreateStenoGorevDonguEkle(Guid birlesimId, Guid oturumId, List<Guid> grpList, DateTime? maxDate, double sure);
         void UpdateStenoGorevTamamla(Guid birlesimId, StenoGorevTuru stenoGorevTur);
         void ChangeOrderStenografKomisyon(Guid kaynakBirlesimId, Guid kaynakStenografId, Guid hedefBirlesimId, Guid hedefStenografId);
 
         IEnumerable<Birlesim> GetBirlesimByDate(DateTime basTarihi, int toplanmaTuru);
         void ChangeSureStenografKomisyon(Guid gorevAtamaId, double sure, bool digerAtamalarDahil=false);
+        void CreateStenoGorevDonguEkle(Guid birlesimId, Guid oturumId, IEnumerable<GorevAtama> stenoEntity,int gorevTur);
     }
     public class StenografService : BaseService, IStenografService
     {
@@ -294,17 +294,25 @@ namespace TTBS.Services
             CreateStenoGorev(birlesim,oturumId,entity.StenografIds,entity.TurAdedi);
         }
 
-        public void CreateStenoGorevDonguEkle(Guid birlesimId, Guid oturumId, List<Guid> stenoList, DateTime? maxDate, double sure)
+        public void CreateStenoGorevDonguEkle(Guid birlesimId, Guid oturumId, IEnumerable<GorevAtama> stenoList, int gorevturu)
         {
             int firsRec = 0;
+            var grpList = stenoList.GroupBy(c => new {
+                c.StenografId,
+                c.StenoSure
+            }).Select(x => new { StenografId = x.Key.StenografId, Sure = x.Key.StenoSure }).ToList();
+            var maxDate = stenoList.Max(x => x.GorevBitisTarihi);
+            var birlesimtur = stenoList.Select(x => x.Birlesim).FirstOrDefault().ToplanmaTuru;
+            var sure = gorevturu == (int)StenoGorevTuru.Stenograf ? stenoList.Select(x => x.Birlesim).FirstOrDefault().StenoSure : stenoList.Select(x => x.Birlesim).FirstOrDefault().UzmanStenoSure;
             var atamaList = new List<GorevAtama>();
-            foreach (var item in stenoList)
+            foreach (var item in grpList)
             {
                 var newEntity = new GorevAtama();
                 newEntity.BirlesimId = birlesimId;
                 newEntity.OturumId = oturumId;
-                newEntity.StenografId = item;
+                newEntity.StenografId = item.StenografId;
                 newEntity.GorevStatu = GorevStatu.Planlandı;
+                sure = birlesimtur == ToplanmaTuru.GenelKurul ? sure : item.Sure;
                 newEntity.GorevBasTarihi = maxDate.HasValue ? maxDate.Value.AddMinutes(firsRec*sure) : null;
                 newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.HasValue ? newEntity.GorevBasTarihi.Value.AddMinutes(sure) : null;
                 newEntity.StenoSure = sure;
