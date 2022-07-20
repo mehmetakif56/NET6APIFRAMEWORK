@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Compile Remove="Models\KomisyonByDateModel.cs" />
+    <Compile Remove="Models\StenoGorevIstatistikModel.cs" />
   </ItemGroup>
 
   <ItemGroup>
