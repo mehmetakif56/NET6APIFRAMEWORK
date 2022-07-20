@@ -195,9 +195,6 @@ namespace TTBS.Services
                             _stenoGorevRepo.Save();
                         }
                     }
-                  
-
-
                     
                 }
             }
@@ -206,15 +203,25 @@ namespace TTBS.Services
                 var stenoGrevHedef = _stenoGorevRepo.Get(x => x.BirlesimId == hedefBirlesimId).OrderBy(x => x.GorevBasTarihi);
                 if (stenoGrevHedef != null && stenoGrevHedef.Count() > 0)
                 {
-                    var minStenoGorev = stenoGrevHedef.Where(x => x.StenografId == hedefStenografId).FirstOrDefault();
-                    var hedefStenoGorev = stenoGrevHedef.Where(x => x.GorevBasTarihi >= minStenoGorev.GorevBasTarihi);
-                    foreach (var item in hedefStenoGorev)
+                    var stenoList = new List<GorevAtama>();
+                    var hedefSteno = stenoGrevHedef.Where(x => x.StenografId == hedefStenografId).OrderBy(x => x.GorevBasTarihi).ToArray();
+                    var kaynakSteno = stenoGrevHedef.Where(x => x.StenografId == kaynakStenografId).OrderBy(x => x.GorevBasTarihi).ToArray();
+
+                    for (int i = 0; i < hedefSteno.Count(); i++)
                     {
-                        item.GorevBasTarihi = item.GorevBasTarihi.Value.AddMinutes(item.StenoSure);
-                        item.GorevBitisTarihi = item.GorevBasTarihi.Value.AddMinutes(item.StenoSure);
-                        _stenoGorevRepo.Update(item);
-                        _stenoGorevRepo.Save();
+                        var hedef = hedefSteno[i];
+                        hedef.GorevBasTarihi = kaynakSteno[i].GorevBasTarihi;
+                        hedef.GorevBitisTarihi = kaynakSteno[i].GorevBitisTarihi;
+                        stenoList.Add(hedef);
+
+                        var kaynak = kaynakSteno[i];
+                        kaynak.GorevBasTarihi = hedefSteno[i].GorevBasTarihi;
+                        kaynak.GorevBitisTarihi = hedefSteno[i].GorevBitisTarihi;
+                        stenoList.Add(kaynak);
                     }
+
+                    _stenoGorevRepo.Update(stenoList);
+                    _stenoGorevRepo.Save();
                 }
             }
            
