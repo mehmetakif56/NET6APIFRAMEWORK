@@ -49,6 +49,8 @@ namespace TTBS.Services
 
         IEnumerable<Birlesim> GetBirlesimByDate(DateTime basTarihi, int toplanmaTuru);
         void ChangeSureStenografKomisyon(Guid gorevAtamaId, double sure, bool digerAtamalarDahil=false);
+
+        IEnumerable<Birlesim> GetKomisyonByDateAndGroup(DateTime baslangic, DateTime bitis, Guid grup);
         void CreateStenoGorevDonguEkle(Guid birlesimId, Guid oturumId, IEnumerable<GorevAtama> stenoEntity,int gorevTur);
     }
     public class StenografService : BaseService, IStenografService
@@ -656,6 +658,11 @@ namespace TTBS.Services
                 _stenoGorevRepo.Update(result, CurrentUser.Id);
                 _stenoGorevRepo.Save();
             }
+        }
+
+        public IEnumerable<Birlesim> GetKomisyonByDateAndGroup(DateTime baslangic, DateTime bitis, Guid grup)
+        {
+            return _birlesimRepo.Get(x => x.ToplanmaTuru.Equals(ToplanmaTuru.Komisyon) && x.BaslangicTarihi >= baslangic && x.BaslangicTarihi <= bitis, includeProperties: "Komisyon,GorevAtamas.Stenograf.StenoGrups").Where(x => x.GorevAtamas.Where(x => x.Stenograf.StenoGrups.Select(x => x.GrupId).Contains(grup)).Count()>0);
         }
 
     }
