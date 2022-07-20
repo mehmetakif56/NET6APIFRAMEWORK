@@ -53,7 +53,7 @@ namespace TTBS.Controllers
         [HttpGet("GetKomisyonByDate")]
         public List<StenoGrupSureModel> GetKomisyonByDateAndGroup(DateTime baslangic, DateTime bitis, Guid grup)
         {
-            var komisyonEntity = _stenoService.GetKomisyonByDate(baslangic, bitis, grup);
+            var komisyonEntity = _stenoService.GetKomisyonByDateAndGroup(baslangic, bitis, grup);
             var model = _mapper.Map<List<StenoGrupSureModel>>(komisyonEntity);
             return model;
         }
