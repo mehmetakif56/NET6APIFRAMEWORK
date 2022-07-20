@@ -211,17 +211,18 @@ namespace TTBS.Services
 
                     for (int i = 0; i < hedefSteno.Count(); i++)
                     {
-
                         var hedefGorevBasTarihi = hedefSteno[i].GorevBasTarihi;
                         var hedefGorevBitisTarihi = hedefSteno[i].GorevBitisTarihi;
+                        var hedefSure = hedefSteno[i].StenoSure;
 
                         hedefSteno[i].GorevBasTarihi = kaynakSteno[i].GorevBasTarihi;
                         hedefSteno[i].GorevBitisTarihi = kaynakSteno[i].GorevBitisTarihi;
+                        hedefSteno[i].StenoSure = kaynakSteno[i].StenoSure;
                         stenoList.Add(hedefSteno[i]);
-
 
                         kaynakSteno[i].GorevBasTarihi = hedefGorevBasTarihi;
                         kaynakSteno[i].GorevBitisTarihi = hedefGorevBitisTarihi;
+                        kaynakSteno[i].StenoSure = hedefSure;
                         stenoList.Add(kaynakSteno[i]);
                     }
                     _stenoGorevRepo.Update(stenoList);
