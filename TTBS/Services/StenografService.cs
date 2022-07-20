@@ -197,7 +197,6 @@ namespace TTBS.Services
                             _stenoGorevRepo.Save();
                         }
                     }
-                    
                 }
             }
             else
@@ -207,26 +206,28 @@ namespace TTBS.Services
                 {
                     var stenoList = new List<GorevAtama>();
                     var hedefSteno = stenoGrevHedef.Where(x => x.StenografId == hedefStenografId).OrderBy(x => x.GorevBasTarihi).ToArray();
+                   
                     var kaynakSteno = stenoGrevHedef.Where(x => x.StenografId == kaynakStenografId).OrderBy(x => x.GorevBasTarihi).ToArray();
 
                     for (int i = 0; i < hedefSteno.Count(); i++)
                     {
-                        var hedef = hedefSteno[i];
-                        hedef.GorevBasTarihi = kaynakSteno[i].GorevBasTarihi;
-                        hedef.GorevBitisTarihi = kaynakSteno[i].GorevBitisTarihi;
-                        stenoList.Add(hedef);
 
-                        var kaynak = kaynakSteno[i];
-                        kaynak.GorevBasTarihi = hedefSteno[i].GorevBasTarihi;
-                        kaynak.GorevBitisTarihi = hedefSteno[i].GorevBitisTarihi;
-                        stenoList.Add(kaynak);
+                        var hedefGorevBasTarihi = hedefSteno[i].GorevBasTarihi;
+                        var hedefGorevBitisTarihi = hedefSteno[i].GorevBitisTarihi;
+
+                        hedefSteno[i].GorevBasTarihi = kaynakSteno[i].GorevBasTarihi;
+                        hedefSteno[i].GorevBitisTarihi = kaynakSteno[i].GorevBitisTarihi;
+                        stenoList.Add(hedefSteno[i]);
+
+
+                        kaynakSteno[i].GorevBasTarihi = hedefGorevBasTarihi;
+                        kaynakSteno[i].GorevBitisTarihi = hedefGorevBitisTarihi;
+                        stenoList.Add(kaynakSteno[i]);
                     }
-
                     _stenoGorevRepo.Update(stenoList);
                     _stenoGorevRepo.Save();
                 }
             }
-           
         }
 
         public async void ChangeSureStenografKomisyon(Guid gorevAtamaId, double sure,bool digerAtamalarDahil =false)
