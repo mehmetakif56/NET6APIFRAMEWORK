@@ -324,7 +324,6 @@ namespace TTBS.Services
                 var atamaList = new List<GorevAtama>();
                 for (int i = 1; i <= stenoList.Count() / grpListCnt; i++)
                 {
-                 
                     foreach (var item in entity.StenografIds)
                     {
                         var grpList = stenoList.Take(i* grpListCnt);
@@ -335,30 +334,24 @@ namespace TTBS.Services
                         newEntity.BirlesimId = entity.BirlesimId;
                         newEntity.OturumId = entity.OturumId;
                         newEntity.StenografId = item;
-                        newEntity.GorevStatu = GorevStatu.Planlandı;
+                        newEntity.GorevStatu = maxDate.Value > stenoList.FirstOrDefault().GorevBasTarihi.Value ? GorevStatu.Pasif :GorevStatu.Planlandı;
                         newEntity.GorevBasTarihi = maxDate.Value;
                         newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.Value.AddMinutes(maxSure);
                         newEntity.StenoSure = maxSure;
                         atamaList.Add(newEntity);
-                        
-
-                    }
-                    var upateList = stenoList.Skip(i * grpListCnt).Take(grpListCnt);
-                    foreach (var hedef in upateList)
-                    {
-                        hedef.GorevBasTarihi = hedef.GorevBasTarihi.Value.AddMinutes(hedef.StenoSure);
-                        hedef.GorevBitisTarihi = hedef.GorevBasTarihi.Value.AddMinutes(hedef.StenoSure);
-                        _stenoGorevRepo.Update(hedef);
-                        _stenoGorevRepo.Save();
+                        var upateList = stenoList.Where(x => x.GorevBasTarihi >= maxDate.Value);
+                        foreach (var hedef in upateList)
+                        {
+                            hedef.GorevBasTarihi = hedef.GorevBasTarihi.Value.AddMinutes(hedef.StenoSure);
+                            hedef.GorevBitisTarihi = hedef.GorevBasTarihi.Value.AddMinutes(hedef.StenoSure);
+                            _stenoGorevRepo.Update(hedef);
+                            _stenoGorevRepo.Save();
+                        }
                     }
                 }
-
-               
                 _stenoGorevRepo.Create(atamaList, CurrentUser.Id);
                 _stenoGorevRepo.Save();
-
             }
-
         }
 
         public void CreateStenoGorevDonguEkle(Guid birlesimId, Guid oturumId, IEnumerable<GorevAtama> stenoList, int gorevturu)
