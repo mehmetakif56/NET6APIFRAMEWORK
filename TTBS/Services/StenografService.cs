@@ -324,22 +324,27 @@ namespace TTBS.Services
                 var atamaList = new List<GorevAtama>();
                 for (int i = 1; i <= stenoList.Count() / grpListCnt; i++)
                 {
+
+                    var grpList = stenoList.Take(i * grpListCnt);
+                    var maxDate = grpList.Max(x => x.GorevBitisTarihi);
+                    var maxSure = grpList.Max(x => x.StenoSure);
+                    int firstRec = 0;
                     foreach (var item in entity.StenografIds)
                     {
-                        var grpList = stenoList.Take(i* grpListCnt);
-                        var maxDate = grpList.Max(x => x.GorevBitisTarihi);
-                        var maxSure = grpList.Max(x => x.StenoSure);
+
 
                         var newEntity = new GorevAtama();
                         newEntity.BirlesimId = entity.BirlesimId;
                         newEntity.OturumId = entity.OturumId;
                         newEntity.StenografId = item;
                         newEntity.GorevStatu = maxDate.Value > stenoList.FirstOrDefault().GorevBasTarihi.Value ? GorevStatu.Pasif :GorevStatu.Planlandı;
-                        newEntity.GorevBasTarihi = maxDate.Value;
+                        newEntity.GorevBasTarihi = maxDate.Value.AddMinutes(firstRec*maxSure);
                         newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.Value.AddMinutes(maxSure);
                         newEntity.StenoSure = maxSure;
                         atamaList.Add(newEntity);
-                        var upateList = stenoList.Where(x => x.GorevBasTarihi >= maxDate.Value);
+                        firstRec++;
+                        maxDate = newEntity.GorevBasTarihi;
+                        var upateList = stenoList.Where(x => x.GorevBasTarihi >= maxDate);
                         foreach (var hedef in upateList)
                         {
                             hedef.GorevBasTarihi = hedef.GorevBasTarihi.Value.AddMinutes(hedef.StenoSure);
@@ -347,6 +352,7 @@ namespace TTBS.Services
                             _stenoGorevRepo.Update(hedef);
                             _stenoGorevRepo.Save();
                         }
+                     
                     }
                 }
                 _stenoGorevRepo.Create(atamaList, CurrentUser.Id);
