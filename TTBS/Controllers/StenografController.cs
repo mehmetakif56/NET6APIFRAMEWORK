@@ -441,6 +441,7 @@ namespace TTBS.Controllers
         {
             var stenoEntity = _stenoService.GetAllStenografByGroupId(groupId);
             var model = _mapper.Map<IEnumerable<StenoModel>>(stenoEntity);
+            model.ToList().ForEach(x => x.GorevStatu = -1);
             return model;
         }
 
@@ -598,7 +599,7 @@ namespace TTBS.Controllers
                 SiraNo = z.Key.SiraNo,
                 SonGorevSuresi = z.Key.SonGorevSuresi,
                 StenoGorevDurum = z.Key.StenoGorevDurum,
-                GorevStatu=z.Key.GorevStatu
+                GorevStatu=(int)z.Key.GorevStatu
             });
 
             var model = _mapper.Map<IEnumerable<StenoModel>>(stenoGroup);
