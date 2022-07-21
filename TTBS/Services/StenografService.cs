@@ -234,38 +234,45 @@ namespace TTBS.Services
 
         public async void ChangeSureStenografKomisyon(Guid gorevAtamaId, double sure, bool digerAtamalarDahil = false)
         {
-            var stenoGorev = _stenoGorevRepo.GetById(gorevAtamaId);
-            var hedefStenoGorev = await GetHedefStenoGorevs(stenoGorev);
-            var gorevBas = hedefStenoGorev.FirstOrDefault().GorevBasTarihi;
-            var gorevBit = hedefStenoGorev.FirstOrDefault().GorevBitisTarihi;
-            int firstRec = 0;
-            if (digerAtamalarDahil)
+            try
             {
-
-                foreach (var item in hedefStenoGorev)
+                var stenoGorev = _stenoGorevRepo.GetById(gorevAtamaId);
+                var hedefStenoGorev = await GetHedefStenoGorevs(stenoGorev);
+                var gorevBas = hedefStenoGorev.FirstOrDefault().GorevBasTarihi;
+                var gorevBit = hedefStenoGorev.FirstOrDefault().GorevBitisTarihi;
+                int firstRec = 0;
+                if (digerAtamalarDahil)
                 {
-                    item.StenoSure = sure;
-                    item.GorevBasTarihi = firstRec == 0 ? gorevBas : gorevBas.Value.AddMinutes(sure);
-                    item.GorevBitisTarihi = item.GorevBasTarihi.Value.AddMinutes(sure);
-                    gorevBas = item.GorevBasTarihi;
-                    _stenoGorevRepo.Update(item);
-                    _stenoGorevRepo.Save();
-                    firstRec++;
+
+                    foreach (var item in hedefStenoGorev)
+                    {
+                        item.StenoSure = sure;
+                        item.GorevBasTarihi = firstRec == 0 ? gorevBas : gorevBas.Value.AddMinutes(sure);
+                        item.GorevBitisTarihi = item.GorevBasTarihi.Value.AddMinutes(sure);
+                        gorevBas = item.GorevBasTarihi;
+                        _stenoGorevRepo.Update(item);
+                        _stenoGorevRepo.Save();
+                        firstRec++;
+                    }
+                }
+                else
+                {
+
+                    foreach (var item in hedefStenoGorev)
+                    {
+                        item.StenoSure = firstRec == 0 ? sure : item.StenoSure;
+                        item.GorevBasTarihi = firstRec == 0 ? gorevBas : gorevBit;
+                        item.GorevBitisTarihi = item.GorevBasTarihi.Value.AddMinutes(item.StenoSure);
+                        gorevBit = item.GorevBitisTarihi;
+                        _stenoGorevRepo.Update(item);
+                        _stenoGorevRepo.Save();
+                        firstRec++;
+                    }
                 }
             }
-            else
+           catch (Exception ex)
             {
 
-                foreach (var item in hedefStenoGorev)
-                {
-                    item.StenoSure = firstRec == 0 ? sure : item.StenoSure;
-                    item.GorevBasTarihi = firstRec == 0 ? gorevBas : gorevBit;
-                    item.GorevBitisTarihi = item.GorevBasTarihi.Value.AddMinutes(item.StenoSure);
-                    gorevBit = item.GorevBitisTarihi;
-                    _stenoGorevRepo.Update(item);
-                    _stenoGorevRepo.Save();
-                    firstRec++;
-                }
             }
 
         }
@@ -345,14 +352,19 @@ namespace TTBS.Services
                         firstRec++;
                         maxDate = newEntity.GorevBasTarihi;
                         var upateList = stenoList.Where(x => x.GorevBasTarihi >= maxDate);
-                        foreach (var hedef in upateList)
+                        if(upateList!=null && upateList.Count()>0)
                         {
-                            hedef.GorevBasTarihi = hedef.GorevBasTarihi.Value.AddMinutes(hedef.StenoSure);
-                            hedef.GorevBitisTarihi = hedef.GorevBasTarihi.Value.AddMinutes(hedef.StenoSure);
-                            _stenoGorevRepo.Update(hedef);
-                            _stenoGorevRepo.Save();
+                            var firstRecord = upateList.OrderBy(x => x.GorevBasTarihi).FirstOrDefault();
+                            var firstDate = firstRecord.GorevBasTarihi.Value.AddMinutes(firstRecord.StenoSure);
+                            foreach (var hedef in upateList)
+                            {
+                                hedef.GorevBasTarihi = firstDate;
+                                hedef.GorevBitisTarihi = hedef.GorevBasTarihi.Value.AddMinutes(hedef.StenoSure);
+                                firstDate = hedef.GorevBitisTarihi.Value;
+                                _stenoGorevRepo.Update(hedef);
+                                _stenoGorevRepo.Save();
+                            }
                         }
-                     
                     }
                 }
                 _stenoGorevRepo.Create(atamaList, CurrentUser.Id);
