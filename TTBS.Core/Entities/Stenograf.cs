@@ -21,6 +21,8 @@ namespace TTBS.Core.Entities
         public DateTime? SonGorevTarihi { get; set; }
         [NotMapped]
         public int SonGorevSuresi { get; set; }
+        [NotMapped]
+        public GorevStatu GorevStatu { get; set; }
         public Guid UserId { get; set; }
         public UserEntity User { get; set; }
     }
