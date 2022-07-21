@@ -50,7 +50,7 @@ namespace TTBS.Controllers
             return model;
         }
 
-        [HttpGet("GetKomisyonByDateAndGroup")]
+        [HttpGet("GetStatisticstKomisyonByDateAndGroup")]
         public StenoGroupStatisticsModel GetKomisyonByDateAndGroup(DateTime baslangic, DateTime bitis, Guid grupId)
         {
             StenoGroupStatisticsModel model = new StenoGroupStatisticsModel();
