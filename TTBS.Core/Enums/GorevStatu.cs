@@ -13,6 +13,6 @@ namespace TTBS.Core.Enums
         Tamamlandı=2,
         Iptal=3,
         YerDegistirme=4,
-        Pasif =5
+        GorevZamanAsim =5
     }
 }

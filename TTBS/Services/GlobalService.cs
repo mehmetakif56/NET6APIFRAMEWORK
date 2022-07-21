@@ -18,6 +18,7 @@ namespace TTBS.Services
         void CreateDonem(Donem donem);
         void CreateYasama(Yasama donem);
         void CreateBirlesim(Birlesim birlesim);
+        void DeleteBirlesim(Guid id);
         Result CreateBirlesimGorevAtama(Birlesim birlesim);
         Guid CreateOturum(Oturum oturum);
         void CreateKomisyon(Komisyon komisyon);
@@ -379,6 +380,16 @@ namespace TTBS.Services
         {
             var result = _birlesimRepo.Get(x => x.ToplanmaTuru == ToplanmaTuru.GenelKurul && (x.ToplanmaDurumu == Core.Enums.ToplanmaStatu.DevamEdiyor || x.ToplanmaDurumu == Core.Enums.ToplanmaStatu.Planlandı || x.ToplanmaDurumu == Core.Enums.ToplanmaStatu.Oluşturuldu));
             return result!=null && result.Count()>0 ? true : false;                
+        }
+
+        public void DeleteBirlesim(Guid id)
+        {
+            var result = _birlesimRepo.Get(x => x.Id == id && x.ToplanmaDurumu == ToplanmaStatu.Oluşturuldu || x.ToplanmaDurumu == ToplanmaStatu.Planlandı);
+            if(result !=null)
+            {
+                _birlesimRepo.Delete(result);
+                _birlesimRepo.Save();
+            }
         }
     }
 }

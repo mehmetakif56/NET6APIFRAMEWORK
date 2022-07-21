@@ -331,20 +331,17 @@ namespace TTBS.Services
                 var atamaList = new List<GorevAtama>();
                 for (int i = 1; i <= stenoList.Count() / grpListCnt; i++)
                 {
-
                     var grpList = stenoList.Take(i * grpListCnt);
                     var maxDate = grpList.Max(x => x.GorevBitisTarihi);
                     var maxSure = grpList.Max(x => x.StenoSure);
                     int firstRec = 0;
                     foreach (var item in entity.StenografIds)
                     {
-
-
                         var newEntity = new GorevAtama();
                         newEntity.BirlesimId = entity.BirlesimId;
                         newEntity.OturumId = entity.OturumId;
                         newEntity.StenografId = item;
-                        newEntity.GorevStatu = maxDate.Value > stenoList.FirstOrDefault().GorevBasTarihi.Value ? GorevStatu.Pasif :GorevStatu.Planlandı;
+                        newEntity.GorevStatu = maxDate.Value > stenoList.FirstOrDefault().Birlesim.BaslangicTarihi.Value ? GorevStatu.GorevZamanAsim : GorevStatu.Planlandı;
                         newEntity.GorevBasTarihi = maxDate.Value.AddMinutes(firstRec*maxSure);
                         newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.Value.AddMinutes(maxSure);
                         newEntity.StenoSure = maxSure;
@@ -379,6 +376,7 @@ namespace TTBS.Services
                 c.StenografId,
             }).Count();
             var grpList = stenoList.TakeLast(grpListCnt);
+            var lastStenoSure = grpList.LastOrDefault().StenoSure;
             var maxDate = stenoList.Max(x => x.GorevBitisTarihi);
             var birlesimtur = stenoList.Select(x => x.Birlesim).FirstOrDefault().ToplanmaTuru;
             var sure = gorevturu == (int)StenoGorevTuru.Stenograf ? stenoList.Select(x => x.Birlesim).FirstOrDefault().StenoSure : stenoList.Select(x => x.Birlesim).FirstOrDefault().UzmanStenoSure;
@@ -390,7 +388,7 @@ namespace TTBS.Services
                 newEntity.OturumId = oturumId;
                 newEntity.StenografId = item.StenografId;
                 newEntity.GorevStatu = GorevStatu.Planlandı;
-                sure = birlesimtur == ToplanmaTuru.GenelKurul ? sure : item.StenoSure;
+                sure = birlesimtur == ToplanmaTuru.GenelKurul ? sure : lastStenoSure;
                 newEntity.GorevBasTarihi = maxDate.HasValue ? maxDate.Value.AddMinutes(firsRec * sure) : null;
                 newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.HasValue ? newEntity.GorevBasTarihi.Value.AddMinutes(sure) : null;
                 newEntity.StenoSure = sure;
