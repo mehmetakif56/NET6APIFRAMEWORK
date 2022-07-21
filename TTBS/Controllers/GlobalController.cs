@@ -119,6 +119,21 @@ namespace TTBS.Controllers
             
             return Ok();
         }
+
+        [HttpDelete("DeleteBirlesim")]
+        public IActionResult DeleteBirlesim(Guid id)
+        {
+            try
+            {
+               _globalService.DeleteBirlesim(id);                
+            }
+            catch (Exception ex)
+            { return BadRequest(ex.Message); }
+
+            return Ok();
+        }
+
+
         private Birlesim SetBirlesimWithMap(BirlesimModel model)
         {
             var birlesimEntity = Mapper.Map<Birlesim>(model);
