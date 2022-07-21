@@ -120,9 +120,9 @@ namespace TTBS.Helper
             //                                                             } }))
             //    .ForMember(x => x.GrupName, c => c.MapFrom(x => x.Grup.Ad));
 
-            CreateMap<Birlesim, StenoGrupSureModel>()
-                .ForMember(dest => dest.komisyonAd, opt => opt.MapFrom(src => src.Komisyon.Ad))
-                .ForMember(dest => dest.date, opt => opt.MapFrom(src => src.BaslangicTarihi));
+            CreateMap<Birlesim, KomisyonModel>()
+                .ForMember(dest => dest.Ad, opt => opt.MapFrom(src => src.Komisyon.Ad))
+                .ForMember(dest => dest.Tarih, opt => opt.MapFrom(src => src.BaslangicTarihi));
 
         }
     }

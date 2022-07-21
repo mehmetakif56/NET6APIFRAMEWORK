@@ -10,17 +10,17 @@ namespace TTBS.Services
         IEnumerable<StenoIzin> GetAllStenoIzin();
         IEnumerable<StenoIzin> GetStenoIzinByStenografId(Guid id);
         IEnumerable<StenoIzin> GetStenoIzinByName(string adSoyad);
-        IEnumerable<StenoIzin> GetStenoIzinBetweenDateAndStenograf(DateTime basTarihi, DateTime bitTarihi,  string? field, string? sortOrder, int? izinTur, Guid? stenografId, int pageIndex, int pagesize);
+        IEnumerable<StenoIzin> GetStenoIzinBetweenDateAndStenograf(DateTime basTarihi, DateTime bitTarihi, string? field, string? sortOrder, int? izinTur, Guid? stenografId, int pageIndex, int pagesize);
         IEnumerable<GorevAtama> GetStenoGorevById(Guid id);
         IEnumerable<GorevAtama> GetStenoGorevByName(string adSoyad);
-        IEnumerable<GorevAtama> GetStenoGorevByDateAndStatus(DateTime gorevBasTarihi,DateTime gorevBitTarihi, int status);
+        IEnumerable<GorevAtama> GetStenoGorevByDateAndStatus(DateTime gorevBasTarihi, DateTime gorevBitTarihi, int status);
         IEnumerable<GorevAtama> GetStenoGorevByStenografAndDate(Guid? stenografId, DateTime gorevBasTarihi, DateTime gorevBitTarihi);
         void CreateStenoGorevAtama(GorevAtama stenoGorev);
         void AddStenoGorevAtamaKomisyon(GorevAtama stenoGorev);
         void UpdateStenoGorev(List<GorevAtama> stenoGorev);
         void CreateStenoIzin(StenoIzin stenoGorev);
         IEnumerable<GorevAtama> GetStenoGorevByGorevTuru(int gorevTuru);
-        IEnumerable<GorevAtama> GetStenoGorevByBirlesimIdAndGorevTuru(Guid birlesimId,int gorevTuru);
+        IEnumerable<GorevAtama> GetStenoGorevByBirlesimIdAndGorevTuru(Guid birlesimId, int gorevTuru);
         //List<StenoPlan> GetStenoPlanByStatus(int status);
         IEnumerable<Birlesim> GetBirlesimByDateAndTur(DateTime gorevTarihi, DateTime gorevBitTarihi, int gorevTuru);
         List<GorevAtama> GetStenoGorevBySatatus(int status);
@@ -40,8 +40,8 @@ namespace TTBS.Services
         //IEnumerable<GorevAtama> GetIntersectStenoPlan(Guid stenoPlanId, Guid stenoId);
         void UpdateStenoSiraNo(List<Stenograf> steno);
         IEnumerable<Grup> GetAllStenografGroup(int gorevTuru);
-        void UpdateBirlesimStenoGorevBaslama(Guid birlesimId,DateTime basTarih, StenoGorevTuru stenoGorevTur);
-        void UpdateBirlesimStenoGorevDevamEtme(Guid birlesimId, DateTime basTarih, StenoGorevTuru stenoGorevTuru,DateTime oturumKapanmaTarihi,Guid oturumId);
+        void UpdateBirlesimStenoGorevBaslama(Guid birlesimId, DateTime basTarih, StenoGorevTuru stenoGorevTur);
+        void UpdateBirlesimStenoGorevDevamEtme(Guid birlesimId, DateTime basTarih, StenoGorevTuru stenoGorevTuru, DateTime oturumKapanmaTarihi, Guid oturumId);
 
         void UpdateGorevDurumByBirlesimAndSteno(Guid birlesimId, Guid stenoId);
         void UpdateGorevDurumById(Guid id);
@@ -49,10 +49,10 @@ namespace TTBS.Services
         void ChangeOrderStenografKomisyon(Guid kaynakBirlesimId, Guid kaynakStenografId, Guid hedefBirlesimId, Guid hedefStenografId);
 
         IEnumerable<Birlesim> GetBirlesimByDate(DateTime basTarihi, int toplanmaTuru);
-        void ChangeSureStenografKomisyon(Guid gorevAtamaId, double sure, bool digerAtamalarDahil=false);
+        void ChangeSureStenografKomisyon(Guid gorevAtamaId, double sure, bool digerAtamalarDahil = false);
 
         IEnumerable<Birlesim> GetKomisyonByDateAndGroup(DateTime baslangic, DateTime bitis, Guid grup);
-        void CreateStenoGorevDonguEkle(Guid birlesimId, Guid oturumId, IEnumerable<GorevAtama> stenoEntity,int gorevTur);
+        void CreateStenoGorevDonguEkle(Guid birlesimId, Guid oturumId, IEnumerable<GorevAtama> stenoEntity, int gorevTur);
     }
     public class StenografService : BaseService, IStenografService
     {
@@ -85,34 +85,34 @@ namespace TTBS.Services
             _oturumRepo = oturumRepo;
             _grupRepo = grupRepo;
         }
-       
+
         public IEnumerable<StenoIzin> GetAllStenoIzin()
         {
-            return _stenoIzinRepo.GetAll(includeProperties:"Stenograf");
+            return _stenoIzinRepo.GetAll(includeProperties: "Stenograf");
         }
 
         public IEnumerable<StenoIzin> GetStenoIzinByStenografId(Guid id)
         {
-            return _stenoIzinRepo.Get(x=>x.StenografId ==id, includeProperties: "Stenograf");
+            return _stenoIzinRepo.Get(x => x.StenografId == id, includeProperties: "Stenograf");
         }
 
         public IEnumerable<StenoIzin> GetStenoIzinByName(string adSoyad)
         {
-            return _stenoIzinRepo.Get(x=>x.Stenograf.AdSoyad == adSoyad, includeProperties: "Stenograf");
+            return _stenoIzinRepo.Get(x => x.Stenograf.AdSoyad == adSoyad, includeProperties: "Stenograf");
         }
 
-        public IEnumerable<StenoIzin> GetStenoIzinBetweenDateAndStenograf(DateTime basTarihi, DateTime bitTarihi, string? field, string? sortOrder, int? izinTur, Guid? stenografId, int pageIndex,int pagesize)
+        public IEnumerable<StenoIzin> GetStenoIzinBetweenDateAndStenograf(DateTime basTarihi, DateTime bitTarihi, string? field, string? sortOrder, int? izinTur, Guid? stenografId, int pageIndex, int pagesize)
         {
-           var stenoIzinList = _stenoIzinRepo.Get(x => (basTarihi >= x.BaslangicTarihi && basTarihi <= x.BitisTarihi) ||
-                                                  (bitTarihi >= x.BaslangicTarihi && bitTarihi <= x.BitisTarihi) , includeProperties: "Stenograf");
+            var stenoIzinList = _stenoIzinRepo.Get(x => (basTarihi >= x.BaslangicTarihi && basTarihi <= x.BitisTarihi) ||
+                                                   (bitTarihi >= x.BaslangicTarihi && bitTarihi <= x.BitisTarihi), includeProperties: "Stenograf");
             if (izinTur != null)
                 stenoIzinList = stenoIzinList.Where(x => (int)x.IzinTuru == izinTur);
-            if (stenografId != null && stenografId !=Guid.Empty)
+            if (stenografId != null && stenografId != Guid.Empty)
                 stenoIzinList = stenoIzinList.Where(x => x.StenografId == stenografId);
 
-            if (stenoIzinList !=null && stenoIzinList.Count()>0)
+            if (stenoIzinList != null && stenoIzinList.Count() > 0)
             {
-                if(!string.IsNullOrEmpty(field))
+                if (!string.IsNullOrEmpty(field))
                 {
                     if (field == "baslangicTarihi")
                     {
@@ -126,21 +126,21 @@ namespace TTBS.Services
                     {
                         stenoIzinList = sortOrder == "desc" ? stenoIzinList.OrderByDescending(x => x.IzinTuru) : stenoIzinList.OrderBy(x => x.IzinTuru);
                     }
-                }              
+                }
 
                 stenoIzinList.ToList().ForEach(x => x.StenografCount = stenoIzinList.Count());
             }
-            return  stenoIzinList != null && stenoIzinList.Count() > 0 ? stenoIzinList.Skip((pageIndex - 1) * pagesize).Take(pagesize).ToList() : new List<StenoIzin> { };
+            return stenoIzinList != null && stenoIzinList.Count() > 0 ? stenoIzinList.Skip((pageIndex - 1) * pagesize).Take(pagesize).ToList() : new List<StenoIzin> { };
         }
 
         public IEnumerable<GorevAtama> GetStenoGorevById(Guid id)
         {
-            return _stenoGorevRepo.Get(x=>x.Id == id,includeProperties: "Stenograf");
-        }       
+            return _stenoGorevRepo.Get(x => x.Id == id, includeProperties: "Stenograf");
+        }
 
         public IEnumerable<GorevAtama> GetStenoGorevByDateAndStatus(DateTime gorevBasTarihi, DateTime gorevBitTarihi, int statu)
         {
-            return _stenoGorevRepo.Get(x => x.GorevBasTarihi>= gorevBasTarihi && x.GorevBitisTarihi <= gorevBitTarihi && (int)x.GorevStatu == statu, includeProperties: "Stenograf");
+            return _stenoGorevRepo.Get(x => x.GorevBasTarihi >= gorevBasTarihi && x.GorevBitisTarihi <= gorevBitTarihi && (int)x.GorevStatu == statu, includeProperties: "Stenograf");
         }
 
         private void UpdateBirlesimGorevAtama(Birlesim birlesim)
@@ -158,9 +158,9 @@ namespace TTBS.Services
             return oturum.Id;
         }
 
-        public void ChangeOrderStenografKomisyon(Guid kaynakBirlesimId,Guid kaynakStenografId,Guid hedefBirlesimId,Guid hedefStenografId)
+        public void ChangeOrderStenografKomisyon(Guid kaynakBirlesimId, Guid kaynakStenografId, Guid hedefBirlesimId, Guid hedefStenografId)
         {
-            if(kaynakBirlesimId !=hedefBirlesimId)
+            if (kaynakBirlesimId != hedefBirlesimId)
             {
                 var stenoGrevKaynak = _stenoGorevRepo.Get(x => x.BirlesimId == kaynakBirlesimId && x.StenografId == kaynakStenografId);
                 if (stenoGrevKaynak != null && stenoGrevKaynak.Count() > 0)
@@ -207,7 +207,7 @@ namespace TTBS.Services
                 {
                     var stenoList = new List<GorevAtama>();
                     var hedefSteno = stenoGrevHedef.Where(x => x.StenografId == hedefStenografId).OrderBy(x => x.GorevBasTarihi).ToArray();
-                   
+
                     var kaynakSteno = stenoGrevHedef.Where(x => x.StenografId == kaynakStenografId).OrderBy(x => x.GorevBasTarihi).ToArray();
 
                     for (int i = 0; i < hedefSteno.Count(); i++)
@@ -232,16 +232,16 @@ namespace TTBS.Services
             }
         }
 
-        public async void ChangeSureStenografKomisyon(Guid gorevAtamaId, double sure,bool digerAtamalarDahil =false)
+        public async void ChangeSureStenografKomisyon(Guid gorevAtamaId, double sure, bool digerAtamalarDahil = false)
         {
-            var stenoGorev =_stenoGorevRepo.GetById(gorevAtamaId);
+            var stenoGorev = _stenoGorevRepo.GetById(gorevAtamaId);
             var hedefStenoGorev = await GetHedefStenoGorevs(stenoGorev);
             var gorevBas = hedefStenoGorev.FirstOrDefault().GorevBasTarihi;
             var gorevBit = hedefStenoGorev.FirstOrDefault().GorevBitisTarihi;
             int firstRec = 0;
-            if(digerAtamalarDahil)
+            if (digerAtamalarDahil)
             {
-              
+
                 foreach (var item in hedefStenoGorev)
                 {
                     item.StenoSure = sure;
@@ -255,7 +255,7 @@ namespace TTBS.Services
             }
             else
             {
-               
+
                 foreach (var item in hedefStenoGorev)
                 {
                     item.StenoSure = firstRec == 0 ? sure : item.StenoSure;
@@ -267,15 +267,15 @@ namespace TTBS.Services
                     firstRec++;
                 }
             }
-           
+
         }
 
         public async Task<List<GorevAtama>> GetHedefStenoGorevs(GorevAtama atama)
         {
-            return  _stenoGorevRepo.Get(x => x.BirlesimId == atama.BirlesimId && x.GorevBasTarihi >= atama.GorevBasTarihi).OrderBy(x=>x.GorevBasTarihi).ToList();
+            return _stenoGorevRepo.Get(x => x.BirlesimId == atama.BirlesimId && x.GorevBasTarihi >= atama.GorevBasTarihi).OrderBy(x => x.GorevBasTarihi).ToList();
         }
 
-        private void CreateStenoGorev(Birlesim birlesim, Guid oturumId, List<Guid> stenoList,int turAdedi)
+        private void CreateStenoGorev(Birlesim birlesim, Guid oturumId, List<Guid> stenoList, int turAdedi)
         {
             int firstRec = 0;
             for (int i = 0; i < turAdedi; i++)
@@ -301,7 +301,7 @@ namespace TTBS.Services
 
         public void CreateStenoGorevAtama(GorevAtama entity)
         {
-            var birlesim =_birlesimRepo.GetById(entity.BirlesimId);
+            var birlesim = _birlesimRepo.GetById(entity.BirlesimId);
             UpdateBirlesimGorevAtama(birlesim);
 
             var oturumId = CreateOturumGorevAtama(new Oturum
@@ -310,13 +310,13 @@ namespace TTBS.Services
                 BaslangicTarihi = birlesim.BaslangicTarihi
             });
 
-            CreateStenoGorev(birlesim,oturumId,entity.StenografIds,entity.TurAdedi);
+            CreateStenoGorev(birlesim, oturumId, entity.StenografIds, entity.TurAdedi);
         }
 
         public void AddStenoGorevAtamaKomisyon(GorevAtama entity)
         {
-            var stenoList =GetStenoGorevByBirlesimIdAndGorevTuru(entity.BirlesimId, 0);
-            if(stenoList !=null && stenoList.Count()>0)
+            var stenoList = GetStenoGorevByBirlesimIdAndGorevTuru(entity.BirlesimId, 0);
+            if (stenoList != null && stenoList.Count() > 0)
             {
                 var grpListCnt = stenoList.GroupBy(c => new {
                     c.StenografId,
@@ -379,7 +379,7 @@ namespace TTBS.Services
                 newEntity.StenografId = item.StenografId;
                 newEntity.GorevStatu = GorevStatu.Planlandı;
                 sure = birlesimtur == ToplanmaTuru.GenelKurul ? sure : item.StenoSure;
-                newEntity.GorevBasTarihi = maxDate.HasValue ? maxDate.Value.AddMinutes(firsRec*sure) : null;
+                newEntity.GorevBasTarihi = maxDate.HasValue ? maxDate.Value.AddMinutes(firsRec * sure) : null;
                 newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.HasValue ? newEntity.GorevBasTarihi.Value.AddMinutes(sure) : null;
                 newEntity.StenoSure = sure;
                 atamaList.Add(newEntity);
@@ -388,7 +388,7 @@ namespace TTBS.Services
             }
             _stenoGorevRepo.Create(atamaList, CurrentUser.Id);
             _stenoGorevRepo.Save();
-            
+
         }
 
         public void UpdateStenoGorev(List<GorevAtama> entityList)
@@ -403,9 +403,9 @@ namespace TTBS.Services
             _stenoIzinRepo.Save();
         }
 
-        public IEnumerable<GorevAtama> GetStenoGorevByBirlesimIdAndGorevTuru(Guid birlesimId,int gorevTuru)
+        public IEnumerable<GorevAtama> GetStenoGorevByBirlesimIdAndGorevTuru(Guid birlesimId, int gorevTuru)
         {
-            return _stenoGorevRepo.Get(x =>x.BirlesimId == birlesimId && (int)x.Stenograf.StenoGorevTuru == gorevTuru ,includeProperties: "Stenograf,Birlesim").OrderBy(x=>x.GorevBasTarihi);
+            return _stenoGorevRepo.Get(x => x.BirlesimId == birlesimId && (int)x.Stenograf.StenoGorevTuru == gorevTuru, includeProperties: "Stenograf,Birlesim").OrderBy(x => x.GorevBasTarihi);
         }
 
         public IEnumerable<GorevAtama> GetStenoGorevByGorevTuru(int gorevTuru)
@@ -426,7 +426,7 @@ namespace TTBS.Services
         public IEnumerable<Stenograf> GetAllStenografByGroupId(Guid? groupId)
         {
             if (groupId != null)
-                return _stenoGrupRepo.Get(x => x.GrupId == groupId, includeProperties: "Stenograf").Select(x=>x.Stenograf);
+                return _stenoGrupRepo.Get(x => x.GrupId == groupId, includeProperties: "Stenograf").Select(x => x.Stenograf);
             else
                 return _stenoGrupRepo.Get(includeProperties: "Stenograf").Select(x => x.Stenograf);
         }
@@ -439,29 +439,29 @@ namespace TTBS.Services
 
         public IEnumerable<GorevAtama> GetStenoGorevByName(string adSoyad)
         {
-            return _stenoGorevRepo.Get(x=>x.Stenograf.AdSoyad == adSoyad,includeProperties: "Stenograf");
+            return _stenoGorevRepo.Get(x => x.Stenograf.AdSoyad == adSoyad, includeProperties: "Stenograf");
         }
 
         public IEnumerable<Birlesim> GetBirlesimByDateAndTur(DateTime basTarihi, DateTime bitTarihi, int toplanmaTuru)
         {
-            return _birlesimRepo.Get(x => x.BaslangicTarihi >= basTarihi && x.BitisTarihi <= bitTarihi && (int)x.ToplanmaTuru == toplanmaTuru,includeProperties:"Oturums");
+            return _birlesimRepo.Get(x => x.BaslangicTarihi >= basTarihi && x.BitisTarihi <= bitTarihi && (int)x.ToplanmaTuru == toplanmaTuru, includeProperties: "Oturums");
         }
 
         public IEnumerable<Birlesim> GetBirlesimByDate(DateTime basTarihi, int toplanmaTuru)
         {
-            return _birlesimRepo.Get(x => (int)x.ToplanmaTuru == toplanmaTuru,includeProperties: "Oturums").Where(x => x.BaslangicTarihi.Value.ToShortDateString() == basTarihi.ToShortDateString()); 
+            return _birlesimRepo.Get(x => (int)x.ToplanmaTuru == toplanmaTuru, includeProperties: "Oturums").Where(x => x.BaslangicTarihi.Value.ToShortDateString() == basTarihi.ToShortDateString());
         }
 
         public void CreateStenograf(Stenograf entity)
         {
             _stenografRepo.Create(entity, CurrentUser.Id);
-            _stenografRepo.Save();            
+            _stenografRepo.Save();
         }
         public IEnumerable<Stenograf> GetAllStenografByGorevTuru(int gorevTuru)
         {
-            return _stenografRepo.Get(x => (int)x.StenoGorevTuru == gorevTuru,includeProperties:"GorevAtamas");
+            return _stenografRepo.Get(x => (int)x.StenoGorevTuru == gorevTuru, includeProperties: "GorevAtamas");
         }
-      
+
         public void DeleteStenoGorev(Guid stenoGorevId)
         {
             _stenoGorevRepo.Delete(stenoGorevId);
@@ -470,7 +470,7 @@ namespace TTBS.Services
 
         public IEnumerable<GorevAtama> GetStenoGorevByStenografAndDate(Guid? stenografId, DateTime gorevBasTarihi, DateTime gorevBitTarihi)
         {
-            if(stenografId !=null)
+            if (stenografId != null)
                 return _stenoGorevRepo.Get(x => x.StenografId == stenografId && x.GorevBasTarihi >= gorevBasTarihi && x.GorevBitisTarihi <= gorevBitTarihi, includeProperties: "Stenograf");
             else
                 return _stenoGorevRepo.Get(x => x.GorevBasTarihi >= gorevBasTarihi && x.GorevBitisTarihi <= gorevBitTarihi, includeProperties: "Stenograf");
@@ -478,9 +478,9 @@ namespace TTBS.Services
 
         public IEnumerable<GorevAtama> GetStenoGorevByGrupId(Guid id)
         {
-            return _stenoGrupRepo.Get(x=>x.GrupId == id,  includeProperties: "Stenograf.GorevAtamas").SelectMany(x=>x.Stenograf.GorevAtamas);
+            return _stenoGrupRepo.Get(x => x.GrupId == id, includeProperties: "Stenograf.GorevAtamas").SelectMany(x => x.Stenograf.GorevAtamas);
         }
-        
+
         public void CreateStenoGroup(StenoGrup entity)
         {
             _stenoGrupRepo.Create(entity, CurrentUser.Id);
@@ -488,7 +488,7 @@ namespace TTBS.Services
         }
         public IEnumerable<Stenograf> GetAllStenoGrupNotInclueded()
         {
-            return _stenografRepo.Get(x =>x.StenoGorevTuru == StenoGorevTuru.Stenograf && !x.StenoGrups.Select(x=>x.StenoId).Contains(x.Id));
+            return _stenografRepo.Get(x => x.StenoGorevTuru == StenoGorevTuru.Stenograf && !x.StenoGrups.Select(x => x.StenoId).Contains(x.Id));
         }
         public void DeleteStenoGroup(StenoGrup entity)
         {
@@ -571,30 +571,30 @@ namespace TTBS.Services
                 _stenografRepo.Update(steno, CurrentUser.Id);
                 _stenografRepo.Save();
             }
-           
+
         }
 
         public IEnumerable<Grup> GetAllStenografGroup(int gorevTuru)
         {
-            return _grupRepo.Get(x=>(int)x.StenoGrupTuru == gorevTuru,includeProperties: "StenoGrups.Stenograf.GorevAtamas").OrderBy(x=>x.Ad);
+            return _grupRepo.Get(x => (int)x.StenoGrupTuru == gorevTuru, includeProperties: "StenoGrups.Stenograf.GorevAtamas").OrderBy(x => x.Ad);
         }
 
         public void DeleteGorevByBirlesimIdAndStenoId(Guid birlesimId, Guid stenografId)
         {
             var gorev = _stenoGorevRepo.Get(x => x.BirlesimId == birlesimId && x.StenografId == stenografId && x.Birlesim.BitisTarihi == null);
-            if(gorev!= null && gorev.Count() > 0)
+            if (gorev != null && gorev.Count() > 0)
             {
                 _stenoGorevRepo.Delete(gorev.FirstOrDefault());
                 _stenoGorevRepo.Save();
             }
-           
+
         }
 
         public void UpdateBirlesimStenoGorevDevamEtme(Guid birlesimId, DateTime basTarih, StenoGorevTuru stenoGorevTur, DateTime oturumKapanmaTarihi, Guid oturumId)
         {
             var updateList = new List<GorevAtama>();
-            var resultList = _stenoGorevRepo.Get(x => x.BirlesimId == birlesimId && x.Stenograf.StenoGorevTuru == stenoGorevTur && oturumKapanmaTarihi <= x.GorevBasTarihi , includeProperties: "Birlesim,Stenograf");
-            if(resultList != null && resultList.Count()>0)
+            var resultList = _stenoGorevRepo.Get(x => x.BirlesimId == birlesimId && x.Stenograf.StenoGorevTuru == stenoGorevTur && oturumKapanmaTarihi <= x.GorevBasTarihi, includeProperties: "Birlesim,Stenograf");
+            if (resultList != null && resultList.Count() > 0)
             {
                 var result = resultList.FirstOrDefault();
                 var ilkGorevBitisTarihi = result.GorevBasTarihi.Value;
@@ -628,7 +628,7 @@ namespace TTBS.Services
         public void UpdateStenoGorevTamamla(Guid birlesimId, StenoGorevTuru stenoGorevTur)
         {
             var result = _stenoGorevRepo.Get(x => x.BirlesimId == birlesimId && x.Stenograf.StenoGorevTuru == stenoGorevTur, includeProperties: "Birlesim,Stenograf").OrderBy(x => x.GorevBasTarihi);
-           if(result!=null && result.Count() > 0)
+            if (result != null && result.Count() > 0)
             {
                 result.ToList().ForEach(x => x.GorevStatu = GorevStatu.Tamamlandı);
                 _stenoGorevRepo.Update(result);
@@ -646,17 +646,17 @@ namespace TTBS.Services
             var gorevId = resultFirst.Id;
             var mindateDiff = basTarih.Subtract(result.Min(x => x.GorevBasTarihi).Value).TotalMinutes;
 
-            var birlesim = result.Select(x=>x.Birlesim).FirstOrDefault();
+            var birlesim = result.Select(x => x.Birlesim).FirstOrDefault();
             birlesim.BaslangicTarihi = birlesim.BaslangicTarihi.Value.AddMinutes(mindateDiff);
             birlesim.ToplanmaDurumu = ToplanmaStatu.DevamEdiyor;
             _birlesimRepo.Update(birlesim);
-            _birlesimRepo.Save();  
-     
-            var modResult = stenoGorevTur == StenoGorevTuru.Stenograf ? result.Select(x => x.Birlesim.StenoSure): result.Select(x => x.Birlesim.UzmanStenoSure);
-            if(modResult!=null && modResult.Count() > 0)
+            _birlesimRepo.Save();
+
+            var modResult = stenoGorevTur == StenoGorevTuru.Stenograf ? result.Select(x => x.Birlesim.StenoSure) : result.Select(x => x.Birlesim.UzmanStenoSure);
+            if (modResult != null && modResult.Count() > 0)
             {
-                var sonuc = modResult.FirstOrDefault()-(mindateDiff % modResult.FirstOrDefault());
-                var minStenoResult = result.Where(x => x.GorevBasTarihi == mindate).FirstOrDefault();          
+                var sonuc = modResult.FirstOrDefault() - (mindateDiff % modResult.FirstOrDefault());
+                var minStenoResult = result.Where(x => x.GorevBasTarihi == mindate).FirstOrDefault();
                 minStenoResult.GorevBasTarihi = mindate.AddMinutes(mindateDiff);
                 minStenoResult.GorevBitisTarihi = minStenoResult.GorevBasTarihi.Value.AddMinutes(sonuc);
                 minStenoResult.GorevStatu = GorevStatu.DevamEdiyor;
@@ -664,7 +664,7 @@ namespace TTBS.Services
                 var remain = gorevBasPlan.Subtract(mindate).TotalMinutes;
                 updateList.Add(minStenoResult);
 
-                var remainResult = result.Where(x=>x.Id != gorevId);
+                var remainResult = result.Where(x => x.Id != gorevId);
                 foreach (var item in remainResult)
                 {
                     item.GorevBasTarihi = item.GorevBasTarihi.Value.AddMinutes(remain);
@@ -679,12 +679,12 @@ namespace TTBS.Services
 
         public void UpdateGorevDurumByBirlesimAndSteno(Guid birlesimId, Guid stenoId)
         {
-            var result =_stenoGorevRepo.Get(x=>x.BirlesimId == birlesimId && x.StenografId == stenoId && x.GorevBasTarihi>=DateTime.Now);
-            if(result!= null && result.Count()>0)
+            var result = _stenoGorevRepo.Get(x => x.BirlesimId == birlesimId && x.StenografId == stenoId && x.GorevBasTarihi >= DateTime.Now);
+            if (result != null && result.Count() > 0)
             {
                 var statuDevam = result.Where(x => x.GorevStatu == GorevStatu.Planlandı);
-                if(statuDevam != null && statuDevam.Count()>0)
-                     result.ToList().ForEach(x => x.GorevStatu = GorevStatu.Iptal);
+                if (statuDevam != null && statuDevam.Count() > 0)
+                    result.ToList().ForEach(x => x.GorevStatu = GorevStatu.Iptal);
                 else
                 {
                     var statuIptal = result.Where(x => x.GorevStatu == GorevStatu.Iptal);
@@ -699,11 +699,11 @@ namespace TTBS.Services
         public void UpdateGorevDurumById(Guid id)
         {
             var result = _stenoGorevRepo.GetById(id);
-            if (result != null && result.GorevBasTarihi>= DateTime.Now)
+            if (result != null && result.GorevBasTarihi >= DateTime.Now)
             {
-                if(result.GorevStatu == GorevStatu.Iptal)
+                if (result.GorevStatu == GorevStatu.Iptal)
                     result.GorevStatu = GorevStatu.Planlandı;
-                else if(result.GorevStatu == GorevStatu.Planlandı)
+                else if (result.GorevStatu == GorevStatu.Planlandı)
                     result.GorevStatu = GorevStatu.Iptal;
                 _stenoGorevRepo.Update(result, CurrentUser.Id);
                 _stenoGorevRepo.Save();
@@ -712,7 +712,7 @@ namespace TTBS.Services
 
         public IEnumerable<Birlesim> GetKomisyonByDateAndGroup(DateTime baslangic, DateTime bitis, Guid grup)
         {
-            return _birlesimRepo.Get(x => x.ToplanmaTuru.Equals(ToplanmaTuru.Komisyon) && x.BaslangicTarihi >= baslangic && x.BaslangicTarihi <= bitis, includeProperties: "Komisyon,GorevAtamas.Stenograf.StenoGrups").Where(x => x.GorevAtamas.Where(x => x.Stenograf.StenoGrups.Select(x => x.GrupId).Contains(grup)).Count()>0);
+            return _birlesimRepo.Get(x => x.ToplanmaTuru.Equals(ToplanmaTuru.Komisyon) && x.BaslangicTarihi >= baslangic && x.BaslangicTarihi <= bitis, includeProperties: "Komisyon,GorevAtamas.Stenograf.StenoGrups").Where(x => x.GorevAtamas.Where(x => x.Stenograf.StenoGrups.Select(x => x.GrupId).Contains(grup)).Count() > 0).OrderBy(x => x.BaslangicTarihi);
         }
 
     }

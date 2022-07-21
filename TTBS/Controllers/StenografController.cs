@@ -50,11 +50,40 @@ namespace TTBS.Controllers
             return model;
         }
 
-        [HttpGet("GetKomisyonByDate")]
-        public List<StenoGrupSureModel> GetKomisyonByDateAndGroup(DateTime baslangic, DateTime bitis, Guid grup)
+        [HttpGet("GetKomisyonByDateAndGroup")]
+        public StenoGroupStatisticsModel GetKomisyonByDateAndGroup(DateTime baslangic, DateTime bitis, Guid grupId)
         {
-            var komisyonEntity = _stenoService.GetKomisyonByDateAndGroup(baslangic, bitis, grup);
-            var model = _mapper.Map<List<StenoGrupSureModel>>(komisyonEntity);
+            StenoGroupStatisticsModel model = new StenoGroupStatisticsModel();
+            List<StenoSureFarkModel> sureFarks = new List<StenoSureFarkModel>();
+            var stenoEntity = _stenoService.GetAllStenografByGroupId(grupId);
+            var komisyonEntity = _stenoService.GetKomisyonByDateAndGroup(baslangic, bitis, grupId);
+   
+         
+            int sure = 0, toplam = 0;
+            foreach (var komisyon in komisyonEntity)
+            {
+                foreach(var steno in stenoEntity)
+                {
+                    sure = 0;
+                    foreach (var gorevAtama in komisyon.GorevAtamas)
+                    {
+                        if(steno.Id == gorevAtama.StenografId)
+                        {
+                            sure = sure + gorevAtama.GorevBitisTarihi.Value.Subtract(gorevAtama.GorevBasTarihi.Value).Minutes;
+                        }
+                    }
+                    StenoSureFarkModel stenoSureFarkModel = new StenoSureFarkModel();
+                    stenoSureFarkModel.AdSoyad = steno.AdSoyad;
+                    stenoSureFarkModel.Id = steno.Id;
+                    stenoSureFarkModel.Sure = sure;
+                    stenoSureFarkModel.BirlesimId = komisyon.Id;
+                    sureFarks.Add(stenoSureFarkModel);
+                }
+            }
+            var komisyonModel= _mapper.Map<IEnumerable<KomisyonModel>>(komisyonEntity);
+            var stenoModel = _mapper.Map<IEnumerable<StenoModel>>(stenoEntity);
+            model.komisyons = komisyonModel;
+            model.stenos = sureFarks;
             return model;
         }
 
