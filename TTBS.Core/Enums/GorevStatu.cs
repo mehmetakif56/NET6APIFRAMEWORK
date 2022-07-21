@@ -12,6 +12,7 @@ namespace TTBS.Core.Enums
         DevamEdiyor =1,
         Tamamlandı=2,
         Iptal=3,
-        YerDegistirme=4
+        YerDegistirme=4,
+        Pasif =5
     }
 }
