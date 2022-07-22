@@ -591,13 +591,25 @@ namespace TTBS.Services
 
         public void DeleteGorevByBirlesimIdAndStenoId(Guid birlesimId, Guid stenografId)
         {
-            var gorev = _stenoGorevRepo.Get(x => x.BirlesimId == birlesimId && x.StenografId == stenografId && x.Birlesim.BitisTarihi == null);
-            if (gorev != null && gorev.Count() > 0)
+            var gorevler = _stenoGorevRepo.Get(x => x.BirlesimId == birlesimId && x.Birlesim.BitisTarihi == null,includeProperties:"Birlesim").OrderBy(x=>x.GorevBasTarihi);
+            var gorevSteno = gorevler.Where(x=>x.StenografId == stenografId);
+            if (gorevSteno != null && gorevSteno.Count() > 0)
             {
-                _stenoGorevRepo.Delete(gorev.FirstOrDefault());
+                _stenoGorevRepo.Delete(gorevSteno);
+                _stenoGorevRepo.Save();
+
+                var minDate = gorevler.FirstOrDefault().Birlesim.BaslangicTarihi;
+                var updateList = new List<GorevAtama>();
+                foreach (var item in gorevler)
+                {
+                    item.GorevBasTarihi = minDate.Value;
+                    item.GorevBitisTarihi = item.GorevBasTarihi.Value.AddMinutes(item.StenoSure);
+                    minDate = item.GorevBitisTarihi;
+                    updateList.Add(item);
+                }
+                _stenoGorevRepo.Update(updateList);
                 _stenoGorevRepo.Save();
             }
-
         }
 
         public void UpdateBirlesimStenoGorevDevamEtme(Guid birlesimId, DateTime basTarih, StenoGorevTuru stenoGorevTur, DateTime oturumKapanmaTarihi, Guid oturumId)

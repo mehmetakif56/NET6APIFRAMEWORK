@@ -435,7 +435,7 @@ namespace TTBS.Controllers
         }
         #endregion
 
-        # region Stenograf
+        #region Stenograf
         [HttpGet("GetAllStenografByGroupId")]
         public IEnumerable<StenoModel> GetAllStenografByGroupId(Guid? groupId)
         {
