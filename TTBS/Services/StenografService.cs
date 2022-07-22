@@ -53,6 +53,7 @@ namespace TTBS.Services
         void ChangeSureStenografKomisyon(Guid gorevAtamaId, double sure, bool digerAtamalarDahil = false);
 
         IEnumerable<Birlesim> GetKomisyonByDateAndGroup(DateTime baslangic, DateTime bitis, Guid grup);
+        IEnumerable<Birlesim> GetBirlesimByDateAndGroup(DateTime baslangic, DateTime bitis, Guid grup);
         void CreateStenoGorevDonguEkle(Guid birlesimId, Guid oturumId, IEnumerable<GorevAtama> stenoEntity, int gorevTur);
     }
     public class StenografService : BaseService, IStenografService
@@ -789,7 +790,13 @@ namespace TTBS.Services
 
         public IEnumerable<Birlesim> GetKomisyonByDateAndGroup(DateTime baslangic, DateTime bitis, Guid grup)
         {
-            return _birlesimRepo.Get(x => x.ToplanmaTuru.Equals(ToplanmaTuru.Komisyon) && x.BaslangicTarihi >= baslangic && x.BaslangicTarihi <= bitis, includeProperties: "Komisyon,GorevAtamas.Stenograf.StenoGrups").Where(x => x.GorevAtamas.Where(x => x.GorevStatu == GorevStatu.Tamamlandı && x.Stenograf.StenoGrups.Select(x => x.GrupId).Contains(grup)).Count() > 0).OrderBy(x => x.BaslangicTarihi);
+            return _birlesimRepo.Get(x => x.ToplanmaTuru == ToplanmaTuru.Komisyon && x.BaslangicTarihi >= baslangic && x.BaslangicTarihi <= bitis, includeProperties: "Komisyon,GorevAtamas.Stenograf.StenoGrups").Where(x => x.GorevAtamas.Where(x => x.Stenograf.StenoGrups.Select(x => x.GrupId).Contains(grup)).Count() > 0).OrderBy(x => x.BaslangicTarihi);
+        }
+
+        public IEnumerable<Birlesim> GetBirlesimByDateAndGroup(DateTime baslangic, DateTime bitis, Guid grup)
+        {
+
+            return _birlesimRepo.Get(x => x.ToplanmaTuru == ToplanmaTuru.GenelKurul && x.BaslangicTarihi >= baslangic && x.BaslangicTarihi <= bitis, includeProperties: "GorevAtamas.Stenograf.StenoGrups").Where(x => x.GorevAtamas.Where(x => x.Stenograf.StenoGrups.Select(x => x.GrupId).Contains(grup)).Count() > 0).OrderBy(x => x.BaslangicTarihi);
         }
 
     }

@@ -50,17 +50,19 @@ namespace TTBS.Controllers
             return model;
         }
 
-        [HttpGet("GetStatisticstKomisyonByDateAndGroup")]
-        public StenoGroupStatisticsModel GetKomisyonByDateAndGroup(DateTime baslangic, DateTime bitis, Guid grupId)
+        [HttpGet("GetWeeklyStatisticstKomisyonAndBirlesimByDateAndGroup")]
+        public StenoGroupStatisticsModel GetWeeklyStatisticstKomisyonAndBirlesimByDateAndGroup(DateTime baslangic, DateTime bitis, Guid grupId)
         {
             StenoGroupStatisticsModel model = new StenoGroupStatisticsModel();
             List<StenoSureFarkModel> sureFarks = new List<StenoSureFarkModel>();
             var stenoEntity = _stenoService.GetAllStenografByGroupId(grupId);
             var komisyonEntity = _stenoService.GetKomisyonByDateAndGroup(baslangic, bitis, grupId);
+            var birlesimEntity = _stenoService.GetBirlesimByDateAndGroup(baslangic, bitis, grupId);
+            var komisyonAndBirlesimEntity = komisyonEntity.Concat(birlesimEntity).OrderByDescending(x => x.ToplanmaTuru);
    
          
             int sure = 0, toplam = 0;
-            foreach (var komisyon in komisyonEntity)
+            foreach (var komisyon in komisyonAndBirlesimEntity)
             {
                 foreach(var steno in stenoEntity)
                 {
@@ -80,7 +82,8 @@ namespace TTBS.Controllers
                     sureFarks.Add(stenoSureFarkModel);
                 }
             }
-            var komisyonModel= _mapper.Map<IEnumerable<KomisyonModel>>(komisyonEntity);
+
+            var komisyonModel= _mapper.Map<IEnumerable<HaftalikSureIStatistikModel>>(komisyonAndBirlesimEntity);
             var stenoModel = _mapper.Map<IEnumerable<StenoModel>>(stenoEntity);
             model.komisyons = komisyonModel;
             model.stenos = sureFarks;
