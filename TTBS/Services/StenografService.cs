@@ -2,6 +2,7 @@
 using TTBS.Core.Interfaces;
 using System.Linq;
 using TTBS.Core.Enums;
+using TTBS.Core.Extensions;
 
 namespace TTBS.Services
 {
@@ -329,6 +330,8 @@ namespace TTBS.Services
                 {
                     c.StenografId,
                 }).Count();
+              
+
                 var atamaList = new List<GorevAtama>();
                 for (int i = 1; i <= stenoList.Count() / grpListCnt; i++)
                 {
@@ -340,7 +343,7 @@ namespace TTBS.Services
                     {
                         var newEntity = new GorevAtama();
                         newEntity.BirlesimId = entity.BirlesimId;
-                        newEntity.OturumId = entity.OturumId;
+                        newEntity.OturumId = 
                         newEntity.StenografId = item;
                         newEntity.GorevStatu = maxDate.Value > stenoList.FirstOrDefault().Birlesim.BaslangicTarihi.Value ? GorevStatu.GorevZamanAsim : GorevStatu.Planlandı;
                         newEntity.GorevBasTarihi = maxDate.Value.AddMinutes(firstRec * maxSure);
@@ -618,25 +621,49 @@ namespace TTBS.Services
 
         public void DeleteGorevByBirlesimIdAndStenoId(Guid birlesimId, Guid stenografId)
         {
-            var gorevler = _stenoGorevRepo.Get(x => x.BirlesimId == birlesimId && x.Birlesim.BitisTarihi == null,includeProperties:"Birlesim").OrderBy(x=>x.GorevBasTarihi);
-            var gorevSteno = gorevler.Where(x=>x.StenografId == stenografId);
-            if (gorevSteno != null && gorevSteno.Count() > 0)
+            var result = new Result();
+            var birlesim = _birlesimRepo.GetById(birlesimId);
+            if (birlesim != null && (birlesim.ToplanmaDurumu == ToplanmaStatu.Oluşturuldu || birlesim.ToplanmaDurumu == ToplanmaStatu.Planlandı))
             {
-                var minDate = gorevler.FirstOrDefault().Birlesim.BaslangicTarihi;
-
-                _stenoGorevRepo.Delete(gorevSteno);
-                _stenoGorevRepo.Save();
-           
-                var updateList = new List<GorevAtama>();
-                foreach (var item in gorevler)
+                var gorevler = _stenoGorevRepo.Get(x => x.BirlesimId == birlesimId && x.Birlesim.BitisTarihi == null, includeProperties: "Birlesim").OrderBy(x => x.GorevBasTarihi);
+                var gorevSteno = gorevler.Where(x => x.StenografId == stenografId);
+                if (gorevSteno != null && gorevSteno.Count() > 0)
                 {
-                    item.GorevBasTarihi = minDate.Value;
-                    item.GorevBitisTarihi = item.GorevBasTarihi.Value.AddMinutes(item.StenoSure);
-                    minDate = item.GorevBitisTarihi;
-                    updateList.Add(item);
+                    _stenoGorevRepo.Delete(gorevSteno);
+                    _stenoGorevRepo.Save();
+
+                    gorevler = _stenoGorevRepo.Get(x => x.BirlesimId == birlesimId && x.Birlesim.BitisTarihi == null, includeProperties: "Birlesim").OrderBy(x => x.GorevBasTarihi);
+                    if (gorevler != null && gorevler.Count() > 0)
+                    {
+                        var minDate = gorevler.FirstOrDefault().Birlesim.BaslangicTarihi;
+                        var updateList = new List<GorevAtama>();
+                        foreach (var item in gorevler)
+                        {
+                            item.GorevBasTarihi = minDate.Value;
+                            item.GorevBitisTarihi = item.GorevBasTarihi.Value.AddMinutes(item.StenoSure);
+                            minDate = item.GorevBitisTarihi;
+                            updateList.Add(item);
+                        }
+                        _stenoGorevRepo.Update(updateList);
+                        _stenoGorevRepo.Save();
+                    }
+                    else
+                    {
+                        var oturum = _oturumRepo.Get(x => x.BirlesimId == birlesimId && x.BitisTarihi == null).FirstOrDefault();
+                        if (oturum != null)
+                        {
+                            _oturumRepo.Delete(oturum);
+                            _oturumRepo.Save();
+                        }
+
+                        if (birlesim != null)
+                        {
+                            birlesim.ToplanmaDurumu = ToplanmaStatu.Oluşturuldu;
+                            _birlesimRepo.Update(birlesim);
+                            _birlesimRepo.Save();
+                        }
+                    }
                 }
-                _stenoGorevRepo.Update(updateList);
-                _stenoGorevRepo.Save();
             }
         }
 
