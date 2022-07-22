@@ -326,7 +326,8 @@ namespace TTBS.Services
             var stenoList = GetStenoGorevByBirlesimIdAndGorevTuru(entity.BirlesimId, 0);
             if (stenoList != null && stenoList.Count() > 0)
             {
-                var grpListCnt = stenoList.GroupBy(c => new {
+                var grpListCnt = stenoList.GroupBy(c => new
+                {
                     c.StenografId,
                 }).Count();
                 var atamaList = new List<GorevAtama>();
@@ -343,14 +344,14 @@ namespace TTBS.Services
                         newEntity.OturumId = entity.OturumId;
                         newEntity.StenografId = item;
                         newEntity.GorevStatu = maxDate.Value > stenoList.FirstOrDefault().Birlesim.BaslangicTarihi.Value ? GorevStatu.GorevZamanAsim : GorevStatu.Planlandı;
-                        newEntity.GorevBasTarihi = maxDate.Value.AddMinutes(firstRec*maxSure);
+                        newEntity.GorevBasTarihi = maxDate.Value.AddMinutes(firstRec * maxSure);
                         newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.Value.AddMinutes(maxSure);
                         newEntity.StenoSure = maxSure;
                         atamaList.Add(newEntity);
                         firstRec++;
                         maxDate = newEntity.GorevBasTarihi;
                         var upateList = stenoList.Where(x => x.GorevBasTarihi >= maxDate);
-                        if(upateList!=null && upateList.Count()>0)
+                        if (upateList != null && upateList.Count() > 0)
                         {
                             var firstRecord = upateList.OrderBy(x => x.GorevBasTarihi).FirstOrDefault();
                             var firstDate = firstRecord.GorevBasTarihi.Value.AddMinutes(firstRecord.StenoSure);
@@ -367,6 +368,32 @@ namespace TTBS.Services
                 }
                 _stenoGorevRepo.Create(atamaList, CurrentUser.Id);
                 _stenoGorevRepo.Save();
+            }
+            else if (entity.StenografIds != null && entity.StenografIds.Count > 0)
+            {
+                var birlesim = _birlesimRepo.GetById(entity.BirlesimId);
+                if (birlesim != null)
+                {
+                    var minDate = birlesim.BaslangicTarihi;
+                    var atamaList = new List<GorevAtama>();
+                    int firstRec = 1;
+                    foreach (var item in entity.StenografIds)
+                    {
+                        var newEntity = new GorevAtama();
+                        newEntity.BirlesimId = entity.BirlesimId;
+                        newEntity.OturumId = entity.OturumId;
+                        newEntity.StenografId = item;
+                        newEntity.GorevStatu =  GorevStatu.Planlandı;
+                        newEntity.GorevBasTarihi = minDate.Value;
+                        newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.Value.AddMinutes(firstRec*birlesim.StenoSure);
+                        newEntity.StenoSure = birlesim.StenoSure;
+                        atamaList.Add(newEntity);
+                        minDate = newEntity.GorevBitisTarihi;
+                        firstRec++;
+                    }
+                    _stenoGorevRepo.Create(atamaList, CurrentUser.Id);
+                    _stenoGorevRepo.Save();
+                }
             }
         }
 
@@ -596,10 +623,11 @@ namespace TTBS.Services
             var gorevSteno = gorevler.Where(x=>x.StenografId == stenografId);
             if (gorevSteno != null && gorevSteno.Count() > 0)
             {
+                var minDate = gorevler.FirstOrDefault().Birlesim.BaslangicTarihi;
+
                 _stenoGorevRepo.Delete(gorevSteno);
                 _stenoGorevRepo.Save();
-
-                var minDate = gorevler.FirstOrDefault().Birlesim.BaslangicTarihi;
+           
                 var updateList = new List<GorevAtama>();
                 foreach (var item in gorevler)
                 {
