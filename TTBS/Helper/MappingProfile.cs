@@ -120,9 +120,9 @@ namespace TTBS.Helper
             //                                                             } }))
             //    .ForMember(x => x.GrupName, c => c.MapFrom(x => x.Grup.Ad));
 
-            CreateMap<Birlesim, KomisyonModel>()
-                .ForMember(dest => dest.Ad, opt => opt.MapFrom(src => src.Komisyon.Ad))
-                .ForMember(dest => dest.Tarih, opt => opt.MapFrom(src => src.BaslangicTarihi));
+            CreateMap<Birlesim, HaftalikSureIStatistikModel>()
+                .ForMember(dest => dest.Ad, opt => opt.MapFrom(src => src.ToplanmaTuru == ToplanmaTuru.Komisyon ? src.BaslangicTarihi.Value.ToShortDateString() + " " + src.Komisyon.Ad : src.BaslangicTarihi.Value.ToShortDateString() + " " + src.BirlesimNo + " nolu Birleşim"))
+                .ForMember(dest => dest.toplanmaTuru, opt => opt.MapFrom(src => src.ToplanmaTuru));
 
         }
     }
