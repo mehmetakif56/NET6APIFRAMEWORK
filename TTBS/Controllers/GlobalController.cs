@@ -362,6 +362,13 @@ namespace TTBS.Controllers
             return Ok();
         }
 
+        [HttpGet("GetStenoToplamSureByGroupAndDate")]
+        public List<StenoToplamGenelSureModel> GetStenoToplamSureByGroupAndDate(Guid groupID, DateTime baslangic, DateTime bitis)
+        {
+            var entity = _globalService.GetGrupToplamSureByDate(groupID, baslangic, bitis);
+            return _mapper.Map<List<StenoToplamGenelSureModel>>(entity);
+        }
+
         #region GidenGrup
         [HttpPost("CreateGidenGrup")]
         public IActionResult CreateGidenGrup(GidenGrupModel model)

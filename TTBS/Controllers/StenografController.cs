@@ -59,22 +59,24 @@ namespace TTBS.Controllers
             var komisyonEntity = _stenoService.GetKomisyonByDateAndGroup(baslangic, bitis, grupId);
             var birlesimEntity = _stenoService.GetBirlesimByDateAndGroup(baslangic, bitis, grupId);
             var komisyonAndBirlesimEntity = komisyonEntity.Concat(birlesimEntity).OrderByDescending(x => x.ToplanmaTuru);
-   
-         
-            int sure = 0, toplam = 0;
+            var istatistikEntity = _globalService.GetGrupToplamSureByDate(grupId, baslangic, bitis);
+
+
+            double sure = 0, toplam = 0;
             foreach (var komisyon in komisyonAndBirlesimEntity)
             {
                 foreach(var steno in stenoEntity)
                 {
-                    sure = 0;
-                    foreach (var gorevAtama in komisyon.GorevAtamas)
-                    {
-                        if(steno.Id == gorevAtama.StenografId)
-                        {
-                            sure = sure + gorevAtama.GorevBitisTarihi.Value.Subtract(gorevAtama.GorevBasTarihi.Value).Minutes;
-                        }
-                    }
                     StenoSureFarkModel stenoSureFarkModel = new StenoSureFarkModel();
+                    sure = 0;
+                    foreach (var istatistik in istatistikEntity)
+                    {
+                        if(steno.Id == istatistik.StenoId && komisyon.Id == istatistik.BirlesimId)
+                        {
+                            sure = istatistik.Sure;
+                        }
+                        
+                    }
                     stenoSureFarkModel.AdSoyad = steno.AdSoyad;
                     stenoSureFarkModel.Id = steno.Id;
                     stenoSureFarkModel.Sure = sure;

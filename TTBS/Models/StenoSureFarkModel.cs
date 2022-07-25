@@ -7,7 +7,7 @@ namespace TTBS.Models
     {
         public Guid? Id { get; set; }
         public string AdSoyad { get; set; }
-        public int Sure { get; set; }
+        public double Sure { get; set; }
 
         public Guid BirlesimId { get; set; }
 

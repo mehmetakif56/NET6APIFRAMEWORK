@@ -47,6 +47,7 @@ namespace TTBS.Services
         IEnumerable<Oturum> GetOturumByBirlesimId(Guid id);
         Guid InsertStenoToplamSure(StenoToplamGenelSure stenoToplamGenelSure);
         void DeleteStenoToplamSure(Guid id);
+        IEnumerable<StenoToplamGenelSure> GetGrupToplamSureByDate(Guid groupId, DateTime baslangic, DateTime bitis);
     }
     public class GlobalService : BaseService, IGlobalService
     {
@@ -424,6 +425,11 @@ namespace TTBS.Services
                 _stenoToplamSureRepo.Delete(result);
                 _stenoToplamSureRepo.Save();
             }
+        }
+
+        public IEnumerable<StenoToplamGenelSure> GetGrupToplamSureByDate(Guid groupId, DateTime baslangic, DateTime bitis)
+        {
+            return _stenoToplamSureRepo.Get(x => x.GroupId == groupId && x.Tarih >= baslangic && x.Tarih <= bitis);
         }
     }
 }
