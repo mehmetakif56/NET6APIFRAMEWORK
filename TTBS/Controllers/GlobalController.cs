@@ -346,5 +346,16 @@ namespace TTBS.Controllers
             return Ok();
         }
         #endregion
+
+        #region GidenGrup
+        [HttpPost("CreateGidenGrup")]
+        public IActionResult CreateGidenGrup(GidenGrupModel model)
+        {
+            var entity = Mapper.Map<GidenGrup>(model);
+            _globalService.CreateGidenGrup(entity);
+            return Ok(entity);
+
+        }
+        #endregion
     }
 }

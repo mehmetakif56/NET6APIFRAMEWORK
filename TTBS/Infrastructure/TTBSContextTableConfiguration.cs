@@ -67,6 +67,11 @@ namespace TTBS.Infrastructure
             builder.ToTable("Oturum");
         }
 
+        private void ConfigureGidenGrup(EntityTypeBuilder<GidenGrup> builder)
+        {
+            builder.ToTable("GidenGrup");
+        }
+
         private void ConfigureStenoGrup(EntityTypeBuilder<StenoGrup> builder)
         {
             builder.ToTable("StenoGrup");
