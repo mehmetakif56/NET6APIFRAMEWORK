@@ -23,7 +23,7 @@ namespace TTBS.Services
         Guid CreateOturum(Oturum oturum);
         void CreateKomisyon(Komisyon komisyon);
         void CreateGrup(Grup grup);
-        //void CreateGidenGrup(GidenGrup grup);
+        void CreateGidenGrup(GidenGrup grup);
         IEnumerable<Grup> GetAllGrup(int grupTuru);
         Grup GetGrupById(Guid id);
         void CreateAltKomisyon(AltKomisyon komisyon);
@@ -60,7 +60,7 @@ namespace TTBS.Services
         private IUnitOfWork _unitWork;
         private IRepository<GorevAtama> _stenoGorevRepo;
         private IRepository<Stenograf> _stenografRepo;
-
+        private IRepository<GidenGrup> _gidenGrupRepo;
         public GlobalService(IRepository<Donem> donemRepo,
                              IRepository<Yasama> yasamaRepo,
                              IRepository<Birlesim> birlesimRepo,
@@ -73,7 +73,7 @@ namespace TTBS.Services
                              IUnitOfWork unitWork,
                              IRepository<GorevAtama> stenoGorevRepo,
                              IRepository<Stenograf> stenografRepo,
-                          
+                             IRepository<GidenGrup> gidenGrupRepo,
                              IServiceProvider provider) : base(provider)
         {
             _donemRepo = donemRepo;
@@ -88,7 +88,7 @@ namespace TTBS.Services
             _oturumRepo = oturumRepo;
             _stenoGorevRepo = stenoGorevRepo;
             _stenografRepo = stenografRepo;
-
+            _gidenGrupRepo= gidenGrupRepo;
         }
         public IEnumerable<Donem> GetAllDonem()
         {
@@ -268,11 +268,11 @@ namespace TTBS.Services
             _grupRepo.Save();
         }
 
-        //public void CreateGidenGrup(GidenGrup grup)
-        //{
-        //    _gidenGrupRepo.Create(grup, CurrentUser.Id);
-        //    _gidenGrupRepo.Save();
-        //}
+        public void CreateGidenGrup(GidenGrup grup)
+        {
+            _gidenGrupRepo.Create(grup, CurrentUser.Id);
+            _gidenGrupRepo.Save();
+        }
 
         public IEnumerable<Grup> GetAllGrup(int grupTuru)
         {
@@ -401,5 +401,6 @@ namespace TTBS.Services
                 _birlesimRepo.Save();
             }
         }
+
     }
 }
