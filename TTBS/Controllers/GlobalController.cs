@@ -355,7 +355,7 @@ namespace TTBS.Controllers
             return Ok(entity);
         }
 
-        [HttpPost("DeleteStenoToplamSure")]
+        [HttpDelete("DeleteStenoToplamSure")]
         public IActionResult DeleteStenoToplamSure(Guid id)
         {
             _globalService.DeleteStenoToplamSure(id);

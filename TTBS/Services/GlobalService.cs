@@ -78,6 +78,7 @@ namespace TTBS.Services
                              IRepository<GorevAtama> stenoGorevRepo,
                              IRepository<Stenograf> stenografRepo,
                              IRepository<GidenGrup> gidenGrupRepo,
+                             IRepository<StenoToplamGenelSure> stenoToplamSureRepo,
                              IServiceProvider provider) : base(provider)
         {
             _donemRepo = donemRepo;
@@ -93,6 +94,7 @@ namespace TTBS.Services
             _stenoGorevRepo = stenoGorevRepo;
             _stenografRepo = stenografRepo;
             _gidenGrupRepo= gidenGrupRepo;
+            _stenoToplamSureRepo = stenoToplamSureRepo;
         }
         public IEnumerable<Donem> GetAllDonem()
         {

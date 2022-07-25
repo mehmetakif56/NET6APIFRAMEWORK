@@ -128,6 +128,7 @@ namespace TTBS.Helper
                 .ForMember(dest => dest.toplanmaTuru, opt => opt.MapFrom(src => src.ToplanmaTuru));
 
             CreateMap<StenoToplamGenelSure, StenoToplamGenelSureModel>();
+            CreateMap<StenoToplamGenelSureModel, StenoToplamGenelSure>();
 
         }
     }
