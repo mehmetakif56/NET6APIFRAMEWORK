@@ -55,11 +55,8 @@ namespace TTBS.Infrastructure
             builder.Entity<OzelGorevTur>(ConfigureOzelGorevTur);
             builder.Entity<OzelToplanma>(ConfigureOzelGorev);
             builder.Entity<Oturum>(ConfigureOturum);
-<<<<<<< HEAD
             builder.Entity<StenoToplamGenelSure>(ConfigureStenoToplamGenelSure);
-=======
-           
->>>>>>> e8454eeafc1c7518024ba997177bd1e562595dc4
+
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

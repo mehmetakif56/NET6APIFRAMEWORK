@@ -62,11 +62,8 @@ namespace TTBS.Services
         private IUnitOfWork _unitWork;
         private IRepository<GorevAtama> _stenoGorevRepo;
         private IRepository<Stenograf> _stenografRepo;
-<<<<<<< HEAD
         private IRepository<StenoToplamGenelSure> _stenoToplamSureRepo;
-=======
 
->>>>>>> e8454eeafc1c7518024ba997177bd1e562595dc4
         public GlobalService(IRepository<Donem> donemRepo,
                              IRepository<Yasama> yasamaRepo,
                              IRepository<Birlesim> birlesimRepo,
