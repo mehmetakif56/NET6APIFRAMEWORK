@@ -347,6 +347,21 @@ namespace TTBS.Controllers
         }
         #endregion
 
+        [HttpPost("CreateStenoToplamSure")]
+        public IActionResult CreateStenoToplamSure(StenoToplamGenelSureModel model)
+        {
+            var entity = Mapper.Map<StenoToplamGenelSure>(model);
+            _globalService.InsertStenoToplamSure(entity);
+            return Ok(entity);
+        }
+
+        [HttpPost("DeleteStenoToplamSure")]
+        public IActionResult DeleteStenoToplamSure(Guid id)
+        {
+            _globalService.DeleteStenoToplamSure(id);
+            return Ok();
+        }
+
         #region GidenGrup
         [HttpPost("CreateGidenGrup")]
         public IActionResult CreateGidenGrup(GidenGrupModel model)

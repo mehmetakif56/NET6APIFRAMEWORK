@@ -45,6 +45,8 @@ namespace TTBS.Services
         void UpdateOturum(Oturum oturum);
         void UpdateBirlesim(Birlesim birlesim);
         IEnumerable<Oturum> GetOturumByBirlesimId(Guid id);
+        Guid InsertStenoToplamSure(StenoToplamGenelSure stenoToplamGenelSure);
+        void DeleteStenoToplamSure(Guid id);
     }
     public class GlobalService : BaseService, IGlobalService
     {
@@ -60,6 +62,8 @@ namespace TTBS.Services
         private IUnitOfWork _unitWork;
         private IRepository<GorevAtama> _stenoGorevRepo;
         private IRepository<Stenograf> _stenografRepo;
+        private IRepository<StenoToplamGenelSure> _stenoToplamSureRepo;
+
         private IRepository<GidenGrup> _gidenGrupRepo;
         public GlobalService(IRepository<Donem> donemRepo,
                              IRepository<Yasama> yasamaRepo,
@@ -402,5 +406,22 @@ namespace TTBS.Services
             }
         }
 
+        public Guid InsertStenoToplamSure(StenoToplamGenelSure stenoToplamGenelSure)
+        {
+            _stenoToplamSureRepo.Create(stenoToplamGenelSure, CurrentUser.Id);
+            _stenoToplamSureRepo.Save();
+
+            return stenoToplamGenelSure.Id;
+        }
+
+        public void DeleteStenoToplamSure(Guid id)
+        {
+            var result = _stenoToplamSureRepo.Get(x => x.Id == id);
+            if(result != null)
+            {
+                _stenoToplamSureRepo.Delete(result);
+                _stenoToplamSureRepo.Save();
+            }
+        }
     }
 }

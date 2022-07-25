@@ -90,5 +90,11 @@ namespace TTBS.Infrastructure
                             .HasForeignKey(ur => ur.GrupId)
                             .OnDelete(DeleteBehavior.Cascade);
         }
+
+        private void ConfigureStenoToplamGenelSure(EntityTypeBuilder<StenoToplamGenelSure> builder)
+        {
+            builder.ToTable("StenoToplamGenelSure");
+        }
+
     }
 }

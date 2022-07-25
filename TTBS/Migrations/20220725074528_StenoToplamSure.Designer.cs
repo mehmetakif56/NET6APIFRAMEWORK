@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TTBS.Infrastructure;
 
@@ -11,9 +12,10 @@ using TTBS.Infrastructure;
 namespace TTBS.Migrations
 {
     [DbContext(typeof(TTBSContext))]
-    partial class TTBSContextModelSnapshot : ModelSnapshot
+    [Migration("20220725074528_StenoToplamSure")]
+    partial class StenoToplamSure
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -230,49 +232,6 @@ namespace TTBS.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Donem", (string)null);
-                });
-
-            modelBuilder.Entity("TTBS.Core.Entities.GidenGrup", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Ad")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("GidenGrupDurumu")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("GidenGrupTarihi")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("GrupId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid?>("ModifiedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GrupId");
-
-                    b.ToTable("GidenGrup", (string)null);
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.GorevAtama", b =>
@@ -1003,17 +962,6 @@ namespace TTBS.Migrations
                     b.Navigation("OzelToplanma");
 
                     b.Navigation("Yasama");
-                });
-
-            modelBuilder.Entity("TTBS.Core.Entities.GidenGrup", b =>
-                {
-                    b.HasOne("TTBS.Core.Entities.Grup", "Grup")
-                        .WithMany()
-                        .HasForeignKey("GrupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Grup");
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.GorevAtama", b =>

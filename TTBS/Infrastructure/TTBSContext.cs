@@ -30,6 +30,9 @@ namespace TTBS.Infrastructure
         public DbSet<OzelGorevTur> OzelGorevTurs { get; set; }
         public DbSet<OzelToplanma> OzelGorevs { get; set; }
         public DbSet<Oturum> Oturums { get; set; }
+        public DbSet<StenoToplamGenelSure> StenoToplamGenelSures { get; set; }
+
+        public DbSet<GidenGrup> GidenGrups { get; set; }
 
         public DbSet<AltKomisyon> AltKomisyons { get; set; }
 
@@ -52,7 +55,10 @@ namespace TTBS.Infrastructure
             builder.Entity<OzelGorevTur>(ConfigureOzelGorevTur);
             builder.Entity<OzelToplanma>(ConfigureOzelGorev);
             builder.Entity<Oturum>(ConfigureOturum);
-           
+            builder.Entity<StenoToplamGenelSure>(ConfigureStenoToplamGenelSure);
+            builder.Entity<GidenGrup>(ConfigureGidenGrup);
+
+
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
