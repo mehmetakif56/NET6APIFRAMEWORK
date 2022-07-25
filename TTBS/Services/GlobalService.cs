@@ -23,6 +23,7 @@ namespace TTBS.Services
         Guid CreateOturum(Oturum oturum);
         void CreateKomisyon(Komisyon komisyon);
         void CreateGrup(Grup grup);
+        //void CreateGidenGrup(GidenGrup grup);
         IEnumerable<Grup> GetAllGrup(int grupTuru);
         Grup GetGrupById(Guid id);
         void CreateAltKomisyon(AltKomisyon komisyon);
@@ -61,7 +62,11 @@ namespace TTBS.Services
         private IUnitOfWork _unitWork;
         private IRepository<GorevAtama> _stenoGorevRepo;
         private IRepository<Stenograf> _stenografRepo;
+<<<<<<< HEAD
         private IRepository<StenoToplamGenelSure> _stenoToplamSureRepo;
+=======
+
+>>>>>>> e8454eeafc1c7518024ba997177bd1e562595dc4
         public GlobalService(IRepository<Donem> donemRepo,
                              IRepository<Yasama> yasamaRepo,
                              IRepository<Birlesim> birlesimRepo,
@@ -74,6 +79,7 @@ namespace TTBS.Services
                              IUnitOfWork unitWork,
                              IRepository<GorevAtama> stenoGorevRepo,
                              IRepository<Stenograf> stenografRepo,
+                          
                              IServiceProvider provider) : base(provider)
         {
             _donemRepo = donemRepo;
@@ -88,6 +94,7 @@ namespace TTBS.Services
             _oturumRepo = oturumRepo;
             _stenoGorevRepo = stenoGorevRepo;
             _stenografRepo = stenografRepo;
+
         }
         public IEnumerable<Donem> GetAllDonem()
         {
@@ -266,6 +273,12 @@ namespace TTBS.Services
             _grupRepo.Create(grup, CurrentUser.Id);
             _grupRepo.Save();
         }
+
+        //public void CreateGidenGrup(GidenGrup grup)
+        //{
+        //    _gidenGrupRepo.Create(grup, CurrentUser.Id);
+        //    _gidenGrupRepo.Save();
+        //}
 
         public IEnumerable<Grup> GetAllGrup(int grupTuru)
         {

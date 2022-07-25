@@ -347,6 +347,7 @@ namespace TTBS.Controllers
         }
         #endregion
 
+<<<<<<< HEAD
         [HttpPost("CreateStenoToplamSure")]
         public IActionResult CreateStenoToplamSure(StenoToplamGenelSureModel model)
         {
@@ -361,5 +362,8 @@ namespace TTBS.Controllers
             _globalService.DeleteStenoToplamSure(id);
             return Ok();
         }
+=======
+       
+>>>>>>> e8454eeafc1c7518024ba997177bd1e562595dc4
     }
 }

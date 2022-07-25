@@ -380,7 +380,11 @@ namespace TTBS.Controllers
                 return BadRequest("Stenograf Listesi Dolu Olmalıdır!");
             try
             {
-                var entity = Mapper.Map<GorevAtama>(model);
+                var oturum = _globalService.GetOturumByBirlesimId(model.BirlesimId).Where(x => x.BitisTarihi == null).FirstOrDefault();
+                if (oturum != null)
+                    model.OturumId = oturum.Id;
+
+                var entity = Mapper.Map<GorevAtama>(model);          
                 _stenoService.AddStenoGorevAtamaKomisyon(entity);
             }
             catch (Exception ex)

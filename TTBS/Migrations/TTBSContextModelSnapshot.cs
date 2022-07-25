@@ -232,6 +232,49 @@ namespace TTBS.Migrations
                     b.ToTable("Donem", (string)null);
                 });
 
+            modelBuilder.Entity("TTBS.Core.Entities.GidenGrup", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Ad")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("GidenGrupDurumu")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("GidenGrupTarihi")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("GrupId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GrupId");
+
+                    b.ToTable("GidenGrup", (string)null);
+                });
+
             modelBuilder.Entity("TTBS.Core.Entities.GorevAtama", b =>
                 {
                     b.Property<Guid>("Id")
@@ -960,6 +1003,17 @@ namespace TTBS.Migrations
                     b.Navigation("OzelToplanma");
 
                     b.Navigation("Yasama");
+                });
+
+            modelBuilder.Entity("TTBS.Core.Entities.GidenGrup", b =>
+                {
+                    b.HasOne("TTBS.Core.Entities.Grup", "Grup")
+                        .WithMany()
+                        .HasForeignKey("GrupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Grup");
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.GorevAtama", b =>
