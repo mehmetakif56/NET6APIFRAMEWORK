@@ -95,5 +95,6 @@ namespace TTBS.Infrastructure
         {
             builder.ToTable("StenoToplamGenelSure");
         }
+
     }
 }
