@@ -346,5 +346,20 @@ namespace TTBS.Controllers
             return Ok();
         }
         #endregion
+
+        [HttpPost("CreateStenoToplamSure")]
+        public IActionResult CreateStenoToplamSure(StenoToplamGenelSureModel model)
+        {
+            var entity = Mapper.Map<StenoToplamGenelSure>(model);
+            _globalService.InsertStenoToplamSure(entity);
+            return Ok(entity);
+        }
+
+        [HttpPost("DeleteStenoToplamSure")]
+        public IActionResult DeleteStenoToplamSure(Guid id)
+        {
+            _globalService.DeleteStenoToplamSure(id);
+            return Ok();
+        }
     }
 }
