@@ -5,7 +5,7 @@ namespace TTBS.Models
     public class BirlesimModel
     {
         public Guid? Id { get; set; }
-        public string BirlesimNo { get; set; }
+        public string BirlesimNo { get; set; } =String.Empty;
         public DateTime? BaslangicTarihi { get; set; }
         public Guid YasamaId { get; set; }
         public decimal StenoSure { get; set; }
