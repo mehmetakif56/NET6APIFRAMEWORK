@@ -598,8 +598,8 @@ namespace TTBS.Controllers
                 x.Stenograf.StenoGorevTuru,
                 x.Stenograf.SiraNo,
                 x.Stenograf.SonGorevSuresi,
-                x.Stenograf.StenoGorevDurum,
-                x.GorevStatu
+                x.Stenograf.StenoGorevDurum
+                //x.GorevStatu
             }).Select(z => new Stenograf
             {
                 Id = z.Key.StenografId,
@@ -607,8 +607,8 @@ namespace TTBS.Controllers
                 StenoGorevTuru = z.Key.StenoGorevTuru,
                 SiraNo = z.Key.SiraNo,
                 SonGorevSuresi = z.Key.SonGorevSuresi,
-                StenoGorevDurum = z.Key.StenoGorevDurum,
-                GorevStatu=(int)z.Key.GorevStatu
+                StenoGorevDurum = z.Key.StenoGorevDurum
+                //GorevStatu=(int)z.Key.GorevStatu
             });
            
             var model = _mapper.Map<IEnumerable<StenoModel>>(stenoGroup);
