@@ -10,7 +10,8 @@ namespace TTBS.Models
         public StenoGorevTuru StenoGorevTuru { get; set; }
         public int SiraNo { get; set; }
         public DateTime? SonGorevTarihi { get; set; }
-        public int SonGorevSuresi { get; set; }
+        public int SonGorevSuresi { get; set; } //Haftalık
+        public int YillikGorevSuresi { get; set; }
         public bool StenoGorevDurum { get; set; }
         public int GorevStatu { get; set; }
     }
