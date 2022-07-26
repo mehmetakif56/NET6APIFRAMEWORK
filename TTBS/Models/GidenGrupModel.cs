@@ -2,12 +2,18 @@
 
 namespace TTBS.Models
 {
-    public class GidenGrupModel
+    public class GidenGrupOlusturModel
     {
         public Guid? Id { get; set; }
-        public string Ad { get; set; }
-        public DateTime? GidenGrupTarihi { get; set; }
-        public GidenGrupDurumu GidenGrupDurumu { get; set; } = GidenGrupDurumu.Hayır;
         public Guid GrupId { get; set; }
+        /// <summary>
+        /// Belirtilen grup için gidengrup özelliğinin kullanılması
+        /// </summary>
+        public DurumStatu GidenGrupMu { get; set; }
+        /// <summary>
+        /// <summary>
+        /// saat 18:00 e kadar giden grup çalışma durumu
+        /// </summary>
+        public DurumStatu GidenGrupTamamlama { get; set; } = DurumStatu.Hayır;
     }
 }
