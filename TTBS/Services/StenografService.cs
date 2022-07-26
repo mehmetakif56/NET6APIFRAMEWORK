@@ -399,7 +399,7 @@ namespace TTBS.Services
                         newEntity.GorevBasTarihi = minDate.Value;
                         newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.Value.AddMinutes(firstRec*birlesim.StenoSure);
                         newEntity.StenoSure = birlesim.StenoSure;
-                        newEntity.GorevStatu = item.Stenograf.StenoGrups.SelectMany(x => x.Grup.GidenGrups).Select(x => x.GidenGrupMu).FirstOrDefault() == DurumStatu.Hayır && newEntity.GorevBasTarihi.Value.AddMinutes(9 * newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
+                        newEntity.GorevStatu = newEntity.Stenograf.StenoGrups.SelectMany(x => x.Grup.GidenGrups).Select(x => x.GidenGrupMu).FirstOrDefault() == DurumStatu.Hayır && newEntity.GorevBasTarihi.Value.AddMinutes(9 * newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
                         atamaList.Add(newEntity);
                         minDate = newEntity.GorevBitisTarihi;
                         firstRec++;
