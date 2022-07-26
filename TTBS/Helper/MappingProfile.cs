@@ -57,7 +57,7 @@ namespace TTBS.Helper
             CreateMap<GorevAtama, StenoGorevAtamaModel>();
 
             CreateMap<Stenograf, StenoModel>()
-                 .ForMember(dest => dest.SonGorevSuresi,
+                 .ForMember(dest => dest.HaftalikGorevSuresi,
                             opt => opt.MapFrom(src => src.GorevAtamas != null && src.GorevAtamas.LastOrDefault(x => x.StenografId == src.Id) != null ?
                                                src.GorevAtamas.LastOrDefault(x => x.StenografId == src.Id).GorevDakika : 0));
             CreateMap<StenoModel, Stenograf>();

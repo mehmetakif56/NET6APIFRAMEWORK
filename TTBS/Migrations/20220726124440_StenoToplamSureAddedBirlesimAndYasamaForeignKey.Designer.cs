@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TTBS.Infrastructure;
 
@@ -11,9 +12,10 @@ using TTBS.Infrastructure;
 namespace TTBS.Migrations
 {
     [DbContext(typeof(TTBSContext))]
-    partial class TTBSContextModelSnapshot : ModelSnapshot
+    [Migration("20220726124440_StenoToplamSureAddedBirlesimAndYasamaForeignKey")]
+    partial class StenoToplamSureAddedBirlesimAndYasamaForeignKey
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -352,6 +354,15 @@ namespace TTBS.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("GidenGrupDurumu")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GidenGrupNo")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("GidenGrupTarihi")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -1003,7 +1014,7 @@ namespace TTBS.Migrations
             modelBuilder.Entity("TTBS.Core.Entities.GidenGrup", b =>
                 {
                     b.HasOne("TTBS.Core.Entities.Grup", "Grup")
-                        .WithMany("GidenGrups")
+                        .WithMany()
                         .HasForeignKey("GrupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1180,8 +1191,6 @@ namespace TTBS.Migrations
 
             modelBuilder.Entity("TTBS.Core.Entities.Grup", b =>
                 {
-                    b.Navigation("GidenGrups");
-
                     b.Navigation("StenoGrups");
                 });
 
