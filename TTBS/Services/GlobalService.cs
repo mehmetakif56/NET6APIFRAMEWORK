@@ -67,6 +67,7 @@ namespace TTBS.Services
         private IRepository<Stenograf> _stenografRepo;
         private IRepository<StenoToplamGenelSure> _stenoToplamSureRepo;
         private IRepository<GidenGrup> _gidenGrupRepo;
+        private IRepository<StenoGrup> _stenoGrupRepo;
         public GlobalService(IRepository<Donem> donemRepo,
                              IRepository<Yasama> yasamaRepo,
                              IRepository<Birlesim> birlesimRepo,
@@ -80,6 +81,7 @@ namespace TTBS.Services
                              IRepository<GorevAtama> stenoGorevRepo,
                              IRepository<Stenograf> stenografRepo,
                              IRepository<GidenGrup> gidenGrupRepo,
+                             IRepository<StenoGrup> stenoGrupRepo,
                              IRepository<StenoToplamGenelSure> stenoToplamSureRepo,
                              IServiceProvider provider) : base(provider)
         {
@@ -97,6 +99,7 @@ namespace TTBS.Services
             _stenografRepo = stenografRepo;
             _gidenGrupRepo= gidenGrupRepo;
             _stenoToplamSureRepo = stenoToplamSureRepo;
+            _stenoGrupRepo= stenoGrupRepo;
         }
         public IEnumerable<Donem> GetAllDonem()
         {
@@ -288,6 +291,14 @@ namespace TTBS.Services
             }
             _gidenGrupRepo.Create(grup, CurrentUser.Id);
             _gidenGrupRepo.Save();
+
+            var grpList = _stenoGrupRepo.Get(x=>x.GrupId == grup.GrupId);
+            if(grpList!=null && grpList.Count()>0)
+            {
+                grpList.ToList().ForEach(x => x.GidenGrupMu = DurumStatu.Evet);
+                _stenoGrupRepo.Update(grpList);
+                _stenoGrupRepo.Save();
+            }
         }
 
         public IEnumerable<Grup> GetAllGrup(int grupTuru)
