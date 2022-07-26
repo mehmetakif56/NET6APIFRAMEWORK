@@ -183,7 +183,7 @@ namespace TTBS.Services
 
         private void CreateUzmanSteno(Birlesim birlesim, Guid oturumId)
         {
-            var stenoList = _stenografRepo.Get(x => x.StenoGorevTuru == StenoGorevTuru.Uzman).OrderBy(x => x.SiraNo);
+            var stenoList = _stenografRepo.Get(x => x.StenoGorevTuru == StenoGorevTuru.Uzman,includeProperties: "StenoGrups.Grup.GidenGrups").OrderBy(x => x.SiraNo);
             int firstRec = 0;
             for (int i = 0; i < birlesim.TurAdedi; i++)
             {
@@ -208,7 +208,7 @@ namespace TTBS.Services
 
         private void CreateSteno(Birlesim birlesim, Guid oturumId)
         {
-            var stenoList = _stenografRepo.Get(x=>x.StenoGorevTuru == StenoGorevTuru.Stenograf).OrderBy(x => x.SiraNo);
+            var stenoList = _stenografRepo.Get(x=>x.StenoGorevTuru == StenoGorevTuru.Stenograf, includeProperties: "StenoGrups.Grup.GidenGrups").OrderBy(x => x.SiraNo);
             int firstRec = 0;
             for (int i = 0; i < birlesim.TurAdedi; i++)
             {
@@ -291,7 +291,7 @@ namespace TTBS.Services
 
         public IEnumerable<Grup> GetAllGrup(int grupTuru)
         {
-            return _grupRepo.Get(x=>(int)x.StenoGrupTuru == grupTuru);
+            return _grupRepo.Get(x=>(int)x.StenoGrupTuru == grupTuru,includeProperties: "GidenGrups");
         }
 
         public Grup GetGrupById(Guid id)
