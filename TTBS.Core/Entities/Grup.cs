@@ -13,5 +13,7 @@ namespace TTBS.Core.Entities
         public virtual ICollection<StenoGrup> StenoGrups { get; set; }
         public StenoGorevTuru StenoGrupTuru { get; set; }
         public virtual ICollection<GidenGrup> GidenGrups { get; set; }
+        [NotMapped]
+        public DurumStatu GidenGrupMu { get; set; }
     }
 }

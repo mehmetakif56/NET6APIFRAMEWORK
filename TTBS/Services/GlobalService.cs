@@ -66,7 +66,6 @@ namespace TTBS.Services
         private IRepository<GorevAtama> _stenoGorevRepo;
         private IRepository<Stenograf> _stenografRepo;
         private IRepository<StenoToplamGenelSure> _stenoToplamSureRepo;
-
         private IRepository<GidenGrup> _gidenGrupRepo;
         public GlobalService(IRepository<Donem> donemRepo,
                              IRepository<Yasama> yasamaRepo,

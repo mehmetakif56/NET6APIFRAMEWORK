@@ -67,6 +67,7 @@ namespace TTBS.Services
         private IRepository<StenografBeklemeSure> _stenoBeklemeSure;
         private IRepository<Grup> _grupRepo;
         private IRepository<Oturum> _oturumRepo;
+        private IRepository<GidenGrup> _gidenGrupRepo;
         public StenografService(IRepository<StenoIzin> stenoIzinRepo, IRepository<GorevAtama> stenoGorevRepo,
                                 IUnitOfWork unitWork,
                                 IRepository<Stenograf> stenografRepo,
@@ -75,6 +76,7 @@ namespace TTBS.Services
                                 IRepository<Grup> grupRepo,
                                 IRepository<Birlesim> birlesimRepo,
                                 IRepository<Oturum> oturumRepo,
+                                IRepository<GidenGrup> gidenGrupRepo,
                                 IServiceProvider provider) : base(provider)
         {
             _stenoIzinRepo = stenoIzinRepo;
@@ -86,6 +88,7 @@ namespace TTBS.Services
             _birlesimRepo = birlesimRepo;
             _oturumRepo = oturumRepo;
             _grupRepo = grupRepo;
+            _gidenGrupRepo = gidenGrupRepo;
         }
 
         public IEnumerable<StenoIzin> GetAllStenoIzin()
