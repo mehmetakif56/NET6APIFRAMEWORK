@@ -247,9 +247,9 @@ namespace TTBS.Controllers
                         }
 
 
-                        if (item.StenoToplantiVar || item.GorevStatu == GorevStatu.Iptal || item.GorevStatu == GorevStatu.YerDegistirme || (iz != null && iz.Count() > 0))
+                        if (item.StenoToplantiVar || item.GorevStatu == GorevStatu.Iptal || item.GorevStatu == GorevStatu.YerDegistirme || item.GorevStatu == GorevStatu.GidenGrup || (iz != null && iz.Count() > 0))
                         {
-                            item.GorevStatu = item.GorevStatu == GorevStatu.YerDegistirme ? GorevStatu.YerDegistirme : GorevStatu.Iptal;
+                            item.GorevStatu = item.GorevStatu == GorevStatu.YerDegistirme ? GorevStatu.YerDegistirme :  (item.GorevStatu == GorevStatu.GidenGrup ? GorevStatu.GidenGrup : GorevStatu.Iptal);
                         }
                         else
                         {

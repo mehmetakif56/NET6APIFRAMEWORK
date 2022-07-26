@@ -11,9 +11,20 @@ namespace TTBS.Core.Entities
     public class GidenGrup:BaseEntity
     {
         public Guid Id { get; set; }
-        public string Ad { get; set; }
+        /// <summary>
+        /// Kaydetmede bugünün tarihini alır
+        /// </summary>
         public DateTime? GidenGrupTarihi { get; set; }
-        public GidenGrupDurumu GidenGrupDurumu { get; set; } = GidenGrupDurumu.Hayır;
+        /// <summary>
+        /// Belirtilen grup için gidengrup özelliğinin kullanılması
+        /// </summary>
+        public DurumStatu GidenGrupMu { get; set; } = DurumStatu.Hayır;
+        /// <summary>
+        /// <summary>
+        /// saat 18:00 e kadar giden grup çalışma durumu
+        /// </summary>
+        public DurumStatu GidenGrupTamamlama { get; set; } = DurumStatu.Hayır;
+
         public Guid GrupId  { get; set; }
         public Grup Grup { get; set; }
     }

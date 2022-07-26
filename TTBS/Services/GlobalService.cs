@@ -196,10 +196,10 @@ namespace TTBS.Services
                     newEntity.BirlesimId = birlesim.Id;
                     newEntity.OturumId = oturumId;
                     newEntity.StenografId = item.Id;
-                    newEntity.GorevStatu = GorevStatu.Planlandı;
                     newEntity.GorevBasTarihi = birlesim.BaslangicTarihi.HasValue ? birlesim.BaslangicTarihi.Value.AddMinutes(firstRec * birlesim.UzmanStenoSure) : null;
                     newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.HasValue ? newEntity.GorevBasTarihi.Value.AddMinutes(birlesim.UzmanStenoSure) : null;
                     newEntity.StenoSure = birlesim.UzmanStenoSure;
+                    newEntity.GorevStatu = newEntity.GorevBasTarihi.Value.AddMinutes(9 * newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
                     atamaList.Add(newEntity);
                     firstRec++;
                 }
@@ -221,10 +221,10 @@ namespace TTBS.Services
                     newEntity.BirlesimId = birlesim.Id;
                     newEntity.OturumId = oturumId;
                     newEntity.StenografId = item.Id;
-                    newEntity.GorevStatu = GorevStatu.Planlandı;
                     newEntity.GorevBasTarihi = birlesim.BaslangicTarihi.HasValue ? birlesim.BaslangicTarihi.Value.AddMinutes(firstRec * birlesim.StenoSure) : null;
                     newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.HasValue ? newEntity.GorevBasTarihi.Value.AddMinutes(birlesim.StenoSure) : null;
                     newEntity.StenoSure = birlesim.StenoSure;
+                    newEntity.GorevStatu = newEntity.GorevBasTarihi.Value.AddMinutes(9* newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup: GorevStatu.Planlandı;
                     atamaList.Add(newEntity);
                     firstRec++;
                 }
@@ -279,6 +279,14 @@ namespace TTBS.Services
 
         public void CreateGidenGrup(GidenGrup grup)
         {
+            var gidenGrup = _gidenGrupRepo.Get().Where(x=>x.GidenGrupTarihi.HasValue && x.GidenGrupTarihi.Value.ToShortDateString() == DateTime.Now.ToShortDateString());
+            if (gidenGrup != null && gidenGrup.Count()>0)
+            {
+                var firstGiden = gidenGrup.FirstOrDefault();
+                firstGiden.IsDeleted = true;
+                _gidenGrupRepo.Update(firstGiden);
+                _gidenGrupRepo.Save();
+            }
             _gidenGrupRepo.Create(grup, CurrentUser.Id);
             _gidenGrupRepo.Save();
         }

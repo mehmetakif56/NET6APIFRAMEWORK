@@ -371,7 +371,7 @@ namespace TTBS.Controllers
 
         #region GidenGrup
         [HttpPost("CreateGidenGrup")]
-        public IActionResult CreateGidenGrup(GidenGrupModel model)
+        public IActionResult CreateGidenGrup(GidenGrupOlusturModel model)
         {
             var entity = Mapper.Map<GidenGrup>(model);
             _globalService.CreateGidenGrup(entity);

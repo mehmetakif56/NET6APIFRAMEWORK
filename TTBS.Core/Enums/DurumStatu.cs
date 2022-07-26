@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TTBS.Core.Enums
 {
-    public enum GidenGrupDurumu
+    public enum DurumStatu
     {
         Hayır =0,
         Evet=1
