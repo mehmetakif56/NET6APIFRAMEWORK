@@ -421,7 +421,7 @@ namespace TTBS.Services
 
         public void DeleteBirlesim(Guid id)
         {
-            var result = _birlesimRepo.Get(x => x.Id == id && x.ToplanmaDurumu == ToplanmaStatu.Oluşturuldu || x.ToplanmaDurumu == ToplanmaStatu.Planlandı);
+            var result = _birlesimRepo.Get(x => x.Id == id && (x.ToplanmaDurumu == ToplanmaStatu.Oluşturuldu || x.ToplanmaDurumu == ToplanmaStatu.Planlandı));
             if(result !=null)
             {
                 _birlesimRepo.Delete(result);
