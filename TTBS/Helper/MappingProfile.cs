@@ -22,7 +22,8 @@ namespace TTBS.Helper
             CreateMap<StenoIzin, StenoIzinModel>()
                 .ForMember(dest => dest.StenografAdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad));
 
-            CreateMap<GorevAtama, ReportPlanModel>();
+            CreateMap<GorevAtama, ReportPlanModel>()
+                .ForMember(dest => dest.StenografAd, opt => opt.MapFrom(src => src.Stenograf.AdSoyad));
             CreateMap<ReportPlanModel, GorevAtama>();
 
             CreateMap<Birlesim, ReportPlanDetayModel>()
