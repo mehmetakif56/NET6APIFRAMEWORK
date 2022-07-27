@@ -37,7 +37,7 @@ namespace TTBS.Helper
                  .ForMember(dest => dest.Bitissaat, opt => opt.MapFrom(src => src.BitisTarihi.HasValue ? src.BitisTarihi.Value.ToShortTimeString() : ""))
                  .ForMember(dest => dest.ToplamSure, opt => opt.MapFrom(src => src.BitisTarihi.HasValue && src.BaslangicTarihi.HasValue ? (src.BitisTarihi.Value - src.BaslangicTarihi.Value).TotalMinutes : 0))
                  .ForMember(dest => dest.NetSure, opt => opt.MapFrom(src => 0))
-                 .ForMember(dest => dest.GorevAd, opt => opt.MapFrom(src => src.ToplanmaTuru == ToplanmaTuru.Komisyon ? src.Komisyon.Ad + " (" + src.BaslangicTarihi.Value.ToShortDateString() + ")" : src.BirlesimNo + ". Birleşim (" + src.BaslangicTarihi.Value.ToShortDateString() + ")"))
+                 .ForMember(dest => dest.GorevAd, opt => opt.MapFrom(src => src.ToplanmaTuru == ToplanmaTuru.Komisyon ? src.Komisyon.Ad + " (" + src.BaslangicTarihi.Value.ToShortDateString() + ")" : (src.ToplanmaTuru == ToplanmaTuru.OzelToplanti ? src.OzelToplanma.Ad + " (" + src.BaslangicTarihi.Value.ToShortDateString() + ")" : src.BirlesimNo + ". Birleşim (" + src.BaslangicTarihi.Value.ToShortDateString() + ")")))
                  .ForMember(dest => dest.Ara, opt => opt.MapFrom(src => 0));
             CreateMap<ReportPlanDetayModel, Birlesim>();
 
