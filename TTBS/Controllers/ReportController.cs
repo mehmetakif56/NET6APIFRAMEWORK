@@ -22,7 +22,7 @@ namespace TTBS.Controllers
         }
 
         [HttpGet("GetReportStenoPlanBetweenDateGorevTur")]
-        public IEnumerable<ReportPlanDetayModel> GetReportStenoPlanBetweenDateGorevTur(DateTime gorevBasTarihi, DateTime gorevBitTarihi, int gorevTuru)
+        public IEnumerable<ReportPlanDetayModel> GetReportStenoPlanBetweenDateGorevTur(DateTime gorevBasTarihi, DateTime gorevBitTarihi, int? gorevTuru)
         {
             var stenoGrpEntity = _reportService.GetReportStenoPlanBetweenDateGorevTur(gorevBasTarihi, gorevBitTarihi, gorevTuru);
             var model = _mapper.Map<IEnumerable<ReportPlanDetayModel>>(stenoGrpEntity);
