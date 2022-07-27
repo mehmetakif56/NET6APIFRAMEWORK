@@ -27,6 +27,7 @@ namespace TTBS.Controllers
             var model = _mapper.Map<IEnumerable<ReportPlanDetayModel>>(stenoGrpEntity);
             return model;
         }
+
         [HttpGet("GetStenoGorevByStenografAndDate")]
         public IEnumerable<ReportPlanModel> GetStenoGorevByStenografAndDate(Guid? stenografId, DateTime gorevBasTarihi, DateTime gorevBitTarihi)
         {

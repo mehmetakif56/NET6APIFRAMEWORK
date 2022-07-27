@@ -4,6 +4,9 @@ namespace TTBS.Models
 {
     public class ReportPlanModel
     {
+
+        //steno ad + toplantı ad
+        public string StenografAd { get; set; }
         public ToplanmaTuru ToplanmaTuru { get; set; }
         public int  UzmGorevlendirmeSay { get; set; }
         public int UzmGorevlendirmeSure { get; set; }

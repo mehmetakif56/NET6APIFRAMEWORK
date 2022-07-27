@@ -32,9 +32,6 @@ namespace TTBS.Controllers
         [HttpGet("GetActiveGorevler")]
         public IEnumerable<GorevAtama> GetActiveGorevler()
         {
-            var date = DateTime.Now;
-            var date2 = DateTime.UtcNow;
-            var date3 = DateTime.Today.ToString("yyyy-MM-dd");
             var entity = _dashboardService.GetActiveGorevler();
             var model = _mapper.Map<IEnumerable<GorevAtama>>(entity);
             return model;
