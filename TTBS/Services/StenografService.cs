@@ -287,7 +287,7 @@ namespace TTBS.Services
 
         public async Task<List<GorevAtama>> GetHedefStenoGorevs(GorevAtama atama)
         {
-            return _stenoGorevRepo.Get(x => x.BirlesimId == atama.BirlesimId && x.GorevBasTarihi >= atama.GorevBasTarihi, includeProperties: "Stenograf.StenoGrups").OrderBy(x => x.GorevBasTarihi).ToList();
+            return _stenoGorevRepo.Get(x => x.BirlesimId == atama.BirlesimId && x.GorevBasTarihi >= atama.GorevBasTarihi && x.GorevStatu != GorevStatu.YerDegistirme, includeProperties: "Stenograf.StenoGrups").OrderBy(x => x.GorevBasTarihi).ToList();
         }
 
         private void CreateStenoGorev(Birlesim birlesim, Guid oturumId, List<Guid> stenoList, int turAdedi)
