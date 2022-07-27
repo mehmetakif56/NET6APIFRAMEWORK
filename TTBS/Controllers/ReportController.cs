@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using TTBS.Core.Entities;
 using TTBS.Models;
 using TTBS.Services;
 
@@ -31,7 +32,7 @@ namespace TTBS.Controllers
         [HttpGet("GetStenoGorevByStenografAndDate")]
         public IEnumerable<ReportPlanModel> GetStenoGorevByStenografAndDate(Guid? stenografId, DateTime gorevBasTarihi, DateTime gorevBitTarihi)
         {
-            var stenoGrpEntity = _reportService.GetStenoGorevByStenografAndDate(stenografId, gorevBasTarihi, gorevBitTarihi);
+            var stenoGrpEntity = _reportService.GetStenoGorevByStenografAndDate(stenografId, gorevBasTarihi, gorevBitTarihi).GroupBy(x => new { x.BirlesimId, x.StenografId });
             var model = _mapper.Map<IEnumerable<ReportPlanModel>>(stenoGrpEntity);
             return model;
         }

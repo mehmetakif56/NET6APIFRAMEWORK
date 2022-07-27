@@ -22,6 +22,11 @@ namespace TTBS.Helper
             CreateMap<StenoIzin, StenoIzinModel>()
                 .ForMember(dest => dest.StenografAdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad));
 
+            CreateMap<IEnumerable<GorevAtama>, ReportPlanModel>()
+                .ForMember(dest => dest.StenografAd, opt => opt.MapFrom(src => src.First().Stenograf.AdSoyad))
+                .ForMember(dest => dest.GorevlendirmeSure, opt => opt.MapFrom(src => src.Sum(x => x.GorevBitisTarihi.Value.Subtract(x.GorevBasTarihi.Value).Minutes)))
+                .ForMember(dest => dest.ToplanmaTuru, opt => opt.MapFrom(src => src.First().StenoGorevTuru))
+                .ForMember(dest => dest.GorevlendirmeSay, opt => opt.MapFrom(src => src.Count()));
             CreateMap<GorevAtama, ReportPlanModel>()
                 .ForMember(dest => dest.StenografAd, opt => opt.MapFrom(src => src.Stenograf.AdSoyad));
             CreateMap<ReportPlanModel, GorevAtama>();
