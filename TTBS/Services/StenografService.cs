@@ -175,7 +175,7 @@ namespace TTBS.Services
                     _stenoGorevRepo.Save();
                 }
 
-                var stenoGrevHedef = _stenoGorevRepo.Get(x => x.BirlesimId == hedefBirlesimId, includeProperties: "Stenograf.StenoGrups").OrderBy(x => x.GorevBasTarihi);
+                var stenoGrevHedef = _stenoGorevRepo.Get(x => x.BirlesimId == hedefBirlesimId && x.GorevStatu != GorevStatu.YerDegistirme, includeProperties: "Stenograf.StenoGrups").OrderBy(x => x.GorevBasTarihi);
                 if (stenoGrevHedef != null && stenoGrevHedef.Count() > 0)
                 {
                     var minStenoGorev = stenoGrevHedef.Where(x => x.StenografId == hedefStenografId);
@@ -208,7 +208,7 @@ namespace TTBS.Services
             }
             else
             {
-                var stenoGrevHedef = _stenoGorevRepo.Get(x => x.BirlesimId == hedefBirlesimId).OrderBy(x => x.GorevBasTarihi);
+                var stenoGrevHedef = _stenoGorevRepo.Get(x => x.BirlesimId == hedefBirlesimId && x.GorevStatu != GorevStatu.YerDegistirme).OrderBy(x => x.GorevBasTarihi);
                 if (stenoGrevHedef != null && stenoGrevHedef.Count() > 0)
                 {
                     var stenoList = new List<GorevAtama>();
@@ -287,7 +287,7 @@ namespace TTBS.Services
 
         public async Task<List<GorevAtama>> GetHedefStenoGorevs(GorevAtama atama)
         {
-            return _stenoGorevRepo.Get(x => x.BirlesimId == atama.BirlesimId && x.GorevBasTarihi >= atama.GorevBasTarihi, includeProperties: "Stenograf.StenoGrups").OrderBy(x => x.GorevBasTarihi).ToList();
+            return _stenoGorevRepo.Get(x => x.BirlesimId == atama.BirlesimId && x.GorevBasTarihi >= atama.GorevBasTarihi && x.GorevStatu != GorevStatu.YerDegistirme, includeProperties: "Stenograf.StenoGrups").OrderBy(x => x.GorevBasTarihi).ToList();
         }
 
         private void CreateStenoGorev(Birlesim birlesim, Guid oturumId, List<Guid> stenoList, int turAdedi)
@@ -311,6 +311,8 @@ namespace TTBS.Services
                 }
                 _stenoGorevRepo.Create(atamaList, CurrentUser.Id);
                 _stenoGorevRepo.Save();
+
+               //UpdateGidenGrup(atamaList);
             }
         }
 
@@ -383,6 +385,8 @@ namespace TTBS.Services
                 }
                 _stenoGorevRepo.Create(atamaList, CurrentUser.Id);
                 _stenoGorevRepo.Save();
+
+                //UpdateGidenGrup(atamaList);
             }
             else if (entity.StenografIds != null && entity.StenografIds.Count > 0)
             {
@@ -408,6 +412,8 @@ namespace TTBS.Services
                     }
                     _stenoGorevRepo.Create(atamaList, CurrentUser.Id);
                     _stenoGorevRepo.Save();
+
+                   // UpdateGidenGrup(atamaList);
                 }
             }
         }
@@ -447,9 +453,39 @@ namespace TTBS.Services
                 firsRec++;
 
             }
+
+            
             _stenoGorevRepo.Create(atamaList, CurrentUser.Id);
             _stenoGorevRepo.Save();
 
+            //UpdateGidenGrup(atamaList);
+
+        }
+
+        public void UpdateGidenGrup(List<GorevAtama> list)
+        {
+            //var hasGidenGrup = list.Where(x => x.GorevStatu == GorevStatu.GidenGrup);
+            //if (hasGidenGrup != null && hasGidenGrup.Count() > 0)
+            //{
+            //    var grpId = _stenoGrupRepo.Get(x => x.StenoId == hasGidenGrup.FirstOrDefault().StenografId).Select(x => x.GrupId);
+            //    if (grpId != null)
+            //    {
+            //        var gidenGrup =_gidenGrupRepo.Get(x => x.GrupId == grpId.FirstOrDefault());
+            //        if (gidenGrup != null)
+            //        {
+            //            var allgrps = _grupRepo.Get(x=>x.Id !=grpId.FirstOrDefault()).OrderBy(x=>x.Ad);
+            //            gidenGrup.FirstOrDefault().IsDeleted = true;
+            //            _gidenGrupRepo.Update(gidenGrup.FirstOrDefault());
+            //            _gidenGrupRepo.Save();
+
+            //            var newGidenGrup = new GidenGrup();
+            //            newGidenGrup.GrupId = allgrps.FirstOrDefault().Id;
+            //            newGidenGrup.GidenGrupTarihi =DateTime.Today.AddDays(1);
+            //            _gidenGrupRepo.Create(newGidenGrup);
+            //            _gidenGrupRepo.Save();
+            //        }
+            //    }
+            //}
         }
 
         public void UpdateStenoGorev(List<GorevAtama> entityList)
@@ -466,7 +502,7 @@ namespace TTBS.Services
 
         public IEnumerable<GorevAtama> GetStenoGorevByBirlesimIdAndGorevTuru(Guid birlesimId, int gorevTuru)
         {
-            return _stenoGorevRepo.Get(x => x.BirlesimId == birlesimId && (int)x.Stenograf.StenoGorevTuru == gorevTuru, includeProperties: "Stenograf.StenoGrups,Birlesim").OrderBy(x => x.GorevBasTarihi);
+            return _stenoGorevRepo.Get(x => x.BirlesimId == birlesimId && (int)x.Stenograf.StenoGorevTuru == gorevTuru && x.GorevStatu != GorevStatu.YerDegistirme, includeProperties: "Stenograf.StenoGrups,Birlesim").OrderBy(x => x.GorevBasTarihi);
         }
 
         public IEnumerable<GorevAtama> GetStenoGorevByGorevTuru(int gorevTuru)

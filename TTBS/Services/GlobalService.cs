@@ -187,7 +187,7 @@ namespace TTBS.Services
 
         private void CreateUzmanSteno(Birlesim birlesim, Guid oturumId)
         {
-            var stenoList = _stenografRepo.Get(x => x.StenoGorevTuru == StenoGorevTuru.Uzman,includeProperties: "StenoGrups.Grup.GidenGrups").OrderBy(x => x.SiraNo);
+            var stenoList = _stenografRepo.Get(x => x.StenoGorevTuru == StenoGorevTuru.Uzman,includeProperties: "StenoGrups").OrderBy(x => x.SiraNo);
             int firstRec = 0;
             for (int i = 0; i < birlesim.TurAdedi; i++)
             {
@@ -201,7 +201,7 @@ namespace TTBS.Services
                     newEntity.GorevBasTarihi = birlesim.BaslangicTarihi.HasValue ? birlesim.BaslangicTarihi.Value.AddMinutes(firstRec * birlesim.UzmanStenoSure) : null;
                     newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.HasValue ? newEntity.GorevBasTarihi.Value.AddMinutes(birlesim.UzmanStenoSure) : null;
                     newEntity.StenoSure = birlesim.UzmanStenoSure;
-                    newEntity.GorevStatu = item.StenoGrups.SelectMany(x=>x.Grup.GidenGrups).Select(x=>x.GidenGrupMu).FirstOrDefault() == DurumStatu.Hayır && newEntity.GorevBasTarihi.Value.AddMinutes(9 * newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
+                    newEntity.GorevStatu = item.StenoGrups.Select(x => x.GidenGrupMu).FirstOrDefault() == DurumStatu.Evet && newEntity.GorevBasTarihi.Value.AddMinutes(9 * newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
                     atamaList.Add(newEntity);
                     firstRec++;
                 }
@@ -212,7 +212,7 @@ namespace TTBS.Services
 
         private void CreateSteno(Birlesim birlesim, Guid oturumId)
         {
-            var stenoList = _stenografRepo.Get(x=>x.StenoGorevTuru == StenoGorevTuru.Stenograf, includeProperties: "StenoGrups.Grup.GidenGrups").OrderBy(x => x.SiraNo);
+            var stenoList = _stenografRepo.Get(x=>x.StenoGorevTuru == StenoGorevTuru.Stenograf, includeProperties: "StenoGrups").OrderBy(x => x.SiraNo);
             int firstRec = 0;
             for (int i = 0; i < birlesim.TurAdedi; i++)
             {
@@ -226,7 +226,7 @@ namespace TTBS.Services
                     newEntity.GorevBasTarihi = birlesim.BaslangicTarihi.HasValue ? birlesim.BaslangicTarihi.Value.AddMinutes(firstRec * birlesim.StenoSure) : null;
                     newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.HasValue ? newEntity.GorevBasTarihi.Value.AddMinutes(birlesim.StenoSure) : null;
                     newEntity.StenoSure = birlesim.StenoSure;
-                    newEntity.GorevStatu = item.StenoGrups.SelectMany(x => x.Grup.GidenGrups).Select(x => x.GidenGrupMu).FirstOrDefault() == DurumStatu.Hayır && newEntity.GorevBasTarihi.Value.AddMinutes(9* newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup: GorevStatu.Planlandı;
+                    newEntity.GorevStatu = item.StenoGrups.Select(x => x.GidenGrupMu).FirstOrDefault() == DurumStatu.Evet && newEntity.GorevBasTarihi.Value.AddMinutes(9* newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup: GorevStatu.Planlandı;
                     atamaList.Add(newEntity);
                     firstRec++;
                 }
@@ -421,7 +421,7 @@ namespace TTBS.Services
 
         public void DeleteBirlesim(Guid id)
         {
-            var result = _birlesimRepo.Get(x => x.Id == id && x.ToplanmaDurumu == ToplanmaStatu.Oluşturuldu || x.ToplanmaDurumu == ToplanmaStatu.Planlandı);
+            var result = _birlesimRepo.Get(x => x.Id == id && (x.ToplanmaDurumu == ToplanmaStatu.Oluşturuldu || x.ToplanmaDurumu == ToplanmaStatu.Planlandı));
             if(result !=null)
             {
                 _birlesimRepo.Delete(result);
