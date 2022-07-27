@@ -47,7 +47,8 @@ namespace TTBS.Helper
             CreateMap<Komisyon, KomisyonAltModel>();
 
             CreateMap<GrupModel, Grup>();
-            CreateMap<Grup, GrupModel>();
+            CreateMap<Grup, GrupModel>()
+                      .ForMember(dest => dest.GidenGrupMu, opt => opt.MapFrom(src => src.GidenGrups !=null && src.GidenGrups.FirstOrDefault().GidenGrupMu  == DurumStatu.Hayır ? DurumStatu.Evet:DurumStatu.Hayır  ));
 
             CreateMap<GorevAtama, StenoGorevGüncelleModel>();
             CreateMap<StenoGorevGüncelleModel, GorevAtama>();

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TTBS.Infrastructure;
 
@@ -11,9 +12,10 @@ using TTBS.Infrastructure;
 namespace TTBS.Migrations
 {
     [DbContext(typeof(TTBSContext))]
-    partial class TTBSContextModelSnapshot : ModelSnapshot
+    [Migration("20220726125729_grrp")]
+    partial class grrp
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -722,9 +724,6 @@ namespace TTBS.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("GidenGrupMu")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -827,10 +826,6 @@ namespace TTBS.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BirlesimId");
-
-                    b.HasIndex("YasamaId");
 
                     b.ToTable("StenoToplamGenelSure", (string)null);
                 });
@@ -1113,25 +1108,6 @@ namespace TTBS.Migrations
                         .IsRequired();
 
                     b.Navigation("Stenograf");
-                });
-
-            modelBuilder.Entity("TTBS.Core.Entities.StenoToplamGenelSure", b =>
-                {
-                    b.HasOne("TTBS.Core.Entities.Birlesim", "Birlesim")
-                        .WithMany()
-                        .HasForeignKey("BirlesimId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TTBS.Core.Entities.Yasama", "Yasama")
-                        .WithMany()
-                        .HasForeignKey("YasamaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Birlesim");
-
-                    b.Navigation("Yasama");
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.UserRoleEntity", b =>

@@ -67,6 +67,7 @@ namespace TTBS.Services
         private IRepository<StenografBeklemeSure> _stenoBeklemeSure;
         private IRepository<Grup> _grupRepo;
         private IRepository<Oturum> _oturumRepo;
+        private IRepository<GidenGrup> _gidenGrupRepo;
         public StenografService(IRepository<StenoIzin> stenoIzinRepo, IRepository<GorevAtama> stenoGorevRepo,
                                 IUnitOfWork unitWork,
                                 IRepository<Stenograf> stenografRepo,
@@ -75,6 +76,7 @@ namespace TTBS.Services
                                 IRepository<Grup> grupRepo,
                                 IRepository<Birlesim> birlesimRepo,
                                 IRepository<Oturum> oturumRepo,
+                                IRepository<GidenGrup> gidenGrupRepo,
                                 IServiceProvider provider) : base(provider)
         {
             _stenoIzinRepo = stenoIzinRepo;
@@ -86,6 +88,7 @@ namespace TTBS.Services
             _birlesimRepo = birlesimRepo;
             _oturumRepo = oturumRepo;
             _grupRepo = grupRepo;
+            _gidenGrupRepo = gidenGrupRepo;
         }
 
         public IEnumerable<StenoIzin> GetAllStenoIzin()
@@ -172,7 +175,7 @@ namespace TTBS.Services
                     _stenoGorevRepo.Save();
                 }
 
-                var stenoGrevHedef = _stenoGorevRepo.Get(x => x.BirlesimId == hedefBirlesimId).OrderBy(x => x.GorevBasTarihi);
+                var stenoGrevHedef = _stenoGorevRepo.Get(x => x.BirlesimId == hedefBirlesimId, includeProperties: "Stenograf.StenoGrups").OrderBy(x => x.GorevBasTarihi);
                 if (stenoGrevHedef != null && stenoGrevHedef.Count() > 0)
                 {
                     var minStenoGorev = stenoGrevHedef.Where(x => x.StenografId == hedefStenografId);
@@ -187,7 +190,7 @@ namespace TTBS.Services
                         newEntity.GorevBasTarihi = item.GorevBasTarihi;
                         newEntity.GorevBitisTarihi = item.GorevBitisTarihi;
                         newEntity.StenoSure = item.StenoSure;
-                        newEntity.GorevStatu = newEntity.GorevBasTarihi.Value.AddMinutes(9 * newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
+                        newEntity.GorevStatu = item.Stenograf.StenoGrups.Select(x => x.GidenGrupMu).FirstOrDefault() == DurumStatu.Evet && newEntity.GorevBasTarihi.Value.AddMinutes(9 * newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
                         _stenoGorevRepo.Create(newEntity);
                         _stenoGorevRepo.Save();
 
@@ -196,7 +199,7 @@ namespace TTBS.Services
                         {
                             hedef.GorevBasTarihi = hedef.GorevBasTarihi.Value.AddMinutes(hedef.StenoSure);
                             hedef.GorevBitisTarihi = hedef.GorevBasTarihi.Value.AddMinutes(hedef.StenoSure);
-                            hedef.GorevStatu = hedef.GorevBasTarihi.Value.AddMinutes(9 * hedef.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
+                            hedef.GorevStatu = hedef.Stenograf.StenoGrups.Select(x => x.GidenGrupMu).FirstOrDefault() == DurumStatu.Evet &&  hedef.GorevBasTarihi.Value.AddMinutes(9 * hedef.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
                             _stenoGorevRepo.Update(hedef);
                             _stenoGorevRepo.Save();
                         }
@@ -252,7 +255,7 @@ namespace TTBS.Services
                         item.StenoSure = sure;
                         item.GorevBasTarihi = firstRec == 0 ? gorevBas : gorevBas.Value.AddMinutes(sure);
                         item.GorevBitisTarihi = item.GorevBasTarihi.Value.AddMinutes(sure);
-                        item.GorevStatu = item.GorevBasTarihi.Value.AddMinutes(9 * item.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
+                        item.GorevStatu = item.Stenograf.StenoGrups.Select(x => x.GidenGrupMu).FirstOrDefault() == DurumStatu.Evet &&  item.GorevBasTarihi.Value.AddMinutes(9 * item.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
                         gorevBas = item.GorevBasTarihi;
                         _stenoGorevRepo.Update(item);
                         _stenoGorevRepo.Save();
@@ -267,7 +270,7 @@ namespace TTBS.Services
                         item.StenoSure = firstRec == 0 ? sure : item.StenoSure;
                         item.GorevBasTarihi = firstRec == 0 ? gorevBas : gorevBit;
                         item.GorevBitisTarihi = item.GorevBasTarihi.Value.AddMinutes(item.StenoSure);
-                        item.GorevStatu = item.GorevBasTarihi.Value.AddMinutes(9 * item.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
+                        item.GorevStatu = item.Stenograf.StenoGrups.Select(x => x.GidenGrupMu).FirstOrDefault() == DurumStatu.Evet &&  item.GorevBasTarihi.Value.AddMinutes(9 * item.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
                         gorevBit = item.GorevBitisTarihi;
                         _stenoGorevRepo.Update(item);
                         _stenoGorevRepo.Save();
@@ -284,7 +287,7 @@ namespace TTBS.Services
 
         public async Task<List<GorevAtama>> GetHedefStenoGorevs(GorevAtama atama)
         {
-            return _stenoGorevRepo.Get(x => x.BirlesimId == atama.BirlesimId && x.GorevBasTarihi >= atama.GorevBasTarihi).OrderBy(x => x.GorevBasTarihi).ToList();
+            return _stenoGorevRepo.Get(x => x.BirlesimId == atama.BirlesimId && x.GorevBasTarihi >= atama.GorevBasTarihi, includeProperties: "Stenograf.StenoGrups").OrderBy(x => x.GorevBasTarihi).ToList();
         }
 
         private void CreateStenoGorev(Birlesim birlesim, Guid oturumId, List<Guid> stenoList, int turAdedi)
@@ -302,7 +305,7 @@ namespace TTBS.Services
                     newEntity.GorevBasTarihi = birlesim.BaslangicTarihi.HasValue ? birlesim.BaslangicTarihi.Value.AddMinutes(firstRec * birlesim.StenoSure) : null;
                     newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.HasValue ? newEntity.GorevBasTarihi.Value.AddMinutes(birlesim.StenoSure) : null;
                     newEntity.StenoSure = birlesim.StenoSure;
-                    newEntity.GorevStatu = newEntity.GorevBasTarihi.Value.AddMinutes(9 * newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
+                    newEntity.GorevStatu = GetStenoGidenGrupDurum(item) == DurumStatu.Evet && newEntity.GorevBasTarihi.Value.AddMinutes(9 * newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
                     atamaList.Add(newEntity);
                     firstRec++;
                 }
@@ -322,6 +325,7 @@ namespace TTBS.Services
                 BaslangicTarihi = birlesim.BaslangicTarihi
             });
 
+            
             CreateStenoGorev(birlesim, oturumId, entity.StenografIds, entity.TurAdedi);
         }
 
@@ -352,8 +356,11 @@ namespace TTBS.Services
                         newEntity.GorevBasTarihi = maxDate.Value.AddMinutes(firstRec * maxSure);
                         newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.Value.AddMinutes(maxSure);
                         newEntity.StenoSure = maxSure;
-                        newEntity.GorevStatu = maxDate.Value > stenoList.FirstOrDefault().Birlesim.BaslangicTarihi.Value ? GorevStatu.GorevZamanAsim : 
-                                             (newEntity.GorevBasTarihi.Value.AddMinutes(9 * newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı);
+                        var durum = maxDate.Value > stenoList.FirstOrDefault().Birlesim.BaslangicTarihi.Value ? GorevStatu.GorevZamanAsim : GorevStatu.Planlandı;
+                        if (durum != GorevStatu.GorevZamanAsim)
+                            newEntity.GorevStatu = (GetStenoGidenGrupDurum(item) == DurumStatu.Evet && newEntity.GorevBasTarihi.Value.AddMinutes(9 * newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı);
+                        else
+                            newEntity.GorevStatu = durum;
                         atamaList.Add(newEntity);
                         firstRec++;
                         maxDate = newEntity.GorevBasTarihi;
@@ -366,7 +373,7 @@ namespace TTBS.Services
                             {
                                 hedef.GorevBasTarihi = firstDate;
                                 hedef.GorevBitisTarihi = hedef.GorevBasTarihi.Value.AddMinutes(hedef.StenoSure);
-                                newEntity.GorevStatu = hedef.GorevBasTarihi.Value.AddMinutes(9 * hedef.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
+                                hedef.GorevStatu = hedef.Stenograf.StenoGrups.Select(x => x.GidenGrupMu).FirstOrDefault() == DurumStatu.Evet && hedef.GorevBasTarihi.Value.AddMinutes(9 * hedef.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
                                 firstDate = hedef.GorevBitisTarihi.Value;
                                 _stenoGorevRepo.Update(hedef);
                                 _stenoGorevRepo.Save();
@@ -394,7 +401,7 @@ namespace TTBS.Services
                         newEntity.GorevBasTarihi = minDate.Value;
                         newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.Value.AddMinutes(firstRec*birlesim.StenoSure);
                         newEntity.StenoSure = birlesim.StenoSure;
-                        newEntity.GorevStatu = newEntity.GorevBasTarihi.Value.AddMinutes(9 * newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
+                        newEntity.GorevStatu = GetStenoGidenGrupDurum(item) == DurumStatu.Evet && newEntity.GorevBasTarihi.Value.AddMinutes(9 * newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
                         atamaList.Add(newEntity);
                         minDate = newEntity.GorevBitisTarihi;
                         firstRec++;
@@ -403,6 +410,14 @@ namespace TTBS.Services
                     _stenoGorevRepo.Save();
                 }
             }
+        }
+
+        public DurumStatu GetStenoGidenGrupDurum(Guid stenoId)
+        {
+            var result = _stenoGrupRepo.Get(x => x.StenoId == stenoId);
+            if (result != null && result.Count() > 0)
+                return result.FirstOrDefault().GidenGrupMu;
+            return DurumStatu.Hayır;
         }
 
         public void CreateStenoGorevDonguEkle(Guid birlesimId, Guid oturumId, IEnumerable<GorevAtama> stenoList, int gorevturu)
@@ -427,7 +442,7 @@ namespace TTBS.Services
                 newEntity.GorevBasTarihi = maxDate.HasValue ? maxDate.Value.AddMinutes(firsRec * sure) : null;
                 newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.HasValue ? newEntity.GorevBasTarihi.Value.AddMinutes(sure) : null;
                 newEntity.StenoSure = sure;
-                newEntity.GorevStatu = newEntity.GorevBasTarihi.Value.AddMinutes(9 * newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
+                newEntity.GorevStatu = item.Stenograf?.StenoGrups.Select(x => x.GidenGrupMu).FirstOrDefault() == DurumStatu.Evet &&  newEntity.GorevBasTarihi.Value.AddMinutes(9 * newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
                 atamaList.Add(newEntity);
                 firsRec++;
 
@@ -451,7 +466,7 @@ namespace TTBS.Services
 
         public IEnumerable<GorevAtama> GetStenoGorevByBirlesimIdAndGorevTuru(Guid birlesimId, int gorevTuru)
         {
-            return _stenoGorevRepo.Get(x => x.BirlesimId == birlesimId && (int)x.Stenograf.StenoGorevTuru == gorevTuru, includeProperties: "Stenograf,Birlesim").OrderBy(x => x.GorevBasTarihi);
+            return _stenoGorevRepo.Get(x => x.BirlesimId == birlesimId && (int)x.Stenograf.StenoGorevTuru == gorevTuru, includeProperties: "Stenograf.StenoGrups,Birlesim").OrderBy(x => x.GorevBasTarihi);
         }
 
         public IEnumerable<GorevAtama> GetStenoGorevByGorevTuru(int gorevTuru)

@@ -12,8 +12,8 @@ namespace TTBS.Core.Entities
         public string Ad { get; set; }
         public virtual ICollection<StenoGrup> StenoGrups { get; set; }
         public StenoGorevTuru StenoGrupTuru { get; set; }
-        public int GidenGrupNo { get; set; }
-        public DateTime? GidenGrupTarihi { get; set; }
-        public DurumStatu GidenGrupDurumu { get; set; } = DurumStatu.Hayır;
+        public virtual ICollection<GidenGrup> GidenGrups { get; set; }
+        [NotMapped]
+        public DurumStatu GidenGrupMu { get; set; }
     }
 }

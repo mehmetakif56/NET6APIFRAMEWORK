@@ -11,5 +11,6 @@ namespace TTBS.Core.Entities
         public Guid GrupId { get; set; }
         public Stenograf Stenograf { get; set; }
         public Grup Grup { get; set; }
+        public DurumStatu GidenGrupMu { get; set; } = DurumStatu.Hayır;
     }
 }
