@@ -312,7 +312,7 @@ namespace TTBS.Services
                 _stenoGorevRepo.Create(atamaList, CurrentUser.Id);
                 _stenoGorevRepo.Save();
 
-                UpdateGidenGrup(atamaList);
+               //UpdateGidenGrup(atamaList);
             }
         }
 
@@ -386,7 +386,7 @@ namespace TTBS.Services
                 _stenoGorevRepo.Create(atamaList, CurrentUser.Id);
                 _stenoGorevRepo.Save();
 
-                UpdateGidenGrup(atamaList);
+                //UpdateGidenGrup(atamaList);
             }
             else if (entity.StenografIds != null && entity.StenografIds.Count > 0)
             {
@@ -413,7 +413,7 @@ namespace TTBS.Services
                     _stenoGorevRepo.Create(atamaList, CurrentUser.Id);
                     _stenoGorevRepo.Save();
 
-                    UpdateGidenGrup(atamaList);
+                   // UpdateGidenGrup(atamaList);
                 }
             }
         }
@@ -458,34 +458,34 @@ namespace TTBS.Services
             _stenoGorevRepo.Create(atamaList, CurrentUser.Id);
             _stenoGorevRepo.Save();
 
-            UpdateGidenGrup(atamaList);
+            //UpdateGidenGrup(atamaList);
 
         }
 
-        public async void UpdateGidenGrup(List<GorevAtama> list)
+        public void UpdateGidenGrup(List<GorevAtama> list)
         {
-            var hasGidenGrup = list.Where(x => x.GorevStatu == GorevStatu.GidenGrup);
-            if (hasGidenGrup != null && hasGidenGrup.Count() > 0)
-            {
-                var grpId = _stenoGrupRepo.Get(x => x.StenoId == hasGidenGrup.FirstOrDefault().StenografId).Select(x => x.GrupId);
-                if (grpId != null)
-                {
-                    var gidenGrup =_gidenGrupRepo.Get(x => x.GrupId == grpId.FirstOrDefault());
-                    if (gidenGrup != null)
-                    {
-                        var allgrps = _grupRepo.Get(x=>x.Id !=grpId.FirstOrDefault()).OrderBy(x=>x.Ad);
-                        gidenGrup.FirstOrDefault().IsDeleted = true;
-                        _gidenGrupRepo.Update(gidenGrup.FirstOrDefault());
-                        _gidenGrupRepo.Save();
+            //var hasGidenGrup = list.Where(x => x.GorevStatu == GorevStatu.GidenGrup);
+            //if (hasGidenGrup != null && hasGidenGrup.Count() > 0)
+            //{
+            //    var grpId = _stenoGrupRepo.Get(x => x.StenoId == hasGidenGrup.FirstOrDefault().StenografId).Select(x => x.GrupId);
+            //    if (grpId != null)
+            //    {
+            //        var gidenGrup =_gidenGrupRepo.Get(x => x.GrupId == grpId.FirstOrDefault());
+            //        if (gidenGrup != null)
+            //        {
+            //            var allgrps = _grupRepo.Get(x=>x.Id !=grpId.FirstOrDefault()).OrderBy(x=>x.Ad);
+            //            gidenGrup.FirstOrDefault().IsDeleted = true;
+            //            _gidenGrupRepo.Update(gidenGrup.FirstOrDefault());
+            //            _gidenGrupRepo.Save();
 
-                        var newGidenGrup = new GidenGrup();
-                        newGidenGrup.GrupId = allgrps.FirstOrDefault().Id;
-                        newGidenGrup.GidenGrupTarihi =DateTime.Today.AddDays(1);
-                        _gidenGrupRepo.Create(newGidenGrup);
-                        _gidenGrupRepo.Save();
-                    }
-                }
-            }
+            //            var newGidenGrup = new GidenGrup();
+            //            newGidenGrup.GrupId = allgrps.FirstOrDefault().Id;
+            //            newGidenGrup.GidenGrupTarihi =DateTime.Today.AddDays(1);
+            //            _gidenGrupRepo.Create(newGidenGrup);
+            //            _gidenGrupRepo.Save();
+            //        }
+            //    }
+            //}
         }
 
         public void UpdateStenoGorev(List<GorevAtama> entityList)
