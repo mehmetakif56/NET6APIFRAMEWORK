@@ -10,6 +10,7 @@ namespace TTBS.Models
         public double Sure { get; set; }
 
         public Guid BirlesimId { get; set; }
+        public ToplanmaTuru ToplanmaTuru { get; set; }
 
     }
 }

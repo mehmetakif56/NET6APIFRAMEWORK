@@ -81,6 +81,7 @@ namespace TTBS.Controllers
                     stenoSureFarkModel.Id = steno.Id;
                     stenoSureFarkModel.Sure = sure;
                     stenoSureFarkModel.BirlesimId = komisyon.Id;
+                    stenoSureFarkModel.ToplanmaTuru = komisyon.ToplanmaTuru;
                     sureFarks.Add(stenoSureFarkModel);
                 }
             }
