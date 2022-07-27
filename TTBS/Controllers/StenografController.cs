@@ -231,10 +231,11 @@ namespace TTBS.Controllers
 
                         if (birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul)
                         {
-                            var maxBitis = stenoEntity.Where(x => x.BirlesimId != item.BirlesimId && x.StenografId == item.StenografId).Max(x => x.GorevBitisTarihi);
+                            var maxBitis = stenoEntity.Where(x => x.BirlesimId != item.BirlesimId && x.StenografId == item.StenografId && x.GorevStatu != GorevStatu.Iptal).Max(x => x.GorevBitisTarihi);
 
                             var query = stenoEntity.Where(x => x.BirlesimId != item.BirlesimId &&
                                                                x.StenografId == item.StenografId &&
+                                                               x.GorevStatu != GorevStatu.Iptal &&
                                                                x.GorevBasTarihi.Value.Subtract(gorevBitTarihi).TotalMinutes > 0 &&
                                                                x.GorevBasTarihi.Value.Subtract(gorevBitTarihi).TotalMinutes <= 60);
 
