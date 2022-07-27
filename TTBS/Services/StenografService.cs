@@ -175,7 +175,7 @@ namespace TTBS.Services
                     _stenoGorevRepo.Save();
                 }
 
-                var stenoGrevHedef = _stenoGorevRepo.Get(x => x.BirlesimId == hedefBirlesimId, includeProperties: "Stenograf.StenoGrups").OrderBy(x => x.GorevBasTarihi);
+                var stenoGrevHedef = _stenoGorevRepo.Get(x => x.BirlesimId == hedefBirlesimId && x.GorevStatu != GorevStatu.YerDegistirme, includeProperties: "Stenograf.StenoGrups").OrderBy(x => x.GorevBasTarihi);
                 if (stenoGrevHedef != null && stenoGrevHedef.Count() > 0)
                 {
                     var minStenoGorev = stenoGrevHedef.Where(x => x.StenografId == hedefStenografId);
@@ -208,7 +208,7 @@ namespace TTBS.Services
             }
             else
             {
-                var stenoGrevHedef = _stenoGorevRepo.Get(x => x.BirlesimId == hedefBirlesimId).OrderBy(x => x.GorevBasTarihi);
+                var stenoGrevHedef = _stenoGorevRepo.Get(x => x.BirlesimId == hedefBirlesimId && x.GorevStatu != GorevStatu.YerDegistirme).OrderBy(x => x.GorevBasTarihi);
                 if (stenoGrevHedef != null && stenoGrevHedef.Count() > 0)
                 {
                     var stenoList = new List<GorevAtama>();
