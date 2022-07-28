@@ -206,7 +206,7 @@ namespace TTBS.Controllers
         public List<StenoGorevModel> GetStenoUzmanGorevByBirlesimId(Guid birlesimId, int gorevturu)
         {
             var lst = new List<StenoGorevModel>();
-            var stenoEntity = _stenoService.GetStenoGorevByGorevTuru(gorevturu, birlesimId);
+            var stenoEntity = _stenoService.GetStenoGorevByGorevTuru(gorevturu);
             if (stenoEntity != null && stenoEntity.Count() > 0)
             {
                 var birlesimList = stenoEntity.Where(x => x.BirlesimId == birlesimId).OrderBy(x => x.GorevBasTarihi).ToList();
