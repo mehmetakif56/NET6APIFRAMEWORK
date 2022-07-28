@@ -507,7 +507,7 @@ namespace TTBS.Services
 
         public IEnumerable<GorevAtama> GetStenoGorevByGorevTuru(int gorevTuru)
         {
-            return _stenoGorevRepo.Get(x => (int)x.Stenograf.StenoGorevTuru == gorevTuru, includeProperties: "Stenograf.StenoIzins,Birlesim");
+            return _stenoGorevRepo.Get(includeProperties: "Stenograf.StenoIzins,Birlesim");
         }
 
         //public List<StenoPlan> GetStenoPlanByStatus(int status)
