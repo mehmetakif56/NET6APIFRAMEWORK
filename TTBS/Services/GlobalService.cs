@@ -50,6 +50,7 @@ namespace TTBS.Services
         IEnumerable<StenoToplamGenelSure> GetGrupToplamSureByDate(Guid groupId, DateTime baslangic, DateTime bitis);
         public double GetStenoSureWeeklyById(Guid? stenoId);
         public double GetStenoSureYearlyById(Guid? stenoId);
+        public double GetStenoSureDailyById(Guid? stenoId);
     }
     public class GlobalService : BaseService, IGlobalService
     {
@@ -432,7 +433,7 @@ namespace TTBS.Services
         public Guid InsertStenoToplamSure(StenoToplamGenelSure stenoToplamGenelSure)
         {
             _stenoToplamSureRepo.Create(stenoToplamGenelSure, CurrentUser.Id);
-            _stenoToplamSureRepo.Save();
+            //_stenoToplamSureRepo.Save();
 
             return stenoToplamGenelSure.Id;
         }
@@ -452,16 +453,23 @@ namespace TTBS.Services
             return _stenoToplamSureRepo.Get(x => x.GroupId == groupId && x.Tarih >= baslangic && x.Tarih <= bitis);
         }
 
+        public double GetStenoSureDailyById(Guid? stenoId)
+        {
+            DateTime now = DateTime.Now.Date;
+            var result = _stenoToplamSureRepo.Get(x => x.StenoId == stenoId && x.Tarih < now && x.Tarih >= now.AddDays(-1), includeProperties: "Birlesim").Where(x => x.Birlesim.ToplanmaTuru == ToplanmaTuru.Komisyon || x.Birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul).Select(x => x.Sure).Sum();
+            return result;
+        }
+
         public double GetStenoSureWeeklyById(Guid? stenoId)
         {
             DateTime now = DateTime.Now.Date;
-            var result = _stenoToplamSureRepo.Get(x => x.StenoId == stenoId && x.Tarih < now.AddDays(1) && x.Tarih >= now.AddDays(-7), includeProperties:"Birlesim").Where(x => x.Birlesim.ToplanmaTuru == ToplanmaTuru.Komisyon).Select(x => x.Sure).Sum();
+            var result = _stenoToplamSureRepo.Get(x => x.StenoId == stenoId && x.Tarih < now.AddDays(1) && x.Tarih >= now.AddDays(-7), includeProperties:"Birlesim").Where(x => x.Birlesim.ToplanmaTuru == ToplanmaTuru.Komisyon || x.Birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul).Select(x => x.Sure).Sum();
             return result;
         }
 
         public double GetStenoSureYearlyById(Guid? stenoId)
         {
-            var result = _stenoToplamSureRepo.Get(x => x.StenoId == stenoId, includeProperties: "Birlesim,Yasama").Where(z => z.Yasama.BitisTarihi == null && z.Birlesim.ToplanmaTuru == ToplanmaTuru.Komisyon).Select(x => x.Sure).Sum();
+            var result = _stenoToplamSureRepo.Get(x => x.StenoId == stenoId, includeProperties: "Birlesim,Yasama").Where(z => z.Yasama.BitisTarihi == null && z.Birlesim.ToplanmaTuru == ToplanmaTuru.Komisyon || z.Birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul).Select(x => x.Sure).Sum();
             return result;
         }
     }
