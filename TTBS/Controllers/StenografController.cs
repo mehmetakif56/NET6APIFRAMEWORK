@@ -311,7 +311,7 @@ namespace TTBS.Controllers
 
                        if (birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul)
                        {
-                           var maxBitis =    stenoEntity.Where(x => x.BirlesimId != item.BirlesimId && x.StenografId == item.StenografId && x.GorevStatu != GorevStatu.Iptal).Max(x => x.GorevBitisTarihi);
+                            var maxBitis = model.FirstOrDefault().GorevBitisTarihi;//   stenoEntity.Where(x => x.BirlesimId != item.BirlesimId && x.StenografId == item.StenografId && x.GorevStatu != GorevStatu.Iptal).Max(x => x.GorevBitisTarihi);
                            var query = new List<StenoGorevModel>();
 
                            //var query = stenoEntity.Where(x => x.BirlesimId != item.BirlesimId &&
