@@ -313,13 +313,13 @@ namespace TTBS.Controllers
                         {
                             var maxBitis = stenoEntity.Where(x => x.BirlesimId != item.BirlesimId && x.StenografId == item.StenografId && x.GorevStatu != GorevStatu.Iptal).Max(x => x.GorevBitisTarihi);
 
-                            //var query = stenoEntity.Where(x => x.BirlesimId != item.BirlesimId &&
-                            //                                   x.StenografId == item.StenografId &&
-                            //                                   x.GorevStatu != GorevStatu.Iptal &&
-                            //                                   x.GorevBasTarihi.Value.Subtract(gorevBitTarihi).TotalMinutes > 0 &&
-                            //                                   x.GorevBasTarihi.Value.Subtract(gorevBitTarihi).TotalMinutes <= 60);
+                            var query = stenoEntity.Where(x => x.BirlesimId != item.BirlesimId &&
+                                                               x.StenografId == item.StenografId &&
+                                                               x.GorevStatu != GorevStatu.Iptal &&
+                                                               x.GorevBasTarihi.Value.Subtract(gorevBitTarihi).TotalMinutes > 0 &&
+                                                               x.GorevBasTarihi.Value.Subtract(gorevBitTarihi).TotalMinutes <= 60);
 
-                            //item.StenoToplantiVar = (query != null && query.Count() > 0) || (maxBitis.HasValue && maxBitis.Value.AddMinutes(sure * 9) >= gorevBitTarihi) ? true : false;
+                            item.StenoToplantiVar = (query != null && query.Count() > 0) || (maxBitis.HasValue && maxBitis.Value.AddMinutes(sure * 9) >= gorevBitTarihi) ? true : false;
                             sure = gorevturu == (int)StenoGorevTuru.Stenograf ? birlesim.StenoSure : birlesim.UzmanStenoSure;
                         }
                         else
