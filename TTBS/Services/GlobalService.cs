@@ -15,6 +15,7 @@ namespace TTBS.Services
         Komisyon GetKomisyonById(Guid id);
         Donem GetDonemById(Guid id);
         Yasama GetYasamaById(Guid id);
+        public IEnumerable<Yasama> GetYasamaByDonemId(Guid id);
         void CreateDonem(Donem donem);
         void CreateYasama(Yasama donem);
         void CreateBirlesim(Birlesim birlesim);
@@ -266,6 +267,11 @@ namespace TTBS.Services
         public Yasama GetYasamaById(Guid id)
         {
             return _yasamaRepo.GetById(id);
+        }
+
+        public IEnumerable<Yasama> GetYasamaByDonemId(Guid id)
+        {
+            return _yasamaRepo.Get(x => x.DonemId == id).OrderBy(x => x.BaslangicTarihi);
         }
 
         public void CreateYasama(Yasama yasama)
