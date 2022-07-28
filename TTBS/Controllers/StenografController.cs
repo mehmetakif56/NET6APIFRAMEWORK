@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TTBS.Core.Entities;
 using TTBS.Core.Enums;
+using TTBS.Core.Interfaces;
 using TTBS.Models;
 using TTBS.Services;
 
@@ -15,13 +16,15 @@ namespace TTBS.Controllers
         private readonly IGlobalService _globalService;
         private readonly ILogger<StenografController> _logger;
         public readonly IMapper _mapper;
+        private IRepository<StenoToplamGenelSure> _stenoToplamSureRepo;
 
-        public StenografController(IStenografService stenoService, IGlobalService globalService, ILogger<StenografController> logger, IMapper mapper)
+        public StenografController(IRepository<StenoToplamGenelSure> stenoToplamSureRepo, IStenografService stenoService, IGlobalService globalService, ILogger<StenografController> logger, IMapper mapper)
         {
             _stenoService = stenoService;
             _globalService = globalService;
             _logger = logger;
             _mapper = mapper;
+            _stenoToplamSureRepo = stenoToplamSureRepo;
         }
         #region KomisyonToplanma
 
@@ -65,26 +68,41 @@ namespace TTBS.Controllers
             double sure = 0, toplam = 0;
             foreach (var komisyon in komisyonAndBirlesimEntity)
             {
-                foreach(var steno in stenoEntity)
+                foreach (var steno in stenoEntity)
                 {
                     StenoSureFarkModel stenoSureFarkModel = new StenoSureFarkModel();
                     sure = 0;
-                    foreach (var istatistik in istatistikEntity)
+                    foreach (var istatistik in komisyon.GorevAtamas)
                     {
-                        if(steno.Id == istatistik.StenoId && komisyon.Id == istatistik.BirlesimId)
+                        if (steno.Id == istatistik.StenografId)
                         {
-                            sure = istatistik.Sure;
+                            sure = sure + istatistik.GorevBitisTarihi.Value.Subtract(istatistik.GorevBasTarihi.Value).Minutes;
                         }
-                        
+
                     }
                     stenoSureFarkModel.AdSoyad = steno.AdSoyad;
                     stenoSureFarkModel.Id = steno.Id;
                     stenoSureFarkModel.Sure = sure;
                     stenoSureFarkModel.BirlesimId = komisyon.Id;
-                    stenoSureFarkModel.ToplanmaTuru = komisyon.ToplanmaTuru;
                     sureFarks.Add(stenoSureFarkModel);
+
+                    StenoToplamGenelSure x = new StenoToplamGenelSure();
+                    x.Sure = sure;
+                    x.StenoId = steno.Id;
+                    x.BirlesimId = komisyon.Id;
+                    x.GroupId = grupId;
+                    x.Tarih = (DateTime)komisyon.BaslangicTarihi;
+                    x.YasamaId = new Guid("DDC86742-737D-45EF-A067-D3BF3FFAE4AA");
+
+                    if (sure != 0)
+                    {
+                        _globalService.InsertStenoToplamSure(x);
+                    }
+
                 }
             }
+
+            _stenoToplamSureRepo.Save();
 
             var komisyonModel= _mapper.Map<IEnumerable<HaftalikSureIStatistikModel>>(komisyonAndBirlesimEntity);
             var stenoModel = _mapper.Map<IEnumerable<StenoModel>>(stenoEntity);
