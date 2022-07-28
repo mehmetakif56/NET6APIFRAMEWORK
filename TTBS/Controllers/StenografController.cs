@@ -301,25 +301,26 @@ namespace TTBS.Controllers
                     var ste = model.Where(x => x.StenografId == model.FirstOrDefault().StenografId);
                     var stenoToplamSureAsım = ste.Max(x => x.GorevBitisTarihi.Value).Subtract(ste.Min(x => x.GorevBasTarihi.Value)).TotalMinutes <= 50;
 
-                    Parallel.ForEach(model, item =>
-                   {
+                    foreach (var item in model)
+                    {
 
-                       var iz = birlesimList.Where(x => x.StenografId == item.StenografId).SelectMany(x => x.Stenograf.StenoIzins)
+                        var iz = birlesimList.Where(x => x.StenografId == item.StenografId).SelectMany(x => x.Stenograf.StenoIzins)
                                            .Where(x => x.BaslangicTarihi.Value <= gorevBitTarihi &&
                                                        x.BitisTarihi.Value >= gorevBitTarihi);
                        item.StenoIzinTuru = iz != null && iz.Count() > 0 ? iz.Select(x => x.IzinTuru).FirstOrDefault() : 0;
 
                        if (birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul)
                        {
-                           var maxBitis = model.FirstOrDefault().GorevBitisTarihi;//   stenoEntity.Where(x => x.BirlesimId != item.BirlesimId && x.StenografId == item.StenografId && x.GorevStatu != GorevStatu.Iptal).Max(x => x.GorevBitisTarihi);
+                           var maxBitis =    stenoEntity.Where(x => x.BirlesimId != item.BirlesimId && x.StenografId == item.StenografId && x.GorevStatu != GorevStatu.Iptal).Max(x => x.GorevBitisTarihi);
+                           var query = new List<StenoGorevModel>();
 
-                           var query = stenoEntity.Where(x => x.BirlesimId != item.BirlesimId &&
-                                                              x.StenografId == item.StenografId &&
-                                                              x.GorevStatu != GorevStatu.Iptal &&
-                                                              x.GorevBasTarihi.Value.Subtract(gorevBitTarihi).TotalMinutes > 0 &&
-                                                              x.GorevBasTarihi.Value.Subtract(gorevBitTarihi).TotalMinutes <= 60);
+                           //var query = stenoEntity.Where(x => x.BirlesimId != item.BirlesimId &&
+                           //                                   x.StenografId == item.StenografId &&
+                           //                                   x.GorevStatu != GorevStatu.Iptal &&
+                           //                                   x.GorevBasTarihi.Value.Subtract(gorevBitTarihi).TotalMinutes > 0 &&
+                           //                                   x.GorevBasTarihi.Value.Subtract(gorevBitTarihi).TotalMinutes <= 60);
 
-                           item.StenoToplantiVar = true ;
+                           item.StenoToplantiVar = (query != null && query.Count() > 0) || (maxBitis.HasValue && maxBitis.Value.AddMinutes(sure * 9) >= gorevBitTarihi) ? true : false;
                            sure = gorevturu == (int)StenoGorevTuru.Stenograf ? birlesim.StenoSure : birlesim.UzmanStenoSure;
                        }
                        else
@@ -352,7 +353,7 @@ namespace TTBS.Controllers
 
                        item.StenoToplamSureAsım = stenoToplamSureAsım;
                        lst.Add(item);
-                   });
+                   };
                 }
             }
             //var entity = Mapper.Map<List<GorevAtama>>(model);
