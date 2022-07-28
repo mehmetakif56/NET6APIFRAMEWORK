@@ -284,7 +284,7 @@ namespace TTBS.Controllers
         public List<StenoGorevModel> GetStenoGorevByBirlesimId(Guid birlesimId, int gorevturu)
         {
             var lst = new List<StenoGorevModel>();
-            var stenoEntity = _stenoService.GetStenoGorevByGorevTuru(gorevturu, birlesimId);
+            var stenoEntity = _stenoService.GetStenoGorevByGorevTuru(gorevturu);
             //var model = _mapper.Map<List<StenoGorevModel>>(stenoEntity);
 
             if (stenoEntity != null && stenoEntity.Count() > 0)
