@@ -433,7 +433,7 @@ namespace TTBS.Services
         public Guid InsertStenoToplamSure(StenoToplamGenelSure stenoToplamGenelSure)
         {
             _stenoToplamSureRepo.Create(stenoToplamGenelSure, CurrentUser.Id);
-            //_stenoToplamSureRepo.Save();
+            _stenoToplamSureRepo.Save();
 
             return stenoToplamGenelSure.Id;
         }
