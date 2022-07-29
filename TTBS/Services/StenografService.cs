@@ -52,8 +52,8 @@ namespace TTBS.Services
         IEnumerable<Birlesim> GetBirlesimByDate(DateTime basTarihi, int toplanmaTuru);
         void ChangeSureStenografKomisyon(Guid gorevAtamaId, double sure, bool digerAtamalarDahil = false);
 
-        IEnumerable<Birlesim> GetKomisyonByDateAndGroup(DateTime baslangic, DateTime bitis, Guid grup);
-        IEnumerable<Birlesim> GetBirlesimByDateAndGroup(DateTime baslangic, DateTime bitis, Guid grup);
+        IEnumerable<Birlesim> GetKomisyonByDateAndGroup(DateTime? baslangic, DateTime? bitis, Guid? yasamaId, Guid grup);
+        IEnumerable<Birlesim> GetBirlesimByDateAndGroup(DateTime? baslangic, DateTime? bitis, Guid? yasamaId, Guid grup);
         void CreateStenoGorevDonguEkle(Guid birlesimId, Guid oturumId, IEnumerable<GorevAtama> stenoEntity, int gorevTur);
     }
     public class StenografService : BaseService, IStenografService
@@ -844,16 +844,30 @@ namespace TTBS.Services
             }
         }
 
-        public IEnumerable<Birlesim> GetKomisyonByDateAndGroup(DateTime baslangic, DateTime bitis, Guid grup)
+        public IEnumerable<Birlesim> GetKomisyonByDateAndGroup(DateTime? baslangic, DateTime? bitis, Guid? yasamaId, Guid grup)
         {
+            if(yasamaId == null)
+            {
+                // TODO : Toplantı ve görev statülerini == yap
+                return _birlesimRepo.Get(x => x.ToplanmaTuru == ToplanmaTuru.Komisyon && x.BaslangicTarihi >= baslangic && x.BaslangicTarihi <= bitis, includeProperties: "Komisyon").Where(x => x.ToplanmaDurumu != ToplanmaStatu.Tamamlandı);
+            }
+            
             // TODO : Toplantı ve görev statülerini == yap
-            return _birlesimRepo.Get(x => x.ToplanmaTuru == ToplanmaTuru.Komisyon && x.BaslangicTarihi >= baslangic && x.BaslangicTarihi <= bitis, includeProperties: "Komisyon").Where(x => x.ToplanmaDurumu != ToplanmaStatu.Tamamlandı);
+            return _birlesimRepo.Get(x => x.ToplanmaTuru == ToplanmaTuru.Komisyon && x.YasamaId == yasamaId, includeProperties: "Komisyon").Where(x => x.ToplanmaDurumu != ToplanmaStatu.Tamamlandı);
+            
         }
 
-        public IEnumerable<Birlesim> GetBirlesimByDateAndGroup(DateTime baslangic, DateTime bitis, Guid grup)
+        public IEnumerable<Birlesim> GetBirlesimByDateAndGroup(DateTime? baslangic, DateTime? bitis, Guid? yasamaId, Guid grup)
         {
+            if(yasamaId == null)
+            {
+                // TODO : Toplantı ve görev statülerini == yap
+                return _birlesimRepo.Get(x => x.ToplanmaTuru == ToplanmaTuru.GenelKurul && x.BaslangicTarihi >= baslangic && x.BaslangicTarihi <= bitis).Where(x => x.ToplanmaDurumu != ToplanmaStatu.Tamamlandı);
+            }
+
             // TODO : Toplantı ve görev statülerini == yap
-            return _birlesimRepo.Get(x => x.ToplanmaTuru == ToplanmaTuru.GenelKurul && x.BaslangicTarihi >= baslangic && x.BaslangicTarihi <= bitis).Where(x => x.ToplanmaDurumu != ToplanmaStatu.Tamamlandı);
+            return _birlesimRepo.Get(x => x.ToplanmaTuru == ToplanmaTuru.GenelKurul && x.YasamaId == yasamaId).Where(x => x.ToplanmaDurumu != ToplanmaStatu.Tamamlandı);
+
         }
 
     }

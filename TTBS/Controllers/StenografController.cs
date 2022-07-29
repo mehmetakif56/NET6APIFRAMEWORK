@@ -51,15 +51,21 @@ namespace TTBS.Controllers
         }
 
         [HttpGet("GetWeeklyStatisticstKomisyonAndBirlesimByDateAndGroup")]
-        public StenoGroupStatisticsModel GetWeeklyStatisticstKomisyonAndBirlesimByDateAndGroup(DateTime baslangic, DateTime bitis, Guid grupId)
+        public StenoGroupStatisticsModel GetWeeklyStatisticstKomisyonAndBirlesimByDateAndGroup(DateTime? baslangic, DateTime? bitis, Guid? yasamaId, Guid grupId)
         {
             StenoGroupStatisticsModel model = new StenoGroupStatisticsModel();
             List<StenoSureFarkModel> sureFarks = new List<StenoSureFarkModel>();
             var stenoEntity = _stenoService.GetAllStenografByGroupId(grupId);
-            var komisyonEntity = _stenoService.GetKomisyonByDateAndGroup(baslangic, bitis, grupId);
-            var birlesimEntity = _stenoService.GetBirlesimByDateAndGroup(baslangic, bitis, grupId);
+            var komisyonEntity = _stenoService.GetKomisyonByDateAndGroup(baslangic, bitis, yasamaId, grupId);
+            var birlesimEntity = _stenoService.GetBirlesimByDateAndGroup(baslangic, bitis, yasamaId, grupId);
             var komisyonAndBirlesimEntity = komisyonEntity.Concat(birlesimEntity).OrderByDescending(x => x.ToplanmaTuru);
-            var istatistikEntity = _globalService.GetGrupToplamSureByDate(grupId, baslangic, bitis);
+            var istatistikEntity = _globalService.GetGrupToplamSureByDate(grupId, baslangic, bitis, yasamaId);
+
+            // Burada uzman stenografların sayfa sayıları da performansa eklenecek
+            //if(stenoEntity.First().StenoGorevTuru == StenoGorevTuru.Uzman)
+            //{
+
+            //}
 
 
             double sure = 0, toplam = 0;

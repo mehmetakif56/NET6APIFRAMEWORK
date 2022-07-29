@@ -48,7 +48,7 @@ namespace TTBS.Services
         IEnumerable<Oturum> GetOturumByBirlesimId(Guid id);
         Guid InsertStenoToplamSure(StenoToplamGenelSure stenoToplamGenelSure);
         void DeleteStenoToplamSure(Guid id);
-        IEnumerable<StenoToplamGenelSure> GetGrupToplamSureByDate(Guid groupId, DateTime baslangic, DateTime bitis);
+        IEnumerable<StenoToplamGenelSure> GetGrupToplamSureByDate(Guid groupId, DateTime? baslangic, DateTime? bitis, Guid? yasamaId);
         public double GetStenoSureWeeklyById(Guid? stenoId);
         public double GetStenoSureYearlyById(Guid? stenoId);
         public double GetStenoSureDailyById(Guid? stenoId);
@@ -454,9 +454,13 @@ namespace TTBS.Services
             }
         }
 
-        public IEnumerable<StenoToplamGenelSure> GetGrupToplamSureByDate(Guid groupId, DateTime baslangic, DateTime bitis)
+        public IEnumerable<StenoToplamGenelSure> GetGrupToplamSureByDate(Guid groupId, DateTime? baslangic, DateTime? bitis, Guid? yasamaId)
         {
-            return _stenoToplamSureRepo.Get(x => x.GroupId == groupId && x.Tarih >= baslangic && x.Tarih <= bitis);
+            if(yasamaId == null)
+            {
+                return _stenoToplamSureRepo.Get(x => x.GroupId == groupId && x.Tarih >= baslangic && x.Tarih <= bitis);
+            }
+            return _stenoToplamSureRepo.Get(x => x.GroupId == groupId && x.YasamaId == yasamaId);
         }
 
         public double GetStenoSureDailyById(Guid? stenoId)
