@@ -27,7 +27,7 @@ namespace TTBS.Services
         List<GorevAtama> GetStenoGorevBySatatus(int status);
         IEnumerable<Stenograf> GetAllStenografByGroupId(Guid? groupId);
         void CreateStenograf(Stenograf stenograf);
-        IEnumerable<Stenograf> GetAllStenografByGorevTuru(int gorevTuru);
+        IEnumerable<Stenograf> GetAllStenografByGorevTuru(int? gorevTuru);
         void DeleteStenoGorev(Guid stenoGorevId);
         void DeleteGorevByBirlesimIdAndStenoId(Guid birlesimId, Guid stenografId);
         IEnumerable<GorevAtama> GetStenoGorevByGrupId(Guid id);
@@ -316,6 +316,31 @@ namespace TTBS.Services
             }
         }
 
+        private int GetSaatFarkStenograf(List<Guid> stenoList, Guid birlesimId,DateTime gorevBitTarihi)
+        {
+            //var resultMax = GetMaxbitTarihStenograf(stenoList, birlesim.Id);
+            //var resultFark = GetSaatFarkStenograf(stenoList, birlesim.Id, birlesim.BaslangicTarihi.Value);
+            var result = _stenoGorevRepo.Get(x => x.BirlesimId != birlesimId &&
+                                             stenoList.Contains(x.StenografId) &&
+                                             x.GorevStatu != GorevStatu.Iptal &&
+                                             x.GorevBasTarihi.Value.Subtract(gorevBitTarihi).TotalMinutes > 0 &&
+                                             x.GorevBasTarihi.Value.Subtract(gorevBitTarihi).TotalMinutes <= 60);
+             return result !=null && result.Count() >0 ? result.Count() : 0;
+        }
+
+        private List<KeyValuePair<Guid, DateTime?>> GetMaxbitTarihStenograf(List<Guid> stenoList, Guid birlesimId)
+        {
+            var listKeys = new List<KeyValuePair<Guid, DateTime?>>();
+
+            var result = _stenoGorevRepo.Get(x => x.BirlesimId != birlesimId && stenoList.Contains(x.StenografId) && x.GorevStatu != GorevStatu.Iptal).GroupBy(x => x.StenografId).Select(g => new
+            {
+                StenografId = g.Key,
+                MaxDate = g.Max(row => row.GorevBitisTarihi)
+            });
+            result.ToList().ForEach(x => listKeys.Add(new KeyValuePair<Guid, DateTime?>(x.StenografId, x.MaxDate)));
+            return listKeys;
+        }
+
         public void CreateStenoGorevAtama(GorevAtama entity)
         {
             var birlesim = _birlesimRepo.GetById(entity.BirlesimId);
@@ -554,9 +579,12 @@ namespace TTBS.Services
             _stenografRepo.Create(entity, CurrentUser.Id);
             _stenografRepo.Save();
         }
-        public IEnumerable<Stenograf> GetAllStenografByGorevTuru(int gorevTuru)
+        public IEnumerable<Stenograf> GetAllStenografByGorevTuru(int? gorevTuru)
         {
-            return _stenografRepo.Get(x => (int)x.StenoGorevTuru == gorevTuru, includeProperties: "GorevAtamas");
+            if(gorevTuru != null)
+                  return _stenografRepo.Get(x => (int)x.StenoGorevTuru == gorevTuru, includeProperties: "GorevAtamas");
+            else
+                return _stenografRepo.Get(includeProperties: "GorevAtamas");
         }
 
         public void DeleteStenoGorev(Guid stenoGorevId)

@@ -317,9 +317,8 @@ namespace TTBS.Controllers
 
                        if (birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul)
                        {
-                            var maxBitis = model.FirstOrDefault().GorevBitisTarihi; //  stenoEntity.Where(x => x.GorevBasTarihi.Value.ToShortDateString() == DateTime.Today.ToShortDateString() && x.BirlesimId != item.BirlesimId && x.StenografId == item.StenografId && x.GorevStatu != GorevStatu.Iptal).Max(x => x.GorevBitisTarihi);
-                          
-
+                            var maxBitis =  stenoEntity.Where(x => x.BirlesimId != item.BirlesimId && x.StenografId == item.StenografId && x.GorevStatu != GorevStatu.Iptal).Max(x => x.GorevBitisTarihi);
+     
                             var query = stenoEntity.Where(x => x.BirlesimId != item.BirlesimId &&
                                                                x.StenografId == item.StenografId &&
                                                                x.GorevStatu != GorevStatu.Iptal &&
@@ -580,7 +579,7 @@ namespace TTBS.Controllers
         }
 
         [HttpGet("GetAllStenografByGorevTuru")]
-        public IEnumerable<StenoModel> GetAllStenografByGorevTuru(int gorevTuru)
+        public IEnumerable<StenoModel> GetAllStenografByGorevTuru(int? gorevTuru)
         {
             var stenoEntity = _stenoService.GetAllStenografByGorevTuru(gorevTuru);
             var model = _mapper.Map<IEnumerable<StenoModel>>(stenoEntity);
