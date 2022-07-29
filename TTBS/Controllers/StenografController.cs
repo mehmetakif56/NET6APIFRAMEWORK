@@ -54,60 +54,63 @@ namespace TTBS.Controllers
         }
 
         [HttpGet("GetWeeklyStatisticstKomisyonAndBirlesimByDateAndGroup")]
-        public StenoGroupStatisticsModel GetWeeklyStatisticstKomisyonAndBirlesimByDateAndGroup(DateTime baslangic, DateTime bitis, Guid grupId)
+        public StenoGroupStatisticsModel GetWeeklyStatisticstKomisyonAndBirlesimByDateAndGroup(DateTime baslangic, DateTime bitis)
         {
             StenoGroupStatisticsModel model = new StenoGroupStatisticsModel();
-            List<StenoSureFarkModel> sureFarks = new List<StenoSureFarkModel>();
-            var stenoEntity = _stenoService.GetAllStenografByGroupId(grupId);
-            var komisyonEntity = _stenoService.GetKomisyonByDateAndGroup(baslangic, bitis, grupId);
-            var birlesimEntity = _stenoService.GetBirlesimByDateAndGroup(baslangic, bitis, grupId);
-            var komisyonAndBirlesimEntity = komisyonEntity.Concat(birlesimEntity).OrderByDescending(x => x.ToplanmaTuru);
-            var istatistikEntity = _globalService.GetGrupToplamSureByDate(grupId, baslangic, bitis);
-
-
-            double sure = 0, toplam = 0;
-            foreach (var komisyon in komisyonAndBirlesimEntity)
+            var grups = _globalService.GetAllGrup(0).Concat(_globalService.GetAllGrup(1));
+            foreach (var grup in grups)
             {
-                foreach (var steno in stenoEntity)
+                var grupId = grup.Id;
+                List<StenoSureFarkModel> sureFarks = new List<StenoSureFarkModel>();
+                var stenoEntity = _stenoService.GetAllStenografByGroupId(grupId);
+                var komisyonEntity = _stenoService.GetKomisyonByDateAndGroup(baslangic, bitis, grupId);
+                var birlesimEntity = _stenoService.GetBirlesimByDateAndGroup(baslangic, bitis, grupId);
+                var komisyonAndBirlesimEntity = komisyonEntity.Concat(birlesimEntity).OrderByDescending(x => x.ToplanmaTuru);
+                var istatistikEntity = _globalService.GetGrupToplamSureByDate(grupId, baslangic, bitis);
+
+
+                double sure = 0, toplam = 0;
+                foreach (var komisyon in komisyonAndBirlesimEntity)
                 {
-                    StenoSureFarkModel stenoSureFarkModel = new StenoSureFarkModel();
-                    sure = 0;
-                    foreach (var istatistik in komisyon.GorevAtamas)
+                    foreach (var steno in stenoEntity)
                     {
-                        if (steno.Id == istatistik.StenografId)
+                        StenoSureFarkModel stenoSureFarkModel = new StenoSureFarkModel();
+                        sure = 0;
+                        foreach (var istatistik in komisyon.GorevAtamas)
                         {
-                            sure = sure + istatistik.GorevBitisTarihi.Value.Subtract(istatistik.GorevBasTarihi.Value).Minutes;
+                            if (steno.Id == istatistik.StenografId)
+                            {
+                                sure = sure + istatistik.GorevBitisTarihi.Value.Subtract(istatistik.GorevBasTarihi.Value).Minutes;
+                            }
+
                         }
+                        stenoSureFarkModel.AdSoyad = steno.AdSoyad;
+                        stenoSureFarkModel.Id = steno.Id;
+                        stenoSureFarkModel.Sure = sure;
+                        stenoSureFarkModel.BirlesimId = komisyon.Id;
+                        sureFarks.Add(stenoSureFarkModel);
 
-                    }
-                    stenoSureFarkModel.AdSoyad = steno.AdSoyad;
-                    stenoSureFarkModel.Id = steno.Id;
-                    stenoSureFarkModel.Sure = sure;
-                    stenoSureFarkModel.BirlesimId = komisyon.Id;
-                    sureFarks.Add(stenoSureFarkModel);
+                        StenoToplamGenelSure x = new StenoToplamGenelSure();
+                        x.Sure = sure;
+                        x.StenoId = steno.Id;
+                        x.BirlesimId = komisyon.Id;
+                        x.BirlesimAd = komisyon.BaslangicTarihi.Value.ToShortDateString() + " " + (komisyon.ToplanmaTuru == ToplanmaTuru.GenelKurul ? komisyon.BirlesimNo : komisyon.Komisyon.Ad);
+                        x.GroupId = grupId;
+                        x.Tarih = (DateTime)komisyon.BaslangicTarihi;
+                        x.YasamaId = new Guid("DDC86742-737D-45EF-A067-D3BF3FFAE4AA");
 
-                    StenoToplamGenelSure x = new StenoToplamGenelSure();
-                    x.Sure = sure;
-                    x.StenoId = steno.Id;
-                    x.BirlesimId = komisyon.Id;
-                    x.GroupId = grupId;
-                    x.Tarih = (DateTime)komisyon.BaslangicTarihi;
-                    x.YasamaId = new Guid("DDC86742-737D-45EF-A067-D3BF3FFAE4AA");
-
-                    if (sure != 0)
-                    {
                         _globalService.InsertStenoToplamSure(x);
+
                     }
-
                 }
+
+                _globalService.Save();
+
+                var komisyonModel = _mapper.Map<IEnumerable<HaftalikSureIStatistikModel>>(komisyonAndBirlesimEntity);
+                var stenoModel = _mapper.Map<IEnumerable<StenoModel>>(stenoEntity);
+                model.komisyons = komisyonModel;
+                model.stenos = sureFarks;
             }
-
-            _stenoToplamSureRepo.Save();
-
-            var komisyonModel= _mapper.Map<IEnumerable<HaftalikSureIStatistikModel>>(komisyonAndBirlesimEntity);
-            var stenoModel = _mapper.Map<IEnumerable<StenoModel>>(stenoEntity);
-            model.komisyons = komisyonModel;
-            model.stenos = sureFarks;
             return model;
         }
 
