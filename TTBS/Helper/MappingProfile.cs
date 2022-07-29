@@ -136,7 +136,8 @@ namespace TTBS.Helper
                 .ForMember(dest => dest.Ad, opt => opt.MapFrom(src => src.ToplanmaTuru == ToplanmaTuru.Komisyon ? src.BaslangicTarihi.Value.ToShortDateString() + " " + src.Komisyon.Ad : src.BaslangicTarihi.Value.ToShortDateString() + " " + src.BirlesimNo + " nolu Birleşim"))
                 .ForMember(dest => dest.toplanmaTuru, opt => opt.MapFrom(src => src.ToplanmaTuru));
 
-            CreateMap<StenoToplamGenelSure, StenoToplamGenelSureModel>();
+            CreateMap<StenoToplamGenelSure, StenoToplamGenelSureModel>()
+                .ForMember(dest => dest.StenografAd, opt => opt.MapFrom(src => src.Stenograf.AdSoyad));
             CreateMap<StenoToplamGenelSureModel, StenoToplamGenelSure>();
 
         }

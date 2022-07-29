@@ -25,6 +25,6 @@ namespace TTBS.Core.Entities
         public int GorevStatu { get; set; } 
         public Guid UserId { get; set; }
         public UserEntity User { get; set; }
-        public virtual ICollection<StenoToplamGenelSure> StenoToplamGenelSures { get; set; }
+       // public virtual ICollection<StenoToplamGenelSure> StenoToplamGenelSures { get; set; }
     }
 }

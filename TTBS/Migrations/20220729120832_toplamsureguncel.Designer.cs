@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TTBS.Infrastructure;
 
@@ -11,9 +12,10 @@ using TTBS.Infrastructure;
 namespace TTBS.Migrations
 {
     [DbContext(typeof(TTBSContext))]
-    partial class TTBSContextModelSnapshot : ModelSnapshot
+    [Migration("20220729120832_toplamsureguncel")]
+    partial class toplamsureguncel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -817,7 +819,10 @@ namespace TTBS.Migrations
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("StenografId")
+                    b.Property<Guid>("StenoId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("StenografId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<double>("Sure")
@@ -1126,10 +1131,8 @@ namespace TTBS.Migrations
             modelBuilder.Entity("TTBS.Core.Entities.StenoToplamGenelSure", b =>
                 {
                     b.HasOne("TTBS.Core.Entities.Stenograf", "Stenograf")
-                        .WithMany()
-                        .HasForeignKey("StenografId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("StenoToplamGenelSures")
+                        .HasForeignKey("StenografId");
 
                     b.Navigation("Stenograf");
                 });
@@ -1207,6 +1210,8 @@ namespace TTBS.Migrations
                     b.Navigation("StenoGrups");
 
                     b.Navigation("StenoIzins");
+
+                    b.Navigation("StenoToplamGenelSures");
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.UserEntity", b =>

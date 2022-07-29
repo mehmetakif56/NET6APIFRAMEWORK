@@ -50,7 +50,7 @@ namespace TTBS.Services
         void DeleteStenoToplamSure(Guid id);
         IEnumerable<StenoToplamGenelSure> GetGrupToplamSureByDate(Guid groupId, DateTime? baslangic, DateTime? bitis, Guid? yasamaId);
         public double GetStenoSureWeeklyById(Guid? stenoId);
-        public double GetStenoSureYearlyById(Guid? stenoId);
+        public double GetStenoSureYearlyById(Guid? stenoId, Guid? yasamaId);
         public double GetStenoSureDailyById(Guid? stenoId);
     }
     public class GlobalService : BaseService, IGlobalService
@@ -479,11 +479,10 @@ namespace TTBS.Services
             return 0;
         }
 
-        public double GetStenoSureYearlyById(Guid? stenoId)
+        public double GetStenoSureYearlyById(Guid? stenoId, Guid? yasamaId)
         {
-            //var result = _stenoToplamSureRepo.Get(x => x.StenoId == stenoId, includeProperties: "Birlesim,Yasama").Where(z => z.Yasama.BitisTarihi == null && z.Birlesim.ToplanmaTuru == ToplanmaTuru.Komisyon || z.Birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul).Select(x => x.Sure).Sum();
-            //return result;
-            return 0;
+            var result = _stenoToplamSureRepo.Get(x => x.StenografId == stenoId && x.YasamaId == yasamaId).Select(x => x.Sure).Sum();
+            return result;
         }
     }
 }

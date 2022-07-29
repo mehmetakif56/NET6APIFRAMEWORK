@@ -693,7 +693,7 @@ namespace TTBS.Services
 
         public IEnumerable<GorevAtama> GetAssignedStenoByBirlesimId(Guid birlesimId)
         {
-            return _stenoGorevRepo.Get(x => x.BirlesimId == birlesimId, includeProperties: "Stenograf.StenoToplamGenelSure");
+            return _stenoGorevRepo.Get(x => x.BirlesimId == birlesimId, includeProperties: "Stenograf,Birlesim");
         }
 
         public void UpdateStenoSiraNo(List<Stenograf> stenoList)
