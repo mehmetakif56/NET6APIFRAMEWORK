@@ -465,18 +465,18 @@ namespace TTBS.Services
 
         public double GetStenoSureDailyById(Guid? stenoId)
         {
-            //DateTime now = DateTime.Now.Date;
-            //var result = _stenoToplamSureRepo.Get(x => x.StenoId == stenoId && x.Tarih < now && x.Tarih >= now.AddDays(-1), includeProperties: "Birlesim").Where(x => x.Birlesim.ToplanmaTuru == ToplanmaTuru.Komisyon || x.Birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul).Select(x => x.Sure).Sum();
-            //return result;
-            return 0;
+            DateTime now = DateTime.Now.Date;
+            var result = _stenoToplamSureRepo.Get(x => x.StenografId == stenoId && x.Tarih < now && x.Tarih >= now.AddDays(-1)).Select(x => x.Sure).Sum();
+            return result;
+            //return 0;
         }
 
         public double GetStenoSureWeeklyById(Guid? stenoId)
         {
-            //DateTime now = DateTime.Now.Date;
-            //var result = _stenoToplamSureRepo.Get(x => x.StenoId == stenoId && x.Tarih < now.AddDays(1) && x.Tarih >= now.AddDays(-7), includeProperties:"Birlesim").Where(x => x.Birlesim.ToplanmaTuru == ToplanmaTuru.Komisyon || x.Birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul).Select(x => x.Sure).Sum();
-            //return result;
-            return 0;
+            DateTime now = DateTime.Now.Date;
+            var result = _stenoToplamSureRepo.Get(x => x.StenografId == stenoId && x.Tarih < now.AddDays(1) && x.Tarih >= now.AddDays(-7)).Select(x => x.Sure).Sum();
+            return result;
+            //return 0;
         }
 
         public double GetStenoSureYearlyById(Guid? stenoId, Guid? yasamaId)
