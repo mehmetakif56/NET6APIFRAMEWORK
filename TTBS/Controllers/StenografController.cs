@@ -104,13 +104,14 @@ namespace TTBS.Controllers
                     }
                 }
 
-                _globalService.Save();
+               
 
                 var komisyonModel = _mapper.Map<IEnumerable<HaftalikSureIStatistikModel>>(komisyonAndBirlesimEntity);
                 var stenoModel = _mapper.Map<IEnumerable<StenoModel>>(stenoEntity);
                 model.komisyons = komisyonModel;
                 model.stenos = sureFarks;
             }
+            _globalService.Save();
             return model;
         }
 
