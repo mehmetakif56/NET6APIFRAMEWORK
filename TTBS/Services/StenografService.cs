@@ -318,6 +318,13 @@ namespace TTBS.Services
 
         private int GetSaatFarkStenograf(List<Guid> stenoList, Guid birlesimId,DateTime gorevBitTarihi)
         {
+            //var gk = _birlesimRepo.Get(x => x.ToplanmaTuru == ToplanmaTuru.GenelKurul && (x.ToplanmaDurumu != ToplanmaStatu.Tamamlandı || x.ToplanmaDurumu == ToplanmaStatu.Iptal));
+            //if(gk != null)
+            //{
+            //    var gorevBitTarihi = gk.FirstOrDefault()..Value;
+            //}
+            //var gorevBitTarihi = model.FirstOrDefault().GorevBitisTarihi.Value;
+
             //var resultMax = GetMaxbitTarihStenograf(stenoList, birlesim.Id);
             //var resultFark = GetSaatFarkStenograf(stenoList, birlesim.Id, birlesim.BaslangicTarihi.Value);
             var result = _stenoGorevRepo.Get(x => x.BirlesimId != birlesimId &&
@@ -686,7 +693,7 @@ namespace TTBS.Services
 
         public IEnumerable<GorevAtama> GetAssignedStenoByBirlesimId(Guid birlesimId)
         {
-            return _stenoGorevRepo.Get(x => x.BirlesimId == birlesimId, includeProperties: "Stenograf");
+            return _stenoGorevRepo.Get(x => x.BirlesimId == birlesimId, includeProperties: "Stenograf.StenoToplamGenelSure");
         }
 
         public void UpdateStenoSiraNo(List<Stenograf> stenoList)
@@ -875,7 +882,7 @@ namespace TTBS.Services
         public IEnumerable<Birlesim> GetKomisyonByDateAndGroup(DateTime baslangic, DateTime bitis, Guid grup)
         {
             // TODO : Toplantı ve görev statülerini == yap
-            return _birlesimRepo.Get(x => x.ToplanmaTuru == ToplanmaTuru.Komisyon && x.BaslangicTarihi >= baslangic && x.BaslangicTarihi <= bitis, includeProperties: "Komisyon").Where(x => x.ToplanmaDurumu != ToplanmaStatu.Tamamlandı);
+            return _birlesimRepo.Get(x => x.BaslangicTarihi >= baslangic && x.BaslangicTarihi <= bitis,includeProperties:"Komisyon").Where(x => x.ToplanmaDurumu != ToplanmaStatu.Tamamlandı);
         }
 
         public IEnumerable<Birlesim> GetBirlesimByDateAndGroup(DateTime baslangic, DateTime bitis, Guid grup)

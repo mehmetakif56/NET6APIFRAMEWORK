@@ -94,6 +94,7 @@ namespace TTBS.Infrastructure
         private void ConfigureStenoToplamGenelSure(EntityTypeBuilder<StenoToplamGenelSure> builder)
         {
             builder.ToTable("StenoToplamGenelSure");
+            builder.HasIndex(e => e.BirlesimId).IsClustered(false);
         }
 
     }
