@@ -693,7 +693,7 @@ namespace TTBS.Controllers
             });
            
             var model = _mapper.Map<IEnumerable<StenoModel>>(stenoGroup);
-            model.ToList().ForEach(x => { x.HaftalikGorevSuresi = (int)_globalService.GetStenoSureWeeklyById(x.Id); x.YillikGorevSuresi = (int)_globalService.GetStenoSureYearlyById(x.Id); });
+            model.ToList().ForEach(x => { x.GunlukGorevSuresi = _globalService.GetStenoSureDailyById(x.Id); x.HaftalikGorevSuresi = _globalService.GetStenoSureWeeklyById(x.Id); x.YillikGorevSuresi = _globalService.GetStenoSureYearlyById(x.Id); });
             return model;
         }
 

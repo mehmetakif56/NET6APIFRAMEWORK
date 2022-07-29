@@ -61,6 +61,14 @@ namespace TTBS.Controllers
             return model;
         }
 
+        [HttpGet("GetYasamaByDonemId")]
+        public IEnumerable<YasamaModel> GetYasamaByDonemId(Guid id)
+        {
+            var entity = _globalService.GetYasamaByDonemId(id);
+            var model = _mapper.Map<IEnumerable<YasamaModel>>(entity);
+            return model;
+        }
+
         [HttpGet("GetAllYasama")]
         public IEnumerable<YasamaModel> GetAllYasama()
         {
