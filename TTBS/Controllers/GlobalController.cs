@@ -373,7 +373,7 @@ namespace TTBS.Controllers
         [HttpGet("GetStenoToplamSureByGroupAndDate")]
         public List<StenoToplamGenelSureModel> GetStenoToplamSureByGroupAndDate(Guid groupID, DateTime baslangic, DateTime bitis)
         {
-            var entity = _globalService.GetGrupToplamSureByDate(groupID, baslangic, bitis);
+            var entity = _globalService.GetGrupToplamSureByDate(groupID, baslangic, bitis, null);
             return _mapper.Map<List<StenoToplamGenelSureModel>>(entity);
         }
 
