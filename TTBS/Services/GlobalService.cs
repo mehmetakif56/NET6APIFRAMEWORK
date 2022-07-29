@@ -458,9 +458,9 @@ namespace TTBS.Services
         {
             if(yasamaId == null)
             {
-                return _stenoToplamSureRepo.Get(x => x.GroupId == groupId && x.Tarih >= baslangic && x.Tarih <= bitis);
+                return _stenoToplamSureRepo.Get(x => x.GroupId == groupId && x.Tarih >= baslangic && x.Tarih <= bitis, includeProperties:"Stenograf");
             }
-            return _stenoToplamSureRepo.Get(x => x.GroupId == groupId && x.YasamaId == yasamaId);
+            return _stenoToplamSureRepo.Get(x => x.GroupId == groupId && x.YasamaId == yasamaId, includeProperties: "Stenograf");
         }
 
         public double GetStenoSureDailyById(Guid? stenoId)

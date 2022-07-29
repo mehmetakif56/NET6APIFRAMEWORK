@@ -54,52 +54,8 @@ namespace TTBS.Controllers
         public StenoGroupStatisticsModel GetWeeklyStatisticstKomisyonAndBirlesimByDateAndGroup(DateTime? baslangic, DateTime? bitis, Guid? yasamaId, Guid grupId)
         {
             StenoGroupStatisticsModel model = new StenoGroupStatisticsModel();
-            List<StenoSureFarkModel> sureFarks = new List<StenoSureFarkModel>();
-            var stenoEntity = _stenoService.GetAllStenografByGroupId(grupId);
-            var komisyonAndBirlesimEntity = _stenoService.GetBirlesimByDateAndGroup(baslangic, bitis, yasamaId, grupId);
             var istatistikEntity = _globalService.GetGrupToplamSureByDate(grupId, baslangic, bitis, yasamaId);
-
-            // Burada uzman stenografların sayfa sayıları da performansa eklenecek
-            //if(stenoEntity.First().StenoGorevTuru == StenoGorevTuru.Uzman)
-            //{
-
-            //}
-
-            if(stenoEntity.First().StenoGorevTuru == StenoGorevTuru.Stenograf)
-            {
-                komisyonAndBirlesimEntity = komisyonAndBirlesimEntity.Concat(_stenoService.GetKomisyonByDateAndGroup(baslangic, bitis, yasamaId, grupId)).OrderByDescending(x => x.ToplanmaTuru);
-            }
-
-            double sure = 0, toplam = 0;
-
-            komisyonAndBirlesimEntity.ToList().ForEach(k =>
-            {
-                stenoEntity.ToList().ForEach(s =>
-                {
-                    sure = 0;
-                    istatistikEntity.ToList().ForEach(i =>
-                    {
-                        if (s.Id == i.StenoId && k.Id == i.BirlesimId)
-                        {
-                            sure = i.Sure;
-                        }
-                    });
-
-                    sureFarks.Add(new StenoSureFarkModel(){ 
-                        Id = s.Id, 
-                        AdSoyad = s.AdSoyad,
-                        BirlesimId = k.Id,
-                        ToplanmaTuru = k.ToplanmaTuru,
-                        Sure = sure
-                    });
-                });
-            });
-            
-
-            var komisyonModel= _mapper.Map<IEnumerable<HaftalikSureIStatistikModel>>(komisyonAndBirlesimEntity);
-            var stenoModel = _mapper.Map<IEnumerable<StenoModel>>(stenoEntity);
-            model.komisyons = komisyonModel;
-            model.stenos = sureFarks;
+            model.stenoToplamGenelSureModels = _mapper.Map<List<StenoToplamGenelSureModel>>(istatistikEntity);
             return model;
         }
 
