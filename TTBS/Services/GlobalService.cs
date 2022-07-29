@@ -482,7 +482,7 @@ namespace TTBS.Services
         public double GetStenoSureYearlyById(Guid? stenoId)
         {
             //var result = _stenoToplamSureRepo.Get(x => x.StenoId == stenoId, includeProperties: "Birlesim,Yasama").Where(z => z.Yasama.BitisTarihi == null && z.Birlesim.ToplanmaTuru == ToplanmaTuru.Komisyon || z.Birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul).Select(x => x.Sure).Sum();
-            return result;
+            //return result;
             return 0;
         }
     }
