@@ -92,11 +92,12 @@ namespace TTBS.Controllers
 
                         StenoToplamGenelSure x = new StenoToplamGenelSure();
                         x.Sure = sure;
-                        x.StenoId = steno.Id;
+                        x.StenografId = steno.Id;
                         x.BirlesimId = komisyon.Id;
                         x.BirlesimAd = komisyon.BaslangicTarihi.Value.ToShortDateString() + " " + (komisyon.ToplanmaTuru == ToplanmaTuru.GenelKurul ? komisyon.BirlesimNo : komisyon.Komisyon.Ad);
                         x.GroupId = grupId;
                         x.Tarih = (DateTime)komisyon.BaslangicTarihi;
+                        x.ToplantiTur = komisyon.ToplanmaTuru;
                         x.YasamaId = new Guid("DDC86742-737D-45EF-A067-D3BF3FFAE4AA");
 
                         _globalService.InsertStenoToplamSure(x);
