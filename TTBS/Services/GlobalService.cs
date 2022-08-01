@@ -25,6 +25,8 @@ namespace TTBS.Services
         void CreateKomisyon(Komisyon komisyon);
         void CreateGrup(Grup grup);
         void CreateGidenGrup(GidenGrup grup);
+        void UpdateGidenGrup(GidenGrup grup);
+        List<GidenGrup> GetGidenGrup();
         IEnumerable<Grup> GetAllGrup(int grupTuru);
         Grup GetGrupById(Guid id);
         void CreateAltKomisyon(AltKomisyon komisyon);
@@ -482,6 +484,23 @@ namespace TTBS.Services
         public double GetStenoSureYearlyById(Guid? stenoId, Guid? yasamaId)
         {
             var result = _stenoToplamSureRepo.Get(x => x.StenografId == stenoId && x.YasamaId == yasamaId).Select(x => x.Sure).Sum();
+            return result;
+        }
+
+        public void UpdateGidenGrup(GidenGrup grup)
+        {
+            _gidenGrupRepo.Update(grup);
+            _gidenGrupRepo.Save();
+        }
+
+        public List<GidenGrup> GetGidenGrup()
+        {
+            var result = new List<GidenGrup>();
+            var gidenGrup = _gidenGrupRepo.Get().OrderByDescending(x => x.GidenGrupTarihi);
+            if(gidenGrup!=null)
+            {
+                result = _gidenGrupRepo.Get(x => x.GrupId == gidenGrup.FirstOrDefault().GrupId && (x.IsDeleted == true || x.IsDeleted == false)).OrderByDescending(x => x.GidenGrupTarihi).TakeLast(3).ToList();
+            }
             return result;
         }
     }

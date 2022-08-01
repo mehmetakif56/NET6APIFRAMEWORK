@@ -386,6 +386,21 @@ namespace TTBS.Controllers
             return Ok(entity);
 
         }
+        [HttpGet("GetGidenGrup")]
+        public List<GidenGrupOlusturModel> GetGidenGrup()
+        {
+           var gidenGrup= _globalService.GetGidenGrup();
+            var model = _mapper.Map<List<GidenGrupOlusturModel>>(gidenGrup);
+            return model;
+        }
+        [HttpPost("UpdateGidenGrup")]
+        public IActionResult UpdateGidenGrup(GidenGrupOlusturModel model)
+        {
+            var entity = Mapper.Map<GidenGrup>(model);
+            _globalService.UpdateGidenGrup(entity);
+            return Ok(entity);
+
+        }
         #endregion
 
     }
