@@ -809,7 +809,7 @@ namespace TTBS.Services
         public void UpdateBirlesimStenoGorevBaslama(Guid birlesimId, DateTime basTarih, StenoGorevTuru stenoGorevTur)
         {
             var updateList = new List<GorevAtama>();
-            var result = _stenoGorevRepo.Get(x => x.BirlesimId == birlesimId && x.StenoGorevTuru == stenoGorevTur, includeProperties: "Birlesim,Stenograf").OrderBy(x => x.GorevBasTarihi);
+            var result = _stenoGorevRepo.Get(x => x.BirlesimId == birlesimId && x.Stenograf.StenoGorevTuru == stenoGorevTur, includeProperties: "Birlesim,Stenograf").OrderBy(x => x.GorevBasTarihi);
             var resultFirst = result.FirstOrDefault();
             var mindate = resultFirst.GorevBasTarihi.Value;
             var gorevId = resultFirst.Id;
