@@ -12,5 +12,6 @@ namespace TTBS.Models
         public string AltKomisyonAdı { get; set; }
         public Guid Id { get; set; }
         public Guid OturumId { get; set; }
+        public Guid YasamaId { get; set; }
     }
 }
