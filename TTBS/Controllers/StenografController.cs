@@ -50,11 +50,21 @@ namespace TTBS.Controllers
             return model;
         }
 
-        [HttpGet("GetWeeklyStatisticstKomisyonAndBirlesimByDateAndGroup")]
-        public StenoGroupStatisticsModel GetWeeklyStatisticstKomisyonAndBirlesimByDateAndGroup(DateTime? baslangic, DateTime? bitis, Guid? yasamaId, Guid grupId)
+        [HttpGet("GetStenoWeeklyStatisticstKomisyonAndBirlesimByDateAndGroup")]
+        public StenoGroupStatisticsModel GetStenoWeeklyStatisticstKomisyonAndBirlesimByDateAndGroup(DateTime? baslangic, DateTime? bitis, Guid? yasamaId, Guid grupId)
         {
             StenoGroupStatisticsModel model = new StenoGroupStatisticsModel();
             var istatistikEntity = _globalService.GetGrupToplamSureByDate(grupId, baslangic, bitis, yasamaId);
+            model.stenoToplamGenelSureModels = _mapper.Map<List<StenoToplamGenelSureModel>>(istatistikEntity);
+            return model;
+        }
+
+        [HttpGet("GetUzmanWeeklyStatisticstKomisyonAndBirlesimByDateAndGroup")]
+        public StenoGroupStatisticsModel GetUzmanWeeklyStatisticstKomisyonAndBirlesimByDateAndGroup(DateTime? baslangic, DateTime? bitis, Guid? yasamaId, Guid grupId)
+        {
+            StenoGroupStatisticsModel model = new StenoGroupStatisticsModel();
+            var istatistikEntity = _globalService.GetGrupToplamSureByDate(grupId, baslangic, bitis, yasamaId);
+            // TODO : Burada uzman stenografların okuduğu sayfa sayısı de eklenecek editör yapıldıktan sonra kararlaştırılıcak.
             model.stenoToplamGenelSureModels = _mapper.Map<List<StenoToplamGenelSureModel>>(istatistikEntity);
             return model;
         }
