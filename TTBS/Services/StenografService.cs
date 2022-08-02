@@ -3,6 +3,7 @@ using TTBS.Core.Interfaces;
 using System.Linq;
 using TTBS.Core.Enums;
 using TTBS.Core.Extensions;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace TTBS.Services
 {
@@ -68,6 +69,8 @@ namespace TTBS.Services
         private IRepository<Grup> _grupRepo;
         private IRepository<Oturum> _oturumRepo;
         private IRepository<GidenGrup> _gidenGrupRepo;
+        private readonly IMemoryCache _memCache;
+        private const string GorevAtamaCache = "GorevAtamaCache";
         public StenografService(IRepository<StenoIzin> stenoIzinRepo, IRepository<GorevAtama> stenoGorevRepo,
                                 IUnitOfWork unitWork,
                                 IRepository<Stenograf> stenografRepo,
@@ -77,6 +80,7 @@ namespace TTBS.Services
                                 IRepository<Birlesim> birlesimRepo,
                                 IRepository<Oturum> oturumRepo,
                                 IRepository<GidenGrup> gidenGrupRepo,
+                                IMemoryCache memCache,
                                 IServiceProvider provider) : base(provider)
         {
             _stenoIzinRepo = stenoIzinRepo;
@@ -88,6 +92,7 @@ namespace TTBS.Services
             _birlesimRepo = birlesimRepo;
             _oturumRepo = oturumRepo;
             _grupRepo = grupRepo;
+            _memCache = memCache;
             _gidenGrupRepo = gidenGrupRepo;
         }
 
@@ -447,6 +452,7 @@ namespace TTBS.Services
 
                    // UpdateGidenGrup(atamaList);
                 }
+
             }
         }
 
@@ -542,11 +548,6 @@ namespace TTBS.Services
             return _stenoGorevRepo.Get(includeProperties: "Stenograf.StenoIzins,Birlesim");
         }
 
-        //public List<StenoPlan> GetStenoPlanByStatus(int status)
-        //{
-        //    return _stenoPlanRepo.Get(x => (int)x.GorevStatu == status).ToList();
-        //}
-
         public List<GorevAtama> GetStenoGorevBySatatus(int status)
         {
             return _stenoGorevRepo.Get(x => (int)x.GorevStatu == status, includeProperties: "Stenograf").ToList();
@@ -559,7 +560,6 @@ namespace TTBS.Services
             else
                 return _stenoGrupRepo.Get(includeProperties: "Stenograf").Select(x => x.Stenograf);
         }
-
 
         public IEnumerable<Stenograf> GetStenoGorevByTur(int gorevTuru)
         {
@@ -627,69 +627,6 @@ namespace TTBS.Services
             _stenoGrupRepo.Delete(entity);
             _stenoGrupRepo.Save();
         }
-
-        //public List<Stenograf> GetAvaliableStenoBetweenDateBySteno(DateTime basTarihi, DateTime bitTarihi, int stenoGorevTuru,int toplantiTur)
-        //{
-        //    var lst = _stenoBeklemeSure.Get(x => (int)x.PlanTuru == toplantiTur);
-        //    //if(lst !=null && lst.Count()>0)
-        //    //{
-        //    //    basTarihi = basTarihi.AddMinutes(-lst.FirstOrDefault().GorevOnceBeklemeSuresi);
-        //    //    bitTarihi = bitTarihi.AddMinutes(lst.FirstOrDefault().GorevSonraBeklemeSuresi);
-        //    //}
-
-        //    var allList=  new List<Stenograf>();
-        //    var stList = _stenografRepo.Get(x => (int)x.StenoGorevTuru == stenoGorevTuru);
-        //    foreach (var st in stList)
-        //    {
-        //        var cnt = _stenoGorevRepo.Get(x => (basTarihi >= x.StenoPlan.PlanlananBaslangicTarihi && basTarihi <= x.StenoPlan.PlanlananBitisTarihi) || 
-        //                                           (bitTarihi >= x.StenoPlan.PlanlananBaslangicTarihi && bitTarihi <= x.StenoPlan.PlanlananBitisTarihi) ||
-        //                                           (x.StenoPlan.PlanlananBaslangicTarihi>= basTarihi && x.StenoPlan.PlanlananBaslangicTarihi <= bitTarihi) ||
-        //                                           (x.StenoPlan.PlanlananBitisTarihi >= basTarihi && x.StenoPlan.PlanlananBitisTarihi <= bitTarihi),
-        //                                           includeProperties: "StenoPlan,Stenograf").Where(x=>x.StenografId == st.Id);
-        //        st.StenoGorevDurum = cnt!=null && cnt.Count() > 0 ? true : false;
-        //      allList.Add(st);
-        //    }
-        //    return allList;
-
-        //}
-
-        //public IEnumerable<GorevAtama> GetIntersectStenoPlan(Guid stenoPlanId,Guid stenoId)
-        //{
-        //    var plan = _stenoPlanRepo.GetById(stenoPlanId);
-        //    var basTarihi = plan.PlanlananBaslangicTarihi;
-        //    var bitTarihi =plan.PlanlananBitisTarihi;
-
-        //    return _stenoGorevRepo.Get(x => (basTarihi >= x.StenoPlan.PlanlananBaslangicTarihi && basTarihi <= x.StenoPlan.PlanlananBitisTarihi) ||
-        //                                           (bitTarihi >= x.StenoPlan.PlanlananBaslangicTarihi && bitTarihi <= x.StenoPlan.PlanlananBitisTarihi) ||
-        //                                           (x.StenoPlan.PlanlananBaslangicTarihi >= basTarihi && x.StenoPlan.PlanlananBaslangicTarihi <= bitTarihi) ||
-        //                                           (x.StenoPlan.PlanlananBitisTarihi >= basTarihi && x.StenoPlan.PlanlananBitisTarihi <= bitTarihi),
-        //                                           includeProperties: "StenoPlan,Stenograf").Where(x => x.StenografId == stenoId);
-
-        //}
-
-        //public IEnumerable<Stenograf> GetAvaliableStenoBetweenDateByGroup(DateTime basTarihi, DateTime bitTarihi, Guid groupId, int toplantiTur)
-        //{
-        //    var lst = _stenoBeklemeSure.Get(x => (int)x.PlanTuru == toplantiTur);
-        //    //if (lst != null && lst.Count() > 0)
-        //    //{
-        //    //    basTarihi = basTarihi.AddMinutes(-lst.FirstOrDefault().GorevOnceBeklemeSuresi);
-        //    //    bitTarihi = bitTarihi.AddMinutes(lst.FirstOrDefault().GorevSonraBeklemeSuresi);
-        //    //}
-
-        //    var allList = new List<Stenograf>();
-        //    var stList = _stenografRepo.Get(x => x.StenoGrups.Select(x => x.GrupId).Contains(groupId), includeProperties: "StenoGrups");
-        //    foreach (var st in stList)
-        //    {
-        //        var cnt = _stenoGorevRepo.Get(x => (basTarihi >= x.StenoPlan.PlanlananBaslangicTarihi && basTarihi <= x.StenoPlan.PlanlananBitisTarihi) ||
-        //                                          (bitTarihi >= x.StenoPlan.PlanlananBaslangicTarihi && bitTarihi <= x.StenoPlan.PlanlananBitisTarihi) ||
-        //                                          (x.StenoPlan.PlanlananBaslangicTarihi >= basTarihi && x.StenoPlan.PlanlananBaslangicTarihi <= bitTarihi) ||
-        //                                          (x.StenoPlan.PlanlananBitisTarihi >= basTarihi && x.StenoPlan.PlanlananBitisTarihi <= bitTarihi),
-        //                                          includeProperties: "StenoPlan,Stenograf").Where(x => x.StenografId == st.Id);
-        //        st.StenoGorevDurum = cnt != null && cnt.Count() > 0 ? true : false;
-        //        allList.Add(st);
-        //    }
-        //    return allList;
-        //}
 
         public IEnumerable<GorevAtama> GetAssignedStenoByBirlesimId(Guid birlesimId)
         {
@@ -804,7 +741,6 @@ namespace TTBS.Services
                 _stenoGorevRepo.Save();
             }
         }
-
 
         public void UpdateBirlesimStenoGorevBaslama(Guid birlesimId, DateTime basTarih, StenoGorevTuru stenoGorevTur)
         {

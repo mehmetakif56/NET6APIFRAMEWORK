@@ -411,6 +411,12 @@ namespace TTBS.Controllers
                 }
                 else if(ToplanmaBaslatmaStatu.AraVerme == model.ToplanmaBaslatmaStatu)
                 {
+                    var birlesim =_globalService.GetBirlesimById(model.BirlesimId).FirstOrDefault();
+                    if(birlesim != null)
+                    {
+                        birlesim.ToplanmaDurumu = ToplanmaStatu.AraVerme;
+                        _globalService.UpdateBirlesim(birlesim);
+                    }
                     var oturum = _globalService.GetOturumByBirlesimId(model.BirlesimId).Where(x => x.BitisTarihi == null).FirstOrDefault();
                     if(oturum!= null)
                     {
