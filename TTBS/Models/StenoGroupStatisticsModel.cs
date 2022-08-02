@@ -2,7 +2,6 @@
 {
     public class StenoGroupStatisticsModel
     {
-        public IEnumerable<HaftalikSureIStatistikModel> komisyons { get; set; }
-        public List<StenoSureFarkModel> stenos { get; set; }
+        public List<StenoToplamGenelSureModel> stenoToplamGenelSureModels { get; set; }
     }
 }

@@ -50,56 +50,22 @@ namespace TTBS.Controllers
             return model;
         }
 
-        [HttpGet("GetWeeklyStatisticstKomisyonAndBirlesimByDateAndGroup")]
-        public StenoGroupStatisticsModel GetWeeklyStatisticstKomisyonAndBirlesimByDateAndGroup(DateTime? baslangic, DateTime? bitis, Guid? yasamaId, Guid grupId)
+        [HttpGet("GetStenoWeeklyStatisticstKomisyonAndBirlesimByDateAndGroup")]
+        public StenoGroupStatisticsModel GetStenoWeeklyStatisticstKomisyonAndBirlesimByDateAndGroup(DateTime? baslangic, DateTime? bitis, Guid? yasamaId, Guid grupId)
         {
             StenoGroupStatisticsModel model = new StenoGroupStatisticsModel();
-            List<StenoSureFarkModel> sureFarks = new List<StenoSureFarkModel>();
-            var stenoEntity = _stenoService.GetAllStenografByGroupId(grupId);
-            var komisyonAndBirlesimEntity = _stenoService.GetBirlesimByDateAndGroup(baslangic, bitis, yasamaId, grupId);
             var istatistikEntity = _globalService.GetGrupToplamSureByDate(grupId, baslangic, bitis, yasamaId);
+            model.stenoToplamGenelSureModels = _mapper.Map<List<StenoToplamGenelSureModel>>(istatistikEntity);
+            return model;
+        }
 
-            // Burada uzman stenografların sayfa sayıları da performansa eklenecek
-            //if(stenoEntity.First().StenoGorevTuru == StenoGorevTuru.Uzman)
-            //{
-
-            //}
-
-            if(stenoEntity.First().StenoGorevTuru == StenoGorevTuru.Stenograf)
-            {
-                komisyonAndBirlesimEntity = komisyonAndBirlesimEntity.Concat(_stenoService.GetKomisyonByDateAndGroup(baslangic, bitis, yasamaId, grupId)).OrderByDescending(x => x.ToplanmaTuru);
-            }
-
-            double sure = 0, toplam = 0;
-
-            komisyonAndBirlesimEntity.ToList().ForEach(k =>
-            {
-                stenoEntity.ToList().ForEach(s =>
-                {
-                    sure = 0;
-                    istatistikEntity.ToList().ForEach(i =>
-                    {
-                        if (s.Id == i.StenoId && k.Id == i.BirlesimId)
-                        {
-                            sure = i.Sure;
-                        }
-                    });
-
-                    sureFarks.Add(new StenoSureFarkModel(){ 
-                        Id = s.Id, 
-                        AdSoyad = s.AdSoyad,
-                        BirlesimId = k.Id,
-                        ToplanmaTuru = k.ToplanmaTuru,
-                        Sure = sure
-                    });
-                });
-            });
-            
-
-            var komisyonModel= _mapper.Map<IEnumerable<HaftalikSureIStatistikModel>>(komisyonAndBirlesimEntity);
-            var stenoModel = _mapper.Map<IEnumerable<StenoModel>>(stenoEntity);
-            model.komisyons = komisyonModel;
-            model.stenos = sureFarks;
+        [HttpGet("GetUzmanWeeklyStatisticstKomisyonAndBirlesimByDateAndGroup")]
+        public StenoGroupStatisticsModel GetUzmanWeeklyStatisticstKomisyonAndBirlesimByDateAndGroup(DateTime? baslangic, DateTime? bitis, Guid? yasamaId, Guid grupId)
+        {
+            StenoGroupStatisticsModel model = new StenoGroupStatisticsModel();
+            var istatistikEntity = _globalService.GetGrupToplamSureByDate(grupId, baslangic, bitis, yasamaId);
+            // TODO : Burada uzman stenografların okuduğu sayfa sayısı de eklenecek editör yapıldıktan sonra kararlaştırılıcak.
+            model.stenoToplamGenelSureModels = _mapper.Map<List<StenoToplamGenelSureModel>>(istatistikEntity);
             return model;
         }
 
@@ -547,7 +513,16 @@ namespace TTBS.Controllers
         {
             var stenoEntity = _stenoService.GetAllStenografByGroupId(groupId);
             var model = _mapper.Map<IEnumerable<StenoModel>>(stenoEntity);
-            model.ToList().ForEach(x => { x.GorevStatu = -1; x.HaftalikGorevSuresi = (int)_globalService.GetStenoSureWeeklyById(x.Id); x.YillikGorevSuresi = (int)_globalService.GetStenoSureYearlyById(x.Id); });
+            model.ToList().ForEach(x => { x.GorevStatu = -1; });
+            return model;
+        }
+
+        [HttpGet("GetAllStenografWithStatisticsByGroupId")]
+        public IEnumerable<StenoModel> GetAllStenografWithStatisticsByGroupId(Guid? groupId, Guid yasamaId)
+        {
+            var stenoEntity = _stenoService.GetAllStenografByGroupId(groupId);
+            var model = _mapper.Map<IEnumerable<StenoModel>>(stenoEntity);
+            model.ToList().ForEach(x => { x.GorevStatu = -1; x.GunlukGorevSuresi = _globalService.GetStenoSureDailyById(x.Id); x.HaftalikGorevSuresi = (int)_globalService.GetStenoSureWeeklyById(x.Id); x.YillikGorevSuresi = (int)_globalService.GetStenoSureYearlyById(x.Id, yasamaId); });
             return model;
         }
 
@@ -707,9 +682,10 @@ namespace TTBS.Controllers
                 StenoGorevDurum = z.Key.StenoGorevDurum
                 //GorevStatu=(int)z.Key.GorevStatu
             });
-           
+            var yasamaId = stenoEntity.Count() > 0? stenoEntity.First().Birlesim.YasamaId : new Guid("00000000-0000-0000-0000-000000000000");
+
             var model = _mapper.Map<IEnumerable<StenoModel>>(stenoGroup);
-            model.ToList().ForEach(x => { x.GunlukGorevSuresi = _globalService.GetStenoSureDailyById(x.Id); x.HaftalikGorevSuresi = _globalService.GetStenoSureWeeklyById(x.Id); x.YillikGorevSuresi = _globalService.GetStenoSureYearlyById(x.Id); });
+            model.ToList().ForEach(x => { x.GunlukGorevSuresi = _globalService.GetStenoSureDailyById(x.Id); x.HaftalikGorevSuresi = _globalService.GetStenoSureWeeklyById(x.Id); x.YillikGorevSuresi = _globalService.GetStenoSureYearlyById(x.Id, yasamaId); });
             return model;
         }
 

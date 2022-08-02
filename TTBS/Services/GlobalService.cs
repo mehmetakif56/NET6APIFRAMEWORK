@@ -25,6 +25,8 @@ namespace TTBS.Services
         void CreateKomisyon(Komisyon komisyon);
         void CreateGrup(Grup grup);
         void CreateGidenGrup(GidenGrup grup);
+        void UpdateGidenGrup(GidenGrup grup);
+        List<GidenGrup> GetGidenGrup();
         IEnumerable<Grup> GetAllGrup(int grupTuru);
         Grup GetGrupById(Guid id);
         void CreateAltKomisyon(AltKomisyon komisyon);
@@ -50,7 +52,7 @@ namespace TTBS.Services
         void DeleteStenoToplamSure(Guid id);
         IEnumerable<StenoToplamGenelSure> GetGrupToplamSureByDate(Guid groupId, DateTime? baslangic, DateTime? bitis, Guid? yasamaId);
         public double GetStenoSureWeeklyById(Guid? stenoId);
-        public double GetStenoSureYearlyById(Guid? stenoId);
+        public double GetStenoSureYearlyById(Guid? stenoId, Guid? yasamaId);
         public double GetStenoSureDailyById(Guid? stenoId);
     }
     public class GlobalService : BaseService, IGlobalService
@@ -458,32 +460,48 @@ namespace TTBS.Services
         {
             if(yasamaId == null)
             {
-                return _stenoToplamSureRepo.Get(x => x.GroupId == groupId && x.Tarih >= baslangic && x.Tarih <= bitis);
+                return _stenoToplamSureRepo.Get(x => x.GroupId == groupId && x.Tarih >= baslangic && x.Tarih <= bitis, includeProperties:"Stenograf");
             }
-            return _stenoToplamSureRepo.Get(x => x.GroupId == groupId && x.YasamaId == yasamaId);
+            return _stenoToplamSureRepo.Get(x => x.GroupId == groupId && x.YasamaId == yasamaId, includeProperties: "Stenograf");
         }
 
         public double GetStenoSureDailyById(Guid? stenoId)
         {
-            //DateTime now = DateTime.Now.Date;
-            //var result = _stenoToplamSureRepo.Get(x => x.StenoId == stenoId && x.Tarih < now && x.Tarih >= now.AddDays(-1), includeProperties: "Birlesim").Where(x => x.Birlesim.ToplanmaTuru == ToplanmaTuru.Komisyon || x.Birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul).Select(x => x.Sure).Sum();
-            //return result;
-            return 0;
+            DateTime now = DateTime.Now.Date;
+            var result = _stenoToplamSureRepo.Get(x => x.StenografId == stenoId && x.Tarih < now && x.Tarih >= now.AddDays(-1)).Select(x => x.Sure).Sum();
+            return result;
+            //return 0;
         }
 
         public double GetStenoSureWeeklyById(Guid? stenoId)
         {
-            //DateTime now = DateTime.Now.Date;
-            //var result = _stenoToplamSureRepo.Get(x => x.StenoId == stenoId && x.Tarih < now.AddDays(1) && x.Tarih >= now.AddDays(-7), includeProperties:"Birlesim").Where(x => x.Birlesim.ToplanmaTuru == ToplanmaTuru.Komisyon || x.Birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul).Select(x => x.Sure).Sum();
-            //return result;
-            return 0;
+            DateTime now = DateTime.Now.Date;
+            var result = _stenoToplamSureRepo.Get(x => x.StenografId == stenoId && x.Tarih < now.AddDays(1) && x.Tarih >= now.AddDays(-7)).Select(x => x.Sure).Sum();
+            return result;
+            //return 0;
         }
 
-        public double GetStenoSureYearlyById(Guid? stenoId)
+        public double GetStenoSureYearlyById(Guid? stenoId, Guid? yasamaId)
         {
-            //var result = _stenoToplamSureRepo.Get(x => x.StenoId == stenoId, includeProperties: "Birlesim,Yasama").Where(z => z.Yasama.BitisTarihi == null && z.Birlesim.ToplanmaTuru == ToplanmaTuru.Komisyon || z.Birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul).Select(x => x.Sure).Sum();
-            //return result;
-            return 0;
+            var result = _stenoToplamSureRepo.Get(x => x.StenografId == stenoId && x.YasamaId == yasamaId).Select(x => x.Sure).Sum();
+            return result;
+        }
+
+        public void UpdateGidenGrup(GidenGrup grup)
+        {
+            _gidenGrupRepo.Update(grup);
+            _gidenGrupRepo.Save();
+        }
+
+        public List<GidenGrup> GetGidenGrup()
+        {
+            var result = new List<GidenGrup>();
+            var gidenGrup = _gidenGrupRepo.Get().OrderByDescending(x => x.GidenGrupTarihi);
+            if(gidenGrup!=null)
+            {
+                result = _gidenGrupRepo.Get(x => x.GrupId == gidenGrup.FirstOrDefault().GrupId && (x.IsDeleted == true || x.IsDeleted == false)).OrderByDescending(x => x.GidenGrupTarihi).TakeLast(3).ToList();
+            }
+            return result;
         }
     }
 }

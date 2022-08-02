@@ -89,7 +89,8 @@ namespace TTBS.Helper
                 .ForMember(dest => dest.KomisyonAdı, opt => opt.MapFrom(src => src.Komisyon.Ad))
                 .ForMember(dest => dest.AltKomisyonAdı, opt => opt.MapFrom(src => src.AltKomisyon.Ad))
                 .ForMember(dest => dest.OturumId, opt => 
-                opt.MapFrom(src => src.Oturums.Where(x=>!x.BitisTarihi.HasValue).FirstOrDefault().Id));
+                opt.MapFrom(src => src.Oturums.Where(x=>!x.BitisTarihi.HasValue).FirstOrDefault().Id))
+                .ForMember(dest => dest.YasamaId, opt => opt.MapFrom(src => src.YasamaId));
             CreateMap<BirlesimViewModel, Birlesim>();
 
             //CreateMap<OturumModel, Oturum>();
@@ -136,7 +137,8 @@ namespace TTBS.Helper
                 .ForMember(dest => dest.Ad, opt => opt.MapFrom(src => src.ToplanmaTuru == ToplanmaTuru.Komisyon ? src.BaslangicTarihi.Value.ToShortDateString() + " " + src.Komisyon.Ad : src.BaslangicTarihi.Value.ToShortDateString() + " " + src.BirlesimNo + " nolu Birleşim"))
                 .ForMember(dest => dest.toplanmaTuru, opt => opt.MapFrom(src => src.ToplanmaTuru));
 
-            CreateMap<StenoToplamGenelSure, StenoToplamGenelSureModel>();
+            CreateMap<StenoToplamGenelSure, StenoToplamGenelSureModel>()
+                .ForMember(dest => dest.StenografAd, opt => opt.MapFrom(src => src.Stenograf.AdSoyad));
             CreateMap<StenoToplamGenelSureModel, StenoToplamGenelSure>();
 
         }
