@@ -1,9 +1,7 @@
 ﻿using TTBS.Core.Entities;
-using TTBS.Core.Interfaces;
-using System.Linq;
 using TTBS.Core.Enums;
 using TTBS.Core.Extensions;
-using Microsoft.Extensions.Caching.Memory;
+using TTBS.Core.Interfaces;
 
 namespace TTBS.Services
 {
@@ -69,8 +67,6 @@ namespace TTBS.Services
         private IRepository<Grup> _grupRepo;
         private IRepository<Oturum> _oturumRepo;
         private IRepository<GidenGrup> _gidenGrupRepo;
-        private readonly IMemoryCache _memCache;
-        private const string GorevAtamaCache = "GorevAtamaCache";
         public StenografService(IRepository<StenoIzin> stenoIzinRepo, IRepository<GorevAtama> stenoGorevRepo,
                                 IUnitOfWork unitWork,
                                 IRepository<Stenograf> stenografRepo,
@@ -80,7 +76,6 @@ namespace TTBS.Services
                                 IRepository<Birlesim> birlesimRepo,
                                 IRepository<Oturum> oturumRepo,
                                 IRepository<GidenGrup> gidenGrupRepo,
-                                IMemoryCache memCache,
                                 IServiceProvider provider) : base(provider)
         {
             _stenoIzinRepo = stenoIzinRepo;
@@ -92,7 +87,6 @@ namespace TTBS.Services
             _birlesimRepo = birlesimRepo;
             _oturumRepo = oturumRepo;
             _grupRepo = grupRepo;
-            _memCache = memCache;
             _gidenGrupRepo = gidenGrupRepo;
         }
 
