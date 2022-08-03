@@ -13,15 +13,15 @@ namespace TTBS.Controllers
     {
         private readonly IStenografService _stenoService;
         private readonly IGlobalService _globalService;
-        private readonly IMongoDBService _mongoDBService;
+        //private readonly IMongoDBService _mongoDBService;
         private readonly ILogger<StenografController> _logger;
         public readonly IMapper _mapper;
 
-        public StenografController(IStenografService stenoService, IGlobalService globalService, IMongoDBService mongoDBService, ILogger<StenografController> logger, IMapper mapper)
+        public StenografController(IStenografService stenoService, IGlobalService globalService, ILogger<StenografController> logger, IMapper mapper)
         {
             _stenoService = stenoService;
             _globalService = globalService;
-            _mongoDBService = mongoDBService;
+            //_mongoDBService = mongoDBService;
             _logger = logger;
             _mapper = mapper;
         }
