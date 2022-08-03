@@ -13,13 +13,15 @@ namespace TTBS.Controllers
     {
         private readonly IStenografService _stenoService;
         private readonly IGlobalService _globalService;
+        private readonly IMongoDBService _mongoDBService;
         private readonly ILogger<StenografController> _logger;
         public readonly IMapper _mapper;
 
-        public StenografController(IStenografService stenoService, IGlobalService globalService, ILogger<StenografController> logger, IMapper mapper)
+        public StenografController(IStenografService stenoService, IGlobalService globalService, IMongoDBService mongoDBService, ILogger<StenografController> logger, IMapper mapper)
         {
             _stenoService = stenoService;
             _globalService = globalService;
+            _mongoDBService = mongoDBService;
             _logger = logger;
             _mapper = mapper;
         }
@@ -392,7 +394,13 @@ namespace TTBS.Controllers
                 }
                 else if(ToplanmaBaslatmaStatu.DevamEtme == model.ToplanmaBaslatmaStatu)
                 {
-                   var oturum = _globalService.GetOturumByBirlesimId(model.BirlesimId).Where(x => x.BitisTarihi != null).LastOrDefault();
+                    var birlesim = _globalService.GetBirlesimById(model.BirlesimId).FirstOrDefault();
+                    if (birlesim != null)
+                    {
+                        birlesim.ToplanmaDurumu = ToplanmaStatu.DevamEdiyor;
+                        _globalService.UpdateBirlesim(birlesim);
+                    }
+                    var oturum = _globalService.GetOturumByBirlesimId(model.BirlesimId).Where(x => x.BitisTarihi != null).LastOrDefault();
                    var oturumId= _globalService.CreateOturum(new Oturum { BirlesimId = model.BirlesimId, BaslangicTarihi = model.BasTarihi });
                    _stenoService.UpdateBirlesimStenoGorevDevamEtme(model.BirlesimId, model.BasTarihi,model.StenoGorevTuru, oturum.BitisTarihi.Value, oturumId);
                 }
@@ -703,6 +711,12 @@ namespace TTBS.Controllers
             }
             return Ok();
         }
+        //[HttpGet("GetStenoGorevByIdFromMongo")]
+        //public GorevAtamaMongo GetStenoGorevByIdFromMongo(Guid id)
+        //{
+        //   var result = _stenoService.GetStenoGorevByIdFromMongo(id);
+        //    return result;
+        //}
         #endregion
 
     }
