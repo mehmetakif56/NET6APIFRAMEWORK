@@ -90,10 +90,10 @@ namespace TTBS.Controllers
         #region Birlesim
 
         [HttpGet("GetBirlesimById")]
-        public BirlesimModel GetBirlesimById(Guid id)
+        public IEnumerable<BirlesimModel> GetBirlesimById(Guid id)
         {
             var entity = _globalService.GetBirlesimById(id);
-            var model = _mapper.Map<BirlesimModel>(entity);
+            var model = _mapper.Map<IEnumerable<BirlesimModel>>(entity);
             return model;
         }
      
