@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TTBS.Infrastructure;
 
@@ -11,9 +12,10 @@ using TTBS.Infrastructure;
 namespace TTBS.Migrations
 {
     [DbContext(typeof(TTBSContext))]
-    partial class TTBSContextModelSnapshot : ModelSnapshot
+    [Migration("20220805073836_bilsis")]
+    partial class bilsis
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -125,13 +127,14 @@ namespace TTBS.Migrations
 
             modelBuilder.Entity("TTBS.Core.Entities.BirlesimKomisyon", b =>
                 {
-                    b.Property<Guid>("BirlesimId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("KomisyonId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("AltKomisyonId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BirlesimId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CreatedBy")
@@ -146,17 +149,22 @@ namespace TTBS.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<Guid>("KomisyonId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("ModifiedBy")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("BirlesimId", "KomisyonId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("BirlesimId");
 
                     b.HasIndex("KomisyonId");
 
-                    b.ToTable("BirlesimKomisyon", (string)null);
+                    b.ToTable("BirlesimKomisyon");
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.BirlesimOzelToplanma", b =>
@@ -588,9 +596,6 @@ namespace TTBS.Migrations
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("OzelGorevTurId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime?>("Tarih")
                         .HasColumnType("datetime2");
 
@@ -598,8 +603,6 @@ namespace TTBS.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("OzelGorevTurId");
 
                     b.ToTable("OzelToplanma", (string)null);
                 });
@@ -1122,17 +1125,6 @@ namespace TTBS.Migrations
                         .IsRequired();
 
                     b.Navigation("Birlesim");
-                });
-
-            modelBuilder.Entity("TTBS.Core.Entities.OzelToplanma", b =>
-                {
-                    b.HasOne("TTBS.Core.Entities.OzelGorevTur", "OzelGorevTur")
-                        .WithMany()
-                        .HasForeignKey("OzelGorevTurId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("OzelGorevTur");
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.RoleClaimEntity", b =>

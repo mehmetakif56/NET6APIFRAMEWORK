@@ -2,6 +2,7 @@
 using TTBS.Core.Enums;
 using TTBS.Core.Extensions;
 using TTBS.Core.Interfaces;
+using TTBS.MongoDB;
 
 namespace TTBS.Services
 {
@@ -18,10 +19,7 @@ namespace TTBS.Services
         public IEnumerable<Yasama> GetYasamaByDonemId(Guid id);
         void CreateDonem(Donem donem);
         void CreateYasama(Yasama donem);
-        void CreateBirlesim(Birlesim birlesim);
         void DeleteBirlesim(Guid id);
-        Result CreateBirlesimGorevAtama(Birlesim birlesim);
-        Guid CreateOturum(Oturum oturum);
         void CreateKomisyon(Komisyon komisyon);
         void CreateGrup(Grup grup);
         void CreateGidenGrup(GidenGrup grup);
@@ -54,6 +52,7 @@ namespace TTBS.Services
         public double GetStenoSureWeeklyById(Guid? stenoId);
         public double GetStenoSureYearlyById(Guid? stenoId, Guid? yasamaId);
         public double GetStenoSureDailyById(Guid? stenoId);
+        bool GetBirlesimByDate();
     }
     public class GlobalService : BaseService, IGlobalService
     {
@@ -67,11 +66,10 @@ namespace TTBS.Services
         private IRepository<OzelGorevTur> _ozelGorevTurRepo;
         private IRepository<Oturum> _oturumRepo;
         private IUnitOfWork _unitWork;
-        private IRepository<GorevAtama> _stenoGorevRepo;
-        private IRepository<Stenograf> _stenografRepo;
         private IRepository<StenoToplamGenelSure> _stenoToplamSureRepo;
         private IRepository<GidenGrup> _gidenGrupRepo;
         private IRepository<StenoGrup> _stenoGrupRepo;
+
         public GlobalService(IRepository<Donem> donemRepo,
                              IRepository<Yasama> yasamaRepo,
                              IRepository<Birlesim> birlesimRepo,
@@ -82,8 +80,6 @@ namespace TTBS.Services
                              IRepository<OzelGorevTur> ozelGorevTurRepo,
                              IRepository<Oturum> oturumRepo,
                              IUnitOfWork unitWork,
-                             IRepository<GorevAtama> stenoGorevRepo,
-                             IRepository<Stenograf> stenografRepo,
                              IRepository<GidenGrup> gidenGrupRepo,
                              IRepository<StenoGrup> stenoGrupRepo,
                              IRepository<StenoToplamGenelSure> stenoToplamSureRepo,
@@ -99,8 +95,6 @@ namespace TTBS.Services
             _altkomisyonRepo = altkomisyonRepo;
             _ozelGorevTurRepo = ozelGorevTurRepo;
             _oturumRepo = oturumRepo;
-            _stenoGorevRepo = stenoGorevRepo;
-            _stenografRepo = stenografRepo;
             _gidenGrupRepo= gidenGrupRepo;
             _stenoToplamSureRepo = stenoToplamSureRepo;
             _stenoGrupRepo= stenoGrupRepo;
@@ -140,106 +134,7 @@ namespace TTBS.Services
         {
             _donemRepo.Create(donem, CurrentUser.Id);
             _donemRepo.Save();
-        }
-
-        public Result CreateBirlesimGorevAtama(Birlesim birlesim)
-        {
-            var result = new Result();  
-            try
-            {
-                if(!GetBirlesimByDate())
-                {
-                    birlesim.ToplanmaDurumu = ToplanmaStatu.Planlandı;
-                    CreateBirlesim(birlesim);
-
-                    var oturumId = CreateOturum(new Oturum
-                    {
-                        BirlesimId = birlesim.Id,
-                        BaslangicTarihi = birlesim.BaslangicTarihi
-                    });
-
-                    CreateStenoGorevAtamaGenelKurul(birlesim, oturumId);
-                   
-                    result.HasError = false;
-                }
-                else
-                {
-                    result.HasError = true;
-                    result.Message = "Devam eden birlesim olduğundan yeni birlesim oluşturulamaz!";
-                }
-
-            }
-            catch(Exception ex)
-            {
-                result.HasError = true;
-                result.Message = ex.Message;
-            }
-            return result;
-        }
-
-        public void CreateBirlesim(Birlesim birlesim)
-        {
-            _birlesimRepo.Create(birlesim, CurrentUser.Id);
-            _birlesimRepo.Save();
-        }
-
-        public void CreateStenoGorevAtamaGenelKurul(Birlesim birlesim,Guid oturumId)
-        {
-            CreateSteno(birlesim, oturumId);
-            CreateUzmanSteno(birlesim, oturumId);
-        }
-
-        private void CreateUzmanSteno(Birlesim birlesim, Guid oturumId)
-        {
-            var stenoList = _stenografRepo.Get(x => x.StenoGorevTuru == StenoGorevTuru.Uzman,includeProperties: "StenoGrups").OrderBy(x => x.SiraNo);
-            int firstRec = 0;
-            for (int i = 0; i < birlesim.TurAdedi; i++)
-            {
-                var atamaList = new List<GorevAtama>();
-                foreach (var item in stenoList)
-                {
-                    var newEntity = new GorevAtama();
-                    newEntity.BirlesimId = birlesim.Id;
-                    newEntity.OturumId = oturumId;
-                    newEntity.StenografId = item.Id;
-                    newEntity.GorevBasTarihi = birlesim.BaslangicTarihi.HasValue ? birlesim.BaslangicTarihi.Value.AddMinutes(firstRec * birlesim.UzmanStenoSure) : null;
-                    newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.HasValue ? newEntity.GorevBasTarihi.Value.AddMinutes(birlesim.UzmanStenoSure) : null;
-                    newEntity.StenoSure = birlesim.UzmanStenoSure;
-                    newEntity.GorevStatu = item.StenoGrups.Select(x => x.GidenGrupMu).FirstOrDefault() == DurumStatu.Evet && newEntity.GorevBasTarihi.Value.AddMinutes(9 * newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
-                    atamaList.Add(newEntity);
-                    firstRec++;
-                }
-                _stenoGorevRepo.Create(atamaList, CurrentUser.Id);
-                _stenoGorevRepo.Save();
-            }
-        }
-
-        private void CreateSteno(Birlesim birlesim, Guid oturumId)
-        {
-            var stenoList = _stenografRepo.Get(x=>x.StenoGorevTuru == StenoGorevTuru.Stenograf, includeProperties: "StenoGrups").OrderBy(x => x.SiraNo);
-            int firstRec = 0;
-            for (int i = 0; i < birlesim.TurAdedi; i++)
-            {
-                var atamaList = new List<GorevAtama>();
-                foreach (var item in stenoList)
-                {
-                    var newEntity = new GorevAtama();
-                    newEntity.BirlesimId = birlesim.Id;
-                    newEntity.OturumId = oturumId;
-                    newEntity.StenografId = item.Id;
-                    newEntity.GorevBasTarihi = birlesim.BaslangicTarihi.HasValue ? birlesim.BaslangicTarihi.Value.AddMinutes(firstRec * birlesim.StenoSure) : null;
-                    newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.HasValue ? newEntity.GorevBasTarihi.Value.AddMinutes(birlesim.StenoSure) : null;
-                    newEntity.StenoSure = birlesim.StenoSure;
-                    newEntity.GorevStatu = item.StenoGrups.Select(x => x.GidenGrupMu).FirstOrDefault() == DurumStatu.Evet && newEntity.GorevBasTarihi.Value.AddMinutes(9* newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup: GorevStatu.Planlandı;
-                    atamaList.Add(newEntity);
-                    firstRec++;
-                }
-                _stenoGorevRepo.Create(atamaList, CurrentUser.Id);
-                _stenoGorevRepo.Save();
-            }
-        }
-
-      
+        }       
         public void CreateKomisyon(Komisyon komisyon)
         {
             _komisyonRepo.Create(komisyon, CurrentUser.Id);
@@ -253,7 +148,7 @@ namespace TTBS.Services
 
         public IEnumerable<Komisyon> GetAllAltKomisyon()
         {
-            return _komisyonRepo.Get(includeProperties: "AltKomisyons");
+            return _komisyonRepo.Get( includeProperties: "AltKomisyons");
         }
 
         public IEnumerable<AltKomisyon> GetAltKomisyon()
@@ -389,15 +284,7 @@ namespace TTBS.Services
             return _ozelGorevTurRepo.GetById(id);
         }
 
-        public Guid CreateOturum(Oturum oturum)
-        {
-            var otr = _oturumRepo.Get(x => x.BirlesimId == oturum.BirlesimId);
-            if (otr != null && otr.Count()>0)
-                oturum.OturumNo = otr.Max(x => x.OturumNo) + 1;
-            _oturumRepo.Create(oturum, CurrentUser.Id);
-            _oturumRepo.Save();
-            return oturum.Id;
-        }
+      
 
         public void UpdateOturum(Oturum oturum)
         {

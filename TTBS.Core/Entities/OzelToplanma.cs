@@ -17,5 +17,6 @@ namespace TTBS.Core.Entities
         public string Yeri { get; set; }
         public OzelGorevTur OzelGorevTur { get; set; }
         public Guid OzelGorevTurId { get; set; }
+        public virtual ICollection<BirlesimOzelToplanma> BirlesimOzelToplanmas { get; set; }
     }
 }

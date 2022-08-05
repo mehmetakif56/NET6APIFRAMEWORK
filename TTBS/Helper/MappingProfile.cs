@@ -37,7 +37,7 @@ namespace TTBS.Helper
                  .ForMember(dest => dest.Bitissaat, opt => opt.MapFrom(src => src.BitisTarihi.HasValue ? src.BitisTarihi.Value.ToShortTimeString() : ""))
                  .ForMember(dest => dest.ToplamSure, opt => opt.MapFrom(src => src.BitisTarihi.HasValue && src.BaslangicTarihi.HasValue ? (src.BitisTarihi.Value - src.BaslangicTarihi.Value).TotalMinutes : 0))
                  .ForMember(dest => dest.NetSure, opt => opt.MapFrom(src => 0))
-                 .ForMember(dest => dest.GorevAd, opt => opt.MapFrom(src => src.ToplanmaTuru == ToplanmaTuru.Komisyon ? src.Komisyon.Ad + " (" + src.BaslangicTarihi.Value.ToShortDateString() + ")" : (src.ToplanmaTuru == ToplanmaTuru.OzelToplanti ? src.OzelToplanma.Ad + " (" + src.BaslangicTarihi.Value.ToShortDateString() + ")" : src.BirlesimNo + ". Birleşim (" + src.BaslangicTarihi.Value.ToShortDateString() + ")")))
+                 .ForMember(dest => dest.GorevAd, opt => opt.MapFrom(src => src.ToplanmaTuru == ToplanmaTuru.Komisyon ? src.BirlesimKomisyons.FirstOrDefault().Komisyon.Ad + " (" + src.BaslangicTarihi.Value.ToShortDateString() + ")" : (src.ToplanmaTuru == ToplanmaTuru.OzelToplanti ? src.BirlesimOzelToplanmas.FirstOrDefault().OzelToplanma.Ad + " (" + src.BaslangicTarihi.Value.ToShortDateString() + ")" : src.BirlesimNo + ". Birleşim (" + src.BaslangicTarihi.Value.ToShortDateString() + ")")))
                  .ForMember(dest => dest.Ara, opt => opt.MapFrom(src => 0));
             CreateMap<ReportPlanDetayModel, Birlesim>();
 
@@ -86,8 +86,8 @@ namespace TTBS.Helper
             CreateMap<GidenGrup, GidenGrupOlusturModel>();
             
             CreateMap<Birlesim, BirlesimViewModel>()
-                .ForMember(dest => dest.KomisyonAdı, opt => opt.MapFrom(src => src.Komisyon.Ad))
-                .ForMember(dest => dest.AltKomisyonAdı, opt => opt.MapFrom(src => src.AltKomisyon.Ad))
+                .ForMember(dest => dest.KomisyonAdı, opt => opt.MapFrom(src => src.BirlesimKomisyons.FirstOrDefault().Komisyon.Ad))
+                .ForMember(dest => dest.AltKomisyonAdı, opt => opt.MapFrom(src => ""))
                 .ForMember(dest => dest.OturumId, opt => 
                 opt.MapFrom(src => src.Oturums.Where(x=>!x.BitisTarihi.HasValue).FirstOrDefault().Id))
                 .ForMember(dest => dest.YasamaId, opt => opt.MapFrom(src => src.YasamaId));
@@ -134,7 +134,7 @@ namespace TTBS.Helper
             //    .ForMember(x => x.GrupName, c => c.MapFrom(x => x.Grup.Ad));
 
             CreateMap<Birlesim, HaftalikSureIStatistikModel>()
-                .ForMember(dest => dest.Ad, opt => opt.MapFrom(src => src.ToplanmaTuru == ToplanmaTuru.Komisyon ? src.BaslangicTarihi.Value.ToShortDateString() + " " + src.Komisyon.Ad : src.BaslangicTarihi.Value.ToShortDateString() + " " + src.BirlesimNo + " nolu Birleşim"))
+                .ForMember(dest => dest.Ad, opt => opt.MapFrom(src => src.ToplanmaTuru == ToplanmaTuru.Komisyon ? src.BaslangicTarihi.Value.ToShortDateString() + " " + src.BirlesimKomisyons.FirstOrDefault().Komisyon.Ad : src.BaslangicTarihi.Value.ToShortDateString() + " " + src.BirlesimNo + " nolu Birleşim"))
                 .ForMember(dest => dest.toplanmaTuru, opt => opt.MapFrom(src => src.ToplanmaTuru));
 
             CreateMap<StenoToplamGenelSure, StenoToplamGenelSureModel>()

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TTBS.Infrastructure;
 
@@ -11,9 +12,10 @@ using TTBS.Infrastructure;
 namespace TTBS.Migrations
 {
     [DbContext(typeof(TTBSContext))]
-    partial class TTBSContextModelSnapshot : ModelSnapshot
+    [Migration("20220802094635_droppersonl")]
+    partial class droppersonl
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,6 +70,9 @@ namespace TTBS.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("AltKomisyonId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime?>("BaslangicTarihi")
                         .HasColumnType("datetime2");
 
@@ -89,11 +94,17 @@ namespace TTBS.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<Guid>("KomisyonId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("ModifiedBy")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("OzelToplanmaId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("StenoSure")
                         .HasColumnType("decimal(18,2)");
@@ -118,78 +129,15 @@ namespace TTBS.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("YasamaId");
-
-                    b.ToTable("Birlesim", (string)null);
-                });
-
-            modelBuilder.Entity("TTBS.Core.Entities.BirlesimKomisyon", b =>
-                {
-                    b.Property<Guid>("BirlesimId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("KomisyonId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("AltKomisyonId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid?>("ModifiedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("BirlesimId", "KomisyonId");
+                    b.HasIndex("AltKomisyonId");
 
                     b.HasIndex("KomisyonId");
 
-                    b.ToTable("BirlesimKomisyon", (string)null);
-                });
-
-            modelBuilder.Entity("TTBS.Core.Entities.BirlesimOzelToplanma", b =>
-                {
-                    b.Property<Guid>("BirlesimId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("OzelToplanmaId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid?>("ModifiedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("BirlesimId", "OzelToplanmaId");
-
                     b.HasIndex("OzelToplanmaId");
 
-                    b.ToTable("BirlesimOzelToplanma", (string)null);
+                    b.HasIndex("YasamaId");
+
+                    b.ToTable("Birlesim", (string)null);
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.ClaimEntity", b =>
@@ -601,7 +549,7 @@ namespace TTBS.Migrations
 
                     b.HasIndex("OzelGorevTurId");
 
-                    b.ToTable("OzelToplanma", (string)null);
+                    b.ToTable("OzelGorev", (string)null);
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.RoleClaimEntity", b =>
@@ -1036,51 +984,33 @@ namespace TTBS.Migrations
 
             modelBuilder.Entity("TTBS.Core.Entities.Birlesim", b =>
                 {
+                    b.HasOne("TTBS.Core.Entities.AltKomisyon", "AltKomisyon")
+                        .WithMany()
+                        .HasForeignKey("AltKomisyonId");
+
+                    b.HasOne("TTBS.Core.Entities.Komisyon", "Komisyon")
+                        .WithMany()
+                        .HasForeignKey("KomisyonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TTBS.Core.Entities.OzelToplanma", "OzelToplanma")
+                        .WithMany()
+                        .HasForeignKey("OzelToplanmaId");
+
                     b.HasOne("TTBS.Core.Entities.Yasama", "Yasama")
                         .WithMany("Birlesims")
                         .HasForeignKey("YasamaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Yasama");
-                });
-
-            modelBuilder.Entity("TTBS.Core.Entities.BirlesimKomisyon", b =>
-                {
-                    b.HasOne("TTBS.Core.Entities.Birlesim", "Birlesim")
-                        .WithMany("BirlesimKomisyons")
-                        .HasForeignKey("BirlesimId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TTBS.Core.Entities.Komisyon", "Komisyon")
-                        .WithMany("BirlesimKomisyons")
-                        .HasForeignKey("KomisyonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Birlesim");
+                    b.Navigation("AltKomisyon");
 
                     b.Navigation("Komisyon");
-                });
-
-            modelBuilder.Entity("TTBS.Core.Entities.BirlesimOzelToplanma", b =>
-                {
-                    b.HasOne("TTBS.Core.Entities.Birlesim", "Birlesim")
-                        .WithMany("BirlesimOzelToplanmas")
-                        .HasForeignKey("BirlesimId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TTBS.Core.Entities.OzelToplanma", "OzelToplanma")
-                        .WithMany("BirlesimOzelToplanmas")
-                        .HasForeignKey("OzelToplanmaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Birlesim");
 
                     b.Navigation("OzelToplanma");
+
+                    b.Navigation("Yasama");
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.GidenGrup", b =>
@@ -1238,10 +1168,6 @@ namespace TTBS.Migrations
 
             modelBuilder.Entity("TTBS.Core.Entities.Birlesim", b =>
                 {
-                    b.Navigation("BirlesimKomisyons");
-
-                    b.Navigation("BirlesimOzelToplanmas");
-
                     b.Navigation("GorevAtamas");
 
                     b.Navigation("Oturums");
@@ -1267,13 +1193,6 @@ namespace TTBS.Migrations
             modelBuilder.Entity("TTBS.Core.Entities.Komisyon", b =>
                 {
                     b.Navigation("AltKomisyons");
-
-                    b.Navigation("BirlesimKomisyons");
-                });
-
-            modelBuilder.Entity("TTBS.Core.Entities.OzelToplanma", b =>
-                {
-                    b.Navigation("BirlesimOzelToplanmas");
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.RoleEntity", b =>

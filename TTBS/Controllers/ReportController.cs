@@ -8,13 +8,13 @@ namespace TTBS.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ReportController : BaseController<GlobalController>
+    public class ReportController : BaseController<ReportController>
     {
         private readonly IReportService _reportService;
-        private readonly ILogger<GlobalController> _logger;
+        private readonly ILogger<ReportController> _logger;
         public readonly IMapper _mapper;
 
-        public ReportController(IReportService reportService, ILogger<GlobalController> logger, IMapper mapper)
+        public ReportController(IReportService reportService, ILogger<ReportController> logger, IMapper mapper)
         {
             _reportService = reportService;
             _logger = logger;

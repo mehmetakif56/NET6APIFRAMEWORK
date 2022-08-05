@@ -106,26 +106,11 @@ namespace TTBS.Controllers
             return model;
         }
 
-        [HttpPost("CreateBirlesim")]
-        public IActionResult CreateBirlesim(BirlesimModel model)
+       
+
+        private void CheckBirlesim(BirlesimModel model)
         {
-            try
-            {
-                if (model.ToplanmaTuru == ToplanmaTuru.GenelKurul)
-                {
-                    var result = _globalService.CreateBirlesimGorevAtama(SetBirlesimWithMap(model));
-                    if (result.HasError)
-                        return BadRequest(result.Message);
-                }
-                else
-                {
-                    _globalService.CreateBirlesim(SetBirlesimWithMap(model));
-                }
-            }
-            catch (Exception ex)
-            { return BadRequest(ex.Message); }
-            
-            return Ok();
+            //var result = model.ToplanmaTuru == ToplanmaTuru.GenelKurul ? _globalService.GetBirlesimByDate() : false;
         }
 
         [HttpDelete("DeleteBirlesim")]
@@ -142,25 +127,10 @@ namespace TTBS.Controllers
         }
 
 
-        private Birlesim SetBirlesimWithMap(BirlesimModel model)
-        {
-            var birlesimEntity = Mapper.Map<Birlesim>(model);
-            birlesimEntity.TurAdedi = 3;
-            birlesimEntity.ToplanmaDurumu = ToplanmaStatu.Oluşturuldu;
-           return birlesimEntity;
-        }
         #endregion
 
         #region Oturum
 
-        [HttpPost("CreateOturum")]
-        public IActionResult CreateOturum(OturumModel model)
-        {
-            var entity = Mapper.Map<Oturum>(model);
-            _globalService.CreateOturum(entity);
-            return Ok(entity);
-            
-        }
 
         [HttpPost("UpdateOturum")]
         public IActionResult UpdateOturum(OturumModel model)

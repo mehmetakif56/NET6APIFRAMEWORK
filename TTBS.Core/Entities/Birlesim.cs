@@ -18,17 +18,19 @@ namespace TTBS.Core.Entities
         public double StenoSure { get; set; }
         [Column(TypeName = "decimal(18,2)")]
         public double UzmanStenoSure { get; set; }
-        public Komisyon Komisyon { get; set; }
-        public AltKomisyon AltKomisyon { get; set; }
-        public OzelToplanma OzelToplanma { get; set; }
-        public Guid KomisyonId { get; set; } = Guid.Empty;
-        public Guid? AltKomisyonId { get; set; } = Guid.Empty;
-        public Guid? OzelToplanmaId { get; set; } = Guid.Empty;
         public string Yeri { get; set; } = String.Empty;
         public ToplanmaTuru ToplanmaTuru { get; set; }
         public int TurAdedi { get; set; } = 3;
         public ToplanmaStatu ToplanmaDurumu { get; set; }
         public virtual ICollection<Oturum> Oturums { get; set; }
         public virtual ICollection<GorevAtama> GorevAtamas { get; set; }
+        public virtual ICollection<BirlesimOzelToplanma> BirlesimOzelToplanmas { get; set; }
+        public virtual ICollection<BirlesimKomisyon> BirlesimKomisyons { get; set; }
+        [NotMapped]
+        public Guid KomisyonId { get; set; } 
+        [NotMapped]
+        public Guid? AltKomisyonId { get; set; } 
+        [NotMapped]
+        public Guid OzelToplanmaId { get; set; }
     }
 }

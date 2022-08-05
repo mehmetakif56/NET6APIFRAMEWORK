@@ -28,15 +28,13 @@ namespace TTBS.Infrastructure
         public DbSet<UserEntity> Users { get; set; }
         public DbSet<StenografBeklemeSure> StenografBeklemeSures { get; set; }
         public DbSet<OzelGorevTur> OzelGorevTurs { get; set; }
-        public DbSet<OzelToplanma> OzelGorevs { get; set; }
+        public DbSet<OzelToplanma> OzelToplanmas { get; set; }
         public DbSet<Oturum> Oturums { get; set; }
         public DbSet<StenoToplamGenelSure> StenoToplamGenelSures { get; set; }
-
         public DbSet<GidenGrup> GidenGrups { get; set; }
-
         public DbSet<AltKomisyon> AltKomisyons { get; set; }
-
-
+        public DbSet<BirlesimOzelToplanma> BirlesimOzelToplanmas { get; set; }
+        public DbSet<BirlesimKomisyon> BirlesimKomisyons { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -53,12 +51,12 @@ namespace TTBS.Infrastructure
             builder.Entity<AltKomisyon>(ConfigurealtKom);
             builder.Entity<StenografBeklemeSure>(ConfigureBeklemeSure);
             builder.Entity<OzelGorevTur>(ConfigureOzelGorevTur);
-            builder.Entity<OzelToplanma>(ConfigureOzelGorev);
+            builder.Entity<OzelToplanma>(ConfigureOzelToplanma);
             builder.Entity<Oturum>(ConfigureOturum);
             builder.Entity<StenoToplamGenelSure>(ConfigureStenoToplamGenelSure);
             builder.Entity<GidenGrup>(ConfigureGidenGrup);
-
-
+            builder.Entity<BirlesimOzelToplanma>(ConfigureBirlesimOzelToplanma);
+            builder.Entity<BirlesimKomisyon>(ConfigureBirlesimKomisyon);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

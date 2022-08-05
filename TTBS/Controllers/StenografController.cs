@@ -401,7 +401,8 @@ namespace TTBS.Controllers
                         _globalService.UpdateBirlesim(birlesim);
                     }
                     var oturum = _globalService.GetOturumByBirlesimId(model.BirlesimId).Where(x => x.BitisTarihi != null).LastOrDefault();
-                   var oturumId= _globalService.CreateOturum(new Oturum { BirlesimId = model.BirlesimId, BaslangicTarihi = model.BasTarihi });
+                    //var oturumId= _globalService.CreateOturum(new Oturum { BirlesimId = model.BirlesimId, BaslangicTarihi = model.BasTarihi });
+                    var oturumId = Guid.Empty;
                    _stenoService.UpdateBirlesimStenoGorevDevamEtme(model.BirlesimId, model.BasTarihi,model.StenoGorevTuru, oturum.BitisTarihi.Value, oturumId);
                 }
                 else if(ToplanmaBaslatmaStatu.Sonladırma == model.ToplanmaBaslatmaStatu)

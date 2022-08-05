@@ -17,5 +17,6 @@ namespace TTBS.Core.Entities
         public KomisyonTipi KomisyonTipi { get; set; }
         public string Yeri { get; set; }
         public virtual ICollection<AltKomisyon> AltKomisyons { get; set; }
+        public virtual ICollection<BirlesimKomisyon> BirlesimKomisyons { get; set; }
     }
 }

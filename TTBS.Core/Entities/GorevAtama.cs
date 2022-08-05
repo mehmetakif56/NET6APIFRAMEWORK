@@ -37,8 +37,5 @@ namespace TTBS.Core.Entities
         public int TurAdedi { get; set; }
         [NotMapped]
         public bool StenoToplamSureAsım { get; set; }
-  
-
-
     }
 }

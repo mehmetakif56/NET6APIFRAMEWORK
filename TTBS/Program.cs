@@ -10,6 +10,7 @@ using TTBS.Core.Interfaces;
 using TTBS.Extensions;
 using TTBS.Helper;
 using TTBS.Infrastructure;
+using TTBS.MongoDB;
 using TTBS.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,7 +25,14 @@ builder.Services.AddDbContext<TTBSContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 
 });
-
+builder.Services.Configure<MongoDbSettings>(options =>
+{
+    options.ConnectionString = builder.Configuration
+        .GetSection(nameof(MongoDbSettings) + ":" + MongoDbSettings.ConnectionStringValue).Value;
+    options.Database = builder.Configuration
+        .GetSection(nameof(MongoDbSettings) + ":" + MongoDbSettings.DatabaseValue).Value;
+});
+builder.Services.AddSingleton<IGorevAtamaMongoRepository, GorevAtamaMongoRepository>();
 var culture = CultureInfo.CreateSpecificCulture("tr-TR");
 var dateformat = new DateTimeFormatInfo
 {
@@ -62,6 +70,7 @@ builder.Services.AddScoped<ISessionHelper, SessionHelper>();
 builder.Services.AddScoped<IStenografService, StenografService>();
 builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
+builder.Services.AddScoped<IGorevAtamaService, GorevAtamaService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
