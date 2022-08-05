@@ -88,12 +88,12 @@ namespace TTBS.Services
             int firstRec = 0;
             for (int i = 0; i < birlesim.TurAdedi; i++)
             {
-                var atamaList = new List<GorevAtamaGKMongo>();
+                var atamaList = new List<GorevAtama>();
                 foreach (var item in stenoList)
                 {
-                    var newEntity = new GorevAtamaGKMongo();
-                    newEntity.BirlesimId = birlesim.Id.ToString(); ;
-                    newEntity.OturumId = oturumId.ToString(); ;
+                    var newEntity = new GorevAtama();
+                    newEntity.BirlesimId = birlesim.Id ;
+                    newEntity.OturumId = oturumId ;
                     newEntity.StenografId = item.Id;
                     newEntity.GorevBasTarihi = birlesim.BaslangicTarihi.HasValue ? birlesim.BaslangicTarihi.Value.AddMinutes(firstRec * birlesim.UzmanStenoSure) : null;
                     newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.HasValue ? newEntity.GorevBasTarihi.Value.AddMinutes(birlesim.UzmanStenoSure) : null;
@@ -102,9 +102,9 @@ namespace TTBS.Services
                     atamaList.Add(newEntity);
                     firstRec++;
                 }
-                var result = _gorevAtamaMongoRepo.AddRangeAsync(atamaList);
-                //_stenoGorevRepo.Create(atamaList, CurrentUser.Id);
-                //_stenoGorevRepo.Save();
+                //var result = _gorevAtamaMongoRepo.AddRangeAsync(atamaList);
+                _stenoGorevRepo.Create(atamaList, CurrentUser.Id);
+                _stenoGorevRepo.Save();
             }
         }
         private void CreateSteno(Birlesim birlesim, Guid oturumId)
@@ -113,12 +113,12 @@ namespace TTBS.Services
             int firstRec = 0;
             for (int i = 0; i < birlesim.TurAdedi; i++)
             {
-                var atamaList = new List<GorevAtamaGKMongo>();
+                var atamaList = new List<GorevAtama>();
                 foreach (var item in stenoList)
                 {
-                    var newEntity = new GorevAtamaGKMongo();
-                    newEntity.BirlesimId = birlesim.Id.ToString();
-                    newEntity.OturumId = oturumId.ToString();
+                    var newEntity = new GorevAtama();
+                    newEntity.BirlesimId = birlesim.Id;
+                    newEntity.OturumId = oturumId;
                     newEntity.StenografId = item.Id;
                     newEntity.GorevBasTarihi = birlesim.BaslangicTarihi.HasValue ? birlesim.BaslangicTarihi.Value.AddMinutes(firstRec * birlesim.StenoSure) : null;
                     newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.HasValue ? newEntity.GorevBasTarihi.Value.AddMinutes(birlesim.StenoSure) : null;
@@ -127,9 +127,9 @@ namespace TTBS.Services
                     atamaList.Add(newEntity);
                     firstRec++;
                 }
-                var result = _gorevAtamaMongoRepo.AddRangeAsync(atamaList);
-                //_stenoGorevRepo.Create(atamaList, CurrentUser.Id);
-                //_stenoGorevRepo.Save();
+                //var result = _gorevAtamaMongoRepo.AddRangeAsync(atamaList);
+                _stenoGorevRepo.Create(atamaList, CurrentUser.Id);
+                _stenoGorevRepo.Save();
             }
         }
         private void CreateBirlesimKomisyonRelation(Guid id, Guid komisyonId, Guid? altKomisyonId)

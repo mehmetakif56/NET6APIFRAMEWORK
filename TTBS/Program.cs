@@ -25,13 +25,13 @@ builder.Services.AddDbContext<TTBSContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 
 });
-builder.Services.Configure<MongoDbSettings>(options =>
-{
-    options.ConnectionString = builder.Configuration
-        .GetSection(nameof(MongoDbSettings) + ":" + MongoDbSettings.ConnectionStringValue).Value;
-    options.Database = builder.Configuration
-        .GetSection(nameof(MongoDbSettings) + ":" + MongoDbSettings.DatabaseValue).Value;
-});
+//builder.Services.Configure<MongoDbSettings>(options =>
+//{
+//    options.ConnectionString = builder.Configuration
+//        .GetSection(nameof(MongoDbSettings) + ":" + MongoDbSettings.ConnectionStringValue).Value;
+//    options.Database = builder.Configuration
+//        .GetSection(nameof(MongoDbSettings) + ":" + MongoDbSettings.DatabaseValue).Value;
+//});
 builder.Services.AddSingleton<IGorevAtamaMongoRepository, GorevAtamaMongoRepository>();
 var culture = CultureInfo.CreateSpecificCulture("tr-TR");
 var dateformat = new DateTimeFormatInfo

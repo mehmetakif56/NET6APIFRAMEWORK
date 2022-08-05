@@ -12,10 +12,10 @@ namespace TTBS.MongoDB
 
         protected MongoDbRepositoryBase(IOptions<MongoDbSettings> options)
         {
-            this.settings = options.Value;
-            var client = new MongoClient(this.settings.ConnectionString);
-            var db = client.GetDatabase(this.settings.Database);
-            this.Collection = db.GetCollection<T>(typeof(T).Name.ToLowerInvariant());
+            //this.settings = options.Value;
+            //var client = new MongoClient(this.settings.ConnectionString);
+            //var db = client.GetDatabase(this.settings.Database);
+            //this.Collection = db.GetCollection<T>(typeof(T).Name.ToLowerInvariant());
 
         }
 
