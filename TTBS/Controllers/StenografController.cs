@@ -429,24 +429,7 @@ namespace TTBS.Controllers
 
             return Ok();
         }
-
-
-        [HttpPost("CreateStenoGorevAtama")]
-        public IActionResult CreateStenoGorevAtama(StenoGorevAtamaModel model)
-        {
-            if(model.StenografIds == null)
-                return BadRequest("Stenograf Listesi Dolu Olmalıdır!");
-            try
-            {
-                var entity = Mapper.Map<GorevAtama>(model);
-               _stenoService.CreateStenoGorevAtama(entity);             
-            }
-            catch (Exception ex)
-            { return BadRequest(ex.Message); }
-
-            return Ok();
-        }
-
+       
         [HttpPost("AddStenoGorevAtamaKomisyon")]
         public IActionResult AddStenoGorevAtamaKomisyon(StenoGorevAtamaModel model)
         {
@@ -556,12 +539,12 @@ namespace TTBS.Controllers
             }
             foreach (var item in lst) 
             {
-                var steno = stenoEntity.SelectMany(x => x.StenoGrups).Where(x => x.GrupId == item.GrupId).Select(cl => new StenoViewModel
+                var steno = stenoEntity.SelectMany(x => x.Stenografs).Where(x => x.GrupId == item.GrupId).Select(cl => new StenoViewModel
                 {
-                    AdSoyad = cl.Stenograf.AdSoyad,
-                    Id = cl.Stenograf.Id,
-                    SonGorevSuresi = cl.Stenograf.GorevAtamas.Where(x => x.GorevBasTarihi >= DateTime.Now.AddDays(-7)).Sum(c => c.GorevDakika),
-                    StenoGorevTuru = cl.Stenograf.StenoGorevTuru
+                    AdSoyad = cl.AdSoyad,
+                    Id = cl.Id,
+                    SonGorevSuresi = cl.GorevAtamas.Where(x => x.GorevBasTarihi >= DateTime.Now.AddDays(-7)).Sum(c => c.GorevDakika),
+                    StenoGorevTuru = cl.StenoGorevTuru
                 }).ToList();
                 item.StenoViews = new List<StenoViewModel>();
                 foreach (var item2 in steno.Where(x=>(int)x.StenoGorevTuru == gorevTur))
@@ -623,24 +606,6 @@ namespace TTBS.Controllers
             catch (Exception ex)
             { return BadRequest(ex.Message); }
 
-            return Ok();
-        }
-
-        [HttpPost("CreateStenoGroup")]
-        public IActionResult CreateStenoGroup(StenoGrupModel model)
-        {
-
-            var entity = Mapper.Map<StenoGrup>(model);
-            _stenoService.CreateStenoGroup(entity);
-            return Ok();
-        }
-
-        [HttpDelete("DeleteStenoGroup")]
-        public IActionResult DeleteStenoGroup(StenoGrupModel model)
-        {
-
-            var entity = Mapper.Map<StenoGrup>(model);
-            _stenoService.DeleteStenoGroup(entity);
             return Ok();
         }
 

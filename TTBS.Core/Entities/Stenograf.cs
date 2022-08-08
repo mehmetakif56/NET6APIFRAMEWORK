@@ -12,7 +12,8 @@ namespace TTBS.Core.Entities
         public string AdSoyad { get; set; }
         public StenoGorevTuru StenoGorevTuru { get; set; }
         public int SiraNo { get; set; }
-        public virtual ICollection<StenoGrup> StenoGrups { get; set; }
+        public Guid? GrupId { get; set; }
+        public Grup Grup { get; set; }
         public virtual ICollection<GorevAtama> GorevAtamas { get; set; }
         public virtual ICollection<StenoIzin> StenoIzins { get; set; }
         [NotMapped]
@@ -25,6 +26,5 @@ namespace TTBS.Core.Entities
         public int GorevStatu { get; set; } 
         public Guid UserId { get; set; }
         public UserEntity User { get; set; }
-       // public virtual ICollection<StenoToplamGenelSure> StenoToplamGenelSures { get; set; }
     }
 }

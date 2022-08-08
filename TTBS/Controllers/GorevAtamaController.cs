@@ -28,11 +28,27 @@ namespace TTBS.Controllers
             try
             {
                 model.ToplanmaDurumu = model.ToplanmaTuru == ToplanmaTuru.GenelKurul ? ToplanmaStatu.Planlandı : ToplanmaStatu.Oluşturuldu;
-                var birlesimEntity = Mapper.Map<Birlesim>(model);
-                var result = _gorevAtamaService.CreateBirlesim(birlesimEntity);
-                if (result.HasError)
-                    return BadRequest(result.Message);
+                var entity = Mapper.Map<Birlesim>(model);
+                var birlesim = _gorevAtamaService.CreateBirlesim(entity);
+                var oturumId = _gorevAtamaService.CreateOturum(new Oturum
+                {
+                    BirlesimId = birlesim.Id,
+                    BaslangicTarihi = birlesim.BaslangicTarihi
+                });
 
+                if (model.ToplanmaTuru == ToplanmaTuru.GenelKurul)
+                {
+                    _gorevAtamaService.CreateStenoAtama(birlesim, oturumId,null);
+                    _gorevAtamaService.CreateUzmanStenoAtama(birlesim, oturumId,null);
+                }
+                else if (model.ToplanmaTuru == ToplanmaTuru.Komisyon)
+                {
+                    _gorevAtamaService.CreateBirlesimKomisyonRelation(birlesim.Id, birlesim.KomisyonId, birlesim.AltKomisyonId);
+                }
+                else if (model.ToplanmaTuru == ToplanmaTuru.OzelToplanti)
+                {
+                    _gorevAtamaService.CreateBirlesimOzelToplanmaRelation(birlesim.Id, birlesim.OzelToplanmaId);
+                }
             }
             catch (Exception ex)
             { return BadRequest(ex.Message); }
@@ -40,13 +56,30 @@ namespace TTBS.Controllers
             return Ok();
         }
 
-        [HttpPost("CreateOturum")]
-        public IActionResult CreateOturum(OturumModel model)
-        {
-            var entity = Mapper.Map<Oturum>(model);
-            _gorevAtamaService.CreateOturum(entity);
-            return Ok(entity);
+        //[HttpPost("CreateOturum")]
+        //public IActionResult CreateOturum(OturumModel model)
+        //{
+        //    var entity = Mapper.Map<Oturum>(model);
+        //    _gorevAtamaService.CreateOturum(entity);
+        //    return Ok(entity);
 
+        //}
+
+        [HttpPost("CreateStenoGorevAtama")]
+        public IActionResult CreateStenoGorevAtama(StenoGorevAtamaModel model)
+        {
+            if (model.StenografIds == null)
+                return BadRequest("Stenograf Listesi Dolu Olmalıdır!");
+            try
+            {
+                var entity = Mapper.Map<GorevAtama>(model);
+                var birlesim = _gorevAtamaService.UpdateBirlesimGorevAtama(entity.BirlesimId);
+                _gorevAtamaService.CreateStenoAtama(birlesim, entity.OturumId,entity.StenografIds);
+            }
+            catch (Exception ex)
+            { return BadRequest(ex.Message); }
+
+            return Ok();
         }
     }
 }

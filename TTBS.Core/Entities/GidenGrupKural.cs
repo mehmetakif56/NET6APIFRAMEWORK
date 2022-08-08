@@ -10,7 +10,6 @@ namespace TTBS.Core.Entities
     {
         public Guid Id { get; set; }
         public string Ad { get; set; }
-        public virtual ICollection<StenoGrup> StenoGrups { get; set; }
         public StenoGorevTuru StenoGrupTuru { get; set; }
         public int GidenGrupNo { get; set; }
         public DateTime? GidenGrupTarihi { get; set; }

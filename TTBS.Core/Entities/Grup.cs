@@ -10,7 +10,7 @@ namespace TTBS.Core.Entities
     {
         public Guid Id { get; set; }
         public string Ad { get; set; }
-        public virtual ICollection<StenoGrup> StenoGrups { get; set; }
+        public virtual ICollection<Stenograf> Stenografs { get; set; }
         public StenoGorevTuru StenoGrupTuru { get; set; }
         public virtual ICollection<GidenGrup> GidenGrups { get; set; }
         [NotMapped]

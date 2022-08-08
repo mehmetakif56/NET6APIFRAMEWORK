@@ -69,9 +69,6 @@ namespace TTBS.Helper
                                                src.GorevAtamas.LastOrDefault(x => x.StenografId == src.Id).GorevDakika : 0));
             CreateMap<StenoModel, Stenograf>();
 
-            CreateMap<StenoGrupModel, StenoGrup>();
-            CreateMap<StenoGrup, StenoGrupModel>();
-
             CreateMap<AltKomisyonModel, AltKomisyon>();
             CreateMap<AltKomisyon, AltKomisyonModel>();
 

@@ -68,7 +68,6 @@ namespace TTBS.Services
         private IUnitOfWork _unitWork;
         private IRepository<StenoToplamGenelSure> _stenoToplamSureRepo;
         private IRepository<GidenGrup> _gidenGrupRepo;
-        private IRepository<StenoGrup> _stenoGrupRepo;
 
         public GlobalService(IRepository<Donem> donemRepo,
                              IRepository<Yasama> yasamaRepo,
@@ -81,7 +80,6 @@ namespace TTBS.Services
                              IRepository<Oturum> oturumRepo,
                              IUnitOfWork unitWork,
                              IRepository<GidenGrup> gidenGrupRepo,
-                             IRepository<StenoGrup> stenoGrupRepo,
                              IRepository<StenoToplamGenelSure> stenoToplamSureRepo,
                              IServiceProvider provider) : base(provider)
         {
@@ -97,7 +95,6 @@ namespace TTBS.Services
             _oturumRepo = oturumRepo;
             _gidenGrupRepo= gidenGrupRepo;
             _stenoToplamSureRepo = stenoToplamSureRepo;
-            _stenoGrupRepo= stenoGrupRepo;
         }
         public IEnumerable<Donem> GetAllDonem()
         {
@@ -196,13 +193,13 @@ namespace TTBS.Services
             _gidenGrupRepo.Create(grup, CurrentUser.Id);
             _gidenGrupRepo.Save();
 
-            var grpList = _stenoGrupRepo.Get(x=>x.GrupId == grup.GrupId);
-            if(grpList!=null && grpList.Count()>0)
-            {
-                grpList.ToList().ForEach(x => x.GidenGrupMu = DurumStatu.Evet);
-                _stenoGrupRepo.Update(grpList);
-                _stenoGrupRepo.Save();
-            }
+            //var grpList = _stenoGrupRepo.Get(x=>x.GrupId == grup.GrupId);
+            //if(grpList!=null && grpList.Count()>0)
+            //{
+            //    grpList.ToList().ForEach(x => x.GidenGrupMu = DurumStatu.Evet);
+            //    _stenoGrupRepo.Update(grpList);
+            //    _stenoGrupRepo.Save();
+            //}
         }
 
         public IEnumerable<Grup> GetAllGrup(int grupTuru)
