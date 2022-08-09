@@ -3,6 +3,7 @@ using TTBS.Core.Entities;
 using TTBS.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TTBS.Core.Enums;
+using TTBS.MongoDB;
 
 namespace TTBS.Helper
 {
@@ -43,6 +44,12 @@ namespace TTBS.Helper
 
             CreateMap<BirlesimModel, Birlesim>();
             CreateMap<Birlesim, BirlesimModel>();
+
+            CreateMap<GorevAtamaMongoModel, GorevAtamaGKM>();
+            CreateMap<GorevAtamaGKM, GorevAtamaMongoModel>();
+
+            CreateMap<GorevAtamaMongoModel, GorevAtamaKomM>();
+            CreateMap<GorevAtamaKomM, GorevAtamaMongoModel>();
 
             CreateMap<OturumModel, Oturum>();
             CreateMap<Oturum, OturumModel>();

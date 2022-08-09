@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using TTBS.Core.Entities;
 using TTBS.Core.Enums;
 using TTBS.Models;
+using TTBS.MongoDB;
 using TTBS.Services;
 
 namespace TTBS.Controllers
@@ -38,8 +39,14 @@ namespace TTBS.Controllers
 
                 if (model.ToplanmaTuru == ToplanmaTuru.GenelKurul)
                 {
-                    _gorevAtamaService.CreateStenoAtama(birlesim, oturumId,null);
-                    _gorevAtamaService.CreateUzmanStenoAtama(birlesim, oturumId,null);
+                    var stenoAllList = _gorevAtamaService.GetStenografIdList();
+                    var stenoList = stenoAllList.Where(x => x.StenoGorevTuru == StenoGorevTuru.Stenograf).Select(x=>x.Id);
+                    var modelList = SetGorevAtama(birlesim, oturumId, stenoList,birlesim.StenoSure);
+                    var stenoUzmanList = stenoAllList.Where(x => x.StenoGorevTuru == StenoGorevTuru.Uzman).Select(x => x.Id);
+                    var modelUzmanList = SetGorevAtama(birlesim, oturumId, stenoUzmanList, birlesim.UzmanStenoSure);
+                    modelList.AddRange(modelUzmanList);
+                    var entityList = Mapper.Map<List<GorevAtamaGKM>>(modelList);
+                    _gorevAtamaService.CreateStenoAtamaGK(entityList);
                 }
                 else if (model.ToplanmaTuru == ToplanmaTuru.Komisyon)
                 {
@@ -72,14 +79,56 @@ namespace TTBS.Controllers
                 return BadRequest("Stenograf Listesi Dolu Olmalıdır!");
             try
             {
-                var entity = Mapper.Map<GorevAtama>(model);
-                var birlesim = _gorevAtamaService.UpdateBirlesimGorevAtama(entity.BirlesimId);
-                _gorevAtamaService.CreateStenoAtama(birlesim, entity.OturumId,entity.StenografIds);
+                var birlesim = _gorevAtamaService.UpdateBirlesimGorevAtama(model.BirlesimId);
+                var modelList = SetGorevAtama(birlesim, model.OturumId, model.StenografIds, birlesim.StenoSure);
+                var entityList = Mapper.Map<List<GorevAtamaKomM>>(modelList);
+                _gorevAtamaService.CreateStenoAtamaKom(entityList);
             }
             catch (Exception ex)
             { return BadRequest(ex.Message); }
 
             return Ok();
         }
+
+        private List<GorevAtamaMongoModel> SetGorevAtama(Birlesim birlesim, Guid oturumId, IEnumerable<Guid> stenoList,double sure)
+        {
+            var atamaList = new List<GorevAtamaMongoModel>();
+            var basDate = birlesim.BaslangicTarihi.HasValue ? birlesim.BaslangicTarihi.Value:DateTime.Now;
+            int firstRec = 0;
+            for (int i = 0; i < birlesim.TurAdedi; i++)
+            {
+                foreach (var item in stenoList)
+                {
+                    var newEntity = new GorevAtamaMongoModel();
+                    newEntity.BirlesimId = birlesim.Id.ToString();
+                    newEntity.OturumId = oturumId.ToString();
+                    newEntity.StenografId = item.ToString();
+                    newEntity.GorevBasTarihi = basDate.AddMinutes(firstRec * sure).ToLongDateString();
+                    newEntity.GorevBitisTarihi = basDate.AddMinutes((firstRec * sure) + sure).ToLongDateString();
+                    newEntity.StenoSure = sure;
+                    //newEntity.GorevStatu = item.StenoGrups.Select(x => x.GidenGrupMu).FirstOrDefault() == DurumStatu.Evet && newEntity.GorevBasTarihi.Value.AddMinutes(9 * newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
+                    atamaList.Add(newEntity);
+                    firstRec++;
+                }
+            }
+            return atamaList;
+        }
+
+
+        [HttpPost("AddStenoGorevAtamaKomisyon")]
+        public IActionResult AddStenoGorevAtamaKomisyon(List<Guid> stenografIds,string birlesimId,string oturumId)
+        {
+            if (stenografIds == null)
+                return BadRequest("Stenograf Listesi Dolu Olmalıdır!");
+            try
+            {
+                _gorevAtamaService.AddStenoGorevAtamaKomisyon(stenografIds, birlesimId, oturumId);
+            }
+            catch (Exception ex)
+            { return BadRequest(ex.Message); }
+
+            return Ok();
+        }
+
     }
 }

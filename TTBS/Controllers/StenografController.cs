@@ -429,26 +429,6 @@ namespace TTBS.Controllers
 
             return Ok();
         }
-       
-        [HttpPost("AddStenoGorevAtamaKomisyon")]
-        public IActionResult AddStenoGorevAtamaKomisyon(StenoGorevAtamaModel model)
-        {
-            if (model.StenografIds == null)
-                return BadRequest("Stenograf Listesi Dolu Olmalıdır!");
-            try
-            {
-                var oturum = _globalService.GetOturumByBirlesimId(model.BirlesimId).Where(x => x.BitisTarihi == null).FirstOrDefault();
-                if (oturum != null)
-                    model.OturumId = oturum.Id;
-
-                var entity = Mapper.Map<GorevAtama>(model);          
-                _stenoService.AddStenoGorevAtamaKomisyon(entity);
-            }
-            catch (Exception ex)
-            { return BadRequest(ex.Message); }
-
-            return Ok();
-        }
 
         [HttpPost("ChangeOrderStenografKomisyon")]
         public IActionResult ChangeOrderStenografKomisyon(Guid kaynakBirlesimId, Guid kaynakStenografId, Guid hedefBirlesimId, Guid hedefStenografId)

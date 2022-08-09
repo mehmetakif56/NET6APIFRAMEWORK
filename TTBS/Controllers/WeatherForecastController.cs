@@ -14,10 +14,10 @@ namespace TTBS.Controllers
     };
 
         private readonly ILogger<WeatherForecastController> _logger;
-        private readonly IGorevAtamaMongoRepository _gorevAtamaRepo;
+        private readonly IGorevAtamaGKMBusiness _gorevAtamaRepo;
         private readonly IGlobalService _globalService;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger, IGorevAtamaMongoRepository weatherForecastDal, IGlobalService globalService)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, IGorevAtamaGKMBusiness weatherForecastDal, IGlobalService globalService)
         {
             _logger = logger;
             this._gorevAtamaRepo = weatherForecastDal;

@@ -32,7 +32,8 @@ builder.Services.Configure<MongoDbSettings>(options =>
     options.Database = builder.Configuration
         .GetSection(nameof(MongoDbSettings) + ":" + MongoDbSettings.DatabaseValue).Value;
 });
-builder.Services.AddSingleton<IGorevAtamaMongoRepository, GorevAtamaMongoRepository>();
+builder.Services.AddSingleton<IGorevAtamaGKMBusiness, GorevAtamaGKMBusiness>();
+builder.Services.AddSingleton<IGorevAtamaKomMBusiness, GorevAtamaKomMBusiness>();
 var culture = CultureInfo.CreateSpecificCulture("tr-TR");
 var dateformat = new DateTimeFormatInfo
 {

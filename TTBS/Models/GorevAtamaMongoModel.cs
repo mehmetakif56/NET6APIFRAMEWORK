@@ -1,21 +1,18 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using TTBS.Core.Enums;
-using TTBS.MongoDB;
 
-namespace TTBS.MongoDB
+namespace TTBS.Models
 {
-    public class GorevAtamaGKMongo : MongoDbEntity
+    public class GorevAtamaMongoModel
     {
-        public DateTime? GorevBasTarihi { get; set; }
-        public DateTime? GorevBitisTarihi { get; set; }
-        public int GorevDakika { get; set; }
-        public int GorevSaniye { get; set; }
-        public Guid StenografId { get; set; }
+        public string GorevBasTarihi { get; set; }
+        public string GorevBitisTarihi { get; set; }
+        public string StenografId { get; set; }
         public GorevStatu GorevStatu { get; set; }
         public double StenoSure { get; set; }
         public string OturumId { get; set; }
         public string BirlesimId { get; set; }
-        public List<string> StenografIds { get; set; }
         public double DifMin { get; set; }
         public bool ToplantiVar { get; set; }
         public IzınTuru StenoIzinTuru { get; set; }
