@@ -19,5 +19,6 @@ namespace TTBS.MongoDB
         public StenoGorevTuru StenoGorevTuru { get; set; }
         public int TurAdedi { get; set; }
         public bool StenoToplamSureAsım { get; set; }
+        public int SatırNo { get; set; }
     }
 }

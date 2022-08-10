@@ -161,25 +161,6 @@ namespace TTBS.Controllers
             return Ok();
         }
 
-        [HttpPut("CreateStenoGorevDonguEkle")]
-        public IActionResult CreateStenoGorevDonguEkle(Guid birlesimId,Guid oturumId, int gorevturu)
-        {
-            try
-            {
-                var stenoEntity = _stenoService.GetStenoGorevByBirlesimIdAndGorevTuru(birlesimId,gorevturu);
-                if (stenoEntity != null && stenoEntity.Count() > 0)
-                {
-
-                    _stenoService.CreateStenoGorevDonguEkle(birlesimId, oturumId, stenoEntity, gorevturu);
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            return Ok();
-        }
-
         [HttpGet("GetStenoUzmanGorevByBirlesimId")]
         public List<StenoGorevModel> GetStenoUzmanGorevByBirlesimId(Guid birlesimId, int gorevturu)
         {

@@ -8,7 +8,7 @@ namespace  TTBS.MongoDB
         [BsonRepresentation(BsonType.ObjectId)]
         [BsonId]
         [BsonElement(Order = 0)]
-        public string Id { get; } = ObjectId.GenerateNewId().ToString();
+        public string Id { get; set; } /*= ObjectId.GenerateNewId().ToString()*/
 
         [BsonRepresentation(BsonType.DateTime)]
         [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]

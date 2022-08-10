@@ -79,7 +79,7 @@ namespace TTBS.Controllers
                 return BadRequest("Stenograf Listesi Dolu Olmalıdır!");
             try
             {
-                var birlesim = _gorevAtamaService.UpdateBirlesimGorevAtama(model.BirlesimId);
+                var birlesim = _gorevAtamaService.UpdateBirlesimGorevAtama(model.BirlesimId,model.TurAdedi);
                 var modelList = SetGorevAtama(birlesim, model.OturumId, model.StenografIds, birlesim.StenoSure);
                 var entityList = Mapper.Map<List<GorevAtamaKomM>>(modelList);
                 _gorevAtamaService.CreateStenoAtamaKom(entityList);
@@ -107,8 +107,10 @@ namespace TTBS.Controllers
                     newEntity.GorevBitisTarihi = basDate.AddMinutes((firstRec * sure) + sure).ToLongDateString();
                     newEntity.StenoSure = sure;
                     //newEntity.GorevStatu = item.StenoGrups.Select(x => x.GidenGrupMu).FirstOrDefault() == DurumStatu.Evet && newEntity.GorevBasTarihi.Value.AddMinutes(9 * newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
-                    atamaList.Add(newEntity);
                     firstRec++;
+                    newEntity.SatırNo = firstRec ;
+                    atamaList.Add(newEntity);
+                    
                 }
             }
             return atamaList;
@@ -127,6 +129,21 @@ namespace TTBS.Controllers
             catch (Exception ex)
             { return BadRequest(ex.Message); }
 
+            return Ok();
+        }
+
+        [HttpPut("CreateStenoGorevDonguEkle")]
+        public IActionResult CreateStenoGorevDonguEkle(string birlesimId, string oturumId)
+        {
+            try
+            {
+                _gorevAtamaService.CreateStenoGorevDonguEkle(birlesimId, oturumId);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
             return Ok();
         }
 
