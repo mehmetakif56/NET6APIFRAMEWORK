@@ -115,7 +115,7 @@ namespace TTBS.Services
                 var newEntity = new GorevAtamaKomM();
                 newEntity.BirlesimId = birlesimId;
                 newEntity.OturumId = oturumId;
-                newEntity.StenografId = item.ToString();
+                newEntity.StenografId = item.StenografId.ToString();
                 newEntity.StenoSure = stenoList.Where(x => x.StenografId == item.StenografId).LastOrDefault().StenoSure;
                 newEntity.GorevBasTarihi = gorevBitis;
                 newEntity.GorevBitisTarihi = DateTime.Parse(newEntity.GorevBasTarihi).AddMinutes(newEntity.StenoSure).ToLongDateString();
@@ -142,7 +142,8 @@ namespace TTBS.Services
                    int k = 0;
                    for (int i = 1; i <= stenoList.Count() / grpListCnt; i++)
                    {
-                        var refSteno = stenoList.Where(x => x.SatırNo == grpListCnt * i+k+j).OrderBy(x => x.SatırNo).FirstOrDefault();
+                        var deger = (grpListCnt * i) + k + j;
+                        var refSteno = stenoList.Where(x => x.SatırNo == deger).OrderBy(x => x.SatırNo).FirstOrDefault();
               
                         foreach (var item in stenoList.Where(x => x.SatırNo > refSteno.SatırNo).OrderBy(x => x.SatırNo))
                         {
@@ -151,16 +152,18 @@ namespace TTBS.Services
                             item.SatırNo = item.SatırNo + 1;
                             _gorevAtamaKomMRepo.UpdateAsync(item.Id, item);
                         }
-                        _gorevAtamaKomMRepo.AddAsync(new GorevAtamaKomM
+                        var nwGrv = new GorevAtamaKomM
                         {
-                            SatırNo = grpListCnt * i +k+j +1,
+                            SatırNo = deger + 1,
                             StenografId = steno.ToString(),
                             BirlesimId = birlesimId,
                             OturumId = oturumId,
                             StenoSure = refSteno.StenoSure,
                             GorevBasTarihi = refSteno.GorevBitisTarihi,
                             GorevBitisTarihi = DateTime.Parse(refSteno.GorevBitisTarihi).AddMinutes(refSteno.StenoSure).ToLongDateString()
-                        });
+                        };
+                        stenoList.Add(nwGrv);
+                       _gorevAtamaKomMRepo.AddAsync(nwGrv);
                         k++;
                     }
                     j++;
