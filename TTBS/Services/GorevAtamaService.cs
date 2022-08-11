@@ -173,140 +173,38 @@ namespace TTBS.Services
                 }
             }
         }
+        #region kapatıldı, şimdilik,açılabilir
+        //    //UpdateGidenGrup(atamaList);
+        //}
+        //else if (entity.StenografIds != null && entity.StenografIds.Count > 0)
+        //{
+        //    var birlesim = _birlesimRepo.GetById(entity.BirlesimId);
+        //    if (birlesim != null)
+        //    {
+        //        var minDate = birlesim.BaslangicTarihi;
+        //        var atamaList = new List<GorevAtamaKomM>();
+        //        int firstRec = 1;
+        //        foreach (var item in entity.StenografIds)
+        //        {
+        //            var newEntity = new GorevAtamaKomM();
+        //            newEntity.BirlesimId = entity.BirlesimId;
+        //            newEntity.OturumId = entity.OturumId;
+        //            newEntity.StenografId = item;
+        //            newEntity.GorevBasTarihi = minDate.Value;
+        //            newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.Value.AddMinutes(firstRec * birlesim.StenoSure);
+        //            newEntity.StenoSure = birlesim.StenoSure;
+        //            newEntity.GorevStatu = GorevStatu.GidenGrup; //GetStenoGidenGrupDurum(item) == DurumStatu.Evet && newEntity.GorevBasTarihi.Value.AddMinutes(9 * newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
+        //            atamaList.Add(newEntity);
+        //            minDate = newEntity.GorevBitisTarihi;
+        //            firstRec++;
+        //        }
+        //        _stenoGorevRepo.Create(atamaList, CurrentUser.Id);
+        //        _stenoGorevRepo.Save();
 
-
-
-
-            //var lastSteno = stenoList.LastOrDefault();
-            //var sure = stenoList.Where(x => x.StenografId == lastSteno.StenografId).OrderBy(x => x.SatırNo).FirstOrDefault().StenoSure;
-
-            //var lastDate =DateTime.Parse(lastSteno.GorevBitisTarihi);
-
-
-            //for (int i = 1; i <= stenoList.Count() / grpListCnt; i++)
-            //{
-            //    stenoList.ForEach(x =>
-            //    {
-            //        DateTime.Parse(x.GorevBasTarihi).AddMinutes(sure);
-            //        DateTime.Parse(x.GorevBitisTarihi).AddMinutes(sure);
-            //    });
-            //}
-
-            //for (int i = 0; i < grpListCnt; i++)
-            //{
-            //    stenoList.Add(new GorevAtamaKomM
-            //    {
-            //        StenografId = stenografIds.FirstOrDefault().ToString(),
-            //        BirlesimId = birlesimId,
-            //        OturumId = oturumId,
-            //        StenoSure = sure,
-            //        GorevBasTarihi = lastDate.ToLongDateString(),
-            //        GorevBitisTarihi = lastDate.AddMinutes(sure).ToLongDateString()
-            //    });
-
-            //}
-
-
-            //var stenoList = _stenoGorevRepo.Get(x => x.BirlesimId == birlesimId,  includeProperties: "Stenograf,Birlesim").OrderBy(x => x.GorevBasTarihi).ToList();
-            //if (stenoList != null && stenoList.Count() > 0)
-            //{
-
-            //    var lastSteno = stenoList.Where(x=> x.StenografId == stenoList.LastOrDefault().StenografId);
-            //    stenoList.ForEach(x => 
-            //    {    
-            //         x.GorevBasTarihi.Value.AddMinutes(lastSteno.FirstOrDefault().StenoSure);
-            //         x.GorevBitisTarihi.Value.AddMinutes(x.StenoSure+ lastSteno.FirstOrDefault().StenoSure);
-            //    });
-            //    stenoList.Add(new GorevAtamaKomM
-            //    {
-            //        StenografId = stenografIds.FirstOrDefault().ToString(),
-            //        BirlesimId = birlesimId,
-            //        GorevBasTarihi = lastSteno.First().GorevBitisTarihi,
-            //        GorevBitisTarihi = lastSteno.First().GorevBitisTarihi.Value.AddMinutes(lastSteno.FirstOrDefault().StenoSure)
-            //    });
-            //    var grpListCnt = stenoList.GroupBy(c => new
-            //    {
-            //        c.StenografId,
-            //    }).Count();
-
-
-            //    var atamaList = new List<GorevAtamaKomM>();
-            //    for (int i = 1; i <= stenoList.Count() / grpListCnt; i++)
-            //    {
-            //        var grpList = stenoList.Take(i * grpListCnt);
-            //        var maxDate = grpList.Max(x => x.GorevBitisTarihi);
-            //        var maxSure = grpList.Max(x => x.StenoSure);
-            //        int firstRec = 0;
-            //        foreach (var item in entity.StenografIds)
-            //        {
-            //            var newEntity = new GorevAtamaKomM();
-            //            newEntity.BirlesimId = entity.BirlesimId.ToString();
-            //            newEntity.OturumId =
-            //            newEntity.StenografId = item.ToString();
-            //            newEntity.GorevBasTarihi = maxDate.Value.AddMinutes(firstRec * maxSure).ToLongDateString();
-            //            newEntity.GorevBitisTarihi = maxDate.Value.AddMinutes((firstRec * maxSure) + maxSure).ToLongDateString();
-            //            newEntity.StenoSure = maxSure;
-            //            var durum = maxDate.Value > stenoList.FirstOrDefault().Birlesim.BaslangicTarihi.Value ? GorevStatu.GorevZamanAsim : GorevStatu.Planlandı;
-            //            if (durum != GorevStatu.GorevZamanAsim)
-            //                newEntity.GorevStatu = GorevStatu.GidenGrup; // (GetStenoGidenGrupDurum(item) == DurumStatu.Evet && newEntity.GorevBasTarihi.Value.AddMinutes(9 * newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı);
-            //            else
-            //                newEntity.GorevStatu = durum;
-            //            atamaList.Add(newEntity);
-            //            firstRec++;
-            //            maxDate = maxDate.Value.AddMinutes(firstRec * maxSure);
-            //            var upateList = stenoList.Where(x => x.GorevBasTarihi >= maxDate);
-            //            if (upateList != null && upateList.Count() > 0)
-            //            {
-            //                var firstRecord = upateList.OrderBy(x => x.GorevBasTarihi).FirstOrDefault();
-            //                var firstDate = firstRecord.GorevBasTarihi.Value.AddMinutes(firstRecord.StenoSure);
-            //                foreach (var hedef in upateList)
-            //                {
-            //                    hedef.GorevBasTarihi = firstDate;
-            //                    hedef.GorevBitisTarihi = hedef.GorevBasTarihi.Value.AddMinutes(hedef.StenoSure);
-            //                    //hedef.GorevStatu = hedef.Stenograf.StenoGrups.Select(x => x.GidenGrupMu).FirstOrDefault() == DurumStatu.Evet && hedef.GorevBasTarihi.Value.AddMinutes(9 * hedef.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
-            //                    firstDate = hedef.GorevBitisTarihi.Value;
-            //                    _stenoGorevRepo.Update(hedef);
-            //                    _stenoGorevRepo.Save();
-            //                }
-            //            }
-            //        }
-            //    }
-            //    _stenoGorevRepo.Create(atamaList, CurrentUser.Id);
-            //    _stenoGorevRepo.Save();
-
-            //    //UpdateGidenGrup(atamaList);
-            //}
-            //else if (entity.StenografIds != null && entity.StenografIds.Count > 0)
-            //{
-            //    var birlesim = _birlesimRepo.GetById(entity.BirlesimId);
-            //    if (birlesim != null)
-            //    {
-            //        var minDate = birlesim.BaslangicTarihi;
-            //        var atamaList = new List<GorevAtamaKomM>();
-            //        int firstRec = 1;
-            //        foreach (var item in entity.StenografIds)
-            //        {
-            //            var newEntity = new GorevAtamaKomM();
-            //            newEntity.BirlesimId = entity.BirlesimId;
-            //            newEntity.OturumId = entity.OturumId;
-            //            newEntity.StenografId = item;
-            //            newEntity.GorevBasTarihi = minDate.Value;
-            //            newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.Value.AddMinutes(firstRec * birlesim.StenoSure);
-            //            newEntity.StenoSure = birlesim.StenoSure;
-            //            newEntity.GorevStatu = GorevStatu.GidenGrup; //GetStenoGidenGrupDurum(item) == DurumStatu.Evet && newEntity.GorevBasTarihi.Value.AddMinutes(9 * newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
-            //            atamaList.Add(newEntity);
-            //            minDate = newEntity.GorevBitisTarihi;
-            //            firstRec++;
-            //        }
-            //        _stenoGorevRepo.Create(atamaList, CurrentUser.Id);
-            //        _stenoGorevRepo.Save();
-
-            //        // UpdateGidenGrup(atamaList);
-            //    }
-
-       
-        }
- 
+        //        // UpdateGidenGrup(atamaList);
+        //    }
+        #endregion
     }
+}
 
 
