@@ -103,106 +103,109 @@ namespace TTBS.Services
         public void CreateStenoGorevDonguEkle(string birlesimId, string oturumId)
         {
             var stenoList = _gorevAtamaKomMRepo.Get(x => x.BirlesimId == birlesimId).OrderBy(x => x.SatırNo).ToList();
-      
-            var grpList = stenoList.GroupBy(c => c.StenografId).Select(x=> new { StenografId = x.Key });
-
-            var refSteno = stenoList.Where(x => x.SatırNo == grpList.Count()).OrderBy(x => x.SatırNo).FirstOrDefault();
-            var gorevBitis = refSteno.GorevBitisTarihi;
-            var atamaList = new List<GorevAtamaKomM>();
-            int firsRec = 1;
-            foreach (var item in grpList)
+            if(stenoList!=null && stenoList.Count> 0)
             {
-                var newEntity = new GorevAtamaKomM();
-                newEntity.BirlesimId = birlesimId;
-                newEntity.OturumId = oturumId;
-                newEntity.StenografId = item.StenografId.ToString();
-                newEntity.StenoSure = stenoList.Where(x => x.StenografId == item.StenografId).LastOrDefault().StenoSure;
-                newEntity.GorevBasTarihi = gorevBitis;
-                newEntity.GorevBitisTarihi = DateTime.Parse(newEntity.GorevBasTarihi).AddMinutes(newEntity.StenoSure).ToLongDateString();
-                newEntity.SatırNo = refSteno.SatırNo+ firsRec;
-                gorevBitis = newEntity.GorevBitisTarihi;           
-                //newEntity.GorevStatu = item.Stenograf?.StenoGrups.Select(x => x.GidenGrupMu).FirstOrDefault() == DurumStatu.Evet &&  newEntity.GorevBasTarihi.Value.AddMinutes(9 * newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
-                atamaList.Add(newEntity);
-                firsRec++;
+                var grpList = stenoList.GroupBy(c => c.StenografId).Select(x => new { StenografId = x.Key });
+
+                var gorevBitis = stenoList.LastOrDefault().GorevBitisTarihi;
+                var refSatırNo = stenoList.LastOrDefault().SatırNo;
+                var atamaList = new List<GorevAtamaKomM>();
+                int firsRec = 1;
+                foreach (var item in grpList)
+                {
+                    var newEntity = new GorevAtamaKomM();
+                    newEntity.BirlesimId = birlesimId;
+                    newEntity.OturumId = oturumId;
+                    newEntity.StenografId = item.StenografId.ToString();
+                    newEntity.StenoSure = stenoList.Where(x => x.StenografId == item.StenografId).LastOrDefault().StenoSure;
+                    newEntity.GorevBasTarihi = gorevBitis;
+                    newEntity.GorevBitisTarihi = DateTime.Parse(newEntity.GorevBasTarihi).AddMinutes(newEntity.StenoSure).ToLongDateString();
+                    newEntity.SatırNo = refSatırNo + firsRec;
+                    gorevBitis = newEntity.GorevBitisTarihi;
+                    //newEntity.GorevStatu = item.Stenograf?.StenoGrups.Select(x => x.GidenGrupMu).FirstOrDefault() == DurumStatu.Evet &&  newEntity.GorevBasTarihi.Value.AddMinutes(9 * newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
+                    atamaList.Add(newEntity);
+                    firsRec++;
+                }
+                _gorevAtamaKomMRepo.AddRangeAsync(atamaList);
             }
-            _gorevAtamaKomMRepo.AddRangeAsync(atamaList);
         }
         public void AddStenoGorevAtamaKomisyon(List<Guid> stenografIds, string birlesimId, string oturumId)
         {
-            var stenoList = _gorevAtamaKomMRepo.Get(x => x.BirlesimId == birlesimId).OrderBy(x => x.SatırNo).ToList();
-            if (stenoList != null && stenoList.Count() > 0)
+            foreach (var steno in stenografIds)
             {
-                var grpListCnt = stenoList.GroupBy(c => new
+                var stenoList = _gorevAtamaKomMRepo.Get(x => x.BirlesimId == birlesimId).OrderBy(x => x.SatırNo).ToList();
+                if (stenoList != null && stenoList.Count() > 0)
+                {
+                    var atamaList = new List<GorevAtamaKomM>();
+                    var grpListCnt = stenoList.GroupBy(c => new
                     {
                         c.StenografId,
-                   }).Count();
-                int j = 0;
-                foreach (var steno in stenografIds)
-                {
-                   int k = 0;
-                   for (int i = 1; i <= stenoList.Count() / grpListCnt; i++)
-                   {
-                        var deger = (grpListCnt * i) + k + j;
+                    }).Count();
+                    int k = 0;
+                    for (int i = 1; i <= stenoList.Count() / grpListCnt; i++)
+                    {
+                        var deger = (grpListCnt * i) + k;
                         var refSteno = stenoList.Where(x => x.SatırNo == deger).OrderBy(x => x.SatırNo).FirstOrDefault();
-              
-                        foreach (var item in stenoList.Where(x => x.SatırNo > refSteno.SatırNo).OrderBy(x => x.SatırNo))
+                        if(refSteno != null)
                         {
-                            item.GorevBasTarihi = DateTime.Parse(item.GorevBasTarihi).AddMinutes(refSteno.StenoSure).ToLongDateString();
-                            item.GorevBitisTarihi = DateTime.Parse(item.GorevBitisTarihi).AddMinutes(refSteno.StenoSure).ToLongDateString();
-                            item.SatırNo = item.SatırNo + 1;
-                            _gorevAtamaKomMRepo.UpdateAsync(item.Id, item);
+                            foreach (var item in stenoList.Where(x => x.SatırNo > refSteno.SatırNo).OrderBy(x => x.SatırNo))
+                            {
+                                item.GorevBasTarihi = DateTime.Parse(item.GorevBasTarihi).AddMinutes(refSteno.StenoSure).ToLongDateString();
+                                item.GorevBitisTarihi = DateTime.Parse(item.GorevBitisTarihi).AddMinutes(refSteno.StenoSure).ToLongDateString();
+                                item.SatırNo = item.SatırNo + 1;
+                                _gorevAtamaKomMRepo.UpdateAsync(item.Id, item);
+                            }
+                            var nwGrv = new GorevAtamaKomM
+                            {
+                                SatırNo = deger + 1,
+                                StenografId = steno.ToString(),
+                                BirlesimId = birlesimId,
+                                OturumId = oturumId,
+                                StenoSure = refSteno.StenoSure,
+                                GorevBasTarihi = refSteno.GorevBitisTarihi,
+                                GorevBitisTarihi = DateTime.Parse(refSteno.GorevBitisTarihi).AddMinutes(refSteno.StenoSure).ToLongDateString()
+                            };
+                            stenoList.Add(nwGrv);
+                            _gorevAtamaKomMRepo.AddAsync(nwGrv);
+                            k++;
                         }
-                        var nwGrv = new GorevAtamaKomM
-                        {
-                            SatırNo = deger + 1,
-                            StenografId = steno.ToString(),
-                            BirlesimId = birlesimId,
-                            OturumId = oturumId,
-                            StenoSure = refSteno.StenoSure,
-                            GorevBasTarihi = refSteno.GorevBitisTarihi,
-                            GorevBitisTarihi = DateTime.Parse(refSteno.GorevBitisTarihi).AddMinutes(refSteno.StenoSure).ToLongDateString()
-                        };
-                        stenoList.Add(nwGrv);
-                       _gorevAtamaKomMRepo.AddAsync(nwGrv);
-                        k++;
                     }
-                    j++;
                 }
-               
-                    
-                
-               
-
-
-                //var lastSteno = stenoList.LastOrDefault();
-                //var sure = stenoList.Where(x => x.StenografId == lastSteno.StenografId).OrderBy(x => x.SatırNo).FirstOrDefault().StenoSure;
-
-                //var lastDate =DateTime.Parse(lastSteno.GorevBitisTarihi);
-
-
-                //for (int i = 1; i <= stenoList.Count() / grpListCnt; i++)
-                //{
-                //    stenoList.ForEach(x =>
-                //    {
-                //        DateTime.Parse(x.GorevBasTarihi).AddMinutes(sure);
-                //        DateTime.Parse(x.GorevBitisTarihi).AddMinutes(sure);
-                //    });
-                //}
-
-                //for (int i = 0; i < grpListCnt; i++)
-                //{
-                //    stenoList.Add(new GorevAtamaKomM
-                //    {
-                //        StenografId = stenografIds.FirstOrDefault().ToString(),
-                //        BirlesimId = birlesimId,
-                //        OturumId = oturumId,
-                //        StenoSure = sure,
-                //        GorevBasTarihi = lastDate.ToLongDateString(),
-                //        GorevBitisTarihi = lastDate.AddMinutes(sure).ToLongDateString()
-                //    });
-
-                //}
             }
+        }
+
+
+
+
+            //var lastSteno = stenoList.LastOrDefault();
+            //var sure = stenoList.Where(x => x.StenografId == lastSteno.StenografId).OrderBy(x => x.SatırNo).FirstOrDefault().StenoSure;
+
+            //var lastDate =DateTime.Parse(lastSteno.GorevBitisTarihi);
+
+
+            //for (int i = 1; i <= stenoList.Count() / grpListCnt; i++)
+            //{
+            //    stenoList.ForEach(x =>
+            //    {
+            //        DateTime.Parse(x.GorevBasTarihi).AddMinutes(sure);
+            //        DateTime.Parse(x.GorevBitisTarihi).AddMinutes(sure);
+            //    });
+            //}
+
+            //for (int i = 0; i < grpListCnt; i++)
+            //{
+            //    stenoList.Add(new GorevAtamaKomM
+            //    {
+            //        StenografId = stenografIds.FirstOrDefault().ToString(),
+            //        BirlesimId = birlesimId,
+            //        OturumId = oturumId,
+            //        StenoSure = sure,
+            //        GorevBasTarihi = lastDate.ToLongDateString(),
+            //        GorevBitisTarihi = lastDate.AddMinutes(sure).ToLongDateString()
+            //    });
+
+            //}
+
 
             //var stenoList = _stenoGorevRepo.Get(x => x.BirlesimId == birlesimId,  includeProperties: "Stenograf,Birlesim").OrderBy(x => x.GorevBasTarihi).ToList();
             //if (stenoList != null && stenoList.Count() > 0)
@@ -301,7 +304,7 @@ namespace TTBS.Services
             //        // UpdateGidenGrup(atamaList);
             //    }
 
-        }
+       
         }
  
     }
