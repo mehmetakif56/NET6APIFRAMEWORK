@@ -6,6 +6,7 @@ namespace TTBS.Models
 {
     public class GorevAtamaMongoModel
     {
+        public string Id { get; set; }
         public string GorevBasTarihi { get; set; }
         public string GorevBitisTarihi { get; set; }
         public string StenografId { get; set; }
