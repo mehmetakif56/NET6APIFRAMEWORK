@@ -11,7 +11,5 @@ namespace TTBS.Models
         public Guid OturumId { get; set; } = Guid.Empty;
         public int TurAdedi { get; set; }
         public StenoGorevTuru StenoGorevTuru { get; set; }
-
-
     }
 }
