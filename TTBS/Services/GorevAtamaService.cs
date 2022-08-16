@@ -100,7 +100,7 @@ namespace TTBS.Services
 
         public IEnumerable<Stenograf> GetStenografIdList()
         {
-           return _stenografRepo.Get().OrderBy(x => x.SiraNo).Select(x => new Stenograf { Id =x.Id,StenoGorevTuru =x.StenoGorevTuru});
+           return _stenografRepo.Get().OrderBy(x => x.SiraNo).Select(x => new Stenograf { Id =x.Id,StenoGorevTuru =x.StenoGorevTuru,AdSoyad =x.AdSoyad});
         }
         public void CreateStenoGorevDonguEkle(string birlesimId, string oturumId)
         {

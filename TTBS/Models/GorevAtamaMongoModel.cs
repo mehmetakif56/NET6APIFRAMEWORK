@@ -10,6 +10,7 @@ namespace TTBS.Models
         public string GorevBasTarihi { get; set; }
         public string GorevBitisTarihi { get; set; }
         public string StenografId { get; set; }
+        public string AdSoyad { get; set; }
         public GorevStatu GorevStatu { get; set; }
         public double StenoSure { get; set; }
         public string OturumId { get; set; }

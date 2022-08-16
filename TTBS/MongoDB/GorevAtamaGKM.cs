@@ -20,5 +20,6 @@ namespace TTBS.MongoDB
         public int TurAdedi { get; set; }
         public bool StenoToplamSureAsım { get; set; }
         public int SatırNo { get; set; }
+        public string AdSoyad { get; set; }
     }
 }
