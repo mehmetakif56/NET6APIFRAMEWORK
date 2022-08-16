@@ -2,6 +2,7 @@
 using TTBS.Core.Enums;
 using TTBS.Core.Extensions;
 using TTBS.Core.Interfaces;
+using TTBS.Models;
 using TTBS.MongoDB;
 
 namespace TTBS.Services
@@ -18,6 +19,7 @@ namespace TTBS.Services
         IEnumerable<Stenograf> GetStenografIdList();
         void AddStenoGorevAtamaKomisyon(List<Guid> stenografIds, string birlesimId, string oturumId);
         void CreateStenoGorevDonguEkle(string birlesimId, string oturumId);
+        List<GorevAtamaGKM> GetGorevAtamaGKByBirlesimId(string birlesimId);
     }
     public class GorevAtamaService : BaseService, IGorevAtamaService
     {
@@ -172,6 +174,12 @@ namespace TTBS.Services
                     }
                 }
             }
+        }
+
+        public List<GorevAtamaGKM> GetGorevAtamaGKByBirlesimId(string birlesimId)
+        {
+            var list = _gorevAtamaGKMRepo.Get(x=>x.BirlesimId == birlesimId).ToList();
+            return list;
         }
         #region kapatıldı, şimdilik,açılabilir
         //    //UpdateGidenGrup(atamaList);
