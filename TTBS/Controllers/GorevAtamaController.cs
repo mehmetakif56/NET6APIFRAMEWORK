@@ -147,8 +147,8 @@ namespace TTBS.Controllers
             return Ok();
         }
 
-        [HttpGet("GetGorevAtamaGKByBirlesimId")]
-        public List<GorevAtamaMongoModel> GetGorevAtamaGKByBirlesimId(string birlesimId)
+        [HttpGet("GetStenoGorevByBirlesimId")]
+        public List<GorevAtamaMongoModel> GetStenoGorevByBirlesimId(string birlesimId)
         {
             var entity = _gorevAtamaService.GetGorevAtamaGKByBirlesimId(birlesimId);
             var model = _mapper.Map<List<GorevAtamaMongoModel>>(entity);
