@@ -79,12 +79,12 @@ namespace TTBS.Controllers
         [HttpPost("CreateStenoGorevAtama")]
         public IActionResult CreateStenoGorevAtama(StenoGorevAtamaModel model)
         {
-            if (model.StenoList == null)
+            if (model.StenografIds == null)
                 return BadRequest("Stenograf Listesi Dolu Olmalıdır!");
             try
             {
                 var birlesim = _gorevAtamaService.UpdateBirlesimGorevAtama(model.BirlesimId,model.TurAdedi);
-                var modelList = SetGorevAtama(birlesim, model.OturumId, model.StenoList, birlesim.StenoSure);
+                var modelList = SetGorevAtama(birlesim, model.OturumId, model.StenografIds, birlesim.StenoSure);
                 var entityList = Mapper.Map<List<GorevAtamaKomM>>(modelList);
                 _gorevAtamaService.CreateStenoAtamaKom(entityList);
             }

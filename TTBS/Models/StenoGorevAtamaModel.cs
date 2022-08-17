@@ -6,7 +6,7 @@ namespace TTBS.Models
 {
     public class StenoGorevAtamaModel
     {
-        public IEnumerable<Guid> StenoList { get; set; }
+        public IEnumerable<Guid> StenografIds { get; set; }
         public Guid BirlesimId { get; set; }
         public Guid OturumId { get; set; } = Guid.Empty;
         public int TurAdedi { get; set; }
