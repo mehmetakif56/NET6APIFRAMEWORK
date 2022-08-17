@@ -92,7 +92,7 @@ namespace TTBS.Services
             _ozelGorevTurRepo = ozelGorevTurRepo;
             _oturumRepo = oturumRepo;
             _stenoToplamSureRepo = stenoToplamSureRepo;
-            grupDetayRepo = grupDetayRepo;
+            _grupDetayRepo = grupDetayRepo;
         }
         public IEnumerable<Donem> GetAllDonem()
         {
@@ -350,11 +350,18 @@ namespace TTBS.Services
 
         public void CreateGrupDetay(GrupDetay detay)
         {
-            var grpDetay = _grupDetayRepo.GetFirst(x=>x.GrupId == detay.Id);
+            var grpDetay = _grupDetayRepo.GetFirst(x=>x.GrupId == detay.GrupId);
             if(grpDetay != null)
             {
                 grpDetay.IsDeleted = true;
                  _grupDetayRepo.Update(grpDetay);
+                _grupDetayRepo.Save();
+            }
+            else
+            {
+                var oldDetay = _grupDetayRepo.GetFirst();
+                 oldDetay.IsDeleted = true;
+                _grupDetayRepo.Update(oldDetay);
                 _grupDetayRepo.Save();
             }
             _grupDetayRepo.Create(detay);
