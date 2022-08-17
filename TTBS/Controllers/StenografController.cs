@@ -411,32 +411,6 @@ namespace TTBS.Controllers
             return Ok();
         }
 
-        [HttpPost("ChangeOrderStenografKomisyon")]
-        public IActionResult ChangeOrderStenografKomisyon(Guid kaynakBirlesimId, Guid kaynakStenografId, Guid hedefBirlesimId, Guid hedefStenografId)
-        {
-            try
-            {
-                _stenoService.ChangeOrderStenografKomisyon(kaynakBirlesimId, kaynakStenografId, hedefBirlesimId, hedefStenografId);
-            }
-            catch (Exception ex)
-            { return BadRequest(ex.Message); }
-
-            return Ok();
-        }
-
-        [HttpPost("ChangeSureStenografKomisyon")]
-        public IActionResult ChangeSureStenografKomisyon(Guid gorevAtamaId,  double sure,bool digerAtamalarDahil =false)
-        {
-            try
-            {
-                _stenoService.ChangeSureStenografKomisyon(gorevAtamaId, sure, digerAtamalarDahil);
-            }
-            catch (Exception ex)
-            { return BadRequest(ex.Message); }
-
-            return Ok();
-        }
-
         [HttpPut("UpdateStenoGorevAtama")]
         public IActionResult UpdateStenoGorevAtama(List<StenoGorevGüncelleModel> model)
         {

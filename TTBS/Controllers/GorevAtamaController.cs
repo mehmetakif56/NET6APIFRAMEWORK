@@ -41,12 +41,12 @@ namespace TTBS.Controllers
                 {
                     var stenoAllList = _gorevAtamaService.GetStenografIdList();
                     var stenoList = stenoAllList.Where(x => x.StenoGorevTuru == StenoGorevTuru.Stenograf)
-                                                .Select(x => new { Id = x.Id, AdSoyad = x.AdSoyad })
-                                                .ToDictionary(x => x.Id, x => x.AdSoyad);
+                                                .Select(x => x.Id);
+                                                
                     var modelList = SetGorevAtama(birlesim, oturumId, stenoList,birlesim.StenoSure);
                     var stenoUzmanList = stenoAllList.Where(x => x.StenoGorevTuru == StenoGorevTuru.Uzman)
-                                                     .Select(x => new { Id = x.Id, AdSoyad = x.AdSoyad })
-                                                     .ToDictionary(x => x.Id, x => x.AdSoyad);
+                                                     .Select(x => x.Id);
+                                                    
                     var modelUzmanList = SetGorevAtama(birlesim, oturumId, stenoUzmanList, birlesim.UzmanStenoSure);
                     modelList.AddRange(modelUzmanList);
                     var entityList = Mapper.Map<List<GorevAtamaGKM>>(modelList);
@@ -94,7 +94,7 @@ namespace TTBS.Controllers
             return Ok();
         }
 
-        private List<GorevAtamaMongoModel> SetGorevAtama(Birlesim birlesim, Guid oturumId, Dictionary<Guid,string> stenoList,double sure)
+        private List<GorevAtamaMongoModel> SetGorevAtama(Birlesim birlesim, Guid oturumId, IEnumerable<Guid> stenoList,double sure)
         {
             var atamaList = new List<GorevAtamaMongoModel>();
             var basDate = birlesim.BaslangicTarihi.HasValue ? birlesim.BaslangicTarihi.Value:DateTime.Now;
@@ -106,11 +106,10 @@ namespace TTBS.Controllers
                     var newEntity = new GorevAtamaMongoModel();
                     newEntity.BirlesimId = birlesim.Id.ToString();
                     newEntity.OturumId = oturumId.ToString();
-                    newEntity.StenografId = item.Key.ToString();
+                    newEntity.StenografId = item.ToString();
                     newEntity.GorevBasTarihi = basDate.AddMinutes(firstRec * sure).ToLongDateString();
                     newEntity.GorevBitisTarihi = basDate.AddMinutes((firstRec * sure) + sure).ToLongDateString();
                     newEntity.StenoSure = sure;
-                    newEntity.AdSoyad = item.Value;
                     //newEntity.GorevStatu = item.StenoGrups.Select(x => x.GidenGrupMu).FirstOrDefault() == DurumStatu.Evet && newEntity.GorevBasTarihi.Value.AddMinutes(9 * newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
                     firstRec++;
                     newEntity.SatırNo = firstRec ;
@@ -158,6 +157,32 @@ namespace TTBS.Controllers
             var entity = _gorevAtamaService.GetGorevAtamaGKByBirlesimId(birlesimId);
             var model = _mapper.Map<List<GorevAtamaMongoModel>>(entity);
             return model;
+        }
+
+        //[HttpPost("ChangeOrderStenografKomisyon")]
+        //public IActionResult ChangeOrderStenografKomisyon(string kaynakBirlesimId, Dictionary<string, string> kaynakStenoList, string hedefBirlesimId, Dictionary<string, string> hedefStenografList)
+        //{
+        //    try
+        //    {
+        //        _gorevAtamaService.ChangeOrderStenografKomisyon(kaynakBirlesimId, kaynakStenoList, hedefBirlesimId, hedefStenografList);
+        //    }
+        //    catch (Exception ex)
+        //    { return BadRequest(ex.Message); }
+
+        //    return Ok();
+        //}
+
+        [HttpPost("ChangeSureStenografKomisyon")]
+        public IActionResult ChangeSureStenografKomisyon(string birlesimId, int satırNo, double sure, bool digerAtamalarDahil = false)
+        {
+            try
+            {
+                _gorevAtamaService.ChangeSureStenografKomisyon(birlesimId, satırNo, sure, digerAtamalarDahil);
+            }
+            catch (Exception ex)
+            { return BadRequest(ex.Message); }
+
+            return Ok();
         }
 
     }
