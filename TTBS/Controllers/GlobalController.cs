@@ -347,31 +347,8 @@ namespace TTBS.Controllers
             return _mapper.Map<List<StenoToplamGenelSureModel>>(entity);
         }
 
-        #region GidenGrup
-        [HttpPost("CreateGidenGrup")]
-        public IActionResult CreateGidenGrup(GidenGrupOlusturModel model)
-        {
-            var entity = Mapper.Map<GidenGrup>(model);
-            _globalService.CreateGidenGrup(entity);
-            return Ok(entity);
+       
 
-        }
-        [HttpGet("GetGidenGrup")]
-        public List<GidenGrupOlusturModel> GetGidenGrup()
-        {
-           var gidenGrup= _globalService.GetGidenGrup();
-            var model = _mapper.Map<List<GidenGrupOlusturModel>>(gidenGrup);
-            return model;
-        }
-        [HttpPost("UpdateGidenGrup")]
-        public IActionResult UpdateGidenGrup(GidenGrupOlusturModel model)
-        {
-            var entity = Mapper.Map<GidenGrup>(model);
-            _globalService.UpdateGidenGrup(entity);
-            return Ok(entity);
-
-        }
-        #endregion
 
     }
 }

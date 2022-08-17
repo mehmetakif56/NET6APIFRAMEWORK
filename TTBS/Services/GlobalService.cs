@@ -22,9 +22,6 @@ namespace TTBS.Services
         void DeleteBirlesim(Guid id);
         void CreateKomisyon(Komisyon komisyon);
         void CreateGrup(Grup grup);
-        void CreateGidenGrup(GidenGrup grup);
-        void UpdateGidenGrup(GidenGrup grup);
-        List<GidenGrup> GetGidenGrup();
         IEnumerable<Grup> GetAllGrup(int grupTuru);
         Grup GetGrupById(Guid id);
         void CreateAltKomisyon(AltKomisyon komisyon);
@@ -67,7 +64,6 @@ namespace TTBS.Services
         private IRepository<Oturum> _oturumRepo;
         private IUnitOfWork _unitWork;
         private IRepository<StenoToplamGenelSure> _stenoToplamSureRepo;
-        private IRepository<GidenGrup> _gidenGrupRepo;
 
         public GlobalService(IRepository<Donem> donemRepo,
                              IRepository<Yasama> yasamaRepo,
@@ -79,7 +75,6 @@ namespace TTBS.Services
                              IRepository<OzelGorevTur> ozelGorevTurRepo,
                              IRepository<Oturum> oturumRepo,
                              IUnitOfWork unitWork,
-                             IRepository<GidenGrup> gidenGrupRepo,
                              IRepository<StenoToplamGenelSure> stenoToplamSureRepo,
                              IServiceProvider provider) : base(provider)
         {
@@ -93,7 +88,6 @@ namespace TTBS.Services
             _altkomisyonRepo = altkomisyonRepo;
             _ozelGorevTurRepo = ozelGorevTurRepo;
             _oturumRepo = oturumRepo;
-            _gidenGrupRepo= gidenGrupRepo;
             _stenoToplamSureRepo = stenoToplamSureRepo;
         }
         public IEnumerable<Donem> GetAllDonem()
@@ -180,27 +174,6 @@ namespace TTBS.Services
             _grupRepo.Save();
         }
 
-        public void CreateGidenGrup(GidenGrup grup)
-        {
-            var gidenGrup = _gidenGrupRepo.Get().Where(x=>x.GidenGrupTarihi.HasValue && x.GidenGrupTarihi.Value.ToShortDateString() == DateTime.Now.ToShortDateString());
-            if (gidenGrup != null && gidenGrup.Count()>0)
-            {
-                var firstGiden = gidenGrup.FirstOrDefault();
-                firstGiden.IsDeleted = true;
-                _gidenGrupRepo.Update(firstGiden);
-                _gidenGrupRepo.Save();
-            }
-            _gidenGrupRepo.Create(grup, CurrentUser.Id);
-            _gidenGrupRepo.Save();
-
-            //var grpList = _stenoGrupRepo.Get(x=>x.GrupId == grup.GrupId);
-            //if(grpList!=null && grpList.Count()>0)
-            //{
-            //    grpList.ToList().ForEach(x => x.GidenGrupMu = DurumStatu.Evet);
-            //    _stenoGrupRepo.Update(grpList);
-            //    _stenoGrupRepo.Save();
-            //}
-        }
 
         public IEnumerable<Grup> GetAllGrup(int grupTuru)
         {
@@ -371,21 +344,6 @@ namespace TTBS.Services
             return result;
         }
 
-        public void UpdateGidenGrup(GidenGrup grup)
-        {
-            _gidenGrupRepo.Update(grup);
-            _gidenGrupRepo.Save();
-        }
-
-        public List<GidenGrup> GetGidenGrup()
-        {
-            var result = new List<GidenGrup>();
-            var gidenGrup = _gidenGrupRepo.Get().OrderByDescending(x => x.GidenGrupTarihi);
-            if(gidenGrup!=null)
-            {
-                result = _gidenGrupRepo.Get(x => x.GrupId == gidenGrup.FirstOrDefault().GrupId && (x.IsDeleted == true || x.IsDeleted == false)).OrderByDescending(x => x.GidenGrupTarihi).TakeLast(3).ToList();
-            }
-            return result;
-        }
+      
     }
 }

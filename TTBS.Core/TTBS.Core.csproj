@@ -43,8 +43,7 @@
     <Compile Include="BaseEntities\BaseEntities.cs" />
     <Compile Include="Entities\BirlesimOzelToplanma.cs" />
     <Compile Include="Entities\BirlesimKomisyon.cs" />
-    <Compile Include="Entities\GidenGrup.cs" />
-    <Compile Include="Entities\GidenGrupKural.cs" />
+    <Compile Include="Entities\GrupDetay.cs" />
     <Compile Include="Entities\Oturum.cs" />
     <Compile Include="Entities\Grup.cs" />
     <Compile Include="Entities\AltKomisyon.cs" />

@@ -21,5 +21,6 @@ namespace TTBS.MongoDB
         public bool StenoToplamSureAsım { get; set; }
         public int SatırNo { get; set; }
         public string AdSoyad { get; set; }
-    }
+        public bool StenoToplantiVar { get; set; }
+     }
 }

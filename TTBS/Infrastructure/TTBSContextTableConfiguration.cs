@@ -67,9 +67,9 @@ namespace TTBS.Infrastructure
             builder.ToTable("Oturum");
         }
 
-        private void ConfigureGidenGrup(EntityTypeBuilder<GidenGrup> builder)
+        private void ConfigureGrupDetay(EntityTypeBuilder<GrupDetay> builder)
         {
-            builder.ToTable("GidenGrup");
+            builder.ToTable("GrupDetay");
         }
 
         private void ConfigureBirlesimOzelToplanma(EntityTypeBuilder<BirlesimOzelToplanma> builder)

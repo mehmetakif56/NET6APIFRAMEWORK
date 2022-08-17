@@ -60,10 +60,6 @@ namespace TTBS.Helper
             CreateMap<KomisyonAltModel, Komisyon>();
             CreateMap<Komisyon, KomisyonAltModel>();
 
-            CreateMap<GrupModel, Grup>();
-            CreateMap<Grup, GrupModel>()
-                      .ForMember(dest => dest.GidenGrupMu, opt => opt.MapFrom(src => src.GidenGrups !=null && src.GidenGrups.FirstOrDefault().GidenGrupMu  == DurumStatu.Hayır ? DurumStatu.Evet:DurumStatu.Hayır  ));
-
             CreateMap<GorevAtama, StenoGorevGüncelleModel>();
             CreateMap<StenoGorevGüncelleModel, GorevAtama>();
 
@@ -85,10 +81,7 @@ namespace TTBS.Helper
             CreateMap<OzelGorevTurModel, OzelGorevTur>();
             CreateMap<OzelGorevTur, OzelGorevTurModel>();
 
-            CreateMap<GidenGrupOlusturModel, GidenGrup>()
-                    .ForMember(dest => dest.GidenGrupTarihi, opt => opt.MapFrom(src => DateTime.Now));
-            CreateMap<GidenGrup, GidenGrupOlusturModel>();
-            
+                   
             CreateMap<Birlesim, BirlesimViewModel>()
                 .ForMember(dest => dest.KomisyonAdı, opt => opt.MapFrom(src => src.BirlesimKomisyons.FirstOrDefault().Komisyon.Ad))
                 .ForMember(dest => dest.AltKomisyonAdı, opt => opt.MapFrom(src => ""))

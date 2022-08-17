@@ -2,6 +2,7 @@
 using TTBS.Core.Enums;
 using TTBS.Core.Extensions;
 using TTBS.Core.Interfaces;
+using TTBS.MongoDB;
 
 namespace TTBS.Services
 {
@@ -38,13 +39,14 @@ namespace TTBS.Services
         IEnumerable<Grup> GetAllStenografGroup(int gorevTuru);
         void UpdateBirlesimStenoGorevBaslama(Guid birlesimId, DateTime basTarih, StenoGorevTuru stenoGorevTur);
         void UpdateBirlesimStenoGorevDevamEtme(Guid birlesimId, DateTime basTarih, StenoGorevTuru stenoGorevTuru, DateTime oturumKapanmaTarihi, Guid oturumId);
-
         void UpdateGorevDurumByBirlesimAndSteno(Guid birlesimId, Guid stenoId);
         void UpdateGorevDurumById(Guid id);
         void UpdateStenoGorevTamamla(Guid birlesimId, StenoGorevTuru stenoGorevTur);
         IEnumerable<Birlesim> GetBirlesimByDate(DateTime basTarihi, int toplanmaTuru);
         IEnumerable<Birlesim> GetKomisyonByDateAndGroup(DateTime? baslangic, DateTime? bitis, Guid? yasamaId, Guid grup);
         IEnumerable<Birlesim> GetBirlesimByDateAndGroup(DateTime? baslangic, DateTime? bitis, Guid? yasamaId, Guid grup);
+
+       
     }
     public class StenografService : BaseService, IStenografService
     {
@@ -56,7 +58,8 @@ namespace TTBS.Services
         private IRepository<StenografBeklemeSure> _stenoBeklemeSure;
         private IRepository<Grup> _grupRepo;
         private IRepository<Oturum> _oturumRepo;
-        private IRepository<GidenGrup> _gidenGrupRepo;
+        private readonly IGorevAtamaGKMBusiness _gorevAtamaGKMRepo;
+        private readonly IGorevAtamaKomMBusiness _gorevAtamaKomMRepo;
         public StenografService(IRepository<StenoIzin> stenoIzinRepo, IRepository<GorevAtama> stenoGorevRepo,
                                 IUnitOfWork unitWork,
                                 IRepository<Stenograf> stenografRepo,
@@ -64,7 +67,8 @@ namespace TTBS.Services
                                 IRepository<Grup> grupRepo,
                                 IRepository<Birlesim> birlesimRepo,
                                 IRepository<Oturum> oturumRepo,
-                                IRepository<GidenGrup> gidenGrupRepo,
+                                IGorevAtamaGKMBusiness gorevAtamaGKMRepo,
+                                IGorevAtamaKomMBusiness gorevAtamaKomMRepo,
                                 IServiceProvider provider) : base(provider)
         {
             _stenoIzinRepo = stenoIzinRepo;
@@ -75,7 +79,8 @@ namespace TTBS.Services
             _birlesimRepo = birlesimRepo;
             _oturumRepo = oturumRepo;
             _grupRepo = grupRepo;
-            _gidenGrupRepo = gidenGrupRepo;
+            _gorevAtamaGKMRepo = gorevAtamaGKMRepo;
+            _gorevAtamaKomMRepo = gorevAtamaKomMRepo;
         }
 
         public IEnumerable<StenoIzin> GetAllStenoIzin()
@@ -211,11 +216,33 @@ namespace TTBS.Services
         {
             _stenoIzinRepo.Create(entity, CurrentUser.Id);
             _stenoIzinRepo.Save();
+            var gkGorev = _gorevAtamaGKMRepo.Get(x => x.StenografId == entity.StenografId.ToString() &&
+                                             DateTime.ParseExact(x.GorevBasTarihi, "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture) >= entity.BaslangicTarihi.Value &&
+                                             DateTime.ParseExact(x.GorevBasTarihi, "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture) <= entity.BitisTarihi.Value);
+            if (gkGorev != null && gkGorev.Count()>0)
+            {
+                foreach (var item in gkGorev)
+                {
+                    item.StenoIzinTuru = entity.IzinTuru;
+                    item.GorevStatu = GorevStatu.Iptal;
+                    _gorevAtamaGKMRepo.UpdateAsync(item.Id, item);
+                }
+            }
+            var komGorev = _gorevAtamaKomMRepo.Get(x => x.StenografId == entity.StenografId.ToString() && DateTime.Parse(x.GorevBasTarihi) >= entity.BaslangicTarihi && DateTime.Parse(x.GorevBasTarihi) <= entity.BitisTarihi);
+            if (komGorev != null && komGorev.Count() > 0)
+            {
+                foreach (var item in komGorev)
+                {
+                    item.StenoIzinTuru = entity.IzinTuru;
+                    item.GorevStatu = GorevStatu.Iptal;
+                    _gorevAtamaKomMRepo.UpdateAsync(item.Id, item);
+                }
+            }
         }
 
         public IEnumerable<GorevAtama> GetStenoGorevByBirlesimIdAndGorevTuru(Guid birlesimId, int gorevTuru)
         {
-            return _stenoGorevRepo.Get(x => x.BirlesimId == birlesimId && (int)x.Stenograf.StenoGorevTuru == gorevTuru && x.GorevStatu != GorevStatu.YerDegistirme, includeProperties: "Stenograf.StenoGrups,Birlesim").OrderBy(x => x.GorevBasTarihi);
+            return _stenoGorevRepo.Get(x => x.BirlesimId == birlesimId && (int)x.Stenograf.StenoGorevTuru == gorevTuru, includeProperties: "Stenograf,Birlesim").OrderBy(x => x.GorevBasTarihi);
         }
 
         public IEnumerable<GorevAtama> GetStenoGorevByGorevTuru(int gorevTuru)

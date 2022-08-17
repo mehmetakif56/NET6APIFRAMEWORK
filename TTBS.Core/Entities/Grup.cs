@@ -12,8 +12,9 @@ namespace TTBS.Core.Entities
         public string Ad { get; set; }
         public virtual ICollection<Stenograf> Stenografs { get; set; }
         public StenoGorevTuru StenoGrupTuru { get; set; }
-        public virtual ICollection<GidenGrup> GidenGrups { get; set; }
-        [NotMapped]
+        public virtual ICollection<GrupDetay> GrupDetays { get; set; }
         public DurumStatu GidenGrupMu { get; set; }
+        public DurumStatu GidenGrupPasif { get; set; }
+        public int GidenGrupSaat { get; set; }
     }
 }
