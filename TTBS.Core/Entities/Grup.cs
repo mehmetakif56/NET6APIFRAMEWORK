@@ -15,6 +15,6 @@ namespace TTBS.Core.Entities
         public virtual ICollection<GrupDetay> GrupDetays { get; set; }
         public DurumStatu GidenGrupMu { get; set; }
         public DurumStatu GidenGrupPasif { get; set; }
-        public int GidenGrupSaat { get; set; }
+        public string GidenGrupSaat { get; set; }
     }
 }
