@@ -53,6 +53,10 @@ namespace TTBS.Helper
 
             CreateMap<OturumModel, Oturum>();
             CreateMap<Oturum, OturumModel>();
+            CreateMap<GrupModel, Grup>();
+            CreateMap<Grup, GrupModel>();
+            CreateMap<GrupGuncelleModel, GrupDetay>();
+            CreateMap<GrupDetay, GrupGuncelleModel>();
 
             CreateMap<KomisyonModel, Komisyon>();
             CreateMap<Komisyon, KomisyonModel>();

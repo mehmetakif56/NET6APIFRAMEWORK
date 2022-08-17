@@ -11,7 +11,9 @@ namespace TTBS.Core.Entities
     public class GrupDetay:BaseEntity
     {
         public Guid Id { get; set; }
-        public DateTime? GidenGrupTarihi { get; set; }
+        public DurumStatu GidenGrupPasif { get; set; }
+        public DurumStatu GidenGrupSaatUygula { get; set; }
+        public string GidenGrupSaat { get; set; }
         public Guid GrupId  { get; set; }
         public Grup Grup { get; set; }
     }

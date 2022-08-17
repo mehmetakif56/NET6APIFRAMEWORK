@@ -22,6 +22,7 @@ namespace TTBS.Services
         void DeleteBirlesim(Guid id);
         void CreateKomisyon(Komisyon komisyon);
         void CreateGrup(Grup grup);
+        void CreateGrupDetay(GrupDetay grup);
         IEnumerable<Grup> GetAllGrup(int grupTuru);
         Grup GetGrupById(Guid id);
         void CreateAltKomisyon(AltKomisyon komisyon);
@@ -58,7 +59,8 @@ namespace TTBS.Services
         private IRepository<Birlesim> _birlesimRepo;
         private IRepository<Komisyon> _komisyonRepo;
         private IRepository<AltKomisyon> _altkomisyonRepo;
-        private IRepository<Grup> _grupRepo;        
+        private IRepository<Grup> _grupRepo;
+        private IRepository<GrupDetay> _grupDetayRepo;
         private IRepository<StenografBeklemeSure> _stenoBeklemeSure;
         private IRepository<OzelGorevTur> _ozelGorevTurRepo;
         private IRepository<Oturum> _oturumRepo;
@@ -74,6 +76,7 @@ namespace TTBS.Services
                              IRepository<StenografBeklemeSure> stenoBeklemeSure,
                              IRepository<OzelGorevTur> ozelGorevTurRepo,
                              IRepository<Oturum> oturumRepo,
+                             IRepository<GrupDetay> grupDetayRepo,
                              IUnitOfWork unitWork,
                              IRepository<StenoToplamGenelSure> stenoToplamSureRepo,
                              IServiceProvider provider) : base(provider)
@@ -89,6 +92,7 @@ namespace TTBS.Services
             _ozelGorevTurRepo = ozelGorevTurRepo;
             _oturumRepo = oturumRepo;
             _stenoToplamSureRepo = stenoToplamSureRepo;
+            grupDetayRepo = grupDetayRepo;
         }
         public IEnumerable<Donem> GetAllDonem()
         {
@@ -344,6 +348,17 @@ namespace TTBS.Services
             return result;
         }
 
-      
+        public void CreateGrupDetay(GrupDetay detay)
+        {
+            var grpDetay = _grupDetayRepo.GetFirst(x=>x.GrupId == detay.Id);
+            if(grpDetay != null)
+            {
+                grpDetay.IsDeleted = true;
+                 _grupDetayRepo.Update(grpDetay);
+                _grupDetayRepo.Save();
+            }
+            _grupDetayRepo.Create(detay);
+            _grupDetayRepo.Save();
+        }
     }
 }

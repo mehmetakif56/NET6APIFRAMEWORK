@@ -7,8 +7,5 @@ namespace TTBS.Models
         public Guid? Id { get; set; }
         public string Ad { get; set; }
         public StenoGorevTuru StenoGrupTuru { get; set; }
-        public DurumStatu GidenGrupMu { get; set; }
-        public DurumStatu GidenGrupPasif { get; set; }
-        public string GidenGrupSaat { get; set; }
     }
 }

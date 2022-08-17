@@ -242,6 +242,14 @@ namespace TTBS.Controllers
             return Ok(entity);
 
         }
+        [HttpPost("CreateGrupDetay")]
+        public IActionResult CreateGrupDetay(GrupGuncelleModel model)
+        {
+            var entity = Mapper.Map<GrupDetay>(model);
+            _globalService.CreateGrupDetay(entity);
+            return Ok(entity);
+
+        }
         [HttpGet("GetGrupById")]
         public GrupModel GetGrupById(Guid id)
         {
