@@ -19,7 +19,7 @@ namespace TTBS.Services
         IEnumerable<Stenograf> GetStenografIdList();
         void AddStenoGorevAtamaKomisyon(List<Guid> stenografIds, string birlesimId, string oturumId);
         void CreateStenoGorevDonguEkle(string birlesimId, string oturumId);
-        List<GorevAtamaGKM> GetGorevAtamaGKByBirlesimId(string birlesimId);
+        List<GorevAtamaKomM> GetGorevAtamaGKByBirlesimId(string birlesimId);
         void ChangeOrderStenografKomisyon(string kaynakBirlesimId, Dictionary<string, string> kaynakStenoList, string hedefBirlesimId, Dictionary<string, string> hedefStenografId);
         void ChangeSureStenografKomisyon(string birlesimId, int satırNo, double sure, bool digerAtamalarDahil = false);
     }
@@ -178,9 +178,9 @@ namespace TTBS.Services
             }
         }
 
-        public List<GorevAtamaGKM> GetGorevAtamaGKByBirlesimId(string birlesimId)
+        public List<GorevAtamaKomM> GetGorevAtamaGKByBirlesimId(string birlesimId)
         {
-            var list = _gorevAtamaGKMRepo.Get(x=>x.BirlesimId == birlesimId).ToList();
+            var list = _gorevAtamaKomMRepo.Get(x=>x.BirlesimId == birlesimId).ToList();
             return list;
         }
         public async void ChangeSureStenografKomisyon(string birlesimId,int satırNo, double sure, bool digerAtamalarDahil = false)
