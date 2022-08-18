@@ -257,7 +257,7 @@ namespace TTBS.Services
 
         public IEnumerable<Stenograf> GetAllStenografByGroupId(Guid? groupId)
         {
-            return _stenografRepo.Get();
+            return _stenografRepo.Get(x=>x.GrupId== groupId);
         }
 
         public IEnumerable<Stenograf> GetStenoGorevByTur(int gorevTuru)
