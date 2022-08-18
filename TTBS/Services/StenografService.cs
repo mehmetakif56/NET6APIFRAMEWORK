@@ -309,7 +309,7 @@ namespace TTBS.Services
 
         public IEnumerable<GorevAtama> GetStenoGorevByGrupId(Guid id)
         {
-            return _stenografRepo.Get(includeProperties: "GorevAtamas").SelectMany(x => x.GorevAtamas);
+            return _stenografRepo.Get(x=>x.GrupId == id, includeProperties: "GorevAtamas").SelectMany(x => x.GorevAtamas);
         }
 
         public IEnumerable<Stenograf> GetAllStenoGrupNotInclueded()
