@@ -70,7 +70,6 @@ namespace TTBS.Services
             _oturumRepo.Save();
             return oturum.Id;
         }
-
         public void CreateStenoAtamaGK(List<GorevAtamaGKM> gorevAtamaGKMongoList)
         {
              var result = _gorevAtamaGKMRepo.AddRangeAsync(gorevAtamaGKMongoList);
@@ -89,7 +88,6 @@ namespace TTBS.Services
             _birlesimOzeToplanmaRepo.Create(new BirlesimOzelToplanma { BirlesimId = id, OzelToplanmaId = ozelToplanmaId });
             _birlesimOzeToplanmaRepo.Save();
         }
-
         public Birlesim UpdateBirlesimGorevAtama(Guid birlesimId, int turAdedi)
         {
             var birlesim = _birlesimRepo.GetById(birlesimId);
@@ -99,7 +97,6 @@ namespace TTBS.Services
             _birlesimRepo.Save();
             return birlesim;
         }
-
         public IEnumerable<Stenograf> GetStenografIdList()
         {
            return _stenografRepo.Get().OrderBy(x => x.SiraNo).Select(x => new Stenograf { Id =x.Id,StenoGorevTuru =x.StenoGorevTuru,AdSoyad =x.AdSoyad});
@@ -177,7 +174,6 @@ namespace TTBS.Services
                 }
             }
         }
-
         public List<GorevAtamaKomM> GetGorevAtamaGKByBirlesimId(string birlesimId)
         {
             var list = _gorevAtamaKomMRepo.Get(x=>x.BirlesimId == birlesimId).ToList();
@@ -205,8 +201,6 @@ namespace TTBS.Services
 
             }
         }
-
-
         public void ChangeOrderStenografKomisyon(string kaynakBirlesimId, Dictionary<string, string> kaynakStenoList, string hedefBirlesimId, Dictionary<string, string> hedefStenografList)
         {
             if (kaynakBirlesimId != hedefBirlesimId) 
@@ -281,7 +275,6 @@ namespace TTBS.Services
                 }
             }
         }
-     
 
         #region kapatıldı, şimdilik,açılabilir
         //    //UpdateGidenGrup(atamaList);

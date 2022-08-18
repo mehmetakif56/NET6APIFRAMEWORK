@@ -478,7 +478,7 @@ namespace TTBS.Controllers
                 {
                     AdSoyad = cl.AdSoyad,
                     Id = cl.Id,
-                    SonGorevSuresi = cl.GorevAtamas.Where(x => x.GorevBasTarihi >= DateTime.Now.AddDays(-7)).Sum(c => c.GorevDakika),
+                    SonGorevSuresi = 0, //kaldırıldı başka bir yere ekleencek//cl.GorevAtamas.Where(x => x.GorevBasTarihi >= DateTime.Now.AddDays(-7)).Sum(c => c.GorevDakika),
                     StenoGorevTuru = cl.StenoGorevTuru
                 }).ToList();
                 item.StenoViews = new List<StenoViewModel>();

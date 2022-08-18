@@ -183,7 +183,7 @@ namespace TTBS.Services
 
         public IEnumerable<Grup> GetAllGrup(int grupTuru)
         {
-            return _grupRepo.Get(x=>(int)x.StenoGrupTuru == grupTuru,includeProperties: "GidenGrups");
+            return _grupRepo.Get(x=>(int)x.StenoGrupTuru == grupTuru);
         }
 
         public Grup GetGrupById(Guid id)
