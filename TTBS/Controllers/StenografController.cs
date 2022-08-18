@@ -449,7 +449,7 @@ namespace TTBS.Controllers
         {
             var stenoEntity = _stenoService.GetAllStenografByGroupId(groupId);
             var model = _mapper.Map<IEnumerable<StenoModel>>(stenoEntity);
-            model.ToList().ForEach(x => { x.GorevStatu = -1; x.GunlukGorevSuresi = _globalService.GetStenoSureDailyById(x.Id); x.HaftalikGorevSuresi = (int)_globalService.GetStenoSureWeeklyById(x.Id); x.YillikGorevSuresi = (int)_globalService.GetStenoSureYearlyById(x.Id, yasamaId); });
+            //model.ToList().ForEach(x => { x.GorevStatu = -1; x.GunlukGorevSuresi = _globalService.GetStenoSureDailyById(x.Id); x.HaftalikGorevSuresi = (int)_globalService.GetStenoSureWeeklyById(x.Id); x.YillikGorevSuresi = (int)_globalService.GetStenoSureYearlyById(x.Id, yasamaId); });
             return model;
         }
 
