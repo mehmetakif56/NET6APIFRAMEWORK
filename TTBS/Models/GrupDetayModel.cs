@@ -2,10 +2,10 @@
 
 namespace TTBS.Models
 {
-    public class GrupGuncelleModel
+    public class GrupDetayModel
     {
-        public Guid? GrupId { get; set; }
         public DurumStatu GidenGrupPasif { get; set; }
         public DurumStatu GidenGrupSaatUygula { get; set; }
+        public Guid GrupId { get; set; }
     }
 }

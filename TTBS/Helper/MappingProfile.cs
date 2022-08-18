@@ -57,6 +57,8 @@ namespace TTBS.Helper
             CreateMap<Grup, GrupModel>();
             CreateMap<GrupGuncelleModel, GrupDetay>();
             CreateMap<GrupDetay, GrupGuncelleModel>();
+            CreateMap<GrupDetayModel, GrupDetay>();
+            CreateMap<GrupDetay, GrupDetayModel>();
 
             CreateMap<KomisyonModel, Komisyon>();
             CreateMap<Komisyon, KomisyonModel>();

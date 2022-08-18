@@ -250,6 +250,20 @@ namespace TTBS.Controllers
             return Ok(entity);
 
         }
+        [HttpPost("UpdateGrupDetay")]
+        public IActionResult UpdateGrupDetay(string gidenSaat)
+        {
+            _globalService.UpdateGrupDetay(gidenSaat);
+            return Ok();
+
+        }
+        [HttpGet("GetGrupDetay")]
+        public GrupDetayModel GetGrupDetay()
+        {
+            var entity = _globalService.GetGrupDetay();
+            var model = _mapper.Map<GrupDetayModel>(entity);
+            return model;
+        }
         [HttpGet("GetGrupById")]
         public GrupModel GetGrupById(Guid id)
         {
