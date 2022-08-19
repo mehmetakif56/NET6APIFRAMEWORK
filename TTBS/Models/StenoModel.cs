@@ -15,5 +15,6 @@ namespace TTBS.Models
         public double GunlukGorevSuresi { get; set; }
         public bool StenoGorevDurum { get; set; }
         public int GorevStatu { get; set; }
+        public Guid GrupId { get; set; }
     }
 }
