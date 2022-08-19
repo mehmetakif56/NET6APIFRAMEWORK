@@ -27,8 +27,6 @@ namespace TTBS.Controllers
         }
         #region KomisyonToplanma
 
-
-
         //[HttpGet("GetStenoPlanByStatus")]
         //public List<StenoPlanModel> GetStenoPlanByStatus(int status=0)
         //{
@@ -132,9 +130,7 @@ namespace TTBS.Controllers
             var stenoEntity = _stenoService.GetStenoGorevById(id);
             var model = _mapper.Map<IEnumerable<StenoGorevModel>>(stenoEntity);
             return model;
-        }
-
-       
+        }       
 
         //[HttpGet("GetStenoUzmanGorevByBirlesimId")]
         //public List<StenoGorevModel> GetStenoUzmanGorevByBirlesimId(Guid birlesimId, int gorevturu)

@@ -114,13 +114,13 @@ namespace TTBS.Controllers
 
 
         [HttpPost("AddStenoGorevAtamaKomisyon")]
-        public IActionResult AddStenoGorevAtamaKomisyon(List<Guid> stenografIds,string birlesimId,string oturumId)
+        public IActionResult AddStenoGorevAtamaKomisyon(StenoGorevAtamaModel model)
         {
-            if (stenografIds == null)
+            if (model.StenografIds == null)
                 return BadRequest("Stenograf Listesi Dolu Olmalıdır!");
             try
             {
-                _gorevAtamaService.AddStenoGorevAtamaKomisyon(stenografIds, birlesimId, oturumId);
+                _gorevAtamaService.AddStenoGorevAtamaKomisyon(model.StenografIds, model.BirlesimId, model.OturumId);
             }
             catch (Exception ex)
             { return BadRequest(ex.Message); }
@@ -129,7 +129,7 @@ namespace TTBS.Controllers
         }
 
         [HttpPut("CreateStenoGorevDonguEkle")]
-        public IActionResult CreateStenoGorevDonguEkle(string birlesimId, string oturumId)
+        public IActionResult CreateStenoGorevDonguEkle(Guid birlesimId, Guid oturumId)
         {
             try
             {
@@ -143,9 +143,9 @@ namespace TTBS.Controllers
         }
 
         [HttpGet("GetStenoGorevByBirlesimId")]
-        public List<GorevAtamaModel> GetStenoGorevByBirlesimId(Guid birlesimId,ToplanmaTuru toplanmaTuru)
+        public List<GorevAtamaModel> GetStenoGorevByBirlesimId(Guid birlesimId,StenoGorevTuru gorevTuru,ToplanmaTuru toplanmaTuru)
         { 
-          return  _gorevAtamaService.GetGorevAtamaByBirlesimId(birlesimId, toplanmaTuru);
+          return  _gorevAtamaService.GetGorevAtamaByBirlesimId(birlesimId, gorevTuru,toplanmaTuru);
         }
 
         //[HttpPost("ChangeOrderStenografKomisyon")]

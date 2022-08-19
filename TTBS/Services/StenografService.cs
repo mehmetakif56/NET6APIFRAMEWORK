@@ -210,28 +210,6 @@ namespace TTBS.Services
         {
             _stenoIzinRepo.Create(entity, CurrentUser.Id);
             _stenoIzinRepo.Save();
-            var gkGorev = _gorevAtamaGKMRepo.Get(x => x.StenografId == entity.StenografId.ToString() &&
-                                             DateTime.ParseExact(x.GorevBasTarihi, "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture) >= entity.BaslangicTarihi.Value &&
-                                             DateTime.ParseExact(x.GorevBasTarihi, "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture) <= entity.BitisTarihi.Value);
-            if (gkGorev != null && gkGorev.Count()>0)
-            {
-                foreach (var item in gkGorev)
-                {
-                    item.StenoIzinTuru = entity.IzinTuru;
-                    item.GorevStatu = GorevStatu.Iptal;
-                    _gorevAtamaGKMRepo.UpdateAsync(item.Id, item);
-                }
-            }
-            var komGorev = _gorevAtamaKomMRepo.Get(x => x.StenografId == entity.StenografId.ToString() && DateTime.Parse(x.GorevBasTarihi) >= entity.BaslangicTarihi && DateTime.Parse(x.GorevBasTarihi) <= entity.BitisTarihi);
-            if (komGorev != null && komGorev.Count() > 0)
-            {
-                foreach (var item in komGorev)
-                {
-                    item.StenoIzinTuru = entity.IzinTuru;
-                    item.GorevStatu = GorevStatu.Iptal;
-                    _gorevAtamaKomMRepo.UpdateAsync(item.Id, item);
-                }
-            }
         }
 
         public IEnumerable<GorevAtama> GetStenoGorevByBirlesimIdAndGorevTuru(Guid birlesimId, int gorevTuru)
