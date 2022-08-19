@@ -11,48 +11,52 @@ namespace TTBS.Services
     {
         Birlesim CreateBirlesim(Birlesim birlesim);
         Guid CreateOturum(Oturum Oturum);
-        void CreateStenoAtamaGK(List<GorevAtamaGKM> gorevAtamaGKMongoList);
-        void CreateStenoAtamaKom(List<GorevAtamaKomM> gorevAtamaGKMongoList);
+        void CreateStenoAtamaGK(List<GorevAtamaGenelKurul> gorevAtamaList);
+        void CreateStenoAtamaKom(List<GorevAtamaKomisyon> gorevAtamaList);
         Birlesim UpdateBirlesimGorevAtama(Guid birlesimId,int turAdedi);
         void CreateBirlesimKomisyonRelation(Guid id, Guid komisyonId, Guid? altKomisyonId);
         void CreateBirlesimOzelToplanmaRelation(Guid id, Guid ozelToplanmaId);
-        IEnumerable<Stenograf> GetStenografIdList();
+        List<Stenograf> GetStenografIdList(DateTime gorevBasTarih);
         void AddStenoGorevAtamaKomisyon(List<Guid> stenografIds, string birlesimId, string oturumId);
         void CreateStenoGorevDonguEkle(string birlesimId, string oturumId);
         List<GorevAtamaKomM> GetGorevAtamaGKByBirlesimId(string birlesimId);
         void ChangeOrderStenografKomisyon(string kaynakBirlesimId, Dictionary<string, string> kaynakStenoList, string hedefBirlesimId, Dictionary<string, string> hedefStenografId);
         void ChangeSureStenografKomisyon(string birlesimId, int satırNo, double sure, bool digerAtamalarDahil = false);
+        IEnumerable<Stenograf> GetStenografIdList();
     }
     public class GorevAtamaService : BaseService, IGorevAtamaService
     {
         private IRepository<Birlesim> _birlesimRepo;
-        private IRepository<GorevAtama> _stenoGorevRepo;
+        private IRepository<GorevAtamaGenelKurul> _gorevAtamaGKRepo;
+        private IRepository<GorevAtamaKomisyon> _gorevAtamaKomRepo;
         private IRepository<BirlesimKomisyon> _birlesimKomisyonRepo;
         private IRepository<BirlesimOzelToplanma> _birlesimOzeToplanmaRepo;
         private readonly IGorevAtamaGKMBusiness _gorevAtamaGKMRepo;
         private readonly IGorevAtamaKomMBusiness _gorevAtamaKomMRepo;
         private IRepository<Stenograf> _stenografRepo;
+        private IRepository<StenoIzin> _stenoIzinRepo;
         private IRepository<Oturum> _oturumRepo;
+        
 
-        public GorevAtamaService(IRepository<Birlesim> birlesimRepo, 
-                                 IRepository<GorevAtama> stenoGorevRepo,
-                                 IGorevAtamaGKMBusiness gorevAtamaGKMRepo,
-                                 IGorevAtamaKomMBusiness gorevAtamaKomMRepo,
+        public GorevAtamaService(IRepository<Birlesim> birlesimRepo,
+                                 IRepository<GorevAtamaGenelKurul> gorevAtamaGKRepo,
+                                 IRepository<GorevAtamaKomisyon> gorevAtamaKomRepo,
                                  IRepository<BirlesimKomisyon> birlesimKomisyonRepo,
                                  IRepository<BirlesimOzelToplanma> birlesimOzeToplanmaRepo,
                                  IRepository<Stenograf> stenografRepo,
+                                 IRepository<StenoIzin> stenoIzinRepo,
                                  IRepository<Oturum> oturumRepo,
                                  IServiceProvider provider) : base(provider)
         {
             _birlesimRepo=birlesimRepo;
-            _stenoGorevRepo = stenoGorevRepo;
-            _gorevAtamaGKMRepo = gorevAtamaGKMRepo;
-            _gorevAtamaKomMRepo= gorevAtamaKomMRepo;
+            _gorevAtamaGKRepo = gorevAtamaGKRepo;
+            _gorevAtamaKomRepo = gorevAtamaKomRepo;
             _birlesimKomisyonRepo = birlesimKomisyonRepo;
             _birlesimOzeToplanmaRepo = birlesimOzeToplanmaRepo;
             _birlesimOzeToplanmaRepo = birlesimOzeToplanmaRepo;
             _stenografRepo = stenografRepo;
             _oturumRepo = oturumRepo;
+            _stenoIzinRepo = stenoIzinRepo;
         }
         public Birlesim CreateBirlesim(Birlesim birlesim)
         {
@@ -70,13 +74,17 @@ namespace TTBS.Services
             _oturumRepo.Save();
             return oturum.Id;
         }
-        public void CreateStenoAtamaGK(List<GorevAtamaGKM> gorevAtamaGKMongoList)
+        public void CreateStenoAtamaGK(List<GorevAtamaGenelKurul> gorevAtamaList)
         {
-             var result = _gorevAtamaGKMRepo.AddRangeAsync(gorevAtamaGKMongoList);
+            _gorevAtamaGKRepo.Create(gorevAtamaList);
+            _gorevAtamaGKRepo.Save();
+             //var result = _gorevAtamaGKMRepo.AddRangeAsync(gorevAtamaGKMongoList);
         }
-        public void CreateStenoAtamaKom(List<GorevAtamaKomM> gorevAtamaMongoList)
+        public void CreateStenoAtamaKom(List<GorevAtamaKomisyon> gorevAtamaList)
         {
-            var result = _gorevAtamaKomMRepo.AddRangeAsync(gorevAtamaMongoList);
+            _gorevAtamaKomRepo.Create(gorevAtamaList);
+            _gorevAtamaKomRepo.Save();
+            //var result = _gorevAtamaKomMRepo.AddRangeAsync(gorevAtamaMongoList);
         }
         public void CreateBirlesimKomisyonRelation(Guid id, Guid komisyonId, Guid? altKomisyonId)
         {
@@ -97,9 +105,19 @@ namespace TTBS.Services
             _birlesimRepo.Save();
             return birlesim;
         }
+        public List<Stenograf> GetStenografIdList(DateTime gorevBasTarih)
+        {
+            var result = from b in _stenografRepo.Query()
+                         from p in _stenoIzinRepo.Query().
+                             Where(p => b.Id == p.StenografId && p.BaslangicTarihi.Value.ToShortDateString() == DateTime.Now.ToShortDateString()).DefaultIfEmpty()
+                         select new Stenograf { AdSoyad = b.AdSoyad };
+
+
+            return result.ToList();//   _stenografRepo.Get().OrderBy(x => x.SiraNo).Select(x => new Stenograf { Id =x.Id,StenoGorevTuru =x.StenoGorevTuru,AdSoyad =x.AdSoyad});
+        }
         public IEnumerable<Stenograf> GetStenografIdList()
         {
-           return _stenografRepo.Get().OrderBy(x => x.SiraNo).Select(x => new Stenograf { Id =x.Id,StenoGorevTuru =x.StenoGorevTuru,AdSoyad =x.AdSoyad});
+            return  _stenografRepo.Get().OrderBy(x => x.SiraNo).Select(x => new Stenograf { Id =x.Id,StenoGorevTuru =x.StenoGorevTuru,AdSoyad =x.AdSoyad});
         }
         public void CreateStenoGorevDonguEkle(string birlesimId, string oturumId)
         {

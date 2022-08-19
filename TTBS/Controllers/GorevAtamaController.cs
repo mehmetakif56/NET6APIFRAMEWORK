@@ -49,7 +49,7 @@ namespace TTBS.Controllers
                                                     
                     var modelUzmanList = SetGorevAtama(birlesim, oturumId, stenoUzmanList, birlesim.UzmanStenoSure);
                     modelList.AddRange(modelUzmanList);
-                    var entityList = Mapper.Map<List<GorevAtamaGKM>>(modelList);
+                    var entityList = Mapper.Map<List<GorevAtamaGenelKurul>>(modelList);
                     _gorevAtamaService.CreateStenoAtamaGK(entityList);
                 }
                 else if (model.ToplanmaTuru == ToplanmaTuru.Komisyon)
@@ -67,15 +67,6 @@ namespace TTBS.Controllers
             return Ok();
         }
 
-        //[HttpPost("CreateOturum")]
-        //public IActionResult CreateOturum(OturumModel model)
-        //{
-        //    var entity = Mapper.Map<Oturum>(model);
-        //    _gorevAtamaService.CreateOturum(entity);
-        //    return Ok(entity);
-
-        //}
-
         [HttpPost("CreateStenoGorevAtama")]
         public IActionResult CreateStenoGorevAtama(StenoGorevAtamaModel model)
         {
@@ -85,7 +76,7 @@ namespace TTBS.Controllers
             {
                 var birlesim = _gorevAtamaService.UpdateBirlesimGorevAtama(model.BirlesimId,model.TurAdedi);
                 var modelList = SetGorevAtama(birlesim, model.OturumId, model.StenografIds, birlesim.StenoSure);
-                var entityList = Mapper.Map<List<GorevAtamaKomM>>(modelList);
+                var entityList = Mapper.Map<List<GorevAtamaKomisyon>>(modelList);
                 _gorevAtamaService.CreateStenoAtamaKom(entityList);
             }
             catch (Exception ex)
@@ -94,21 +85,21 @@ namespace TTBS.Controllers
             return Ok();
         }
 
-        private List<GorevAtamaMongoModel> SetGorevAtama(Birlesim birlesim, Guid oturumId, IEnumerable<Guid> stenoList,double sure)
+        private List<GorevAtamaModel> SetGorevAtama(Birlesim birlesim, Guid oturumId, IEnumerable<Guid> stenoList,double sure)
         {
-            var atamaList = new List<GorevAtamaMongoModel>();
+            var atamaList = new List<GorevAtamaModel>();
             var basDate = birlesim.BaslangicTarihi.HasValue ? birlesim.BaslangicTarihi.Value:DateTime.Now;
             int firstRec = 0;
             for (int i = 0; i < birlesim.TurAdedi; i++)
             {
                 foreach (var item in stenoList)
                 {
-                    var newEntity = new GorevAtamaMongoModel();
-                    newEntity.BirlesimId = birlesim.Id.ToString();
-                    newEntity.OturumId = oturumId.ToString();
-                    newEntity.StenografId = item.ToString();
-                    newEntity.GorevBasTarihi = basDate.AddMinutes(firstRec * sure).ToLongDateString();
-                    newEntity.GorevBitisTarihi = basDate.AddMinutes((firstRec * sure) + sure).ToLongDateString();
+                    var newEntity = new GorevAtamaModel();
+                    newEntity.BirlesimId = birlesim.Id;
+                    newEntity.OturumId = oturumId;
+                    newEntity.StenografId = item;
+                    newEntity.GorevBasTarihi = basDate.AddMinutes(firstRec * sure);
+                    newEntity.GorevBitisTarihi = basDate.AddMinutes((firstRec * sure) + sure);
                     newEntity.StenoSure = sure;
                     //newEntity.GorevStatu = item.StenoGrups.Select(x => x.GidenGrupMu).FirstOrDefault() == DurumStatu.Evet && newEntity.GorevBasTarihi.Value.AddMinutes(9 * newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
                     firstRec++;
@@ -142,7 +133,6 @@ namespace TTBS.Controllers
             try
             {
                 _gorevAtamaService.CreateStenoGorevDonguEkle(birlesimId, oturumId);
-
             }
             catch (Exception ex)
             {
@@ -152,10 +142,10 @@ namespace TTBS.Controllers
         }
 
         [HttpGet("GetStenoGorevByBirlesimId")]
-        public List<GorevAtamaMongoModel> GetStenoGorevByBirlesimId(string birlesimId)
+        public List<GorevAtamaModel> GetStenoGorevByBirlesimId(string birlesimId)
         {
             var entity = _gorevAtamaService.GetGorevAtamaGKByBirlesimId(birlesimId);
-            var model = _mapper.Map<List<GorevAtamaMongoModel>>(entity);
+            var model = _mapper.Map<List<GorevAtamaModel>>(entity);
             return model;
         }
 
@@ -183,6 +173,14 @@ namespace TTBS.Controllers
             { return BadRequest(ex.Message); }
 
             return Ok();
+        }
+
+        [HttpGet("GetStenografIdList")]
+        public List<StenoModel> GetStenografIdList()
+        {
+            var entity = _gorevAtamaService.GetStenografIdList(DateTime.Now);
+            var model = _mapper.Map<List<StenoModel>>(entity);
+            return model;
         }
 
     }

@@ -167,5 +167,6 @@ namespace TTBS.Infrastructure
         {
             return _dbSet.FromSqlRaw<T>(query, param).AsNoTracking();
         }
+        public IEnumerable<T> Query() { IQueryable<T> query = _dbSet; return query.ToList(); }
     }
 }

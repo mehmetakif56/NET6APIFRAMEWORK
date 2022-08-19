@@ -53,6 +53,7 @@ namespace TTBS.Core.Interfaces
         bool Save();
 
         IEnumerable<TEntity> FromSql(string query, params object[] param);
+        IEnumerable<TEntity> Query();
     }
 
 }

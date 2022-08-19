@@ -45,8 +45,8 @@ namespace TTBS.Services
         IEnumerable<Birlesim> GetBirlesimByDate(DateTime basTarihi, int toplanmaTuru);
         IEnumerable<Birlesim> GetKomisyonByDateAndGroup(DateTime? baslangic, DateTime? bitis, Guid? yasamaId, Guid grup);
         IEnumerable<Birlesim> GetBirlesimByDateAndGroup(DateTime? baslangic, DateTime? bitis, Guid? yasamaId, Guid grup);
+        void CreateStenoGroup(Guid stenoId,Guid grupId);
 
-       
     }
     public class StenografService : BaseService, IStenografService
     {
@@ -529,6 +529,15 @@ namespace TTBS.Services
             return _birlesimRepo.Get(x => x.ToplanmaTuru == ToplanmaTuru.GenelKurul && x.YasamaId == yasamaId).Where(x => x.ToplanmaDurumu != ToplanmaStatu.Tamamlandı);
 
         }
-
+        public void CreateStenoGroup(Guid stenoId, Guid grupId)
+        {
+            var steno = _stenografRepo.GetById(stenoId);
+            if(steno != null)
+            {
+                steno.GrupId = grupId;
+                _stenografRepo.Update(steno);
+                _stenografRepo.Save();
+            }
+        }
     }
 }

@@ -208,9 +208,9 @@ namespace TTBS.Controllers
                         }
 
 
-                        if (item.StenoToplantiVar || item.GorevStatu == GorevStatu.Iptal || item.GorevStatu == GorevStatu.GidenGrup || (iz != null && iz.Count() > 0))
+                        if (item.StenoToplantiVar || item.GorevStatu == GorevStatu.Iptal || /*item.GorevStatu == GorevStatu.GidenGrup ||*/ (iz != null && iz.Count() > 0))
                         {
-                            item.GorevStatu = item.GorevStatu  == GorevStatu.GidenGrup ? GorevStatu.GidenGrup : GorevStatu.Iptal;
+                            //item.GorevStatu = item.GorevStatu  == GorevStatu.GidenGrup ? GorevStatu.GidenGrup : GorevStatu.Iptal;
                         }
                         else
                         {
@@ -288,9 +288,9 @@ namespace TTBS.Controllers
                        }
 
 
-                       if (item.StenoToplantiVar || item.GorevStatu == GorevStatu.Iptal || item.GorevStatu == GorevStatu.GidenGrup || (iz != null && iz.Count() > 0))
+                       if (item.StenoToplantiVar || item.GorevStatu == GorevStatu.Iptal || /*item.GorevStatu == GorevStatu.GidenGrup ||*/ (iz != null && iz.Count() > 0))
                        {
-                           item.GorevStatu = item.GorevStatu == GorevStatu.GidenGrup ? GorevStatu.GidenGrup : GorevStatu.Iptal;
+                           //item.GorevStatu = item.GorevStatu == GorevStatu.GidenGrup ? GorevStatu.GidenGrup : GorevStatu.Iptal;
                        }
                        else
                        {
@@ -621,6 +621,18 @@ namespace TTBS.Controllers
         //    return result;
         //}
         #endregion
-
+        [HttpPost("CreateStenoGroup")]
+        public IActionResult CreateStenoGroup(StenoGrupModel model)
+        {
+            try
+            {
+                _stenoService.CreateStenoGroup(model.StenoId, model.GrupId);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            return Ok();
+        }
     }
 }

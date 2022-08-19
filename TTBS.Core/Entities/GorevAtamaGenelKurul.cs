@@ -7,7 +7,7 @@ using TTBS.Core.Enums;
 
 namespace TTBS.Core.Entities
 {
-    public class GorevAtama : BaseEntity
+    public class GorevAtamaGenelKurul : BaseEntity
     {
         public Guid Id { get; set; }
         public int SatırNo { get; set; }
@@ -23,10 +23,9 @@ namespace TTBS.Core.Entities
         public bool GidenGrup { get; set; }
         public IzınTuru StenoIzinTuru { get; set; }
         public bool SureAsmaVar { get; set; }
-
-        [NotMapped]
-        public List<Guid> StenografIds { get; set; }
         public Birlesim Birlesim { get; set; }
         public Stenograf Stenograf { get; set; }
+        [NotMapped]
+        public List<Guid> StenografIds { get; set; }
     }
 }

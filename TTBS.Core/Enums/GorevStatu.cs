@@ -11,8 +11,6 @@ namespace TTBS.Core.Enums
         Planlandı=0,
         DevamEdiyor =1,
         Tamamlandı=2,
-        Iptal=3,
-        GorevZamanAsim =5,
-        GidenGrup=6
+        Iptal=3
     }
 }

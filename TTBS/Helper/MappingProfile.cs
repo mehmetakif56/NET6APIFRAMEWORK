@@ -26,7 +26,7 @@ namespace TTBS.Helper
             CreateMap<IEnumerable<GorevAtama>, ReportPlanModel>()
                 .ForMember(dest => dest.StenografAd, opt => opt.MapFrom(src => src.First().Stenograf.AdSoyad))
                 .ForMember(dest => dest.GorevlendirmeSure, opt => opt.MapFrom(src => src.Sum(x => x.GorevBitisTarihi.Value.Subtract(x.GorevBasTarihi.Value).Minutes)))
-                .ForMember(dest => dest.ToplanmaTuru, opt => opt.MapFrom(src => src.First().StenoGorevTuru))
+                .ForMember(dest => dest.ToplanmaTuru, opt => opt.MapFrom(src => src.First().Stenograf.StenoGorevTuru))
                 .ForMember(dest => dest.GorevlendirmeSay, opt => opt.MapFrom(src => src.Count()));
             CreateMap<GorevAtama, ReportPlanModel>()
                 .ForMember(dest => dest.StenografAd, opt => opt.MapFrom(src => src.Stenograf.AdSoyad));
@@ -45,11 +45,11 @@ namespace TTBS.Helper
             CreateMap<BirlesimModel, Birlesim>();
             CreateMap<Birlesim, BirlesimModel>();
 
-            CreateMap<GorevAtamaMongoModel, GorevAtamaGKM>();
-            CreateMap<GorevAtamaGKM, GorevAtamaMongoModel>();
+            CreateMap<GorevAtamaModel, GorevAtamaGenelKurul>();
+            CreateMap<GorevAtamaGenelKurul, GorevAtamaModel>();
 
-            CreateMap<GorevAtamaMongoModel, GorevAtamaKomM>();
-            CreateMap<GorevAtamaKomM, GorevAtamaMongoModel>();
+            CreateMap<GorevAtamaModel, GorevAtamaKomisyon>();
+            CreateMap<GorevAtamaKomisyon, GorevAtamaModel>();
 
             CreateMap<OturumModel, Oturum>();
             CreateMap<Oturum, OturumModel>();
@@ -74,8 +74,8 @@ namespace TTBS.Helper
 
             CreateMap<Stenograf, StenoModel>()
                  .ForMember(dest => dest.HaftalikGorevSuresi,
-                            opt => opt.MapFrom(src => src.GorevAtamas != null && src.GorevAtamas.LastOrDefault(x => x.StenografId == src.Id) != null ?
-                                               src.GorevAtamas.LastOrDefault(x => x.StenografId == src.Id).GorevDakika : 0));
+                            opt => opt.MapFrom(src => 0)/*src.GorevAtamas != null && src.GorevAtamas.LastOrDefault(x => x.StenografId == src.Id) != null ?
+                                               src.GorevAtamas.LastOrDefault(x => x.StenografId == src.Id).GorevDakika : 0)*/);
             CreateMap<StenoModel, Stenograf>();
 
             CreateMap<AltKomisyonModel, AltKomisyon>();

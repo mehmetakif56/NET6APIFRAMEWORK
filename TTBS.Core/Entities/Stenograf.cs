@@ -26,5 +26,7 @@ namespace TTBS.Core.Entities
         public int GorevStatu { get; set; } 
         public Guid UserId { get; set; }
         public UserEntity User { get; set; }
+        [NotMapped]
+        public IzınTuru StenoIzinTuru { get; set; }
     }
 }

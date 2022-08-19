@@ -113,6 +113,17 @@ namespace TTBS.Infrastructure
             builder.ToTable("StenoToplamGenelSure");
             builder.HasIndex(e => e.BirlesimId).IsClustered(false);
         }
-
+        private void ConfigureGorevAtamaKomisyon(EntityTypeBuilder<GorevAtamaKomisyon> builder)
+        {
+            builder.ToTable("GorevAtamaKomisyon");
+        }
+        private void ConfigureGorevAtamaGenelKurul(EntityTypeBuilder<GorevAtamaGenelKurul> builder)
+        {
+            builder.ToTable("GorevAtamaGenelKurul");
+        }
+        private void ConfigureGorevAtamaOzelToplanma(EntityTypeBuilder<GorevAtamaOzelToplanma> builder)
+        {
+            builder.ToTable("GorevAtamaOzelToplanma");
+        }
     }
 }
