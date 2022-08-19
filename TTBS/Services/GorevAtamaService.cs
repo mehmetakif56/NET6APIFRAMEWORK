@@ -1,4 +1,5 @@
-﻿using TTBS.Core.Entities;
+﻿using AutoMapper;
+using TTBS.Core.Entities;
 using TTBS.Core.Enums;
 using TTBS.Core.Extensions;
 using TTBS.Core.Interfaces;
@@ -19,7 +20,7 @@ namespace TTBS.Services
         List<Stenograf> GetStenografIdList(DateTime gorevBasTarih);
         void AddStenoGorevAtamaKomisyon(List<Guid> stenografIds, string birlesimId, string oturumId);
         void CreateStenoGorevDonguEkle(string birlesimId, string oturumId);
-        List<GorevAtamaKomM> GetGorevAtamaGKByBirlesimId(string birlesimId);
+        List<GorevAtamaModel> GetGorevAtamaByBirlesimId(Guid birlesimId, ToplanmaTuru toplanmaTuru);
         void ChangeOrderStenografKomisyon(string kaynakBirlesimId, Dictionary<string, string> kaynakStenoList, string hedefBirlesimId, Dictionary<string, string> hedefStenografId);
         void ChangeSureStenografKomisyon(string birlesimId, int satırNo, double sure, bool digerAtamalarDahil = false);
         IEnumerable<Stenograf> GetStenografIdList();
@@ -29,6 +30,7 @@ namespace TTBS.Services
         private IRepository<Birlesim> _birlesimRepo;
         private IRepository<GorevAtamaGenelKurul> _gorevAtamaGKRepo;
         private IRepository<GorevAtamaKomisyon> _gorevAtamaKomRepo;
+        private IRepository<GorevAtamaOzelToplanma> _gorevAtamaOzelRepo;
         private IRepository<BirlesimKomisyon> _birlesimKomisyonRepo;
         private IRepository<BirlesimOzelToplanma> _birlesimOzeToplanmaRepo;
         private readonly IGorevAtamaGKMBusiness _gorevAtamaGKMRepo;
@@ -36,16 +38,18 @@ namespace TTBS.Services
         private IRepository<Stenograf> _stenografRepo;
         private IRepository<StenoIzin> _stenoIzinRepo;
         private IRepository<Oturum> _oturumRepo;
-        
+        public readonly IMapper _mapper;
 
         public GorevAtamaService(IRepository<Birlesim> birlesimRepo,
                                  IRepository<GorevAtamaGenelKurul> gorevAtamaGKRepo,
                                  IRepository<GorevAtamaKomisyon> gorevAtamaKomRepo,
                                  IRepository<BirlesimKomisyon> birlesimKomisyonRepo,
                                  IRepository<BirlesimOzelToplanma> birlesimOzeToplanmaRepo,
+                                 IRepository<GorevAtamaOzelToplanma> gorevAtamaOzelRepo,
                                  IRepository<Stenograf> stenografRepo,
                                  IRepository<StenoIzin> stenoIzinRepo,
                                  IRepository<Oturum> oturumRepo,
+                                 IMapper mapper,
                                  IServiceProvider provider) : base(provider)
         {
             _birlesimRepo=birlesimRepo;
@@ -57,6 +61,8 @@ namespace TTBS.Services
             _stenografRepo = stenografRepo;
             _oturumRepo = oturumRepo;
             _stenoIzinRepo = stenoIzinRepo;
+            _gorevAtamaOzelRepo = gorevAtamaOzelRepo;
+            _mapper = mapper;
         }
         public Birlesim CreateBirlesim(Birlesim birlesim)
         {
@@ -192,10 +198,23 @@ namespace TTBS.Services
                 }
             }
         }
-        public List<GorevAtamaKomM> GetGorevAtamaGKByBirlesimId(string birlesimId)
+        public List<GorevAtamaModel> GetGorevAtamaByBirlesimId(Guid birlesimId,ToplanmaTuru toplanmaTuru)
         {
-            var list = _gorevAtamaKomMRepo.Get(x=>x.BirlesimId == birlesimId).ToList();
-            return list;
+            var model = new List<GorevAtamaModel>();
+            if(toplanmaTuru == ToplanmaTuru.GenelKurul)
+            {
+                model = _mapper.Map<List<GorevAtamaModel>>(_gorevAtamaGKRepo.Get(x => x.BirlesimId == birlesimId).ToList());
+            }
+            else if(toplanmaTuru == ToplanmaTuru.Komisyon)
+            {
+                model = _mapper.Map<List<GorevAtamaModel>>(_gorevAtamaKomRepo.Get(x => x.BirlesimId == birlesimId).ToList());
+            }
+            else if(toplanmaTuru == ToplanmaTuru.OzelToplanti)
+            {
+                model = _mapper.Map<List<GorevAtamaModel>>(_gorevAtamaOzelRepo.Get(x => x.BirlesimId == birlesimId).ToList());
+            }
+
+            return model;
         }
         public async void ChangeSureStenografKomisyon(string birlesimId,int satırNo, double sure, bool digerAtamalarDahil = false)
         {

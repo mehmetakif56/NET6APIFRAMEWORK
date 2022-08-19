@@ -142,11 +142,9 @@ namespace TTBS.Controllers
         }
 
         [HttpGet("GetStenoGorevByBirlesimId")]
-        public List<GorevAtamaModel> GetStenoGorevByBirlesimId(string birlesimId)
-        {
-            var entity = _gorevAtamaService.GetGorevAtamaGKByBirlesimId(birlesimId);
-            var model = _mapper.Map<List<GorevAtamaModel>>(entity);
-            return model;
+        public List<GorevAtamaModel> GetStenoGorevByBirlesimId(Guid birlesimId,ToplanmaTuru toplanmaTuru)
+        { 
+          return  _gorevAtamaService.GetGorevAtamaByBirlesimId(birlesimId, toplanmaTuru);
         }
 
         //[HttpPost("ChangeOrderStenografKomisyon")]
