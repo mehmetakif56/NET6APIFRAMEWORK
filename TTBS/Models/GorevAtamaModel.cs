@@ -20,5 +20,8 @@ namespace TTBS.Models
         public IzınTuru StenoIzinTuru { get; set; }
         public bool SureAsmaVar { get; set; }
         public List<Guid> StenografIds { get; set; }
+        public DateTime? BirlesimBasTarihi { get; set; }
+        public StenoGorevTuru stenoGorevTuru { get; set; }
+        public double UzmanStenoSure { get; set; }
     }
 }

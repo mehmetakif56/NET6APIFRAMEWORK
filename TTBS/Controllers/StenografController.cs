@@ -134,190 +134,165 @@ namespace TTBS.Controllers
             return model;
         }
 
-        [HttpPut("UpdateGorevDurumByBirlesimAndSteno")]
-        public IActionResult UpdateGorevDurumByBirlesimAndSteno(Guid birlesimId, Guid stenoId)
-        {
-            try
-            {
-                _stenoService.UpdateGorevDurumByBirlesimAndSteno(birlesimId, stenoId);
-            }
-            catch(Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            return Ok();
-        }
-        [HttpPut("UpdateGorevDurumById")]
-        public IActionResult UpdateGorevDurumById(Guid id)
-        {
-            try
-            {
-                _stenoService.UpdateGorevDurumById(id);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            return Ok();
-        }
+       
 
-        [HttpGet("GetStenoUzmanGorevByBirlesimId")]
-        public List<StenoGorevModel> GetStenoUzmanGorevByBirlesimId(Guid birlesimId, int gorevturu)
-        {
-            var lst = new List<StenoGorevModel>();
-            var stenoEntity = _stenoService.GetStenoGorevByGorevTuru(gorevturu);
-            if (stenoEntity != null && stenoEntity.Count() > 0)
-            {
-                var birlesimList = stenoEntity.Where(x => x.BirlesimId == birlesimId).OrderBy(x => x.GorevBasTarihi).ToList();
-                if (birlesimList != null && birlesimList.Count() > 0)
-                {
-                    var model = _mapper.Map<List<StenoGorevModel>>(birlesimList);
-                    var gorevBasTarihi = model.FirstOrDefault().GorevBasTarihi.Value;
-                    var gorevBitTarihi = model.FirstOrDefault().GorevBitisTarihi.Value;
+        //[HttpGet("GetStenoUzmanGorevByBirlesimId")]
+        //public List<StenoGorevModel> GetStenoUzmanGorevByBirlesimId(Guid birlesimId, int gorevturu)
+        //{
+        //    var lst = new List<StenoGorevModel>();
+        //    var stenoEntity = _stenoService.GetStenoGorevByGorevTuru(gorevturu);
+        //    if (stenoEntity != null && stenoEntity.Count() > 0)
+        //    {
+        //        var birlesimList = stenoEntity.Where(x => x.BirlesimId == birlesimId).OrderBy(x => x.GorevBasTarihi).ToList();
+        //        if (birlesimList != null && birlesimList.Count() > 0)
+        //        {
+        //            var model = _mapper.Map<List<StenoGorevModel>>(birlesimList);
+        //            var gorevBasTarihi = model.FirstOrDefault().GorevBasTarihi.Value;
+        //            var gorevBitTarihi = model.FirstOrDefault().GorevBitisTarihi.Value;
 
-                    var birlesim = birlesimList.FirstOrDefault().Birlesim;
-                    double sure = 0;
-                    var ste = model.Where(x => x.StenografId == model.FirstOrDefault().StenografId);
-                    var stenoToplamSureAsım = ste.Max(x => x.GorevBitisTarihi.Value).Subtract(ste.Min(x => x.GorevBasTarihi.Value)).TotalMinutes <= 50;
+        //            var birlesim = birlesimList.FirstOrDefault().Birlesim;
+        //            double sure = 0;
+        //            var ste = model.Where(x => x.StenografId == model.FirstOrDefault().StenografId);
+        //            var stenoToplamSureAsım = ste.Max(x => x.GorevBitisTarihi.Value).Subtract(ste.Min(x => x.GorevBasTarihi.Value)).TotalMinutes <= 50;
 
-                    foreach (var item in model)
-                    {
+        //            foreach (var item in model)
+        //            {
 
-                        var iz = birlesimList.Where(x => x.StenografId == item.StenografId).SelectMany(x => x.Stenograf.StenoIzins)
-                                            .Where(x => x.BaslangicTarihi.Value <= gorevBitTarihi &&
-                                                        x.BitisTarihi.Value >= gorevBitTarihi);
-                        item.StenoIzinTuru = iz != null && iz.Count() > 0 ? iz.Select(x => x.IzinTuru).FirstOrDefault() : 0;
+        //                var iz = birlesimList.Where(x => x.StenografId == item.StenografId).SelectMany(x => x.Stenograf.StenoIzins)
+        //                                    .Where(x => x.BaslangicTarihi.Value <= gorevBitTarihi &&
+        //                                                x.BitisTarihi.Value >= gorevBitTarihi);
+        //                item.StenoIzinTuru = iz != null && iz.Count() > 0 ? iz.Select(x => x.IzinTuru).FirstOrDefault() : 0;
 
-                        if (birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul)
-                        {
-                            var maxBitis = stenoEntity.Where(x => x.BirlesimId != item.BirlesimId && x.StenografId == item.StenografId && x.GorevStatu != GorevStatu.Iptal).Max(x => x.GorevBitisTarihi);
+        //                if (birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul)
+        //                {
+        //                    var maxBitis = stenoEntity.Where(x => x.BirlesimId != item.BirlesimId && x.StenografId == item.StenografId && x.GorevStatu != GorevStatu.Iptal).Max(x => x.GorevBitisTarihi);
 
-                            var query = stenoEntity.Where(x => x.BirlesimId != item.BirlesimId &&
-                                                               x.StenografId == item.StenografId &&
-                                                               x.GorevStatu != GorevStatu.Iptal &&
-                                                               x.GorevBasTarihi.Value.Subtract(gorevBitTarihi).TotalMinutes > 0 &&
-                                                               x.GorevBasTarihi.Value.Subtract(gorevBitTarihi).TotalMinutes <= 60);
+        //                    var query = stenoEntity.Where(x => x.BirlesimId != item.BirlesimId &&
+        //                                                       x.StenografId == item.StenografId &&
+        //                                                       x.GorevStatu != GorevStatu.Iptal &&
+        //                                                       x.GorevBasTarihi.Value.Subtract(gorevBitTarihi).TotalMinutes > 0 &&
+        //                                                       x.GorevBasTarihi.Value.Subtract(gorevBitTarihi).TotalMinutes <= 60);
 
-                            item.StenoToplantiVar = (query != null && query.Count() > 0) || (maxBitis.HasValue && maxBitis.Value.AddMinutes(sure * 9) >= gorevBitTarihi) ? true : false;
-                            sure = gorevturu == (int)StenoGorevTuru.Stenograf ? birlesim.StenoSure : birlesim.UzmanStenoSure;
-                        }
-                        else
-                        {
-                            item.StenoToplantiVar = false;
-                            sure = item.StenoSure;
-                        }
+        //                    item.StenoToplantiVar = (query != null && query.Count() > 0) || (maxBitis.HasValue && maxBitis.Value.AddMinutes(sure * 9) >= gorevBitTarihi) ? true : false;
+        //                    sure = gorevturu == (int)StenoGorevTuru.Stenograf ? birlesim.StenoSure : birlesim.UzmanStenoSure;
+        //                }
+        //                else
+        //                {
+        //                    item.StenoToplantiVar = false;
+        //                    sure = item.StenoSure;
+        //                }
 
 
-                        if (item.StenoToplantiVar || item.GorevStatu == GorevStatu.Iptal || /*item.GorevStatu == GorevStatu.GidenGrup ||*/ (iz != null && iz.Count() > 0))
-                        {
-                            //item.GorevStatu = item.GorevStatu  == GorevStatu.GidenGrup ? GorevStatu.GidenGrup : GorevStatu.Iptal;
-                        }
-                        else
-                        {
+        //                if (item.StenoToplantiVar || item.GorevStatu == GorevStatu.Iptal || /*item.GorevStatu == GorevStatu.GidenGrup ||*/ (iz != null && iz.Count() > 0))
+        //                {
+        //                    //item.GorevStatu = item.GorevStatu  == GorevStatu.GidenGrup ? GorevStatu.GidenGrup : GorevStatu.Iptal;
+        //                }
+        //                else
+        //                {
 
-                            if (item.GorevBasTarihi != gorevBasTarihi)
-                            {
-                                item.GorevBasTarihi = gorevBitTarihi;
-                            }
-                            if (item.GorevBitisTarihi != gorevBitTarihi)
-                            {
-                                item.GorevBitisTarihi = gorevBitTarihi.AddMinutes(sure);
+        //                    if (item.GorevBasTarihi != gorevBasTarihi)
+        //                    {
+        //                        item.GorevBasTarihi = gorevBitTarihi;
+        //                    }
+        //                    if (item.GorevBitisTarihi != gorevBitTarihi)
+        //                    {
+        //                        item.GorevBitisTarihi = gorevBitTarihi.AddMinutes(sure);
 
-                            }
+        //                    }
 
-                            gorevBasTarihi = item.GorevBasTarihi.Value;
-                            gorevBitTarihi = item.GorevBitisTarihi.HasValue ? item.GorevBitisTarihi.Value : DateTime.MinValue;
-                        }
+        //                    gorevBasTarihi = item.GorevBasTarihi.Value;
+        //                    gorevBitTarihi = item.GorevBitisTarihi.HasValue ? item.GorevBitisTarihi.Value : DateTime.MinValue;
+        //                }
 
-                        item.StenoToplamSureAsım = stenoToplamSureAsım;
-                        lst.Add(item);
-                    }
-                }
-            }
-            //var entity = Mapper.Map<List<GorevAtama>>(model);
-            //_stenoService.UpdateStenoGorev(entity);
-            return lst;
-        }
+        //                item.StenoToplamSureAsım = stenoToplamSureAsım;
+        //                lst.Add(item);
+        //            }
+        //        }
+        //    }
+        //    //var entity = Mapper.Map<List<GorevAtama>>(model);
+        //    //_stenoService.UpdateStenoGorev(entity);
+        //    return lst;
+        //}
 
-        [HttpGet("GetStenoGorevByBirlesimId")]
-        public List<StenoGorevModel> GetStenoGorevByBirlesimId(Guid birlesimId, int gorevturu)
-        {
-            var lst = new List<StenoGorevModel>();
-            var stenoEntity = _stenoService.GetStenoGorevByGorevTuru(gorevturu);
-            //var model = _mapper.Map<List<StenoGorevModel>>(stenoEntity);
+        //[HttpGet("GetStenoGorevByBirlesimId")]
+        //public List<StenoGorevModel> GetStenoGorevByBirlesimId(Guid birlesimId, int gorevturu)
+        //{
+        //    var lst = new List<StenoGorevModel>();
+        //    var stenoEntity = _stenoService.GetStenoGorevByGorevTuru(gorevturu);
+        //    //var model = _mapper.Map<List<StenoGorevModel>>(stenoEntity);
 
-            if (stenoEntity != null && stenoEntity.Count() > 0)
-            {
-                var birlesimList = stenoEntity.Where(x => x.BirlesimId == birlesimId).OrderBy(x => x.GorevBasTarihi).ToList();
-                if (birlesimList != null && birlesimList.Count() > 0)
-                {
-                    var model = _mapper.Map<List<StenoGorevModel>>(birlesimList);
-                    var gorevBasTarihi = model.FirstOrDefault().GorevBasTarihi.Value;
-                    var gorevBitTarihi = model.FirstOrDefault().GorevBitisTarihi.Value;
+        //    if (stenoEntity != null && stenoEntity.Count() > 0)
+        //    {
+        //        var birlesimList = stenoEntity.Where(x => x.BirlesimId == birlesimId).OrderBy(x => x.GorevBasTarihi).ToList();
+        //        if (birlesimList != null && birlesimList.Count() > 0)
+        //        {
+        //            var model = _mapper.Map<List<StenoGorevModel>>(birlesimList);
+        //            var gorevBasTarihi = model.FirstOrDefault().GorevBasTarihi.Value;
+        //            var gorevBitTarihi = model.FirstOrDefault().GorevBitisTarihi.Value;
 
-                    var birlesim = birlesimList.FirstOrDefault().Birlesim;
-                    double sure = 0;
-                    var ste = model.Where(x => x.StenografId == model.FirstOrDefault().StenografId);
-                    var stenoToplamSureAsım = ste.Max(x => x.GorevBitisTarihi.Value).Subtract(ste.Min(x => x.GorevBasTarihi.Value)).TotalMinutes <= 50;
+        //            var birlesim = birlesimList.FirstOrDefault().Birlesim;
+        //            double sure = 0;
+        //            var ste = model.Where(x => x.StenografId == model.FirstOrDefault().StenografId);
+        //            var stenoToplamSureAsım = ste.Max(x => x.GorevBitisTarihi.Value).Subtract(ste.Min(x => x.GorevBasTarihi.Value)).TotalMinutes <= 50;
 
-                    foreach (var item in model)
-                    {
+        //            foreach (var item in model)
+        //            {
 
-                        var iz = birlesimList.Where(x => x.StenografId == item.StenografId).SelectMany(x => x.Stenograf.StenoIzins)
-                                           .Where(x => x.BaslangicTarihi.Value <= gorevBitTarihi &&
-                                                       x.BitisTarihi.Value >= gorevBitTarihi);
-                       item.StenoIzinTuru = iz != null && iz.Count() > 0 ? iz.Select(x => x.IzinTuru).FirstOrDefault() : 0;
+        //                var iz = birlesimList.Where(x => x.StenografId == item.StenografId).SelectMany(x => x.Stenograf.StenoIzins)
+        //                                   .Where(x => x.BaslangicTarihi.Value <= gorevBitTarihi &&
+        //                                               x.BitisTarihi.Value >= gorevBitTarihi);
+        //               item.StenoIzinTuru = iz != null && iz.Count() > 0 ? iz.Select(x => x.IzinTuru).FirstOrDefault() : 0;
 
-                       if (birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul)
-                       {
-                            var maxBitis =  stenoEntity.Where(x => x.BirlesimId != item.BirlesimId && x.StenografId == item.StenografId && x.GorevStatu != GorevStatu.Iptal).Max(x => x.GorevBitisTarihi);
+        //               if (birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul)
+        //               {
+        //                    var maxBitis =  stenoEntity.Where(x => x.BirlesimId != item.BirlesimId && x.StenografId == item.StenografId && x.GorevStatu != GorevStatu.Iptal).Max(x => x.GorevBitisTarihi);
      
-                            var query = stenoEntity.Where(x => x.BirlesimId != item.BirlesimId &&
-                                                               x.StenografId == item.StenografId &&
-                                                               x.GorevStatu != GorevStatu.Iptal &&
-                                                               x.GorevBasTarihi.Value.Subtract(gorevBitTarihi).TotalMinutes > 0 &&
-                                                               x.GorevBasTarihi.Value.Subtract(gorevBitTarihi).TotalMinutes <= 60);
+        //                    var query = stenoEntity.Where(x => x.BirlesimId != item.BirlesimId &&
+        //                                                       x.StenografId == item.StenografId &&
+        //                                                       x.GorevStatu != GorevStatu.Iptal &&
+        //                                                       x.GorevBasTarihi.Value.Subtract(gorevBitTarihi).TotalMinutes > 0 &&
+        //                                                       x.GorevBasTarihi.Value.Subtract(gorevBitTarihi).TotalMinutes <= 60);
 
-                            item.StenoToplantiVar = (query != null && query.Count() > 0) || (maxBitis.HasValue && maxBitis.Value.AddMinutes(sure * 9) >= gorevBitTarihi) ? true : false;
-                           sure = gorevturu == (int)StenoGorevTuru.Stenograf ? birlesim.StenoSure : birlesim.UzmanStenoSure;
-                       }
-                       else
-                       {
-                           item.StenoToplantiVar = false;
-                           sure = item.StenoSure;
-                       }
+        //                    item.StenoToplantiVar = (query != null && query.Count() > 0) || (maxBitis.HasValue && maxBitis.Value.AddMinutes(sure * 9) >= gorevBitTarihi) ? true : false;
+        //                   sure = gorevturu == (int)StenoGorevTuru.Stenograf ? birlesim.StenoSure : birlesim.UzmanStenoSure;
+        //               }
+        //               else
+        //               {
+        //                   item.StenoToplantiVar = false;
+        //                   sure = item.StenoSure;
+        //               }
 
 
-                       if (item.StenoToplantiVar || item.GorevStatu == GorevStatu.Iptal || /*item.GorevStatu == GorevStatu.GidenGrup ||*/ (iz != null && iz.Count() > 0))
-                       {
-                           //item.GorevStatu = item.GorevStatu == GorevStatu.GidenGrup ? GorevStatu.GidenGrup : GorevStatu.Iptal;
-                       }
-                       else
-                       {
+        //               if (item.StenoToplantiVar || item.GorevStatu == GorevStatu.Iptal || /*item.GorevStatu == GorevStatu.GidenGrup ||*/ (iz != null && iz.Count() > 0))
+        //               {
+        //                   //item.GorevStatu = item.GorevStatu == GorevStatu.GidenGrup ? GorevStatu.GidenGrup : GorevStatu.Iptal;
+        //               }
+        //               else
+        //               {
 
-                           if (item.GorevBasTarihi != gorevBasTarihi)
-                           {
-                               item.GorevBasTarihi = gorevBitTarihi;
-                           }
-                           if (item.GorevBitisTarihi != gorevBitTarihi)
-                           {
-                               item.GorevBitisTarihi = gorevBitTarihi.AddMinutes(sure);
+        //                   if (item.GorevBasTarihi != gorevBasTarihi)
+        //                   {
+        //                       item.GorevBasTarihi = gorevBitTarihi;
+        //                   }
+        //                   if (item.GorevBitisTarihi != gorevBitTarihi)
+        //                   {
+        //                       item.GorevBitisTarihi = gorevBitTarihi.AddMinutes(sure);
 
-                           }
+        //                   }
 
-                           gorevBasTarihi = item.GorevBasTarihi.Value;
-                           gorevBitTarihi = item.GorevBitisTarihi.HasValue ? item.GorevBitisTarihi.Value : DateTime.MinValue;
-                       }
+        //                   gorevBasTarihi = item.GorevBasTarihi.Value;
+        //                   gorevBitTarihi = item.GorevBitisTarihi.HasValue ? item.GorevBitisTarihi.Value : DateTime.MinValue;
+        //               }
 
-                       item.StenoToplamSureAsım = stenoToplamSureAsım;
-                       lst.Add(item);
-                   };
-                }
-            }
-            //var entity = Mapper.Map<List<GorevAtama>>(model);
-            //_stenoService.UpdateStenoGorev(entity);
-            return lst;
-        }
+        //               item.StenoToplamSureAsım = stenoToplamSureAsım;
+        //               lst.Add(item);
+        //           };
+        //        }
+        //    }
+        //    //var entity = Mapper.Map<List<GorevAtama>>(model);
+        //    //_stenoService.UpdateStenoGorev(entity);
+        //    return lst;
+        //}
 
         [HttpGet("GetStenoGorevByName")]
         public IEnumerable<StenoGorevModel> GetStenoGorevByName(string adSoyad)
@@ -343,73 +318,6 @@ namespace TTBS.Controllers
             return model;
         }
 
-        [HttpPut("UpdateBirlesimStenoGorev")]
-        public IActionResult UpdateBirlesimStenoGorev(BirlesimStenoGorevModel model)
-        {
-            try
-            {
-                if(ToplanmaBaslatmaStatu.Baslama == model.ToplanmaBaslatmaStatu)
-                {
-                    _stenoService.UpdateBirlesimStenoGorevBaslama(model.BirlesimId, model.BasTarihi,model.StenoGorevTuru);
-                    var oturum = _globalService.GetOturumByBirlesimId(model.BirlesimId).Where(x => x.BitisTarihi == null).FirstOrDefault();
-                    if (oturum != null)
-                    {
-                        oturum.BaslangicTarihi = model.BasTarihi;
-                        _globalService.UpdateOturum(oturum);
-                    }
-                }
-                else if(ToplanmaBaslatmaStatu.AraVerme == model.ToplanmaBaslatmaStatu)
-                {
-                    var birlesim =_globalService.GetBirlesimById(model.BirlesimId).FirstOrDefault();
-                    if(birlesim != null)
-                    {
-                        birlesim.ToplanmaDurumu = ToplanmaStatu.AraVerme;
-                        _globalService.UpdateBirlesim(birlesim);
-                    }
-                    var oturum = _globalService.GetOturumByBirlesimId(model.BirlesimId).Where(x => x.BitisTarihi == null).FirstOrDefault();
-                    if(oturum!= null)
-                    {
-                        oturum.BitisTarihi = model.BasTarihi;
-                        _globalService.UpdateOturum(oturum);
-                    }
-                }
-                else if(ToplanmaBaslatmaStatu.DevamEtme == model.ToplanmaBaslatmaStatu)
-                {
-                    var birlesim = _globalService.GetBirlesimById(model.BirlesimId).FirstOrDefault();
-                    if (birlesim != null)
-                    {
-                        birlesim.ToplanmaDurumu = ToplanmaStatu.DevamEdiyor;
-                        _globalService.UpdateBirlesim(birlesim);
-                    }
-                    var oturum = _globalService.GetOturumByBirlesimId(model.BirlesimId).Where(x => x.BitisTarihi != null).LastOrDefault();
-                    //var oturumId= _globalService.CreateOturum(new Oturum { BirlesimId = model.BirlesimId, BaslangicTarihi = model.BasTarihi });
-                    var oturumId = Guid.Empty;
-                   _stenoService.UpdateBirlesimStenoGorevDevamEtme(model.BirlesimId, model.BasTarihi,model.StenoGorevTuru, oturum.BitisTarihi.Value, oturumId);
-                }
-                else if(ToplanmaBaslatmaStatu.Sonladırma == model.ToplanmaBaslatmaStatu)
-                {
-                    var oturum = _globalService.GetOturumByBirlesimId(model.BirlesimId).Where(x => x.BitisTarihi == null).FirstOrDefault();
-                    if (oturum != null)
-                    {
-                        oturum.BitisTarihi = model.BasTarihi;
-                        _globalService.UpdateOturum(oturum);
-
-                    }
-                    var birlesim = _globalService.GetBirlesimById(model.BirlesimId).FirstOrDefault();
-                    if(birlesim !=null)
-                    {
-                        birlesim.BitisTarihi = model.BasTarihi;
-                        birlesim.ToplanmaDurumu = ToplanmaStatu.Tamamlandı;
-                        _globalService.UpdateBirlesim(birlesim);
-                    }
-                    _stenoService.UpdateStenoGorevTamamla(model.BirlesimId, model.StenoGorevTuru);
-                }
-            }
-            catch (Exception ex)
-            { return BadRequest(ex.Message); }
-
-            return Ok();
-        }
 
         [HttpPut("UpdateStenoGorevAtama")]
         public IActionResult UpdateStenoGorevAtama(List<StenoGorevGüncelleModel> model)
@@ -525,19 +433,6 @@ namespace TTBS.Controllers
             try
             {
                 _stenoService.DeleteStenoGorev(stenoGorevId);
-            }
-            catch (Exception ex)
-            { return BadRequest(ex.Message); }
-
-            return Ok();
-        }
-
-        [HttpDelete("DeleteGorevByBirlesimIdAndStenoId")]
-        public IActionResult DeleteGorevByBirlesimIdAndStenoId(Guid birlesimId,Guid stenografId)
-        {
-            try
-            {
-                _stenoService.DeleteGorevByBirlesimIdAndStenoId(birlesimId, stenografId);
             }
             catch (Exception ex)
             { return BadRequest(ex.Message); }
