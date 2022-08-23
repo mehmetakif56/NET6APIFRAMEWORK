@@ -14,6 +14,7 @@ namespace TTBS.Core.Entities
         public DurumStatu GidenGrupPasif { get; set; }
         public DurumStatu GidenGrupSaatUygula { get; set; }
         public string GidenGrupSaat { get; set; }
+        public DateTime GidenGrupTarih { get; set; }
         public Guid GrupId  { get; set; }
         public Grup Grup { get; set; }
     }

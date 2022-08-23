@@ -25,6 +25,7 @@ namespace TTBS.Services
         void CreateGrupDetay(GrupDetay grup);
         void UpdateGrupDetay(string gidenSaat);
         GrupDetay GetGrupDetay();
+        IEnumerable<GrupDetay> GetGrupDetayLast();
         IEnumerable<Grup> GetAllGrup(int grupTuru);
         Grup GetGrupById(Guid id);
         void CreateAltKomisyon(AltKomisyon komisyon);
@@ -372,6 +373,12 @@ namespace TTBS.Services
                 _grupDetayRepo.Update(grpDetay);
                 _grupDetayRepo.Save();
             }
+        }
+        public IEnumerable<GrupDetay> GetGrupDetayLast()
+        {
+            return _grupDetayRepo.Get(x => x.GidenGrupPasif == DurumStatu.Hayır).
+                                  GroupBy(x => new { GroupId = x.GrupId, GidenGrupTarih = x.GidenGrupTarih }).
+                                  Select(x => new GrupDetay { GrupId = x.Key.GroupId, GidenGrupTarih = x.Key.GidenGrupTarih });
         }
         public GrupDetay GetGrupDetay()
         {

@@ -8,5 +8,6 @@ namespace TTBS.Models
         public DurumStatu GidenGrupSaatUygula { get; set; }
         public Guid GrupId { get; set; }
         public string GidenGrupSaat { get; set; }
+        public DateTime GidenGrupTarih { get; set; }
     }
 }

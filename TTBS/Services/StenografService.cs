@@ -102,22 +102,6 @@ namespace TTBS.Services
 
             if (stenoIzinList != null && stenoIzinList.Count() > 0)
             {
-                if (!string.IsNullOrEmpty(field))
-                {
-                    if (field == "baslangicTarihi")
-                    {
-                        stenoIzinList = sortOrder == "desc" ? stenoIzinList.OrderByDescending(x => x.BaslangicTarihi) : stenoIzinList.OrderBy(x => x.BaslangicTarihi);
-                    }
-                    if (field == "bitisTarihi")
-                    {
-                        stenoIzinList = sortOrder == "desc" ? stenoIzinList.OrderByDescending(x => x.BitisTarihi) : stenoIzinList.OrderBy(x => x.BitisTarihi);
-                    }
-                    if (field == "izinTuru")
-                    {
-                        stenoIzinList = sortOrder == "desc" ? stenoIzinList.OrderByDescending(x => x.IzinTuru) : stenoIzinList.OrderBy(x => x.IzinTuru);
-                    }
-                }
-
                 stenoIzinList.ToList().ForEach(x => x.StenografCount = stenoIzinList.Count());
             }
             return stenoIzinList != null && stenoIzinList.Count() > 0 ? stenoIzinList.Skip((pageIndex - 1) * pagesize).Take(pagesize).ToList() : new List<StenoIzin> { };

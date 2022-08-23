@@ -264,6 +264,13 @@ namespace TTBS.Controllers
             var model = _mapper.Map<GrupDetayModel>(entity);
             return model;
         }
+        [HttpGet("GetGrupDetayLast")]
+        public IEnumerable<GrupDetayModel> GetGrupDetayLast()
+        {
+            var entity = _globalService.GetGrupDetayLast();
+            var model = _mapper.Map<IEnumerable<GrupDetayModel>>(entity);
+            return model;
+        }
         [HttpGet("GetGrupById")]
         public GrupModel GetGrupById(Guid id)
         {
