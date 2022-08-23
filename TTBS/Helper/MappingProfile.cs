@@ -46,10 +46,14 @@ namespace TTBS.Helper
             CreateMap<Birlesim, BirlesimModel>();
 
             CreateMap<GorevAtamaModel, GorevAtamaGenelKurul>();
-            CreateMap<GorevAtamaGenelKurul, GorevAtamaModel>();
+
+            CreateMap<GorevAtamaGenelKurul, GorevAtamaModel>()
+                             .ForMember(dest => dest.StenoAdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad));
+
 
             CreateMap<GorevAtamaModel, GorevAtamaKomisyon>();
-            CreateMap<GorevAtamaKomisyon, GorevAtamaModel>();
+            CreateMap<GorevAtamaKomisyon, GorevAtamaModel>()
+                    .ForMember(dest => dest.StenoAdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad));
 
             CreateMap<OturumModel, Oturum>();
             CreateMap<Oturum, OturumModel>();

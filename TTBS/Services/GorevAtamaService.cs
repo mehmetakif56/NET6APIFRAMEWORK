@@ -215,15 +215,15 @@ namespace TTBS.Services
             var model = new List<GorevAtamaModel>();
             if(toplanmaTuru == ToplanmaTuru.GenelKurul)
             {
-                model = _mapper.Map<List<GorevAtamaModel>>(_gorevAtamaGKRepo.Get(x => x.BirlesimId == birlesimId && x.Stenograf.StenoGorevTuru == gorevTuru).OrderBy(x=>x.SatırNo).ToList());
+                model = _mapper.Map<List<GorevAtamaModel>>(_gorevAtamaGKRepo.Get(x => x.BirlesimId == birlesimId && x.Stenograf.StenoGorevTuru == gorevTuru,includeProperties:"Stenograf").OrderBy(x=>x.SatırNo).ToList());
             }
             else if(toplanmaTuru == ToplanmaTuru.Komisyon)
             {
-                model = _mapper.Map<List<GorevAtamaModel>>(_gorevAtamaKomRepo.Get(x => x.BirlesimId == birlesimId && x.Stenograf.StenoGorevTuru == gorevTuru).OrderBy(x => x.SatırNo).ToList());
+                model = _mapper.Map<List<GorevAtamaModel>>(_gorevAtamaKomRepo.Get(x => x.BirlesimId == birlesimId && x.Stenograf.StenoGorevTuru == gorevTuru, includeProperties: "Stenograf").OrderBy(x => x.SatırNo).ToList());
             }
             else if(toplanmaTuru == ToplanmaTuru.OzelToplanti)
             {
-                model = _mapper.Map<List<GorevAtamaModel>>(_gorevAtamaOzelRepo.Get(x => x.BirlesimId == birlesimId && x.Stenograf.StenoGorevTuru == gorevTuru).OrderBy(x => x.SatırNo).ToList());
+                model = _mapper.Map<List<GorevAtamaModel>>(_gorevAtamaOzelRepo.Get(x => x.BirlesimId == birlesimId && x.Stenograf.StenoGorevTuru == gorevTuru, includeProperties: "Stenograf").OrderBy(x => x.SatırNo).ToList());
             }
 
             return model;

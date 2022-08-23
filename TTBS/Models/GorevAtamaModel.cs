@@ -23,5 +23,6 @@ namespace TTBS.Models
         public DateTime? BirlesimBasTarihi { get; set; }
         public StenoGorevTuru stenoGorevTuru { get; set; }
         public double UzmanStenoSure { get; set; }
+        public string StenoAdSoyad { get; set; }
     }
 }
