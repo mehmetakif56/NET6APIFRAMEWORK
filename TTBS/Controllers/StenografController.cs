@@ -460,37 +460,6 @@ namespace TTBS.Controllers
         //    return model;
         //}
 
-        [HttpGet("GetAssignedStenoByBirlesimId")]
-        public IEnumerable<StenoModel> GetAssignedStenoByBirlesimId(Guid birlesimId)
-        {
-            var stenoEntity = _stenoService.GetAssignedStenoByBirlesimId(birlesimId);
-            var stenoGroup = stenoEntity.GroupBy(x => new
-            {
-                x.StenografId,
-                x.Stenograf.AdSoyad,
-                x.Stenograf.StenoGorevTuru,
-                x.Stenograf.SiraNo,
-                x.Stenograf.SonGorevSuresi,
-                x.Stenograf.StenoGorevDurum
-                //x.GorevStatu
-            }).Select(z => new Stenograf
-            {
-                Id = z.Key.StenografId,
-                AdSoyad = z.Key.AdSoyad,
-                StenoGorevTuru = z.Key.StenoGorevTuru,
-                SiraNo = z.Key.SiraNo,
-                SonGorevSuresi = z.Key.SonGorevSuresi,
-                StenoGorevDurum = z.Key.StenoGorevDurum
-                //GorevStatu=(int)z.Key.GorevStatu
-            });
-            var yasamaId = stenoEntity.Count() > 0? stenoEntity.First().Birlesim.YasamaId : new Guid("00000000-0000-0000-0000-000000000000");
-
-            var model = _mapper.Map<IEnumerable<StenoModel>>(stenoGroup);
-            //şimdilik kaldırıldı, tablodan direkt getirelecek, perfomanstan dolayı
-            //model.ToList().ForEach(x => { x.GunlukGorevSuresi = _globalService.GetStenoSureDailyById(x.Id); x.HaftalikGorevSuresi = _globalService.GetStenoSureWeeklyById(x.Id); x.YillikGorevSuresi = _globalService.GetStenoSureYearlyById(x.Id, yasamaId); });
-            return model;
-        }
-
         [HttpPut("UpdateStenoSiraNo")]
         public IActionResult UpdateStenoSiraNo(List<StenoModel> model)
         {

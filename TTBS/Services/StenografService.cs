@@ -32,7 +32,6 @@ namespace TTBS.Services
         //List<Stenograf> GetAvaliableStenoBetweenDateBySteno(DateTime basTarihi, DateTime bitTarihi, int stenografId, int toplantiTur);
         //void UpdateStenoPlan(StenoPlan plan);
         //IEnumerable<Stenograf> GetAvaliableStenoBetweenDateByGroup(DateTime basTarihi, DateTime bitTarihi, Guid groupId, int toplantiTur);
-        IEnumerable<GorevAtama> GetAssignedStenoByBirlesimId(Guid birlesimId);
         //IEnumerable<GorevAtama> GetIntersectStenoPlan(Guid stenoPlanId, Guid stenoId);
         void UpdateStenoSiraNo(List<Stenograf> steno);
         IEnumerable<Grup> GetAllStenografGroup(int gorevTuru);      
@@ -272,11 +271,7 @@ namespace TTBS.Services
             return _stenografRepo.Get(x => x.StenoGorevTuru == StenoGorevTuru.Stenograf );
         }
     
-        public IEnumerable<GorevAtama> GetAssignedStenoByBirlesimId(Guid birlesimId)
-        {
-            return _stenoGorevRepo.Get(x => x.BirlesimId == birlesimId, includeProperties: "Stenograf,Birlesim");
-        }
-
+      
         public void UpdateStenoSiraNo(List<Stenograf> stenoList)
         {
             foreach (var steno in stenoList)

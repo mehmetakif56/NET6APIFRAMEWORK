@@ -120,11 +120,18 @@ namespace TTBS.Helper
 
 
 
-            CreateMap<GorevAtama, StenoModel>()
+            CreateMap<GorevAtamaKomisyon, StenoModel>()
                .ForMember(dest => dest.AdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad))
                .ForMember(dest => dest.SiraNo, opt => opt.MapFrom(src => src.Stenograf.SiraNo))
                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Stenograf.Id));
-            CreateMap<StenoModel, GorevAtama>();
+            CreateMap<StenoModel, GorevAtamaKomisyon>();
+
+            CreateMap<GorevAtamaGenelKurul, StenoModel>()
+        .ForMember(dest => dest.AdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad))
+        .ForMember(dest => dest.SiraNo, opt => opt.MapFrom(src => src.Stenograf.SiraNo))
+        .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Stenograf.Id));
+            CreateMap<StenoModel, GorevAtamaGenelKurul>();
+
             //.ForMember(dest => dest.GorevDakika, opt 
 
             //CreateMap<StenoGrupViewModel, StenoGrup>();

@@ -30,6 +30,7 @@ namespace TTBS.Services
         void UpdateGorevDurumByBirlesimAndSteno(Guid birlesimId, Guid stenoId, ToplanmaTuru toplanmaTuru);
         void UpdateGorevDurumById(Guid id, ToplanmaTuru toplanmaTuru);
         void UpdateStenoGorevTamamla(Guid birlesimId, StenoGorevTuru stenoGorevTur, ToplanmaTuru toplanmaTuru);
+        IEnumerable<GorevAtamaKomisyon> GetAssignedStenoByBirlesimId(Guid birlesimId);
     }
     public class GorevAtamaService : BaseService, IGorevAtamaService
     {
@@ -121,8 +122,9 @@ namespace TTBS.Services
         {
             var result = from b in _stenografRepo.Query()
                          from p in _stenoIzinRepo.Query().
-                             Where(p => b.Id == p.StenografId && p.BaslangicTarihi.Value.ToShortDateString() == DateTime.Now.ToShortDateString()).DefaultIfEmpty()
-                         select new Stenograf { AdSoyad = b.AdSoyad };
+                             Where(p => b.Id == p.StenografId && p.BaslangicTarihi.Value.ToShortDateString() == gorevBasTarih.ToShortDateString()).DefaultIfEmpty()
+                         from g in _gorevAtamaKomRepo.Query().Where(c=>c.StenografId == b.Id && c.GorevBasTarihi.Value.Subtract(gorevBasTarih).TotalMinutes <=60).DefaultIfEmpty()
+                         select new Stenograf { AdSoyad = b.AdSoyad, StenoIzinTuru =p!= null? p.IzinTuru :0 ,ToplantiVar =g!=null ? true:false};
 
 
             return result.ToList();//   _stenografRepo.Get().OrderBy(x => x.SiraNo).Select(x => new Stenograf { Id =x.Id,StenoGorevTuru =x.StenoGorevTuru,AdSoyad =x.AdSoyad});
@@ -569,6 +571,11 @@ namespace TTBS.Services
                 UpdateGorevAtama(result, toplanmaTuru);
             }
         }
+        public IEnumerable<GorevAtamaKomisyon> GetAssignedStenoByBirlesimId(Guid birlesimId)
+        {
+            return _gorevAtamaKomRepo.Get(x => x.BirlesimId == birlesimId, includeProperties: "Stenograf,Birlesim");
+        }
+
         #region kapatıldı, şimdilik,açılabilir
         //    //UpdateGidenGrup(atamaList);
         //}

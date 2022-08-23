@@ -28,5 +28,7 @@ namespace TTBS.Core.Entities
         public UserEntity User { get; set; }
         [NotMapped]
         public IzınTuru StenoIzinTuru { get; set; }
+        [NotMapped]
+        public bool ToplantiVar { get; set; }
     }
 }

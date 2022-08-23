@@ -109,6 +109,10 @@ namespace TTBS.Controllers
                     
                 }
             }
+            var ste = atamaList.Where(x => x.StenografId == stenoList.FirstOrDefault());
+            var stenoToplamSureAsım = ste.Max(x => x.GorevBitisTarihi.Value).Subtract(ste.Min(x => x.GorevBasTarihi.Value)).TotalMinutes <= 50;
+            atamaList.ForEach(x => x.SureAsmaVar = stenoToplamSureAsım);
+
             return atamaList;
         }
 
@@ -175,9 +179,9 @@ namespace TTBS.Controllers
         }
 
         [HttpGet("GetStenografIdList")]
-        public List<StenoModel> GetStenografIdList()
+        public List<StenoModel> GetStenografIdList(DateTime gorevTarih)
         {
-            var entity = _gorevAtamaService.GetStenografIdList(DateTime.Now);
+            var entity = _gorevAtamaService.GetStenografIdList(gorevTarih);
             var model = _mapper.Map<List<StenoModel>>(entity);
             return model;
         }
@@ -287,6 +291,37 @@ namespace TTBS.Controllers
             { return BadRequest(ex.Message); }
 
             return Ok();
+        }
+
+        [HttpGet("GetAssignedStenoByBirlesimId")]
+        public IEnumerable<StenoModel> GetAssignedStenoByBirlesimId(Guid birlesimId)
+        {
+            var stenoEntity = _gorevAtamaService.GetAssignedStenoByBirlesimId(birlesimId);
+            var stenoGroup = stenoEntity.GroupBy(x => new
+            {
+                x.StenografId,
+                x.Stenograf.AdSoyad,
+                x.Stenograf.StenoGorevTuru,
+                x.Stenograf.SiraNo,
+                x.Stenograf.SonGorevSuresi,
+                x.Stenograf.StenoGorevDurum
+                //x.GorevStatu
+            }).Select(z => new Stenograf
+            {
+                Id = z.Key.StenografId,
+                AdSoyad = z.Key.AdSoyad,
+                StenoGorevTuru = z.Key.StenoGorevTuru,
+                SiraNo = z.Key.SiraNo,
+                SonGorevSuresi = z.Key.SonGorevSuresi,
+                StenoGorevDurum = z.Key.StenoGorevDurum
+                //GorevStatu=(int)z.Key.GorevStatu
+            });
+            var yasamaId = stenoEntity.Count() > 0 ? stenoEntity.First().Birlesim.YasamaId : new Guid("00000000-0000-0000-0000-000000000000");
+
+            var model = _mapper.Map<IEnumerable<StenoModel>>(stenoGroup);
+            //şimdilik kaldırıldı, tablodan direkt getirelecek, perfomanstan dolayı
+            //model.ToList().ForEach(x => { x.GunlukGorevSuresi = _globalService.GetStenoSureDailyById(x.Id); x.HaftalikGorevSuresi = _globalService.GetStenoSureWeeklyById(x.Id); x.YillikGorevSuresi = _globalService.GetStenoSureYearlyById(x.Id, yasamaId); });
+            return model;
         }
     }
 }
