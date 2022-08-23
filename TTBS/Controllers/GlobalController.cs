@@ -269,6 +269,8 @@ namespace TTBS.Controllers
         {
             var entity = _globalService.GetGrupDetayLast();
             var model = _mapper.Map<IEnumerable<GrupDetayModel>>(entity);
+            model =model.GroupBy(x=> new {GrupId = x.GrupId, x.GrupAd, x.GidenGrupTarih }).
+                         Select(x => new GrupDetayModel{GrupId = x.Key.GrupId,GrupAd=x.Key.GrupAd,GidenGrupTarih =x.Key.GidenGrupTarih }).Take(3).ToList();
             return model;
         }
         [HttpGet("GetGrupById")]

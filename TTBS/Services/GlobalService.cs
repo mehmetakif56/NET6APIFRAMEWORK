@@ -376,13 +376,12 @@ namespace TTBS.Services
         }
         public IEnumerable<GrupDetay> GetGrupDetayLast()
         {
-            return _grupDetayRepo.Get(x => x.GidenGrupPasif == DurumStatu.Hayır).
-                                  GroupBy(x => new { GroupId = x.GrupId, GidenGrupTarih = x.GidenGrupTarih }).
-                                  Select(x => new GrupDetay { GrupId = x.Key.GroupId, GidenGrupTarih = x.Key.GidenGrupTarih });
+            return _grupDetayRepo.Get(x => x.GidenGrupPasif == DurumStatu.Hayır, includeProperties: "Grup").OrderByDescending(x=>x.GidenGrupTarih);
+                                
         }
         public GrupDetay GetGrupDetay()
         {
-            return _grupDetayRepo.GetFirst();
+            return _grupDetayRepo.GetFirst( includeProperties: "Grup");
         }
     }
 }

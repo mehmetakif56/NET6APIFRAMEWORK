@@ -9,5 +9,6 @@ namespace TTBS.Models
         public Guid GrupId { get; set; }
         public string GidenGrupSaat { get; set; }
         public DateTime GidenGrupTarih { get; set; }
+        public string GrupAd { get; set; }
     }
 }

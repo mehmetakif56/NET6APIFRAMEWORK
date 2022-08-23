@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,5 +18,7 @@ namespace TTBS.Core.Entities
         public DateTime GidenGrupTarih { get; set; }
         public Guid GrupId  { get; set; }
         public Grup Grup { get; set; }
+        [NotMapped]
+        public string GrupAd { get; set; }
     }
 }

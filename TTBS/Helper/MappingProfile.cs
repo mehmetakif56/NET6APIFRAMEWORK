@@ -56,9 +56,11 @@ namespace TTBS.Helper
             CreateMap<GrupModel, Grup>();
             CreateMap<Grup, GrupModel>();
             CreateMap<GrupGuncelleModel, GrupDetay>();
-            CreateMap<GrupDetay, GrupGuncelleModel>();
+            CreateMap<GrupDetay, GrupGuncelleModel>();    
+
             CreateMap<GrupDetayModel, GrupDetay>();
-            CreateMap<GrupDetay, GrupDetayModel>();
+            CreateMap<GrupDetay, GrupDetayModel>()
+                            .ForMember(dest => dest.GrupAd, opt => opt.MapFrom(src => src.Grup.Ad));
 
             CreateMap<KomisyonModel, Komisyon>();
             CreateMap<Komisyon, KomisyonModel>();
