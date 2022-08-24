@@ -109,9 +109,9 @@ namespace TTBS.Controllers
                     
                 }
             }
-            var ste = atamaList.Where(x => x.StenografId == stenoList.FirstOrDefault());
-            var stenoToplamSureAsım = ste.Max(x => x.GorevBitisTarihi.Value).Subtract(ste.Min(x => x.GorevBasTarihi.Value)).TotalMinutes <= 50;
-            atamaList.ForEach(x => x.SureAsmaVar = stenoToplamSureAsım);
+            //var ste = atamaList.Where(x => x.StenografId == stenoList.FirstOrDefault());
+            //var stenoToplamSureAsım = ste.Max(x => x.GorevBitisTarihi.Value).Subtract(ste.Min(x => x.GorevBasTarihi.Value)).TotalMinutes <= 50;
+            //atamaList.ForEach(x => x.SureAsmaVar = stenoToplamSureAsım);
 
             return atamaList;
         }
@@ -148,8 +148,11 @@ namespace TTBS.Controllers
 
         [HttpGet("GetStenoGorevByBirlesimId")]
         public List<GorevAtamaModel> GetStenoGorevByBirlesimId(Guid birlesimId,StenoGorevTuru gorevTuru,ToplanmaTuru toplanmaTuru)
-        { 
-          return  _gorevAtamaService.GetGorevAtamaByBirlesimId(birlesimId, gorevTuru,toplanmaTuru);
+        {
+            //return  _gorevAtamaService.GetGorevAtamaByBirlesimId(birlesimId, gorevTuru,toplanmaTuru);
+            var entity = _gorevAtamaService.GetStenografIdListLast();
+            var model = _mapper.Map<List<GorevAtamaModel>>(entity);
+            return model;
         }
 
         //[HttpPost("ChangeOrderStenografKomisyon")]
@@ -179,10 +182,10 @@ namespace TTBS.Controllers
         }
 
         [HttpGet("GetStenografIdList")]
-        public List<StenoModel> GetStenografIdList(DateTime gorevTarih)
+        public List<GorevAtamaModel> GetStenografIdList()
         {
-            var entity = _gorevAtamaService.GetStenografIdList(gorevTarih);
-            var model = _mapper.Map<List<StenoModel>>(entity);
+            var entity = _gorevAtamaService.GetStenografIdListLast();
+            var model = _mapper.Map<List<GorevAtamaModel>>(entity);
             return model;
         }
         [HttpPut("UpdateGorevDurumById")]
