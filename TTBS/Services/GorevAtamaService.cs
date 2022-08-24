@@ -31,6 +31,7 @@ namespace TTBS.Services
         void UpdateGorevDurumById(Guid id, ToplanmaTuru toplanmaTuru);
         void UpdateStenoGorevTamamla(Guid birlesimId, StenoGorevTuru stenoGorevTur, ToplanmaTuru toplanmaTuru);
         IEnumerable<GorevAtamaKomisyon> GetAssignedStenoByBirlesimId(Guid birlesimId);
+        IzınTuru GetStenoIzinByGorevBasTarih(Guid stenoId, DateTime? gorevBasTarih);
     }
     public class GorevAtamaService : BaseService, IGorevAtamaService
     {
@@ -610,36 +611,21 @@ namespace TTBS.Services
             return _gorevAtamaKomRepo.Get(x => x.BirlesimId == birlesimId, includeProperties: "Stenograf,Birlesim");
         }
 
-        #region kapatıldı, şimdilik,açılabilir
-        //    //UpdateGidenGrup(atamaList);
-        //}
-        //else if (entity.StenografIds != null && entity.StenografIds.Count > 0)
-        //{
-        //    var birlesim = _birlesimRepo.GetById(entity.BirlesimId);
-        //    if (birlesim != null)
-        //    {
-        //        var minDate = birlesim.BaslangicTarihi;
-        //        var atamaList = new List<GorevAtamaKomM>();
-        //        int firstRec = 1;
-        //        foreach (var item in entity.StenografIds)
-        //        {
-        //            var newEntity = new GorevAtamaKomM();
-        //            newEntity.BirlesimId = entity.BirlesimId;
-        //            newEntity.OturumId = entity.OturumId;
-        //            newEntity.StenografId = item;
-        //            newEntity.GorevBasTarihi = minDate.Value;
-        //            newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.Value.AddMinutes(firstRec * birlesim.StenoSure);
-        //            newEntity.StenoSure = birlesim.StenoSure;
-        //            newEntity.GorevStatu = GorevStatu.GidenGrup; //GetStenoGidenGrupDurum(item) == DurumStatu.Evet && newEntity.GorevBasTarihi.Value.AddMinutes(9 * newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
-        //            atamaList.Add(newEntity);
-        //            minDate = newEntity.GorevBitisTarihi;
-        //            firstRec++;
-        //        }
-        //        _stenoGorevRepo.Create(atamaList, CurrentUser.Id);
-        //        _stenoGorevRepo.Save();
+        public IzınTuru GetStenoIzinByGorevBasTarih(Guid stenoId,DateTime? gorevBasTarih)
+        {
+            var  izinTur = IzınTuru.Bulunmuyor;
+            var result =  _stenoIzinRepo.Get(x => x.StenografId == stenoId && x.BaslangicTarihi <= gorevBasTarih && x.BitisTarihi >= gorevBasTarih).Select(x=>x.IzinTuru);
+            if (result.Any())
+                izinTur = result.FirstOrDefault();
+            return izinTur;
+        }
 
-        //        // UpdateGidenGrup(atamaList);
-        //    }
+        //public void GetKomisyonByGorevBasTairh(Guid stenoId, DateTime? gorevBasTarih)
+        //{
+        //    var result =_gorevAtamaKomRepo.Get(x=>x.StenografId == stenoId )
+        //}
+
+        #region kapatıldı, şimdilik,açılabilir
         #endregion
     }
 }
