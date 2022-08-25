@@ -13,10 +13,12 @@ namespace TTBS.Core.Entities
         public Guid StenografId { get; set; }
         public DateTime? GorevBasTarihi { get; set; }
         public DateTime? GorevBitisTarihi { get; set; }
-        public DateTime? MinKomTarihi { get; set; }
-        public DateTime? MaxKomTarihi { get; set; }
-        //public bool GidenGrupSaatUygula { get; set; }
+        public int GidenGrupSaatUygula { get; set; }
         public string GidenGrupSaat { get; set; }
-        //public IzınTuru IzinTuru { get; set; }
+        public int IzinTuru { get; set; }
+        public GorevStatu GorevStatu { get; set; }
+        public string StenoAdSoyad { get; set; }
+        public string KomisyonAd { get; set; }
+        public Guid OturumId { get; set; }
     }
 }
