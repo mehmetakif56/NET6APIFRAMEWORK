@@ -50,6 +50,8 @@ namespace TTBS.Helper
             CreateMap<GorevAtamaGenelKurul, GorevAtamaModel>()
                              .ForMember(dest => dest.StenoAdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad));
 
+            CreateMap<GorevAtamaModel, GorevAtamalar>();
+            CreateMap<GorevAtamalar, GorevAtamaModel>();
 
             CreateMap<GorevAtamaModel, GorevAtamaKomisyon>();
             CreateMap<GorevAtamaKomisyon, GorevAtamaModel>()

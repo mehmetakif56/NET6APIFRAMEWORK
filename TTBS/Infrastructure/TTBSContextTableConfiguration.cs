@@ -125,5 +125,11 @@ namespace TTBS.Infrastructure
         {
             builder.ToTable("GorevAtamaOzelToplanma");
         }
+        private void ConfigureGorevAtamalar(EntityTypeBuilder<GorevAtamalar> builder)
+        {
+            builder
+            .ToView(nameof(GorevAtamalar))
+            .HasKey(t => t.BirlesimId);
+        }
     }
 }

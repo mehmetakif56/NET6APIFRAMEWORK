@@ -32,6 +32,7 @@ namespace TTBS.Services
         void UpdateStenoGorevTamamla(Guid birlesimId, ToplanmaTuru toplanmaTuru);
         IEnumerable<GorevAtamaKomisyon> GetAssignedStenoByBirlesimId(Guid birlesimId);
         IzınTuru GetStenoIzinByGorevBasTarih(Guid stenoId, DateTime? gorevBasTarih);
+        IEnumerable<GorevAtamalar> GetGorevAtamalarByBirlesimId(Guid birlesimId, ToplanmaTuru toplanmaTuru);
     }
     public class GorevAtamaService : BaseService, IGorevAtamaService
     {
@@ -47,6 +48,7 @@ namespace TTBS.Services
         private IRepository<StenoIzin> _stenoIzinRepo;
         private IRepository<Oturum> _oturumRepo;
         private IRepository<GrupDetay> _grupDetayRepo;
+        private IRepository<GorevAtamalar> _gorevAtamalar;
         public readonly IMapper _mapper;
 
         public GorevAtamaService(IRepository<Birlesim> birlesimRepo,
@@ -59,6 +61,7 @@ namespace TTBS.Services
                                  IRepository<StenoIzin> stenoIzinRepo,
                                  IRepository<GrupDetay> grupDetayRepo,
                                  IRepository<Oturum> oturumRepo,
+                                 IRepository<GorevAtamalar> gorevAtamalar,
                                  IMapper mapper,
                                  IServiceProvider provider) : base(provider)
         {
@@ -73,6 +76,7 @@ namespace TTBS.Services
             _stenoIzinRepo = stenoIzinRepo;
             _gorevAtamaOzelRepo = gorevAtamaOzelRepo;
             _grupDetayRepo = grupDetayRepo;
+            _gorevAtamalar = gorevAtamalar;
             _mapper = mapper;
         }
         public Birlesim CreateBirlesim(Birlesim birlesim)
@@ -262,6 +266,12 @@ namespace TTBS.Services
             }
 
             return model;
+        }
+        public IEnumerable<GorevAtamalar> GetGorevAtamalarByBirlesimId(Guid birlesimId, ToplanmaTuru toplanmaTuru)
+        {
+             var result = _gorevAtamalar.Get(x => x.BirlesimId == birlesimId);
+           
+            return result;
         }
         public async void ChangeSureStenografKomisyon(string birlesimId,int satırNo, double sure, bool digerAtamalarDahil = false)
         {

@@ -37,6 +37,7 @@ namespace TTBS.Infrastructure
         public DbSet<GorevAtamaKomisyon> GorevAtamaKomisyons { get; set; }
         public DbSet<GorevAtamaOzelToplanma> GorevAtamaOzelToplanmas { get; set; }
         public DbSet<GorevAtamaGenelKurul> GorevAtamaGenelKurula { get; set; }
+        public DbSet<GorevAtamalar> GorevAtamalars { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -61,6 +62,7 @@ namespace TTBS.Infrastructure
             builder.Entity<GorevAtamaKomisyon>(ConfigureGorevAtamaKomisyon);
             builder.Entity<GorevAtamaOzelToplanma>(ConfigureGorevAtamaOzelToplanma);
             builder.Entity<GorevAtamaGenelKurul>(ConfigureGorevAtamaGenelKurul);
+            builder.Entity<GorevAtamalar>(ConfigureGorevAtamalar);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

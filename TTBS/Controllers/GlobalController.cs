@@ -248,7 +248,6 @@ namespace TTBS.Controllers
             var entity = Mapper.Map<GrupDetay>(model);
             _globalService.CreateGrupDetay(entity);
             return Ok(entity);
-
         }
         [HttpPost("UpdateGrupDetay")]
         public IActionResult UpdateGrupDetay(string gidenSaat)
