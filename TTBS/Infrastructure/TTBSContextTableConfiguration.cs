@@ -129,7 +129,7 @@ namespace TTBS.Infrastructure
         {
             builder
             .ToView(nameof(GorevAtamalar))
-            .HasKey(t => t.BirlesimId);
+            .HasKey(t => t.Id);
         }
     }
 }

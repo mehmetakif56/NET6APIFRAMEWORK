@@ -17,29 +17,29 @@ namespace TTBS.Infrastructure
 
         public void Create(T entity, Guid? userId = null)
         {
-            entity.CreatedDate = DateTime.Now;
-            entity.CreatedBy = userId;
+            //entity.CreatedDate = DateTime.Now;
+            //entity.CreatedBy = userId;
             _dbSet.Add(entity);
         }
 
         public void Create(Guid? userId = null, params T[] entities)
         {
-            entities.ToList().ForEach((e) =>
-            {
-                e.CreatedDate = DateTime.Now;
-                e.CreatedBy = userId;
-            });
+            //entities.ToList().ForEach((e) =>
+            //{
+            //    e.CreatedDate = DateTime.Now;
+            //    e.CreatedBy = userId;
+            //});
 
             _dbSet.AddRange(entities);
         }
 
         public void Create(IEnumerable<T> entities, Guid? userId = null)
         {
-            entities.ToList().ForEach((e) =>
-            {
-                e.CreatedDate = DateTime.Now;
-                e.CreatedBy = userId;
-            });
+            //entities.ToList().ForEach((e) =>
+            //{
+            //    e.CreatedDate = DateTime.Now;
+            //    e.CreatedBy = userId;
+            //});
             _dbSet.AddRange(entities);
         }
 
@@ -64,28 +64,28 @@ namespace TTBS.Infrastructure
 
         public void Update(T entity, Guid? userId = null)
         {
-            entity.ModifiedDate = DateTime.Now;
-            entity.ModifiedBy = userId;
+            //entity.ModifiedDate = DateTime.Now;
+            //entity.ModifiedBy = userId;
             _dbSet.Update(entity);
         }
 
         public void Update(Guid? userId = null, params T[] entities)
         {
-            entities.ToList().ForEach((e) =>
-            {
-                e.ModifiedDate = DateTime.Now;
-                e.ModifiedBy = userId;
-            });
+            //entities.ToList().ForEach((e) =>
+            //{
+            //    e.ModifiedDate = DateTime.Now;
+            //    e.ModifiedBy = userId;
+            //});
             _dbSet.UpdateRange(entities);
         }
 
         public void Update(IEnumerable<T> entities, Guid? userId = null, bool bulkInsert = false)
         {
-            entities.ToList().ForEach((e) =>
-            {
-                e.ModifiedDate = DateTime.Now;
-                e.ModifiedBy = userId;
-            });
+            //entities.ToList().ForEach((e) =>
+            //{
+            //    e.ModifiedDate = DateTime.Now;
+            //    e.ModifiedBy = userId;
+            //});
             if (bulkInsert)
                 _dbSet.UpdateRange(entities);
             //_dbContext.BulkUpdate(entities);

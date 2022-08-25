@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TTBS.Infrastructure;
 
@@ -11,9 +12,10 @@ using TTBS.Infrastructure;
 namespace TTBS.Migrations
 {
     [DbContext(typeof(TTBSContext))]
-    partial class TTBSContextModelSnapshot : ModelSnapshot
+    [Migration("20220825145120_sureasma")]
+    partial class sureasma
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -149,7 +151,7 @@ namespace TTBS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Claims", (string)null);
+                    b.ToTable("Claims");
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.Donem", b =>
@@ -651,7 +653,7 @@ namespace TTBS.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("RoleClaims", (string)null);
+                    b.ToTable("RoleClaims");
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.RoleEntity", b =>
@@ -671,7 +673,7 @@ namespace TTBS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RoleEntity", (string)null);
+                    b.ToTable("RoleEntity");
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.Stenograf", b =>
@@ -831,7 +833,7 @@ namespace TTBS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.UserRoleEntity", b =>
@@ -855,7 +857,7 @@ namespace TTBS.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserRoleEntity", (string)null);
+                    b.ToTable("UserRoleEntity");
                 });
 
             modelBuilder.Entity("TTBS.Core.Entities.Yasama", b =>

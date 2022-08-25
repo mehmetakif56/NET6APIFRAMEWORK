@@ -128,36 +128,36 @@ namespace TTBS.Services
         }
         public List<GorevAtamaGenelKurul> GetStenografIdListLast()
         {
-            var result = from gk in _gorevAtamaGKRepo.Query()
-                         from iz in _stenoIzinRepo.Query()
-                                                  .Where(iz => gk.StenografId == iz.StenografId &&
-                                                               gk.GorevBasTarihi >= iz.BaslangicTarihi &&
-                                                               gk.GorevBasTarihi <= iz.BitisTarihi).DefaultIfEmpty()
-                         from k in _gorevAtamaKomRepo.Query().Where(k => gk.StenografId == k.StenografId).DefaultIfEmpty()
-                         from s in _stenografRepo.Query().Where(s => gk.StenografId == s.Id).DefaultIfEmpty()
-                         from g in _grupDetayRepo.Query().Where(g => g.GrupId == s.GrupId).DefaultIfEmpty()
-                         select new { gk, iz, k, g,s };
-            
-            var grpList = result.GroupBy(x => new
-            {
-                BirlesimId = x.gk.BirlesimId,
-                StenografId = x.gk.StenografId,
-                IzinTuru = x.iz!=null? x.iz.IzinTuru: IzınTuru.Bulunmuyor,
-                GorevBasTarihi = x.gk.GorevBasTarihi,
-                GorevBitisTarihi = x.gk.GorevBitisTarihi,
-                StenoSure = x.gk.StenoSure,
-                AdSoyad =x.s.AdSoyad
-            }).Select(x => new GorevAtamaGenelKurul
-            {
-                AdSoyad =x.Key.AdSoyad,
-                BirlesimId = x.Key.BirlesimId,
-                StenografId = x.Key.StenografId,
-                StenoIzinTuru = x.Key.IzinTuru,
-                GorevBasTarihi = x.Key.GorevBasTarihi,
-                GorevBitisTarihi = x.Key.GorevBitisTarihi,
-                MinTarih =   x.Min(x=>x.k?.GorevBasTarihi).HasValue ? x.Min(x => x.k?.GorevBasTarihi).Value.AddHours(-1):DateTime.MinValue,
-                MaxTarih = x.Max(x =>x.k?.GorevBitisTarihi).HasValue ? x.Max(x => x.k?.GorevBitisTarihi).Value.AddMinutes(9 * x.Key.StenoSure) :DateTime.MinValue,
-            });
+            //var result = from gk in _gorevAtamaGKRepo.Query()
+            //             from iz in _stenoIzinRepo.Query()
+            //                                      .Where(iz => gk.StenografId == iz.StenografId &&
+            //                                                   gk.GorevBasTarihi >= iz.BaslangicTarihi &&
+            //                                                   gk.GorevBasTarihi <= iz.BitisTarihi).DefaultIfEmpty()
+            //             from k in _gorevAtamaKomRepo.Query().Where(k => gk.StenografId == k.StenografId).DefaultIfEmpty()
+            //             from s in _stenografRepo.Query().Where(s => gk.StenografId == s.Id).DefaultIfEmpty()
+            //             from g in _grupDetayRepo.Query().Where(g => g.GrupId == s.GrupId).DefaultIfEmpty()
+            //             select new { gk, iz, k, g,s };
+
+            //var grpList = result.GroupBy(x => new
+            //{
+            //    BirlesimId = x.gk.BirlesimId,
+            //    StenografId = x.gk.StenografId,
+            //    IzinTuru = x.iz!=null? x.iz.IzinTuru: IzınTuru.Bulunmuyor,
+            //    GorevBasTarihi = x.gk.GorevBasTarihi,
+            //    GorevBitisTarihi = x.gk.GorevBitisTarihi,
+            //    StenoSure = x.gk.StenoSure,
+            //    AdSoyad =x.s.AdSoyad
+            //}).Select(x => new GorevAtamaGenelKurul
+            //{
+            //    AdSoyad =x.Key.AdSoyad,
+            //    BirlesimId = x.Key.BirlesimId,
+            //    StenografId = x.Key.StenografId,
+            //    StenoIzinTuru = x.Key.IzinTuru,
+            //    GorevBasTarihi = x.Key.GorevBasTarihi,
+            //    GorevBitisTarihi = x.Key.GorevBitisTarihi,
+            //    MinTarih =   x.Min(x=>x.k?.GorevBasTarihi).HasValue ? x.Min(x => x.k?.GorevBasTarihi).Value.AddHours(-1):DateTime.MinValue,
+            //    MaxTarih = x.Max(x =>x.k?.GorevBitisTarihi).HasValue ? x.Max(x => x.k?.GorevBitisTarihi).Value.AddMinutes(9 * x.Key.StenoSure) :DateTime.MinValue,
+            //});
 
             //var result = from b in _stenografRepo.Query()
             //             from p in _stenoIzinRepo.Query().
@@ -166,7 +166,7 @@ namespace TTBS.Services
             //             select new Stenograf { AdSoyad = b.AdSoyad, StenoIzinTuru =p!= null? p.IzinTuru :0 ,ToplantiVar =g!=null ? true:false};
 
 
-            return grpList.ToList();//   _stenografRepo.Get().OrderBy(x => x.SiraNo).Select(x => new Stenograf { Id =x.Id,StenoGorevTuru =x.StenoGorevTuru,AdSoyad =x.AdSoyad});
+            return new List<GorevAtamaGenelKurul>();//grpList.ToList();//   _stenografRepo.Get().OrderBy(x => x.SiraNo).Select(x => new Stenograf { Id =x.Id,StenoGorevTuru =x.StenoGorevTuru,AdSoyad =x.AdSoyad});
         }
         public IEnumerable<Stenograf> GetStenografIdList()
         {
@@ -269,7 +269,7 @@ namespace TTBS.Services
         }
         public IEnumerable<GorevAtamalar> GetGorevAtamalarByBirlesimId(Guid birlesimId, ToplanmaTuru toplanmaTuru)
         {
-             var result = _gorevAtamalar.Get(x => x.BirlesimId == birlesimId);
+             var result = _gorevAtamalar.Get(x => x.BirlesimId == birlesimId).OrderBy(x=>x.SatırNo);
            
             return result;
         }
@@ -420,19 +420,19 @@ namespace TTBS.Services
         {
             if (toplanmaTuru == ToplanmaTuru.GenelKurul)
             {
-                var entity = Mapper.Map<GorevAtamaGenelKurul>(model);
+                var entity = Mapper.Map<IEnumerable<GorevAtamaGenelKurul>>(model);
                 _gorevAtamaGKRepo.Update(entity);
                 _gorevAtamaGKRepo.Save();
             }
             else if (toplanmaTuru == ToplanmaTuru.Komisyon)
             {
-                var entity = Mapper.Map<GorevAtamaKomisyon>(model);
+                var entity = Mapper.Map< IEnumerable<GorevAtamaKomisyon>>(model);
                 _gorevAtamaKomRepo.Update(entity);
                 _gorevAtamaKomRepo.Save();
             }
             else if (toplanmaTuru == ToplanmaTuru.OzelToplanti)
             {
-                var entity = Mapper.Map<GorevAtamaOzelToplanma>(model);
+                var entity = Mapper.Map< IEnumerable<GorevAtamaOzelToplanma>>(model);
                 _gorevAtamaOzelRepo.Update(entity);
                 _gorevAtamaOzelRepo.Save();
             }

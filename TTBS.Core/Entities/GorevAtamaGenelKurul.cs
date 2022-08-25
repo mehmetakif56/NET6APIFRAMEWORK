@@ -20,20 +20,18 @@ namespace TTBS.Core.Entities
         public double StenoSure { get; set; }
         public GorevStatu GorevStatu { get; set; }
         public string KomisyonAd { get; set; }
-        public bool GidenGrup { get; set; }
         public IzınTuru StenoIzinTuru { get; set; }
-        public bool SureAsmaVar { get; set; }
         public Birlesim Birlesim { get; set; }
         public Stenograf Stenograf { get; set; }
         [NotMapped]
         public List<Guid> StenografIds { get; set; }
         [NotMapped]
-        public DateTime? MinTarih { get; set; }
-        [NotMapped]
-        public DateTime? MaxTarih { get; set; }
-        [NotMapped]
         public string GidenGrupSaat { get; set; }
         [NotMapped]
-        public string AdSoyad { get; set; }
+        public int GidenGrupSaatUygula { get; set; }
+        [NotMapped]
+        public DateTime? BirlesimBasTarihi { get; set; }
+        [NotMapped]
+        public int SureAsmaVar { get; set; }
     }
 }

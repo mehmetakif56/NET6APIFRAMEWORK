@@ -153,6 +153,7 @@ namespace TTBS.Controllers
         {
             var entity = _gorevAtamaService.GetGorevAtamalarByBirlesimId(birlesimId, toplanmaTuru);
             var model = _mapper.Map<List<GorevAtamaModel>>(entity);
+
             return model;
         }
 
