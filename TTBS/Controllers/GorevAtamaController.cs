@@ -76,7 +76,8 @@ namespace TTBS.Controllers
             try
             {
                 var birlesim = _gorevAtamaService.UpdateBirlesimGorevAtama(model.BirlesimId,model.TurAdedi);
-                var modelList = SetGorevAtama(birlesim, model.OturumId, model.StenografIds, birlesim.StenoSure);
+                var oturum = _globalService.GetOturumByBirlesimId(model.BirlesimId).Where(x => x.BitisTarihi == null).FirstOrDefault();
+                var modelList = SetGorevAtama(birlesim, oturum.Id, model.StenografIds, birlesim.StenoSure);
                 var entityList = Mapper.Map<List<GorevAtamaKomisyon>>(modelList);
                 _gorevAtamaService.CreateStenoAtamaKom(entityList);
             }
@@ -148,9 +149,9 @@ namespace TTBS.Controllers
         }
 
         [HttpGet("GetStenoGorevByBirlesimId")]
-        public List<GorevAtamaModel> GetStenoGorevByBirlesimId(Guid birlesimId,StenoGorevTuru gorevTuru,ToplanmaTuru toplanmaTuru)
+        public List<GorevAtamaModel> GetStenoGorevByBirlesimId(Guid birlesimId,ToplanmaTuru toplanmaTuru)
         {
-            return _gorevAtamaService.GetGorevAtamaByBirlesimId(birlesimId, gorevTuru, toplanmaTuru);
+            return _gorevAtamaService.GetGorevAtamaByBirlesimId(birlesimId, toplanmaTuru);
             //var entity = _gorevAtamaService.GetStenografIdListLast();
             //var model = _mapper.Map<List<GorevAtamaModel>>(entity);
             //return model;
@@ -223,7 +224,7 @@ namespace TTBS.Controllers
             {
                 if (ToplanmaBaslatmaStatu.Baslama == model.ToplanmaBaslatmaStatu)
                 {
-                    _gorevAtamaService.UpdateBirlesimStenoGorevBaslama(model.BirlesimId, model.BasTarihi, model.StenoGorevTuru,model.ToplanmaTuru);
+                    _gorevAtamaService.UpdateBirlesimStenoGorevBaslama(model.BirlesimId, model.BasTarihi, model.ToplanmaTuru);
                     var oturum = _globalService.GetOturumByBirlesimId(model.BirlesimId).Where(x => x.BitisTarihi == null).FirstOrDefault();
                     if (oturum != null)
                     {
@@ -257,7 +258,7 @@ namespace TTBS.Controllers
                     var oturum = _globalService.GetOturumByBirlesimId(model.BirlesimId).Where(x => x.BitisTarihi != null).LastOrDefault();
                     //var oturumId= _globalService.CreateOturum(new Oturum { BirlesimId = model.BirlesimId, BaslangicTarihi = model.BasTarihi });
                     var oturumId = Guid.Empty;
-                    _gorevAtamaService.UpdateBirlesimStenoGorevDevamEtme(model.BirlesimId, model.BasTarihi, model.StenoGorevTuru, oturum.BitisTarihi.Value, oturumId,model.ToplanmaTuru);
+                    _gorevAtamaService.UpdateBirlesimStenoGorevDevamEtme(model.BirlesimId, model.BasTarihi, oturum.BitisTarihi.Value, oturumId,model.ToplanmaTuru);
                 }
                 else if (ToplanmaBaslatmaStatu.Sonladırma == model.ToplanmaBaslatmaStatu)
                 {
@@ -275,7 +276,7 @@ namespace TTBS.Controllers
                         birlesim.ToplanmaDurumu = ToplanmaStatu.Tamamlandı;
                         _globalService.UpdateBirlesim(birlesim);
                     }
-                    _gorevAtamaService.UpdateStenoGorevTamamla(model.BirlesimId, model.StenoGorevTuru, model.ToplanmaTuru);
+                    _gorevAtamaService.UpdateStenoGorevTamamla(model.BirlesimId,  model.ToplanmaTuru);
                 }
             }
             catch (Exception ex)

@@ -19,7 +19,7 @@ namespace TTBS.Core.Entities
         [Column(TypeName = "decimal(18,2)")]
         public double StenoSure { get; set; }
         public GorevStatu GorevStatu { get; set; }
-        public bool ToplantiVar { get; set; }
+        public string KomisyonAd { get; set; }
         public bool GidenGrup { get; set; }
         public IzınTuru StenoIzinTuru { get; set; }
         public bool SureAsmaVar { get; set; }
