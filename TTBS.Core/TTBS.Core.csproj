@@ -43,7 +43,8 @@
     <Compile Include="BaseEntities\BaseEntities.cs" />
     <Compile Include="Entities\BirlesimOzelToplanma.cs" />
     <Compile Include="Entities\BirlesimKomisyon.cs" />
-    <Compile Include="Entities\GorevAtamalar.cs" />
+    <Compile Include="Entities\GorevAtamalarKOM.cs" />
+    <Compile Include="Entities\GorevAtamalarGK.cs" />
     <Compile Include="Entities\GorevAtamaOzelToplanma.cs" />
     <Compile Include="Entities\GorevAtamaKomisyon.cs" />
     <Compile Include="Entities\GorevAtamaGenelKurul.cs" />

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 using TTBS.Core.Entities;
 using TTBS.Core.Enums;
 using TTBS.Models;
@@ -245,9 +246,18 @@ namespace TTBS.Controllers
         [HttpPost("CreateGrupDetay")]
         public IActionResult CreateGrupDetay(GrupGuncelleModel model)
         {
-            var entity = Mapper.Map<GrupDetay>(model);
-            _globalService.CreateGrupDetay(entity);
-            return Ok(entity);
+            try
+            {
+                var entity = Mapper.Map<GrupDetay>(model);
+                _globalService.CreateGrupDetay(entity);
+           
+                return Ok(entity);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
         }
         [HttpPost("UpdateGrupDetay")]
         public IActionResult UpdateGrupDetay(string gidenSaat)

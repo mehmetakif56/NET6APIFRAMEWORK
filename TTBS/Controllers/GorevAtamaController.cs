@@ -104,6 +104,7 @@ namespace TTBS.Controllers
                     newEntity.GorevBitisTarihi = basDate.AddMinutes((firstRec * sure) + sure);
                     newEntity.StenoSure = sure;
                     newEntity.StenoIzinTuru = _gorevAtamaService.GetStenoIzinByGorevBasTarih(item, newEntity.GorevBasTarihi) ;
+                    
                     //newEntity.GorevStatu = item.StenoGrups.Select(x => x.GidenGrupMu).FirstOrDefault() == DurumStatu.Evet && newEntity.GorevBasTarihi.Value.AddMinutes(9 * newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
                     firstRec++;
                     newEntity.SatırNo = firstRec ;
@@ -149,12 +150,10 @@ namespace TTBS.Controllers
         }
 
         [HttpGet("GetStenoGorevByBirlesimId")]
-        public List<GorevAtamaModel> GetStenoGorevByBirlesimId(Guid birlesimId,ToplanmaTuru toplanmaTuru)
+        public IEnumerable<GorevAtamaModel> GetStenoGorevByBirlesimId(Guid birlesimId,ToplanmaTuru toplanmaTuru)
         {
-            var entity = _gorevAtamaService.GetGorevAtamalarByBirlesimId(birlesimId, toplanmaTuru);
-            var model = _mapper.Map<List<GorevAtamaModel>>(entity);
+            return  _gorevAtamaService.GetGorevAtamalarByBirlesimId(birlesimId, toplanmaTuru);           
 
-            return model;
         }
 
         //[HttpPost("ChangeOrderStenografKomisyon")]

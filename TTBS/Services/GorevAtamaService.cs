@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using System.Globalization;
 using TTBS.Core.Entities;
 using TTBS.Core.Enums;
 using TTBS.Core.Extensions;
@@ -31,8 +32,9 @@ namespace TTBS.Services
         void UpdateGorevDurumById(Guid id, ToplanmaTuru toplanmaTuru);
         void UpdateStenoGorevTamamla(Guid birlesimId, ToplanmaTuru toplanmaTuru);
         IEnumerable<GorevAtamaKomisyon> GetAssignedStenoByBirlesimId(Guid birlesimId);
+        List<GorevAtamaModel> GetGorevAtamalarByBirlesimId(Guid birlesimId, ToplanmaTuru toplanmaTuru);
         IzınTuru GetStenoIzinByGorevBasTarih(Guid stenoId, DateTime? gorevBasTarih);
-        IEnumerable<GorevAtamalar> GetGorevAtamalarByBirlesimId(Guid birlesimId, ToplanmaTuru toplanmaTuru);
+        DateTime GetGidenGrup(ToplanmaTuru toplanmaTuru, double sure);
     }
     public class GorevAtamaService : BaseService, IGorevAtamaService
     {
@@ -48,7 +50,8 @@ namespace TTBS.Services
         private IRepository<StenoIzin> _stenoIzinRepo;
         private IRepository<Oturum> _oturumRepo;
         private IRepository<GrupDetay> _grupDetayRepo;
-        private IRepository<GorevAtamalar> _gorevAtamalar;
+        private IRepository<GorevAtamalarGK> _gorevAtamalarGK;
+        private IRepository<GorevAtamalarKOM> _gorevAtamalarKOM;
         public readonly IMapper _mapper;
 
         public GorevAtamaService(IRepository<Birlesim> birlesimRepo,
@@ -61,7 +64,8 @@ namespace TTBS.Services
                                  IRepository<StenoIzin> stenoIzinRepo,
                                  IRepository<GrupDetay> grupDetayRepo,
                                  IRepository<Oturum> oturumRepo,
-                                 IRepository<GorevAtamalar> gorevAtamalar,
+                                 IRepository<GorevAtamalarGK> gorevAtamalarGK,
+                                 IRepository<GorevAtamalarKOM> gorevAtamalarKOM,
                                  IMapper mapper,
                                  IServiceProvider provider) : base(provider)
         {
@@ -76,7 +80,8 @@ namespace TTBS.Services
             _stenoIzinRepo = stenoIzinRepo;
             _gorevAtamaOzelRepo = gorevAtamaOzelRepo;
             _grupDetayRepo = grupDetayRepo;
-            _gorevAtamalar = gorevAtamalar;
+            _gorevAtamalarGK = gorevAtamalarGK;
+            _gorevAtamalarKOM = gorevAtamalarKOM;
             _mapper = mapper;
         }
         public Birlesim CreateBirlesim(Birlesim birlesim)
@@ -267,11 +272,26 @@ namespace TTBS.Services
 
             return model;
         }
-        public IEnumerable<GorevAtamalar> GetGorevAtamalarByBirlesimId(Guid birlesimId, ToplanmaTuru toplanmaTuru)
+        public List<GorevAtamaModel> GetGorevAtamalarByBirlesimId(Guid birlesimId, ToplanmaTuru toplanmaTuru)
         {
-             var result = _gorevAtamalar.Get(x => x.BirlesimId == birlesimId).OrderBy(x=>x.SatırNo);
+            var model = new List<GorevAtamaModel>();
+            if (toplanmaTuru == ToplanmaTuru.GenelKurul)
+            {
+                model = _mapper.Map<List<GorevAtamaModel>>(_gorevAtamalarGK.Get(x => x.BirlesimId == birlesimId).OrderBy(x => x.SatırNo).ToList());
+            }
+            else if (toplanmaTuru == ToplanmaTuru.Komisyon)
+            {
+                model = _mapper.Map<List<GorevAtamaModel>>(_gorevAtamalarKOM.Get(x => x.BirlesimId == birlesimId).OrderBy(x => x.SatırNo).ToList());
+            }
            
-            return result;
+            if(model !=null)
+            {
+                var ste = model.Where(x => x.StenografId == model.FirstOrDefault().StenografId);
+                var stenoToplamSureAsım = ste.Max(x => x.GorevBitisTarihi.Value).Subtract(ste.Min(x => x.GorevBasTarihi.Value)).TotalMinutes <= 50;
+                model.ToList().ForEach(x => x.SureAsmaVar = stenoToplamSureAsım == true ? 1 : 0);
+            }          
+
+            return model;
         }
         public async void ChangeSureStenografKomisyon(string birlesimId,int satırNo, double sure, bool digerAtamalarDahil = false)
         {
@@ -649,13 +669,26 @@ namespace TTBS.Services
             return _gorevAtamaKomRepo.Get(x => x.BirlesimId == birlesimId, includeProperties: "Stenograf,Birlesim");
         }
 
-        public IzınTuru GetStenoIzinByGorevBasTarih(Guid stenoId,DateTime? gorevBasTarih)
+        public IzınTuru GetStenoIzinByGorevBasTarih(Guid stenoId, DateTime? gorevBasTarih)
         {
-            var  izinTur = IzınTuru.Bulunmuyor;
-            var result =  _stenoIzinRepo.Get(x => x.StenografId == stenoId && x.BaslangicTarihi <= gorevBasTarih && x.BitisTarihi >= gorevBasTarih).Select(x=>x.IzinTuru);
+            var izinTur = IzınTuru.Bulunmuyor;
+            var result = _stenoIzinRepo.Get(x => x.StenografId == stenoId && x.BaslangicTarihi <= gorevBasTarih && x.BitisTarihi >= gorevBasTarih).Select(x => x.IzinTuru);
             if (result.Any())
                 izinTur = result.FirstOrDefault();
             return izinTur;
+        }
+        public DateTime GetGidenGrup(ToplanmaTuru toplanmaTuru,double sure)
+        {
+            var result = _grupDetayRepo.Get(x=>x.GidenGrupPasif ==DurumStatu.Hayır).FirstOrDefault();
+            var gidenTarih = DateTime.MinValue;
+
+            if(result !=null && !string.IsNullOrEmpty(result.GidenGrupSaat))
+            {
+                gidenTarih =DateTime.ParseExact(result.GidenGrupSaat, "HH:mm:ss", CultureInfo.InvariantCulture);
+                gidenTarih = result.GidenGrupSaatUygula == DurumStatu.Hayır ? 
+                    (toplanmaTuru == ToplanmaTuru.GenelKurul? gidenTarih.AddMinutes(-60):gidenTarih.AddMinutes(-9* sure)) : gidenTarih;
+            }
+            return gidenTarih;
         }
 
         //public void GetKomisyonByGorevBasTairh(Guid stenoId, DateTime? gorevBasTarih)

@@ -7,7 +7,7 @@ using TTBS.Core.Enums;
 
 namespace TTBS.Core.Entities
 {
-    public class GorevAtamalar:BaseEntity 
+    public class GorevAtamalarGK:BaseEntity 
     {
         public Guid Id { get; set; }
         public int SatırNo { get; set; }

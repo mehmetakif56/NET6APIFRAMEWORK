@@ -12,12 +12,12 @@ namespace TTBS.Controllers
     public class StenografController : BaseController<StenografController>
     {
         private readonly IStenografService _stenoService;
-        private readonly IGlobalService _globalService;
+        private readonly IGlobalService _globalService;      
         //private readonly IMongoDBService _mongoDBService;
         private readonly ILogger<StenografController> _logger;
         public readonly IMapper _mapper;
 
-        public StenografController(IStenografService stenoService, IGlobalService globalService, ILogger<StenografController> logger, IMapper mapper)
+        public StenografController(IStenografService stenoService, IGlobalService globalService,ILogger<StenografController> logger, IMapper mapper)
         {
             _stenoService = stenoService;
             _globalService = globalService;
@@ -115,10 +115,18 @@ namespace TTBS.Controllers
         [HttpPost("CreateStenoIzin")]
         public IActionResult CreateStenoIzin(StenoIzinModel model)
         {
-            var entity = Mapper.Map<StenoIzin>(model);
-            _stenoService.CreateStenoIzin(entity);
-            return Ok(entity);
+            try
+            {
+                var entity = Mapper.Map<StenoIzin>(model);
+                _stenoService.CreateStenoIzin(entity);
 
+                return Ok(entity);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+           
         }
         #endregion
 
