@@ -268,7 +268,7 @@ namespace TTBS.Services
             {
                 var ste = model.Where(x => x.StenografId == model.FirstOrDefault().StenografId);
                 var stenoToplamSureAsım = ste.Max(x => x.GorevBitisTarihi.Value).Subtract(ste.Min(x => x.GorevBasTarihi.Value)).TotalMinutes <= 50;
-                model.ToList().ForEach(x => x.SureAsmaVar = stenoToplamSureAsım == true ? 1 : 0);
+                model.ToList().ForEach(x => x.SureAsmaVar = stenoToplamSureAsım);
             }          
 
             return model;
@@ -663,7 +663,7 @@ namespace TTBS.Services
             var result = _grupDetayRepo.Get(x=>x.GidenGrupPasif ==DurumStatu.Hayır).FirstOrDefault();  
             if(result != null && result.GidenGrupSaat.HasValue)
                 return toplanmaTuru== ToplanmaTuru.GenelKurul ? result.GidenGrupSaat.Value.AddMinutes(-60): result.GidenGrupSaat.Value.AddMinutes(-9*sure);
-            return null;
+            return DateTime.MinValue;
         }
 
         public string GetKomisyonMinMaxDate(Guid stenoId, DateTime? gorevBasTarih, DateTime? gorevBitisTarih,double sure)

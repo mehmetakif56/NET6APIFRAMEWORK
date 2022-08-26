@@ -19,14 +19,13 @@ namespace TTBS.Models
         public GorevStatu GorevStatu { get; set; }
         public string KomisyonAd { get; set; }
         public IzınTuru StenoIzinTuru { get; set; }
-        public int SureAsmaVar { get; set; }
+        public bool SureAsmaVar { get; set; }
         public List<Guid> StenografIds { get; set; }
-        public int GidenGrupSaatUygula { get; set; }
-        public DateTime? GidenGrupSaat { get; set; }
+        public string GidenGrup { get; set; }
         public string StenoAdSoyad { get; set; }
         public DateTime? BirlesimBasTarihi { get; set; }
         public StenoGorevTuru StenoGorevTuru { get; set; }
         public int IsDeleted { get; set; }
-        public int GidenGrupMu { get; set; }
+        public bool GidenGrupMu { get; set; }
     }
 }

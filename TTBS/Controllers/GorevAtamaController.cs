@@ -44,11 +44,11 @@ namespace TTBS.Controllers
                     var stenoList = stenoAllList.Where(x => x.StenoGorevTuru == StenoGorevTuru.Stenograf)
                                                 .Select(x => x.Id);
                                                 
-                    var modelList = SetGorevAtama(birlesim, oturumId, stenoList,birlesim.StenoSure,ToplanmaTuru.GenelKurul);
+                    var modelList = SetGorevAtama(birlesim, oturumId, stenoList,birlesim.StenoSure,ToplanmaTuru.GenelKurul, StenoGorevTuru.Stenograf);
                     var stenoUzmanList = stenoAllList.Where(x => x.StenoGorevTuru == StenoGorevTuru.Uzman)
                                                      .Select(x => x.Id);
                                                     
-                    var modelUzmanList = SetGorevAtama(birlesim, oturumId, stenoUzmanList, birlesim.UzmanStenoSure, ToplanmaTuru.GenelKurul);
+                    var modelUzmanList = SetGorevAtama(birlesim, oturumId, stenoUzmanList, birlesim.UzmanStenoSure, ToplanmaTuru.GenelKurul, StenoGorevTuru.Uzman);
                     modelList.AddRange(modelUzmanList);
                     var entityList = Mapper.Map<List<GorevAtamaGenelKurul>>(modelList);
                     _gorevAtamaService.CreateStenoAtamaGK(entityList);
@@ -69,7 +69,7 @@ namespace TTBS.Controllers
             {
                 var birlesim = _gorevAtamaService.UpdateBirlesimGorevAtama(model.BirlesimId,model.TurAdedi);
                 var oturum = _globalService.GetOturumByBirlesimId(model.BirlesimId).Where(x => x.BitisTarihi == null).FirstOrDefault();
-                var modelList = SetGorevAtama(birlesim, oturum.Id, model.StenografIds, birlesim.StenoSure,ToplanmaTuru.Komisyon);
+                var modelList = SetGorevAtama(birlesim, oturum.Id, model.StenografIds, birlesim.StenoSure,ToplanmaTuru.Komisyon,StenoGorevTuru.Stenograf);
                 var entityList = Mapper.Map<List<GorevAtamaKomisyon>>(modelList);
                 _gorevAtamaService.CreateStenoAtamaKom(entityList);
             }
@@ -79,7 +79,7 @@ namespace TTBS.Controllers
             return Ok();
         }
 
-        private List<GorevAtamaModel> SetGorevAtama(Birlesim birlesim, Guid oturumId, IEnumerable<Guid> stenoList,double sure,ToplanmaTuru toplanmaTuru)
+        private List<GorevAtamaModel> SetGorevAtama(Birlesim birlesim, Guid oturumId, IEnumerable<Guid> stenoList,double sure,ToplanmaTuru toplanmaTuru, StenoGorevTuru gorevTuru)
         {
             var atamaList = new List<GorevAtamaModel>();
             var basDate = birlesim.BaslangicTarihi.HasValue ? birlesim.BaslangicTarihi.Value:DateTime.Now;
@@ -96,8 +96,9 @@ namespace TTBS.Controllers
                     newEntity.GorevBitisTarihi = basDate.AddMinutes((firstRec * sure) + sure);
                     newEntity.StenoSure = sure;
                     newEntity.StenoIzinTuru = _gorevAtamaService.GetStenoIzinByGorevBasTarih(item, newEntity.GorevBasTarihi) ;
-                    newEntity.GidenGrupSaat = _gorevAtamaService.GetGidenGrup(toplanmaTuru,sure);
-                    newEntity.KomisyonAd = _gorevAtamaService.GetKomisyonMinMaxDate(item, newEntity.GorevBasTarihi, newEntity.GorevBitisTarihi, sure);
+                    newEntity.GidenGrupMu = _gorevAtamaService.GetGidenGrup(toplanmaTuru,sure)>= newEntity.GorevBasTarihi;
+                    newEntity.GidenGrup = newEntity.GidenGrupMu ? "GidenGrup" : string.Empty;
+                    newEntity.KomisyonAd = gorevTuru == StenoGorevTuru.Stenograf ? _gorevAtamaService.GetKomisyonMinMaxDate(item, newEntity.GorevBasTarihi, newEntity.GorevBitisTarihi, sure):null;
                     //newEntity.GorevStatu = item.StenoGrups.Select(x => x.GidenGrupMu).FirstOrDefault() == DurumStatu.Evet && newEntity.GorevBasTarihi.Value.AddMinutes(9 * newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
                     firstRec++;
                     newEntity.SatırNo = firstRec ;
@@ -105,11 +106,43 @@ namespace TTBS.Controllers
                     
                 }
             }
-            //var ste = atamaList.Where(x => x.StenografId == stenoList.FirstOrDefault());
-            //var stenoToplamSureAsım = ste.Max(x => x.GorevBitisTarihi.Value).Subtract(ste.Min(x => x.GorevBasTarihi.Value)).TotalMinutes <= 50;
-            //atamaList.ForEach(x => x.SureAsmaVar = stenoToplamSureAsım);
+            return BirlesimSureHesaplama(atamaList); 
+        }
 
-            return atamaList;
+        private List<GorevAtamaModel> BirlesimSureHesaplama(List<GorevAtamaModel> atamaList)
+        {
+            var gorevBasTarihi = atamaList.FirstOrDefault().GorevBasTarihi.Value;
+            var gorevBitTarihi = atamaList.FirstOrDefault().GorevBitisTarihi.Value;
+            var ste = atamaList.Where(x => x.StenografId == atamaList.FirstOrDefault().StenografId);
+            var stenoToplamSureAsım = ste.Max(x => x.GorevBitisTarihi.Value).Subtract(ste.Min(x => x.GorevBasTarihi.Value)).TotalMinutes <= 50;
+            var lst = new List<GorevAtamaModel>();
+            foreach (var item in atamaList)
+            {
+                if (!string.IsNullOrEmpty(item.KomisyonAd) || item.GorevStatu == GorevStatu.Iptal ||  item.StenoIzinTuru != IzınTuru.Bulunmuyor || item.GidenGrupMu)
+                {
+                    item.GorevStatu =  GorevStatu.Iptal;
+                }
+                else
+                {
+
+                    if (item.GorevBasTarihi != gorevBasTarihi)
+                    {
+                        item.GorevBasTarihi = gorevBitTarihi;
+                    }
+                    if (item.GorevBitisTarihi != gorevBitTarihi)
+                    {
+                        item.GorevBitisTarihi = gorevBitTarihi.AddMinutes(item.StenoSure);
+
+                    }
+
+                    gorevBasTarihi = item.GorevBasTarihi.Value;
+                    gorevBitTarihi = item.GorevBitisTarihi.HasValue ? item.GorevBitisTarihi.Value : DateTime.MinValue;
+                }
+
+                item.SureAsmaVar = stenoToplamSureAsım;
+                lst.Add(item);
+            }
+           return lst;
         }
 
 
