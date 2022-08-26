@@ -98,17 +98,15 @@ namespace TTBS.Controllers
                     newEntity.StenoIzinTuru = _gorevAtamaService.GetStenoIzinByGorevBasTarih(item, newEntity.GorevBasTarihi) ;
                     newEntity.GidenGrupMu = _gorevAtamaService.GetGidenGrup(toplanmaTuru,sure)>= newEntity.GorevBasTarihi;
                     newEntity.GidenGrup = newEntity.GidenGrupMu ? "GidenGrup" : string.Empty;
-                    newEntity.KomisyonAd = gorevTuru == StenoGorevTuru.Stenograf ? _gorevAtamaService.GetKomisyonMinMaxDate(item, newEntity.GorevBasTarihi, newEntity.GorevBitisTarihi, sure):null;
-                    //newEntity.GorevStatu = item.StenoGrups.Select(x => x.GidenGrupMu).FirstOrDefault() == DurumStatu.Evet && newEntity.GorevBasTarihi.Value.AddMinutes(9 * newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
+                    newEntity.KomisyonAd = gorevTuru == StenoGorevTuru.Stenograf && toplanmaTuru == ToplanmaTuru.GenelKurul ? _gorevAtamaService.GetKomisyonMinMaxDate(item, newEntity.GorevBasTarihi, newEntity.GorevBitisTarihi, sure):null;
+                 
                     firstRec++;
                     newEntity.SatırNo = firstRec ;
                     atamaList.Add(newEntity);
-                    
                 }
             }
             return BirlesimSureHesaplama(atamaList); 
         }
-
         private List<GorevAtamaModel> BirlesimSureHesaplama(List<GorevAtamaModel> atamaList)
         {
             var gorevBasTarihi = atamaList.FirstOrDefault().GorevBasTarihi.Value;
@@ -124,7 +122,6 @@ namespace TTBS.Controllers
                 }
                 else
                 {
-
                     if (item.GorevBasTarihi != gorevBasTarihi)
                     {
                         item.GorevBasTarihi = gorevBitTarihi;
@@ -132,19 +129,15 @@ namespace TTBS.Controllers
                     if (item.GorevBitisTarihi != gorevBitTarihi)
                     {
                         item.GorevBitisTarihi = gorevBitTarihi.AddMinutes(item.StenoSure);
-
                     }
-
                     gorevBasTarihi = item.GorevBasTarihi.Value;
                     gorevBitTarihi = item.GorevBitisTarihi.HasValue ? item.GorevBitisTarihi.Value : DateTime.MinValue;
                 }
-
                 item.SureAsmaVar = stenoToplamSureAsım;
                 lst.Add(item);
             }
            return lst;
         }
-
 
         [HttpPost("AddStenoGorevAtamaKomisyon")]
         public IActionResult AddStenoGorevAtamaKomisyon(StenoGorevAtamaModel model)

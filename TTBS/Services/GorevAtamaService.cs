@@ -182,16 +182,17 @@ namespace TTBS.Services
         }
         public void AddStenoGorevAtamaKomisyon(IEnumerable<Guid> stenografIds, Guid birlesimId, Guid oturumId)
         {
+            var atamaList = new List<GorevAtamaModel>();
+            var stenoList  = _mapper.Map<List<GorevAtamaModel>>(_gorevAtamaKomRepo.Get(x => x.BirlesimId == birlesimId).OrderBy(x => x.SatırNo).ToList());
             foreach (var steno in stenografIds)
             {
-                var stenoList = _gorevAtamaKomRepo.Get(x => x.BirlesimId == birlesimId).OrderBy(x => x.SatırNo).ToList();
                 if (stenoList != null && stenoList.Count() > 0)
                 {
-                    var atamaList = new List<GorevAtamaKomisyon>();
                     var grpListCnt = stenoList.GroupBy(c => new
                     {
                         c.StenografId,
                     }).Count();
+
                     int k = 0;
                     for (int i = 1; i <= stenoList.Count() / grpListCnt; i++)
                     {
@@ -204,10 +205,12 @@ namespace TTBS.Services
                                 item.GorevBasTarihi = item.GorevBasTarihi.Value.AddMinutes(refSteno.StenoSure);
                                 item.GorevBitisTarihi = item.GorevBitisTarihi.Value.AddMinutes(refSteno.StenoSure);
                                 item.SatırNo = item.SatırNo + 1;
-                                _gorevAtamaKomRepo.Update(item);
-                                _gorevAtamaKomRepo.Save();
+
+                                atamaList.Add(item);
+                                //_gorevAtamaKomRepo.Update(item);
+                                //_gorevAtamaKomRepo.Save();
                             }
-                            var nwGrv = new GorevAtamaKomisyon
+                            var nwGrv = new GorevAtamaModel
                             {
                                 SatırNo = deger + 1,
                                 StenografId = steno,
@@ -217,10 +220,11 @@ namespace TTBS.Services
                                 GorevBasTarihi = refSteno.GorevBitisTarihi,
                                 GorevBitisTarihi =refSteno.GorevBitisTarihi.Value.AddMinutes(refSteno.StenoSure)
                             };
+                            atamaList.Add(nwGrv);
                             //stenoList.Add(nwGrv);
-                            _gorevAtamaKomRepo.Create(nwGrv);
-                            _gorevAtamaKomRepo.Save();
-          
+                            //_gorevAtamaKomRepo.Create(nwGrv);
+                            //_gorevAtamaKomRepo.Save();
+
                             k++;
                         }
                     }
