@@ -88,17 +88,5 @@ namespace TTBS.Infrastructure
         {
             builder.ToTable("GorevAtamaOzelToplanma");
         }
-        private void ConfigureGorevAtamalarGK(EntityTypeBuilder<GorevAtamalarGK> builder)
-        {
-            builder
-            .ToView(nameof(GorevAtamalarGK))
-            .HasKey(t => t.Id);
-        }
-        private void ConfigureGorevAtamalarKOM(EntityTypeBuilder<GorevAtamalarKOM> builder)
-        {
-            builder
-            .ToView(nameof(GorevAtamalarKOM))
-            .HasKey(t => t.Id);
-        }
     }
 }

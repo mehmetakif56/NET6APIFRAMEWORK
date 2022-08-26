@@ -30,7 +30,6 @@ namespace TTBS.Services
         void UpdateGorevDurumById(Guid id, ToplanmaTuru toplanmaTuru);
         void UpdateStenoGorevTamamla(Guid birlesimId, ToplanmaTuru toplanmaTuru);
         IEnumerable<GorevAtamaKomisyon> GetAssignedStenoByBirlesimId(Guid birlesimId);
-        List<GorevAtamaModel> GetGorevAtamalarByBirlesimId(Guid birlesimId, ToplanmaTuru toplanmaTuru);
         IzınTuru GetStenoIzinByGorevBasTarih(Guid stenoId, DateTime? gorevBasTarih);
         DateTime? GetGidenGrup(ToplanmaTuru toplanmaTuru, double sure);
         string GetKomisyonMinMaxDate(Guid stenoId, DateTime? gorevBasTarih, DateTime? gorevBitisTarih, double sure);
@@ -45,8 +44,6 @@ namespace TTBS.Services
         private IRepository<StenoIzin> _stenoIzinRepo;
         private IRepository<Oturum> _oturumRepo;
         private IRepository<GrupDetay> _grupDetayRepo;
-        private IRepository<GorevAtamalarGK> _gorevAtamalarGK;
-        private IRepository<GorevAtamalarKOM> _gorevAtamalarKOM;
         public readonly IMapper _mapper;
 
         public GorevAtamaService(IRepository<Birlesim> birlesimRepo,
@@ -57,8 +54,6 @@ namespace TTBS.Services
                                  IRepository<StenoIzin> stenoIzinRepo,
                                  IRepository<GrupDetay> grupDetayRepo,
                                  IRepository<Oturum> oturumRepo,
-                                 IRepository<GorevAtamalarGK> gorevAtamalarGK,
-                                 IRepository<GorevAtamalarKOM> gorevAtamalarKOM,
                                  IMapper mapper,
                                  IServiceProvider provider) : base(provider)
         {
@@ -70,8 +65,6 @@ namespace TTBS.Services
             _stenoIzinRepo = stenoIzinRepo;
             _gorevAtamaOzelRepo = gorevAtamaOzelRepo;
             _grupDetayRepo = grupDetayRepo;
-            _gorevAtamalarGK = gorevAtamalarGK;
-            _gorevAtamalarKOM = gorevAtamalarKOM;
             _mapper = mapper;
         }
         public Birlesim CreateBirlesim(Birlesim birlesim)
@@ -252,27 +245,7 @@ namespace TTBS.Services
 
             return model;
         }
-        public List<GorevAtamaModel> GetGorevAtamalarByBirlesimId(Guid birlesimId, ToplanmaTuru toplanmaTuru)
-        {
-            var model = new List<GorevAtamaModel>();
-            if (toplanmaTuru == ToplanmaTuru.GenelKurul)
-            {
-                model = _mapper.Map<List<GorevAtamaModel>>(_gorevAtamalarGK.Get(x => x.BirlesimId == birlesimId).OrderBy(x => x.SatırNo).ToList());
-            }
-            else if (toplanmaTuru == ToplanmaTuru.Komisyon)
-            {
-                model = _mapper.Map<List<GorevAtamaModel>>(_gorevAtamalarKOM.Get(x => x.BirlesimId == birlesimId).OrderBy(x => x.SatırNo).ToList());
-            }
-           
-            if(model !=null)
-            {
-                var ste = model.Where(x => x.StenografId == model.FirstOrDefault().StenografId);
-                var stenoToplamSureAsım = ste.Max(x => x.GorevBitisTarihi.Value).Subtract(ste.Min(x => x.GorevBasTarihi.Value)).TotalMinutes <= 50;
-                model.ToList().ForEach(x => x.SureAsmaVar = stenoToplamSureAsım);
-            }          
 
-            return model;
-        }
         public async void ChangeSureStenografKomisyon(Guid birlesimId,int satırNo, double sure, bool digerAtamalarDahil = false)
         {
             try
