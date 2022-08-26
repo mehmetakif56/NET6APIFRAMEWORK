@@ -70,44 +70,7 @@ namespace TTBS.Infrastructure
         private void ConfigureGrupDetay(EntityTypeBuilder<GrupDetay> builder)
         {
             builder.ToTable("GrupDetay");
-        }
-
-        private void ConfigureBirlesimOzelToplanma(EntityTypeBuilder<BirlesimOzelToplanma> builder)
-        {
-            builder.ToTable("BirlesimOzelToplanma");
-
-            builder.Ignore("Id");
-
-            builder.HasKey(ur => new { ur.BirlesimId, ur.OzelToplanmaId });
-
-            builder.HasOne(ur => ur.Birlesim)
-                            .WithMany(r => r.BirlesimOzelToplanmas)
-                            .HasForeignKey(ur => ur.BirlesimId)
-                            .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasOne(ur => ur.OzelToplanma)
-                            .WithMany(u => u.BirlesimOzelToplanmas)
-                            .HasForeignKey(ur => ur.OzelToplanmaId)
-                            .OnDelete(DeleteBehavior.Cascade);
-        }
-        private void ConfigureBirlesimKomisyon(EntityTypeBuilder<BirlesimKomisyon> builder)
-        {
-            builder.ToTable("BirlesimKomisyon");
-
-            builder.Ignore("Id");
-
-            builder.HasKey(ur => new { ur.BirlesimId, ur.KomisyonId });
-
-            builder.HasOne(ur => ur.Birlesim)
-                            .WithMany(r => r.BirlesimKomisyons)
-                            .HasForeignKey(ur => ur.BirlesimId)
-                            .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasOne(ur => ur.Komisyon)
-                            .WithMany(u => u.BirlesimKomisyons)
-                            .HasForeignKey(ur => ur.KomisyonId)
-                            .OnDelete(DeleteBehavior.Cascade);
-        }
+        }      
         private void ConfigureStenoToplamGenelSure(EntityTypeBuilder<StenoToplamGenelSure> builder)
         {
             builder.ToTable("StenoToplamGenelSure");

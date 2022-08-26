@@ -32,8 +32,6 @@ namespace TTBS.Infrastructure
         public DbSet<StenoToplamGenelSure> StenoToplamGenelSures { get; set; }
         public DbSet<GrupDetay> GrupDetays { get; set; }
         public DbSet<AltKomisyon> AltKomisyons { get; set; }
-        public DbSet<BirlesimOzelToplanma> BirlesimOzelToplanmas { get; set; }
-        public DbSet<BirlesimKomisyon> BirlesimKomisyons { get; set; }
         public DbSet<GorevAtamaKomisyon> GorevAtamaKomisyons { get; set; }
         public DbSet<GorevAtamaOzelToplanma> GorevAtamaOzelToplanmas { get; set; }
         public DbSet<GorevAtamaGenelKurul> GorevAtamaGenelKurul { get; set; }
@@ -58,8 +56,6 @@ namespace TTBS.Infrastructure
             builder.Entity<Oturum>(ConfigureOturum);
             builder.Entity<StenoToplamGenelSure>(ConfigureStenoToplamGenelSure);
             builder.Entity<GrupDetay>(ConfigureGrupDetay);
-            builder.Entity<BirlesimOzelToplanma>(ConfigureBirlesimOzelToplanma);
-            builder.Entity<BirlesimKomisyon>(ConfigureBirlesimKomisyon);
             builder.Entity<GorevAtamaKomisyon>(ConfigureGorevAtamaKomisyon);
             builder.Entity<GorevAtamaOzelToplanma>(ConfigureGorevAtamaOzelToplanma);
             builder.Entity<GorevAtamaGenelKurul>(ConfigureGorevAtamaGenelKurul);

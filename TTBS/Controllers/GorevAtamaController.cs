@@ -44,22 +44,14 @@ namespace TTBS.Controllers
                     var stenoList = stenoAllList.Where(x => x.StenoGorevTuru == StenoGorevTuru.Stenograf)
                                                 .Select(x => x.Id);
                                                 
-                    var modelList = SetGorevAtama(birlesim, oturumId, stenoList,birlesim.StenoSure);
+                    var modelList = SetGorevAtama(birlesim, oturumId, stenoList,birlesim.StenoSure,ToplanmaTuru.GenelKurul);
                     var stenoUzmanList = stenoAllList.Where(x => x.StenoGorevTuru == StenoGorevTuru.Uzman)
                                                      .Select(x => x.Id);
                                                     
-                    var modelUzmanList = SetGorevAtama(birlesim, oturumId, stenoUzmanList, birlesim.UzmanStenoSure);
+                    var modelUzmanList = SetGorevAtama(birlesim, oturumId, stenoUzmanList, birlesim.UzmanStenoSure, ToplanmaTuru.GenelKurul);
                     modelList.AddRange(modelUzmanList);
                     var entityList = Mapper.Map<List<GorevAtamaGenelKurul>>(modelList);
                     _gorevAtamaService.CreateStenoAtamaGK(entityList);
-                }
-                else if (model.ToplanmaTuru == ToplanmaTuru.Komisyon)
-                {
-                    _gorevAtamaService.CreateBirlesimKomisyonRelation(birlesim.Id, birlesim.KomisyonId, birlesim.AltKomisyonId);
-                }
-                else if (model.ToplanmaTuru == ToplanmaTuru.OzelToplanti)
-                {
-                    _gorevAtamaService.CreateBirlesimOzelToplanmaRelation(birlesim.Id, birlesim.OzelToplanmaId);
                 }
             }
             catch (Exception ex)
@@ -77,7 +69,7 @@ namespace TTBS.Controllers
             {
                 var birlesim = _gorevAtamaService.UpdateBirlesimGorevAtama(model.BirlesimId,model.TurAdedi);
                 var oturum = _globalService.GetOturumByBirlesimId(model.BirlesimId).Where(x => x.BitisTarihi == null).FirstOrDefault();
-                var modelList = SetGorevAtama(birlesim, oturum.Id, model.StenografIds, birlesim.StenoSure);
+                var modelList = SetGorevAtama(birlesim, oturum.Id, model.StenografIds, birlesim.StenoSure,ToplanmaTuru.Komisyon);
                 var entityList = Mapper.Map<List<GorevAtamaKomisyon>>(modelList);
                 _gorevAtamaService.CreateStenoAtamaKom(entityList);
             }
@@ -87,7 +79,7 @@ namespace TTBS.Controllers
             return Ok();
         }
 
-        private List<GorevAtamaModel> SetGorevAtama(Birlesim birlesim, Guid oturumId, IEnumerable<Guid> stenoList,double sure)
+        private List<GorevAtamaModel> SetGorevAtama(Birlesim birlesim, Guid oturumId, IEnumerable<Guid> stenoList,double sure,ToplanmaTuru toplanmaTuru)
         {
             var atamaList = new List<GorevAtamaModel>();
             var basDate = birlesim.BaslangicTarihi.HasValue ? birlesim.BaslangicTarihi.Value:DateTime.Now;
@@ -104,7 +96,8 @@ namespace TTBS.Controllers
                     newEntity.GorevBitisTarihi = basDate.AddMinutes((firstRec * sure) + sure);
                     newEntity.StenoSure = sure;
                     newEntity.StenoIzinTuru = _gorevAtamaService.GetStenoIzinByGorevBasTarih(item, newEntity.GorevBasTarihi) ;
-                    
+                    newEntity.GidenGrupSaat = _gorevAtamaService.GetGidenGrup(toplanmaTuru,sure);
+                    newEntity.KomisyonAd = _gorevAtamaService.GetKomisyonMinMaxDate(item, newEntity.GorevBasTarihi, newEntity.GorevBitisTarihi, sure);
                     //newEntity.GorevStatu = item.StenoGrups.Select(x => x.GidenGrupMu).FirstOrDefault() == DurumStatu.Evet && newEntity.GorevBasTarihi.Value.AddMinutes(9 * newEntity.StenoSure) >= DateTime.Today.AddHours(18) ? GorevStatu.GidenGrup : GorevStatu.Planlandı;
                     firstRec++;
                     newEntity.SatırNo = firstRec ;
@@ -156,21 +149,21 @@ namespace TTBS.Controllers
 
         }
 
-        //[HttpPost("ChangeOrderStenografKomisyon")]
-        //public IActionResult ChangeOrderStenografKomisyon(string kaynakBirlesimId, Dictionary<string, string> kaynakStenoList, string hedefBirlesimId, Dictionary<string, string> hedefStenografList)
-        //{
-        //    try
-        //    {
-        //        _gorevAtamaService.ChangeOrderStenografKomisyon(kaynakBirlesimId, kaynakStenoList, hedefBirlesimId, hedefStenografList);
-        //    }
-        //    catch (Exception ex)
-        //    { return BadRequest(ex.Message); }
+        [HttpPost("ChangeOrderStenografKomisyon")]
+        public IActionResult ChangeOrderStenografKomisyon(Guid kaynakBirlesimId, Guid kaynakStenoId, Guid hedefBirlesimId, Guid hedefStenoId)
+        {
+            try
+            {
+                _gorevAtamaService.ChangeOrderStenografKomisyon(kaynakBirlesimId, kaynakStenoId, hedefBirlesimId, hedefStenoId);
+            }
+            catch (Exception ex)
+            { return BadRequest(ex.Message); }
 
-        //    return Ok();
-        //}
+            return Ok();
+        }
 
         [HttpPost("ChangeSureStenografKomisyon")]
-        public IActionResult ChangeSureStenografKomisyon(string birlesimId, int satırNo, double sure, bool digerAtamalarDahil = false)
+        public IActionResult ChangeSureStenografKomisyon(Guid birlesimId, int satırNo, double sure, bool digerAtamalarDahil = false)
         {
             try
             {

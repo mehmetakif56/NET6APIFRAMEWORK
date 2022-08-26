@@ -260,7 +260,7 @@ namespace TTBS.Controllers
             
         }
         [HttpPost("UpdateGrupDetay")]
-        public IActionResult UpdateGrupDetay(string gidenSaat)
+        public IActionResult UpdateGrupDetay(DateTime gidenSaat)
         {
             _globalService.UpdateGrupDetay(gidenSaat);
             return Ok();

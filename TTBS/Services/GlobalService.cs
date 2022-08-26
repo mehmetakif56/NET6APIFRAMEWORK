@@ -23,7 +23,7 @@ namespace TTBS.Services
         void CreateKomisyon(Komisyon komisyon);
         void CreateGrup(Grup grup);
         void CreateGrupDetay(GrupDetay grup);
-        void UpdateGrupDetay(string gidenSaat);
+        void UpdateGrupDetay(DateTime? gidenSaat);
         GrupDetay GetGrupDetay();
         IEnumerable<GrupDetay> GetGrupDetayLast();
         IEnumerable<Grup> GetAllGrup(int grupTuru);
@@ -364,7 +364,7 @@ namespace TTBS.Services
             _grupDetayRepo.Save();
         }
 
-        public void UpdateGrupDetay(string gidenSaat)
+        public void UpdateGrupDetay(DateTime? gidenSaat)
         {
             var grpDetay = _grupDetayRepo.GetFirst();
             if (grpDetay != null)

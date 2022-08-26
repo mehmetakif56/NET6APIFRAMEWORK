@@ -24,13 +24,11 @@ namespace TTBS.Core.Entities
         public ToplanmaStatu ToplanmaDurumu { get; set; }
         public virtual ICollection<Oturum> Oturums { get; set; }
         public virtual ICollection<GorevAtama> GorevAtamas { get; set; }
-        public virtual ICollection<BirlesimOzelToplanma> BirlesimOzelToplanmas { get; set; }
-        public virtual ICollection<BirlesimKomisyon> BirlesimKomisyons { get; set; }
-        [NotMapped]
         public Guid KomisyonId { get; set; } 
-        [NotMapped]
         public Guid? AltKomisyonId { get; set; } 
-        [NotMapped]
         public Guid OzelToplanmaId { get; set; }
+        public Komisyon Komisyon { get; set; }
+        public AltKomisyon AltKomisyon { get; set; }  
+        public OzelToplanma OzelToplanma { get; set; }
     }
 }
