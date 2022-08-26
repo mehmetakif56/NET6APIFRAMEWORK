@@ -178,8 +178,7 @@ namespace TTBS.Controllers
         [HttpGet("GetStenoGorevByBirlesimId")]
         public IEnumerable<GorevAtamaModel> GetStenoGorevByBirlesimId(Guid birlesimId,ToplanmaTuru toplanmaTuru)
         {
-            return  _gorevAtamaService.GetGorevAtamalarByBirlesimId(birlesimId, toplanmaTuru);           
-
+            return  _gorevAtamaService.GetGorevAtamaByBirlesimId(birlesimId, toplanmaTuru);          
         }
 
         [HttpPost("ChangeOrderStenografKomisyon")]
