@@ -183,34 +183,29 @@ namespace TTBS.Services
         public void AddStenoGorevAtamaKomisyon(IEnumerable<Guid> stenografIds, Guid birlesimId, Guid oturumId)
         {
             var atamaList = new List<GorevAtamaModel>();
-            var stenoList  = _mapper.Map<List<GorevAtamaModel>>(_gorevAtamaKomRepo.Get(x => x.BirlesimId == birlesimId).OrderBy(x => x.SatırNo).ToList());
-            foreach (var steno in stenografIds)
+            var result = _gorevAtamaKomRepo.Get(x => x.BirlesimId == birlesimId).OrderBy(x => x.SatırNo);
+            var stenoList =_mapper.Map<List<GorevAtamaModel>>(result);
+            if (stenoList != null && stenoList.Count() > 0)
             {
-                if (stenoList != null && stenoList.Count() > 0)
+                foreach (var steno in stenografIds)
                 {
                     var grpListCnt = stenoList.GroupBy(c => new
                     {
                         c.StenografId,
                     }).Count();
-
-          
+                    int k = 0;
                     for (int i = 1; i <= stenoList.Count() / grpListCnt; i++)
                     {
-                        var deger = (grpListCnt * i) ;
-                        var refSteno = stenoList.Take(deger).LastOrDefault(); //stenoList.Where(x => x.SatırNo == deger).OrderBy(x => x.SatırNo).FirstOrDefault();
-                        var list = stenoList.Skip(deger).Take(grpListCnt);   //stenoList.Where(x => x.SatırNo > refSteno.SatırNo && x.SatırNo <= deger * (i+1)).OrderBy(x => x.SatırNo);
-                        if (refSteno != null && list!=null && list.Count()>0)
+                        var deger = (grpListCnt * i) + k;
+                        var refSteno = stenoList.Where(x => x.SatırNo == deger).OrderBy(x => x.SatırNo).FirstOrDefault();
+                        if (refSteno != null)
                         {
-                            foreach (var item in list)
+                            foreach (var item in stenoList.Where(x => x.SatırNo > refSteno.SatırNo).OrderBy(x => x.SatırNo))
                             {
                                 item.GorevBasTarihi = item.GorevBasTarihi.Value.AddMinutes(refSteno.StenoSure);
                                 item.GorevBitisTarihi = item.GorevBitisTarihi.Value.AddMinutes(refSteno.StenoSure);
                                 item.SatırNo = item.SatırNo + 1;
-                                atamaList.Add(item);
-                                //_gorevAtamaKomRepo.Update(item);
-                                //_gorevAtamaKomRepo.Save();
                             }
-
                             var nwGrv = new GorevAtamaModel
                             {
                                 SatırNo = deger + 1,
@@ -221,15 +216,18 @@ namespace TTBS.Services
                                 GorevBasTarihi = refSteno.GorevBitisTarihi,
                                 GorevBitisTarihi = refSteno.GorevBitisTarihi.Value.AddMinutes(refSteno.StenoSure)
                             };
-                            atamaList.Add(nwGrv);
-                            //stenoList.Add(nwGrv);
-                            //_gorevAtamaKomRepo.Create(nwGrv);
-                            //_gorevAtamaKomRepo.Save();
-
-
+                            stenoList.Add(nwGrv);
+                            k++;
                         }
                     }
-                }
+                 }
+                var lastResult = stenoList.OrderBy(x => x.SatırNo);
+                var entityList = _mapper.Map<List<GorevAtamaKomisyon>>(lastResult);
+                _gorevAtamaKomRepo.Delete(result);
+                _gorevAtamaKomRepo.Save();
+         
+                _gorevAtamaKomRepo.Create(entityList);
+                _gorevAtamaKomRepo.Save();
             }
         }
         public List<GorevAtamaModel> GetGorevAtamaByBirlesimId(Guid birlesimId, ToplanmaTuru toplanmaTuru)
@@ -279,7 +277,7 @@ namespace TTBS.Services
         {
             if (kaynakBirlesimId != hedefBirlesimId) 
             {
-                var stenoGrevHedef = _gorevAtamaKomRepo.Get(x => x.BirlesimId == hedefBirlesimId).OrderBy(x => x.SatırNo).ToList();               
+                var stenoGrevHedef = _gorevAtamaKomRepo.Get(x => x.BirlesimId == hedefBirlesimId ).OrderBy(x => x.SatırNo).ToList();               
                 if (stenoGrevHedef != null && stenoGrevHedef.Count() > 0)
                 {
                     var minStenoGorev = stenoGrevHedef.Where(x => x.StenografId == hedefStenoId);
@@ -320,22 +318,25 @@ namespace TTBS.Services
                     var stenoList = new List<GorevAtamaKomisyon>();
                     var hedefSteno = stenoGrevHedef.Where(x => x.StenografId == hedefStenoId).OrderBy(x => x.SatırNo).ToArray();
 
-                    var kaynakSteno = stenoGrevHedef.Where(x => x.StenografId == hedefStenoId).OrderBy(x => x.SatırNo).ToArray();
+                    var kaynakSteno = stenoGrevHedef.Where(x => x.StenografId == kaynakStenoId).OrderBy(x => x.SatırNo).ToArray();
 
                     for (int i = 0; i < hedefSteno.Count(); i++)
                     {
                         var hedefGorevBasTarihi = hedefSteno[i].GorevBasTarihi;
                         var hedefGorevBitisTarihi = hedefSteno[i].GorevBitisTarihi;
                         var hedefSure = hedefSteno[i].StenoSure;
+                        var hedefSatırNo = hedefSteno[i].SatırNo;
 
                         hedefSteno[i].GorevBasTarihi = kaynakSteno[i].GorevBasTarihi;
                         hedefSteno[i].GorevBitisTarihi = kaynakSteno[i].GorevBitisTarihi;
                         hedefSteno[i].StenoSure = kaynakSteno[i].StenoSure;
+                        hedefSteno[i].SatırNo = kaynakSteno[i].SatırNo;
                         stenoList.Add(hedefSteno[i]);
 
                         kaynakSteno[i].GorevBasTarihi = hedefGorevBasTarihi;
                         kaynakSteno[i].GorevBitisTarihi = hedefGorevBitisTarihi;
                         kaynakSteno[i].StenoSure = hedefSure;
+                        kaynakSteno[i].SatırNo = hedefSatırNo;
                         stenoList.Add(kaynakSteno[i]);
                     }
                     //foreach (var item in stenoList)

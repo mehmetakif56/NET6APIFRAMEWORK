@@ -63,8 +63,8 @@ namespace TTBS.Controllers
         [HttpPost("CreateStenoGorevAtama")]
         public IActionResult CreateStenoGorevAtama(StenoGorevAtamaModel model)
         {
-            if (model.StenografIds == null)
-                return BadRequest("Stenograf Listesi Dolu Olmalıdır!");
+            if (model.StenografIds == null || model.TurAdedi == 0)
+                return BadRequest("Stenograf Listesi veye Tur Sayısı Dolu Olmalıdır!");
             try
             {
                 var birlesim = _gorevAtamaService.UpdateBirlesimGorevAtama(model.BirlesimId,model.TurAdedi);
