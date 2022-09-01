@@ -207,8 +207,9 @@ namespace TTBS.Services
                 gorevAtama.ForEach(x => x.StenoIzinTuru = entity.IzinTuru);
                 _genelKurulAtamaRepo.Update(gorevAtama);
                 _genelKurulAtamaRepo.Save();
-                var modelList = _mapper.Map<List<GorevAtamaModel>>(_genelKurulAtamaRepo.Get(x => x.BirlesimId == gorevAtama.FirstOrDefault().BirlesimId));
-                var entityList =  _mapper.Map<List<GorevAtamaGenelKurul>>(BirlesimIzinHesaplama(modelList));
+                var result = _genelKurulAtamaRepo.Get(x => x.BirlesimId == gorevAtama.FirstOrDefault().BirlesimId);
+                var modelList = BirlesimIzinHesaplama(_mapper.Map<List<GorevAtamaModel>>(result));
+                var entityList =  _mapper.Map<List<GorevAtamaGenelKurul>>(modelList);
                 _genelKurulAtamaRepo.Update(entityList);
                 _genelKurulAtamaRepo.Save();
             }
