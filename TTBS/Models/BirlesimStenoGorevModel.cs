@@ -9,5 +9,6 @@ namespace TTBS.Models
         public Guid BirlesimId { get; set; }
         public ToplanmaBaslatmaStatu ToplanmaBaslatmaStatu { get; set; }
         public ToplanmaTuru ToplanmaTuru { get; set; }
+        public int SatırNo { get; set; }
     }
 }
