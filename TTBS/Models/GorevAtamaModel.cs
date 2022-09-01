@@ -20,6 +20,7 @@ namespace TTBS.Models
         public string KomisyonAd { get; set; }
         public IzınTuru StenoIzinTuru { get; set; }
         public bool SureAsmaVar { get; set; }
+        public bool OnayDurumu { get; set; }=false;
         public string GidenGrup { get; set; }
         public string StenoAdSoyad { get; set; }
         public DateTime? BirlesimBasTarihi { get; set; }

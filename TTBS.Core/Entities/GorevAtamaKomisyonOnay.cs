@@ -7,7 +7,7 @@ using TTBS.Core.Enums;
 
 namespace TTBS.Core.Entities
 {
-    public class GorevAtamaGenelKurul : BaseEntity
+    public class GorevAtamaKomisyonOnay : BaseEntity
     {
         public Guid Id { get; set; }
         public int SatırNo { get; set; }
@@ -25,8 +25,8 @@ namespace TTBS.Core.Entities
         public bool OnayDurumu { get; set; }=false;
         public string GidenGrup { get; set; }
         public StenoGorevTuru StenoGorevTuru { get; set; }
-        public bool GidenGrupMu { get; set; }    
+        public bool GidenGrupMu { get; set; }     
         public Birlesim Birlesim { get; set; }
-        public Stenograf Stenograf { get; set; }      
+        public Stenograf Stenograf { get; set; }
     }
 }

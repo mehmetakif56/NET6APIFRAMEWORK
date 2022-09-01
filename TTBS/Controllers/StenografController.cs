@@ -12,7 +12,7 @@ namespace TTBS.Controllers
     public class StenografController : BaseController<StenografController>
     {
         private readonly IStenografService _stenoService;
-        private readonly IGlobalService _globalService;      
+        private readonly IGlobalService _globalService;   
         //private readonly IMongoDBService _mongoDBService;
         private readonly ILogger<StenografController> _logger;
         public readonly IMapper _mapper;
@@ -119,7 +119,6 @@ namespace TTBS.Controllers
             {
                 var entity = Mapper.Map<StenoIzin>(model);
                 _stenoService.CreateStenoIzin(entity);
-
                 return Ok(entity);
             }
             catch (Exception ex)

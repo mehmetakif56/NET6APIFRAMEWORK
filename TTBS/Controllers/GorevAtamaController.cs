@@ -139,6 +139,35 @@ namespace TTBS.Controllers
            return lst;
         }
 
+        private List<GorevAtamaModel> BirlesimKomisyonHesaplama(List<GorevAtamaModel> atamaList)
+        {
+            var gorevBasTarihi = atamaList.FirstOrDefault().GorevBasTarihi.Value;
+            var gorevBitTarihi = atamaList.FirstOrDefault().GorevBitisTarihi.Value;
+            var lst = new List<GorevAtamaModel>();
+            foreach (var item in atamaList)
+            {
+                if (!string.IsNullOrEmpty(item.KomisyonAd))
+                {
+                    item.GorevStatu = GorevStatu.Iptal;
+                }
+                else
+                {
+                    if (item.GorevBasTarihi != gorevBasTarihi)
+                    {
+                        item.GorevBasTarihi = gorevBitTarihi;
+                    }
+                    if (item.GorevBitisTarihi != gorevBitTarihi)
+                    {
+                        item.GorevBitisTarihi = gorevBitTarihi.AddMinutes(item.StenoSure);
+                    }
+                    gorevBasTarihi = item.GorevBasTarihi.Value;
+                    gorevBitTarihi = item.GorevBitisTarihi.HasValue ? item.GorevBitisTarihi.Value : DateTime.MinValue;
+                }
+                lst.Add(item);
+            }
+            return lst;
+        }
+
         [HttpPost("AddStenoGorevAtamaKomisyon")]
         public IActionResult AddStenoGorevAtamaKomisyon(StenoGorevAtamaModel model)
         {
@@ -180,6 +209,58 @@ namespace TTBS.Controllers
             try
             {
                 _gorevAtamaService.ChangeOrderStenografKomisyon(kaynakBirlesimId, kaynakStenoId, hedefBirlesimId, hedefStenoId);
+            }
+            catch (Exception ex)
+            { return BadRequest(ex.Message); }
+
+            return Ok();
+        }
+
+        [HttpPost("ApproveStenografKomisyon")]
+        public IActionResult ApproveStenografKomisyon()
+        {
+            try
+            {
+                _gorevAtamaService.ApproveStenografKomisyon();
+                var gkBirlesim = _globalService.GetAktifGKBirlesim();
+                if(gkBirlesim != null)
+                {
+                    var gkAtama = _gorevAtamaService.GetGorevAtamaByBirlesimId(gkBirlesim.FirstOrDefault().Id, ToplanmaTuru.GenelKurul);
+                    if(gkAtama != null)
+                    {
+                        var modelList = _mapper.Map<List<GorevAtamaModel>>(gkAtama);
+                        modelList.Where(x => x.StenoGorevTuru == StenoGorevTuru.Stenograf).ToList().ForEach(model => model.KomisyonAd = _gorevAtamaService.GetKomisyonMinMaxDate(model.StenografId, model.GorevBasTarihi, model.GorevBitisTarihi, model.StenoSure));
+                        var result = BirlesimKomisyonHesaplama(modelList);
+                        var entityList = _mapper.Map<List<GorevAtamaGenelKurul>>(result);
+                        _gorevAtamaService.UpdateStenoAtamaGK(entityList);
+                    }
+                }
+            }
+            catch (Exception ex)
+            { return BadRequest(ex.Message); }
+
+            return Ok();
+        }
+
+        [HttpPost("CancelStenografKomisyon")]
+        public IActionResult CancelStenografKomisyon()
+        {
+            try
+            {
+                _gorevAtamaService.CancelStenografKomisyon();
+                var gkBirlesim = _globalService.GetAktifGKBirlesim();
+                if (gkBirlesim != null)
+                {
+                    var gkAtama = _gorevAtamaService.GetGorevAtamaByBirlesimId(gkBirlesim.FirstOrDefault().Id, ToplanmaTuru.GenelKurul);
+                    if (gkAtama != null)
+                    {
+                        var modelList = _mapper.Map<List<GorevAtamaModel>>(gkAtama);
+                        modelList.Where(x => x.StenoGorevTuru == StenoGorevTuru.Stenograf).ToList().ForEach(model => model.KomisyonAd = _gorevAtamaService.GetKomisyonMinMaxDate(model.StenografId, model.GorevBasTarihi, model.GorevBitisTarihi, model.StenoSure));
+                        var result = BirlesimSureHesaplama(modelList);
+                        var entityList = _mapper.Map<List<GorevAtamaGenelKurul>>(result);
+                        _gorevAtamaService.UpdateStenoAtamaGK(entityList);
+                    }
+                }
             }
             catch (Exception ex)
             { return BadRequest(ex.Message); }

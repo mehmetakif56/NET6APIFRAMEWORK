@@ -1,7 +1,9 @@
-﻿using TTBS.Core.Entities;
+﻿using AutoMapper;
+using TTBS.Core.Entities;
 using TTBS.Core.Enums;
 using TTBS.Core.Extensions;
 using TTBS.Core.Interfaces;
+using TTBS.Models;
 using TTBS.MongoDB;
 
 namespace TTBS.Services
@@ -51,8 +53,10 @@ namespace TTBS.Services
         private IRepository<StenografBeklemeSure> _stenoBeklemeSure;
         private IRepository<Grup> _grupRepo;
         private IRepository<Oturum> _oturumRepo;
+        private IRepository<GorevAtamaGenelKurul> _genelKurulAtamaRepo;
         private readonly IGorevAtamaGKMBusiness _gorevAtamaGKMRepo;
         private readonly IGorevAtamaKomMBusiness _gorevAtamaKomMRepo;
+        public readonly IMapper _mapper;
         public StenografService(IRepository<StenoIzin> stenoIzinRepo, IRepository<GorevAtama> stenoGorevRepo,
                                 IUnitOfWork unitWork,
                                 IRepository<Stenograf> stenografRepo,
@@ -62,6 +66,8 @@ namespace TTBS.Services
                                 IRepository<Oturum> oturumRepo,
                                 IGorevAtamaGKMBusiness gorevAtamaGKMRepo,
                                 IGorevAtamaKomMBusiness gorevAtamaKomMRepo,
+                                IRepository<GorevAtamaGenelKurul> genelKurulAtamaRepo,
+                                IMapper mapper,
                                 IServiceProvider provider) : base(provider)
         {
             _stenoIzinRepo = stenoIzinRepo;
@@ -74,6 +80,8 @@ namespace TTBS.Services
             _grupRepo = grupRepo;
             _gorevAtamaGKMRepo = gorevAtamaGKMRepo;
             _gorevAtamaKomMRepo = gorevAtamaKomMRepo;
+            _genelKurulAtamaRepo = genelKurulAtamaRepo;
+            _mapper = mapper;
         }
 
         public IEnumerable<StenoIzin> GetAllStenoIzin()
@@ -192,6 +200,47 @@ namespace TTBS.Services
         {
             _stenoIzinRepo.Create(entity, CurrentUser.Id);
             _stenoIzinRepo.Save();
+
+            var gorevAtama = _genelKurulAtamaRepo.Get(x=>x.StenografId == entity.StenografId && x.GorevBasTarihi>=entity.BaslangicTarihi && x.GorevBasTarihi<=entity.BitisTarihi).ToList();
+            if(gorevAtama!=null && gorevAtama.Count>0)
+            {
+                gorevAtama.ForEach(x => x.StenoIzinTuru = entity.IzinTuru);
+                _genelKurulAtamaRepo.Update(gorevAtama);
+                _genelKurulAtamaRepo.Save();
+                var modelList = _mapper.Map<GorevAtamaModel>(_genelKurulAtamaRepo.Get(x => x.BirlesimId == gorevAtama.FirstOrDefault().BirlesimId));
+                var entityList = _mapper.Map<GorevAtamaGenelKurul>(modelList);
+                _genelKurulAtamaRepo.Update(gorevAtama);
+                _genelKurulAtamaRepo.Save();
+            }
+        }
+
+        private List<GorevAtamaModel> BirlesimIzinHesaplama(List<GorevAtamaModel> atamaList)
+        {
+            var gorevBasTarihi = atamaList.FirstOrDefault().GorevBasTarihi.Value;
+            var gorevBitTarihi = atamaList.FirstOrDefault().GorevBitisTarihi.Value;
+            var lst = new List<GorevAtamaModel>();
+            foreach (var item in atamaList)
+            {
+                if (item.StenoIzinTuru != IzınTuru.Bulunmuyor)
+                {
+                    item.GorevStatu = GorevStatu.Iptal;
+                }
+                else
+                {
+                    if (item.GorevBasTarihi != gorevBasTarihi)
+                    {
+                        item.GorevBasTarihi = gorevBitTarihi;
+                    }
+                    if (item.GorevBitisTarihi != gorevBitTarihi)
+                    {
+                        item.GorevBitisTarihi = gorevBitTarihi.AddMinutes(item.StenoSure);
+                    }
+                    gorevBasTarihi = item.GorevBasTarihi.Value;
+                    gorevBitTarihi = item.GorevBitisTarihi.HasValue ? item.GorevBitisTarihi.Value : DateTime.MinValue;
+                }
+                lst.Add(item);
+            }
+            return lst;
         }
 
         public IEnumerable<GorevAtama> GetStenoGorevByBirlesimIdAndGorevTuru(Guid birlesimId, int gorevTuru)

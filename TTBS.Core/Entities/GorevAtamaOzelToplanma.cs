@@ -22,6 +22,7 @@ namespace TTBS.Core.Entities
         public string KomisyonAd { get; set; }
         public IzınTuru StenoIzinTuru { get; set; }
         public bool SureAsmaVar { get; set; }
+        public bool OnayDurumu { get; set; }=false;
         public string GidenGrup { get; set; }
         public StenoGorevTuru StenoGorevTuru { get; set; }
         public bool GidenGrupMu { get; set; }      

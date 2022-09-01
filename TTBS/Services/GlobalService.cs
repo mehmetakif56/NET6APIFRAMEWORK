@@ -53,7 +53,7 @@ namespace TTBS.Services
         public double GetStenoSureWeeklyById(Guid? stenoId);
         public double GetStenoSureYearlyById(Guid? stenoId, Guid? yasamaId);
         public double GetStenoSureDailyById(Guid? stenoId);
-        bool GetBirlesimByDate();
+        IEnumerable<Birlesim> GetAktifGKBirlesim();
     }
     public class GlobalService : BaseService, IGlobalService
     {
@@ -180,8 +180,6 @@ namespace TTBS.Services
             _grupRepo.Create(grup, CurrentUser.Id);
             _grupRepo.Save();
         }
-
-
         public IEnumerable<Grup> GetAllGrup(int grupTuru)
         {
             return _grupRepo.Get(x=>(int)x.StenoGrupTuru == grupTuru);
@@ -261,8 +259,6 @@ namespace TTBS.Services
             return _ozelGorevTurRepo.GetById(id);
         }
 
-      
-
         public void UpdateOturum(Oturum oturum)
         {
             _oturumRepo.Update(oturum, CurrentUser.Id);
@@ -286,12 +282,10 @@ namespace TTBS.Services
             _birlesimRepo.Save();
         }
 
-        public bool GetBirlesimByDate()
+        public IEnumerable<Birlesim> GetAktifGKBirlesim()
         {
-            var result = _birlesimRepo.Get(x => x.ToplanmaTuru == ToplanmaTuru.GenelKurul && (x.ToplanmaDurumu == Core.Enums.ToplanmaStatu.DevamEdiyor || x.ToplanmaDurumu == Core.Enums.ToplanmaStatu.Planlandı || x.ToplanmaDurumu == Core.Enums.ToplanmaStatu.Oluşturuldu));
-            return result!=null && result.Count()>0 ? true : false;                
+            return _birlesimRepo.Get(x => x.ToplanmaTuru == ToplanmaTuru.GenelKurul && (x.ToplanmaDurumu == Core.Enums.ToplanmaStatu.DevamEdiyor || x.ToplanmaDurumu == Core.Enums.ToplanmaStatu.Planlandı || x.ToplanmaDurumu == Core.Enums.ToplanmaStatu.Oluşturuldu));
         }
-
         public void DeleteBirlesim(Guid id)
         {
             var result = _birlesimRepo.Get(x => x.Id == id && (x.ToplanmaDurumu == ToplanmaStatu.Oluşturuldu || x.ToplanmaDurumu == ToplanmaStatu.Planlandı));

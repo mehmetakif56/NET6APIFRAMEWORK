@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseEntities\BaseEntities.cs" />
+    <Compile Include="Entities\GorevAtamaKomisyonOnay.cs" />
     <Compile Include="Entities\GorevAtamaOzelToplanma.cs" />
     <Compile Include="Entities\GorevAtamaKomisyon.cs" />
     <Compile Include="Entities\GorevAtamaGenelKurul.cs" />

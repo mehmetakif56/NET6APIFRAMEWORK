@@ -107,13 +107,6 @@ namespace TTBS.Controllers
             return model;
         }
 
-       
-
-        private void CheckBirlesim(BirlesimModel model)
-        {
-            //var result = model.ToplanmaTuru == ToplanmaTuru.GenelKurul ? _globalService.GetBirlesimByDate() : false;
-        }
-
         [HttpDelete("DeleteBirlesim")]
         public IActionResult DeleteBirlesim(Guid id)
         {
@@ -126,7 +119,6 @@ namespace TTBS.Controllers
 
             return Ok();
         }
-
 
         #endregion
 
