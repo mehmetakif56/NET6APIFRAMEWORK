@@ -88,5 +88,9 @@ namespace TTBS.Infrastructure
         {
             builder.ToTable("GorevAtamaOzelToplanma");
         }
+        private void ConfigureGorevAtamaKomisyonOnay(EntityTypeBuilder<GorevAtamaKomisyonOnay> builder)
+        {
+            builder.ToTable("GorevAtamaKomisyonOnay");
+        }
     }
 }
