@@ -57,6 +57,12 @@ namespace TTBS.Helper
                     .ForMember(dest => dest.StenoAdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad))
                     .ForMember(dest => dest.StenoGorevTuru, opt => opt.MapFrom(src => src.Stenograf.StenoGorevTuru));
 
+            CreateMap<GorevAtamaModel, GorevAtamaKomisyonOnay>();
+            CreateMap<GorevAtamaKomisyonOnay, GorevAtamaModel>()
+                    .ForMember(dest => dest.StenoAdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad))
+                    .ForMember(dest => dest.StenoGorevTuru, opt => opt.MapFrom(src => src.Stenograf.StenoGorevTuru));
+
+
             CreateMap<OturumModel, Oturum>();
             CreateMap<Oturum, OturumModel>();
             CreateMap<GrupModel, Grup>();
