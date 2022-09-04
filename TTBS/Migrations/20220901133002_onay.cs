@@ -26,6 +26,9 @@ namespace TTBS.Migrations
             migrationBuilder.AddColumn<bool>(
                 name: "OnayDurumu",
                 table: "GorevAtamaGenelKurul",
+
+
+
                 type: "bit",
                 nullable: false,
                 defaultValue: false);

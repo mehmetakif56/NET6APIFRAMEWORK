@@ -23,8 +23,11 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<TTBSContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 
 });
+
+#region MongoDB
 builder.Services.Configure<MongoDbSettings>(options =>
 {
     options.ConnectionString = builder.Configuration
@@ -34,6 +37,7 @@ builder.Services.Configure<MongoDbSettings>(options =>
 });
 builder.Services.AddSingleton<IGorevAtamaGKMBusiness, GorevAtamaGKMBusiness>();
 builder.Services.AddSingleton<IGorevAtamaKomMBusiness, GorevAtamaKomMBusiness>();
+#endregion
 var culture = CultureInfo.CreateSpecificCulture("tr-TR");
 var dateformat = new DateTimeFormatInfo
 {

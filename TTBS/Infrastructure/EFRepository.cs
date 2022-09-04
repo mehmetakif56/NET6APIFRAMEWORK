@@ -81,11 +81,6 @@ namespace TTBS.Infrastructure
 
         public void Update(IEnumerable<T> entities, Guid? userId = null, bool bulkInsert = false)
         {
-            //entities.ToList().ForEach((e) =>
-            //{
-            //    e.ModifiedDate = DateTime.Now;
-            //    e.ModifiedBy = userId;
-            //});
             if (bulkInsert)
                 _dbSet.UpdateRange(entities);
             //_dbContext.BulkUpdate(entities);

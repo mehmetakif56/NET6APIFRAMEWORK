@@ -23,7 +23,6 @@ namespace TTBS.Models
         public bool OnayDurumu { get; set; }=false;
         public string GidenGrup { get; set; }
         public string StenoAdSoyad { get; set; }
-        public DateTime? BirlesimBasTarihi { get; set; }
         public StenoGorevTuru StenoGorevTuru { get; set; }
         public bool GidenGrupMu { get; set; }
     }
