@@ -102,6 +102,23 @@ namespace TTBS.Services
         public IEnumerable<StenoIzin> GetStenoIzinBetweenDateAndStenograf(DateTime basTarihi, DateTime bitTarihi, string? field, string? sortOrder, int? izinTur, Guid? stenografId, int pageIndex, int pagesize)
         {
             var stenoIzinList = _stenoIzinRepo.Get(x => basTarihi <= x.BaslangicTarihi && bitTarihi >= x.BaslangicTarihi, includeProperties: "Stenograf");
+
+            //izin başlangıç tarihi daha geriden başlamış fakat aralık dönemi içinde izni tanımlı ise filtre listesine eklenir
+            #region filter permission period before filter's start date
+            if (stenoIzinList != null && stenoIzinList.Count() > 0)
+            {
+                var endDateMatchedValues = _stenoIzinRepo.Get(x => x.BitisTarihi >= basTarihi, includeProperties: "Stenograf");
+                if (endDateMatchedValues != null)
+                {
+                    stenoIzinList.Concat(endDateMatchedValues);
+                }
+            }
+            else
+            {
+                stenoIzinList = _stenoIzinRepo.Get(x => x.BitisTarihi >= basTarihi, includeProperties: "Stenograf");//x.BitisTarihi <= bitTarihi && x.BitisTarihi >= basTarihi
+            }
+            #endregion
+
             if (izinTur != null)
                 stenoIzinList = stenoIzinList.Where(x => (int)x.IzinTuru == izinTur);
             if (stenografId != null && stenografId != Guid.Empty)
@@ -111,6 +128,14 @@ namespace TTBS.Services
             {
                 stenoIzinList.ToList().ForEach(x => x.StenografCount = stenoIzinList.Count());
             }
+
+            //veri listesi boş değilse, birleştirme sonrasında tekrarsız verinin getirilmesi sağlanır
+            if (stenoIzinList != null && stenoIzinList.Count() > 0)
+            {
+                stenoIzinList = stenoIzinList.Distinct();
+            }
+
+
             return stenoIzinList != null && stenoIzinList.Count() > 0 ? stenoIzinList.Skip((pageIndex - 1) * pagesize).Take(pagesize).ToList() : new List<StenoIzin> { };
         }
 
