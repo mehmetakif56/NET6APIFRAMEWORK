@@ -657,7 +657,17 @@ namespace TTBS.Services
         {
             var result = _grupDetayRepo.Get(x=>x.GidenGrupPasif ==DurumStatu.Hayır).FirstOrDefault();  
             if(result != null && result.GidenGrupSaat.HasValue)
-                return toplanmaTuru== ToplanmaTuru.GenelKurul ? result.GidenGrupSaat.Value.AddMinutes(-60): result.GidenGrupSaat.Value.AddMinutes(-9*sure);
+            {
+                if(result.GidenGrupSaatUygula == DurumStatu.Evet)
+                {
+                    return result.GidenGrupSaat.Value;
+                }
+                else
+                {
+                    return toplanmaTuru == ToplanmaTuru.GenelKurul ? result.GidenGrupSaat.Value.AddMinutes(-60) : result.GidenGrupSaat.Value.AddMinutes(-9 * sure);
+                }
+            }
+              
             return DateTime.MinValue;
         }
 

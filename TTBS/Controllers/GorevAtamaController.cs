@@ -96,8 +96,6 @@ namespace TTBS.Controllers
                     newEntity.GorevBitisTarihi = basDate.AddMinutes((firstRec * sure) + sure);
                     newEntity.StenoSure = sure;
                     newEntity.StenoIzinTuru = _gorevAtamaService.GetStenoIzinByGorevBasTarih(item, newEntity.GorevBasTarihi) ;
-                    newEntity.GidenGrupMu = _gorevAtamaService.GetGidenGrup(toplanmaTuru,sure)>= newEntity.GorevBasTarihi;
-                    newEntity.GidenGrup = newEntity.GidenGrupMu ? "GidenGrup" : string.Empty;
                     newEntity.KomisyonAd = gorevTuru == StenoGorevTuru.Stenograf && toplanmaTuru == ToplanmaTuru.GenelKurul ? _gorevAtamaService.GetKomisyonMinMaxDate(item, newEntity.GorevBasTarihi, newEntity.GorevBitisTarihi, sure):null;
                  
                     firstRec++;
@@ -105,6 +103,15 @@ namespace TTBS.Controllers
                     atamaList.Add(newEntity);
                 }
             }
+            var gidenTarih = _gorevAtamaService.GetGidenGrup(toplanmaTuru, sure);
+            if (gidenTarih!=DateTime.MinValue && atamaList.Where(x => x.GorevBasTarihi >= gidenTarih).ToList() != null)
+            {
+                atamaList.Where(x => x.GorevBasTarihi >= gidenTarih).ToList().ForEach(x =>
+                {
+                    x.GidenGrupMu = true;
+                    x.GidenGrup = "GidenGrup";
+                });
+            }               
             return BirlesimSureHesaplama(atamaList); 
         }
         private List<GorevAtamaModel> BirlesimSureHesaplama(List<GorevAtamaModel> atamaList)
