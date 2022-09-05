@@ -107,7 +107,7 @@ namespace TTBS.Services
             #region filter permission period before filter's start date
             if (stenoIzinList != null && stenoIzinList.Count() > 0)
             {
-                var endDateMatchedValues = _stenoIzinRepo.Get(x => x.BitisTarihi <= bitTarihi && x.BitisTarihi >= basTarihi, includeProperties: "Stenograf");
+                var endDateMatchedValues = _stenoIzinRepo.Get(x => x.BitisTarihi >= basTarihi, includeProperties: "Stenograf");
                 if (endDateMatchedValues != null)
                 {
                     stenoIzinList.Concat(endDateMatchedValues);
@@ -115,7 +115,7 @@ namespace TTBS.Services
             }
             else
             {
-                stenoIzinList = _stenoIzinRepo.Get(x => x.BitisTarihi <= bitTarihi && x.BitisTarihi >= basTarihi, includeProperties: "Stenograf");
+                stenoIzinList = _stenoIzinRepo.Get(x => x.BitisTarihi >= basTarihi, includeProperties: "Stenograf");//x.BitisTarihi <= bitTarihi && x.BitisTarihi >= basTarihi
             }
             #endregion
 
