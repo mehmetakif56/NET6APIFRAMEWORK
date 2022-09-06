@@ -119,17 +119,41 @@ namespace TTBS.Services
             }
             #endregion
 
+            #region İzin Tür Filtreleme
             if (izinTur != null)
                 stenoIzinList = stenoIzinList.Where(x => (int)x.IzinTuru == izinTur);
             if (stenografId != null && stenografId != Guid.Empty)
                 stenoIzinList = stenoIzinList.Where(x => x.StenografId == stenografId);
+            #endregion
 
-            //if (stenoIzinList != null && stenoIzinList.Count() > 0)
-            //{
-            //    stenoIzinList.ToList().ForEach(x => x.StenografCount = stenoIzinList.Count());
-            //}
+            #region field sort
 
-            //veri listesi boş değilse, birleştirme sonrasında tekrarsız verinin getirilmesi sağlanır
+            if (stenoIzinList != null && stenoIzinList.Count() > 0)
+            {
+                if (!string.IsNullOrEmpty(field))
+                {
+                    if (field == "baslangicTarihi")
+                    {
+                        stenoIzinList = sortOrder == "desc" ? stenoIzinList.OrderByDescending(x => x.BaslangicTarihi) : stenoIzinList.OrderBy(x => x.BaslangicTarihi);
+                    }
+                    if (field == "bitisTarihi")
+                    {
+                        stenoIzinList = sortOrder == "desc" ? stenoIzinList.OrderByDescending(x => x.BitisTarihi) : stenoIzinList.OrderBy(x => x.BitisTarihi);
+                    }
+                    if (field == "izinTuru")
+                    {
+                        stenoIzinList = sortOrder == "desc" ? stenoIzinList.OrderByDescending(x => x.IzinTuru) : stenoIzinList.OrderBy(x => x.IzinTuru);
+                    }
+                    if (field == "stenografAdSoyad")
+                    {
+                        stenoIzinList = sortOrder == "desc" ? stenoIzinList.OrderByDescending(x => x.Stenograf.AdSoyad) : stenoIzinList.OrderBy(x => x.Stenograf.AdSoyad);
+                    }
+                }
+
+                stenoIzinList.ToList().ForEach(x => x.StenografCount = stenoIzinList.Count());
+            }
+            #endregion
+
             if (stenoIzinList != null && stenoIzinList.Count() > 0)
             {
                 stenoIzinList = stenoIzinList.Distinct();
