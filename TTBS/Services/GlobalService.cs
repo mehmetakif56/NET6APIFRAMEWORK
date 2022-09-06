@@ -289,10 +289,14 @@ namespace TTBS.Services
         public void DeleteBirlesim(Guid id)
         {
             var result = _birlesimRepo.Get(x => x.Id == id && (x.ToplanmaDurumu == ToplanmaStatu.Oluşturuldu || x.ToplanmaDurumu == ToplanmaStatu.Planlandı));
-            if(result !=null)
+            if(result.Any())
             {
                 _birlesimRepo.Delete(result);
                 _birlesimRepo.Save();
+            }
+            else
+            {
+                throw new BadHttpRequestException("Birleşimin statüsü silinmeye uygun değildir.");
             }
         }
 
