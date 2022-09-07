@@ -265,7 +265,7 @@ namespace TTBS.Services
         {
             try
             {
-                var stenoGorev = _gorevAtamaKomRepo.Get(x => x.BirlesimId == birlesimId);
+                var stenoGorev = _gorevAtamaKomRepo.Get(x => x.BirlesimId == birlesimId).OrderBy(x => x.SatırNo).ToList();
                 var modelList = _mapper.Map<List<GorevAtamaModel>>(stenoGorev);
                 var stenoGorevLine = stenoGorev.Where(x => x.SatırNo >= satırNo);
                 if(stenoGorevLine!=null && stenoGorevLine.Count()>0)
