@@ -252,17 +252,15 @@ namespace TTBS.Services
             _stenoIzinRepo.Create(entity, CurrentUser.Id);
             _stenoIzinRepo.Save();
 
-            var gorevAtama = _genelKurulAtamaRepo.Get(x=>x.StenografId == entity.StenografId && x.GorevBasTarihi>=entity.BaslangicTarihi && x.GorevBasTarihi<=entity.BitisTarihi).ToList();
-            if(gorevAtama!=null && gorevAtama.Count>0)
+            var result = _genelKurulAtamaRepo.Get(x => x.Birlesim.BitisTarihi !=null,includeProperties:"Birlesim");
+            if (result != null && result.Count()>0)
             {
-                gorevAtama.ForEach(x => x.StenoIzinTuru = entity.IzinTuru);
-                _genelKurulAtamaRepo.Update(gorevAtama);
-                _genelKurulAtamaRepo.Save();
-                var result = _genelKurulAtamaRepo.Get(x => x.BirlesimId == gorevAtama.FirstOrDefault().BirlesimId);
+                result.Where(x=>x.StenografId == entity.StenografId && x.GorevBasTarihi >= entity.BaslangicTarihi && x.GorevBasTarihi <= entity.BitisTarihi).ToList().ForEach(x =>x.StenoIzinTuru =entity.IzinTuru);
                 var modelList = BirlesimIzinHesaplama(_mapper.Map<List<GorevAtamaModel>>(result));
-                var entityList =  _mapper.Map<List<GorevAtamaGenelKurul>>(modelList);
+                var entityList = _mapper.Map<List<GorevAtamaGenelKurul>>(modelList);
                 _genelKurulAtamaRepo.Update(entityList);
                 _genelKurulAtamaRepo.Save();
+
             }
         }
 
