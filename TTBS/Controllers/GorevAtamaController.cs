@@ -211,11 +211,11 @@ namespace TTBS.Controllers
         }
 
         [HttpPost("ChangeOrderStenografKomisyon")]
-        public IActionResult ChangeOrderStenografKomisyon(Guid kaynakBirlesimId, Guid kaynakStenoId, Guid hedefBirlesimId, Guid hedefStenoId)
+        public IActionResult ChangeOrderStenografKomisyon(Guid kaynakBirlesimId, Guid kaynakStenografId, Guid hedefBirlesimId, Guid hedefStenografId)
         {
             try
             {
-                _gorevAtamaService.ChangeOrderStenografKomisyon(kaynakBirlesimId, kaynakStenoId, hedefBirlesimId, hedefStenoId);
+                _gorevAtamaService.ChangeOrderStenografKomisyon(kaynakBirlesimId, kaynakStenografId, hedefBirlesimId, hedefStenografId);
             }
             catch (Exception ex)
             { return BadRequest(ex.Message); }
