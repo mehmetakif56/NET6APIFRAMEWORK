@@ -11,6 +11,7 @@ namespace TTBS.Core.Enums
         Bulunmuyor=0,
         Raporlu=1,
         İzinli =2,
-        OlaganUstuDurum=3
+        Diger=3,
+        Mazaret = 4
     }
 }
