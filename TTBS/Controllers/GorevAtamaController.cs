@@ -131,14 +131,14 @@ namespace TTBS.Controllers
                 {
                     if (item.GorevBasTarihi != gorevBasTarihi)
                     {
-                        item.GorevBasTarihi = gorevBitTarihi;
+                        item.GorevBasTarihi = gorevBasTarihi;
                     }
                     if (item.GorevBitisTarihi != gorevBitTarihi)
                     {
-                        item.GorevBitisTarihi = gorevBitTarihi.AddMinutes(item.StenoSure);
+                        item.GorevBitisTarihi = gorevBitTarihi;
                     }
-                    gorevBasTarihi = item.GorevBasTarihi.Value;
-                    gorevBitTarihi = item.GorevBitisTarihi.HasValue ? item.GorevBitisTarihi.Value : DateTime.MinValue;
+                    gorevBasTarihi = item.GorevBitisTarihi.Value;
+                    gorevBitTarihi = item.GorevBitisTarihi.HasValue ? item.GorevBitisTarihi.Value.AddMinutes(item.StenoSure) : DateTime.MinValue;
                 }
                 item.SureAsmaVar = stenoToplamSureAsım;
                 lst.Add(item);
@@ -161,14 +161,14 @@ namespace TTBS.Controllers
                 {
                     if (item.GorevBasTarihi != gorevBasTarihi)
                     {
-                        item.GorevBasTarihi = gorevBitTarihi;
+                        item.GorevBasTarihi = gorevBasTarihi;
                     }
                     if (item.GorevBitisTarihi != gorevBitTarihi)
                     {
-                        item.GorevBitisTarihi = gorevBitTarihi.AddMinutes(item.StenoSure);
+                        item.GorevBitisTarihi = gorevBitTarihi;
                     }
-                    gorevBasTarihi = item.GorevBasTarihi.Value;
-                    gorevBitTarihi = item.GorevBitisTarihi.HasValue ? item.GorevBitisTarihi.Value : DateTime.MinValue;
+                    gorevBasTarihi = item.GorevBitisTarihi.Value;
+                    gorevBitTarihi = item.GorevBitisTarihi.HasValue ? item.GorevBitisTarihi.Value.AddMinutes(item.StenoSure) : DateTime.MinValue;
                 }
                 lst.Add(item);
             }
@@ -229,19 +229,7 @@ namespace TTBS.Controllers
             try
             {
                 _gorevAtamaService.ApproveStenografKomisyon();
-                var gkBirlesim = _globalService.GetAktifGKBirlesim();
-                if(gkBirlesim != null)
-                {
-                    var gkAtama = _gorevAtamaService.GetGorevAtamaByBirlesimId(gkBirlesim.FirstOrDefault().Id, ToplanmaTuru.GenelKurul);
-                    if(gkAtama != null)
-                    {
-                        var modelList = _mapper.Map<List<GorevAtamaModel>>(gkAtama);
-                        modelList.Where(x => x.StenoGorevTuru == StenoGorevTuru.Stenograf).ToList().ForEach(model => model.KomisyonAd = _gorevAtamaService.GetKomisyonMinMaxDate(model.StenografId, model.GorevBasTarihi, model.GorevBitisTarihi, model.StenoSure));
-                        var result = BirlesimKomisyonHesaplama(modelList);
-                        var entityList = _mapper.Map<List<GorevAtamaGenelKurul>>(result);
-                        _gorevAtamaService.UpdateStenoAtamaGK(entityList);
-                    }
-                }
+                UpdateGenelKurulKomisyon();
             }
             catch (Exception ex)
             { return BadRequest(ex.Message); }
@@ -249,25 +237,15 @@ namespace TTBS.Controllers
             return Ok();
         }
 
+       
+
         [HttpPost("CancelStenografKomisyon")]
         public IActionResult CancelStenografKomisyon()
         {
             try
             {
                 _gorevAtamaService.CancelStenografKomisyon();
-                var gkBirlesim = _globalService.GetAktifGKBirlesim();
-                if (gkBirlesim != null)
-                {
-                    var gkAtama = _gorevAtamaService.GetGorevAtamaByBirlesimId(gkBirlesim.FirstOrDefault().Id, ToplanmaTuru.GenelKurul);
-                    if (gkAtama != null)
-                    {
-                        var modelList = _mapper.Map<List<GorevAtamaModel>>(gkAtama);
-                        modelList.Where(x => x.StenoGorevTuru == StenoGorevTuru.Stenograf).ToList().ForEach(model => model.KomisyonAd = _gorevAtamaService.GetKomisyonMinMaxDate(model.StenografId, model.GorevBasTarihi, model.GorevBitisTarihi, model.StenoSure));
-                        var result = BirlesimSureHesaplama(modelList);
-                        var entityList = _mapper.Map<List<GorevAtamaGenelKurul>>(result);
-                        _gorevAtamaService.UpdateStenoAtamaGK(entityList);
-                    }
-                }
+                UpdateGenelKurulKomisyon();
             }
             catch (Exception ex)
             { return BadRequest(ex.Message); }
@@ -296,11 +274,20 @@ namespace TTBS.Controllers
             return model;
         }
         [HttpPut("UpdateGorevDurumById")]
-        public IActionResult UpdateGorevDurumById(Guid id, ToplanmaTuru toplanmaTuru)
+        public IActionResult UpdateGorevDurumById(Guid id, Guid birlesimId, ToplanmaTuru toplanmaTuru)
         {
             try
             {
-                _gorevAtamaService.UpdateGorevDurumById(id, toplanmaTuru);
+               var result=_gorevAtamaService.UpdateGorevDurumById(id, birlesimId, toplanmaTuru);
+               if(result!=null && result.Count()>0)
+               {
+                    var hesaplama = BirlesimIptalHesaplama(result);
+                    if (hesaplama != null && hesaplama.Count > 0)
+                    {
+                        _gorevAtamaService.UpdateGorevAtama(hesaplama, toplanmaTuru);
+                        UpdateGenelKurulKomisyon();
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -313,7 +300,16 @@ namespace TTBS.Controllers
         {
             try
             {
-                _gorevAtamaService.UpdateGorevDurumByBirlesimAndSteno(birlesimId, stenoId, toplanmaTuru);
+                var result = _gorevAtamaService.UpdateGorevDurumByBirlesimAndSteno(birlesimId, stenoId, toplanmaTuru);
+                if (result != null && result.Count() > 0)
+                {
+                    var hesaplama = BirlesimIptalHesaplama(result);
+                    if(hesaplama!=null && hesaplama.Count>0)
+                    {
+                        _gorevAtamaService.UpdateGorevAtama(hesaplama, toplanmaTuru);
+                        UpdateGenelKurulKomisyon();
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -432,6 +428,48 @@ namespace TTBS.Controllers
             //şimdilik kaldırıldı, tablodan direkt getirelecek, perfomanstan dolayı
             //model.ToList().ForEach(x => { x.GunlukGorevSuresi = _globalService.GetStenoSureDailyById(x.Id); x.HaftalikGorevSuresi = _globalService.GetStenoSureWeeklyById(x.Id); x.YillikGorevSuresi = _globalService.GetStenoSureYearlyById(x.Id, yasamaId); });
             return model;
+        }
+
+        private List<GorevAtamaModel> BirlesimIptalHesaplama(List<GorevAtamaModel> atamaList)
+        {
+            var gorevBasTarihi = atamaList.FirstOrDefault().GorevBasTarihi.Value;
+            var gorevBitTarihi = atamaList.FirstOrDefault().GorevBitisTarihi.Value;
+            var lst = new List<GorevAtamaModel>();
+            foreach (var item in atamaList)
+            {
+                if (item.GorevStatu != GorevStatu.Iptal)
+                {
+                    if (item.GorevBasTarihi != gorevBasTarihi)
+                    {
+                        item.GorevBasTarihi = gorevBasTarihi;
+                    }
+                    if (item.GorevBitisTarihi != gorevBitTarihi)
+                    {
+                        item.GorevBitisTarihi = gorevBitTarihi; 
+                    }
+                    gorevBasTarihi = item.GorevBitisTarihi.Value;
+                    gorevBitTarihi = item.GorevBitisTarihi.HasValue ? item.GorevBitisTarihi.Value.AddMinutes(item.StenoSure) : DateTime.MinValue;
+                }
+                lst.Add(item);
+            }
+            return lst;
+        }
+
+        private void UpdateGenelKurulKomisyon()
+        {
+            var gkBirlesim = _globalService.GetAktifGKBirlesim();
+            if (gkBirlesim != null)
+            {
+                var gkAtama = _gorevAtamaService.GetGorevAtamaByBirlesimId(gkBirlesim.FirstOrDefault().Id, ToplanmaTuru.GenelKurul);
+                if (gkAtama != null)
+                {
+                    var modelList = _mapper.Map<List<GorevAtamaModel>>(gkAtama);
+                    modelList.Where(x => x.StenoGorevTuru == StenoGorevTuru.Stenograf).ToList().ForEach(model => model.KomisyonAd = _gorevAtamaService.GetKomisyonMinMaxDate(model.StenografId, model.GorevBasTarihi, model.GorevBitisTarihi, model.StenoSure));
+                    var result = BirlesimKomisyonHesaplama(modelList);
+                    var entityList = _mapper.Map<List<GorevAtamaGenelKurul>>(result);
+                    _gorevAtamaService.UpdateStenoAtamaGK(entityList);
+                }
+            }
         }
     }
 }

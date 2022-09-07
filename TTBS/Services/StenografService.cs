@@ -279,14 +279,14 @@ namespace TTBS.Services
                 {
                     if (item.GorevBasTarihi != gorevBasTarihi)
                     {
-                        item.GorevBasTarihi = gorevBitTarihi;
+                        item.GorevBasTarihi = gorevBasTarihi;
                     }
                     if (item.GorevBitisTarihi != gorevBitTarihi)
                     {
-                        item.GorevBitisTarihi = gorevBitTarihi.AddMinutes(item.StenoSure);
+                        item.GorevBitisTarihi = gorevBitTarihi;
                     }
-                    gorevBasTarihi = item.GorevBasTarihi.Value;
-                    gorevBitTarihi = item.GorevBitisTarihi.HasValue ? item.GorevBitisTarihi.Value : DateTime.MinValue;
+                    gorevBasTarihi = item.GorevBitisTarihi.Value;
+                    gorevBitTarihi = item.GorevBitisTarihi.HasValue ? item.GorevBitisTarihi.Value.AddMinutes(item.StenoSure) : DateTime.MinValue;
                 }
                 lst.Add(item);
             }
