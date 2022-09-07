@@ -13,7 +13,7 @@ namespace TTBS.Services
         IEnumerable<StenoIzin> GetAllStenoIzin();
         IEnumerable<StenoIzin> GetStenoIzinByStenografId(Guid id);
         IEnumerable<StenoIzin> GetStenoIzinByName(string adSoyad);
-        IEnumerable<StenoIzin> GetStenoIzinBetweenDateAndStenograf(DateTime basTarihi, DateTime bitTarihi, string? field, string? sortOrder, int? izinTur, Guid? stenografId, int pageIndex, int pagesize);
+        StenoIzınCountModel GetStenoIzinBetweenDateAndStenograf(DateTime basTarihi, DateTime bitTarihi, string? field, string? sortOrder, int? izinTur, Guid? stenografId, int pageIndex, int pagesize);
         IEnumerable<GorevAtama> GetStenoGorevById(Guid id);
         IEnumerable<GorevAtama> GetStenoGorevByName(string adSoyad);
         IEnumerable<GorevAtama> GetStenoGorevByDateAndStatus(DateTime gorevBasTarihi, DateTime gorevBitTarihi, int status);
@@ -99,7 +99,7 @@ namespace TTBS.Services
             return _stenoIzinRepo.Get(x => x.Stenograf.AdSoyad == adSoyad, includeProperties: "Stenograf");
         }
 
-        public IEnumerable<StenoIzin> GetStenoIzinBetweenDateAndStenograf(DateTime basTarihi, DateTime bitTarihi, string? field, string? sortOrder, int? izinTur, Guid? stenografId, int pageIndex, int pagesize)
+        public StenoIzınCountModel GetStenoIzinBetweenDateAndStenograf(DateTime basTarihi, DateTime bitTarihi, string? field, string? sortOrder, int? izinTur, Guid? stenografId, int pageIndex, int pagesize)
         {
             var stenoIzinList = _stenoIzinRepo.Get(x => basTarihi <= x.BaslangicTarihi && bitTarihi >= x.BaslangicTarihi, includeProperties: "Stenograf");
 
@@ -119,24 +119,50 @@ namespace TTBS.Services
             }
             #endregion
 
+            #region İzin Tür Filtreleme
             if (izinTur != null)
                 stenoIzinList = stenoIzinList.Where(x => (int)x.IzinTuru == izinTur);
             if (stenografId != null && stenografId != Guid.Empty)
                 stenoIzinList = stenoIzinList.Where(x => x.StenografId == stenografId);
+            #endregion
+
+            #region field sort
 
             if (stenoIzinList != null && stenoIzinList.Count() > 0)
             {
+                if (!string.IsNullOrEmpty(field))
+                {
+                    if (field == "baslangicTarihi")
+                    {
+                        stenoIzinList = sortOrder == "desc" ? stenoIzinList.OrderByDescending(x => x.BaslangicTarihi) : stenoIzinList.OrderBy(x => x.BaslangicTarihi);
+                    }
+                    if (field == "bitisTarihi")
+                    {
+                        stenoIzinList = sortOrder == "desc" ? stenoIzinList.OrderByDescending(x => x.BitisTarihi) : stenoIzinList.OrderBy(x => x.BitisTarihi);
+                    }
+                    if (field == "izinTuru")
+                    {
+                        stenoIzinList = sortOrder == "desc" ? stenoIzinList.OrderByDescending(x => x.IzinTuru) : stenoIzinList.OrderBy(x => x.IzinTuru);
+                    }
+                    if (field == "stenografAdSoyad")
+                    {
+                        stenoIzinList = sortOrder == "desc" ? stenoIzinList.OrderByDescending(x => x.Stenograf.AdSoyad) : stenoIzinList.OrderBy(x => x.Stenograf.AdSoyad);
+                    }
+                }
+
                 stenoIzinList.ToList().ForEach(x => x.StenografCount = stenoIzinList.Count());
             }
+            #endregion
 
-            //veri listesi boş değilse, birleştirme sonrasında tekrarsız verinin getirilmesi sağlanır
             if (stenoIzinList != null && stenoIzinList.Count() > 0)
             {
                 stenoIzinList = stenoIzinList.Distinct();
             }
 
-
-            return stenoIzinList != null && stenoIzinList.Count() > 0 ? stenoIzinList.Skip((pageIndex - 1) * pagesize).Take(pagesize).ToList() : new List<StenoIzin> { };
+            StenoIzınCountModel stenoIzınCountModel = new StenoIzınCountModel();
+            stenoIzınCountModel.StenoIzinModels = _mapper.Map<IEnumerable<StenoIzinModel>>(stenoIzinList != null && stenoIzinList.Count() > 0 ? stenoIzinList.Skip((pageIndex - 1) * pagesize).Take(pagesize).ToList() : new List<StenoIzin> { });
+            stenoIzınCountModel.count = stenoIzinList.Count();
+            return stenoIzınCountModel;
         }
 
         public IEnumerable<GorevAtama> GetStenoGorevById(Guid id)

@@ -597,6 +597,10 @@ namespace TTBS.Services
 
                 AddKomisyonOnay(modelList);
             }
+            else
+            {
+                throw new BadHttpRequestException("Stenografın görev durumu güncelleme için uygun değildir.");
+            }
         }
 
         private void AddKomisyonOnay(List<GorevAtamaModel> modelList)
