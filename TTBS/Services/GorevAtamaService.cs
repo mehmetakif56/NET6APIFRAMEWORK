@@ -34,7 +34,7 @@ namespace TTBS.Services
         void UpdateStenoGorevTamamla(Guid birlesimId, ToplanmaTuru toplanmaTuru,int satırNo);
         IEnumerable<GorevAtamaKomisyon> GetAssignedStenoByBirlesimId(Guid birlesimId);
         IzınTuru GetStenoIzinByGorevBasTarih(Guid stenoId, DateTime? gorevBasTarih);
-        DateTime? GetGidenGrup(ToplanmaTuru toplanmaTuru, double sure);
+        GrupDetay GetGidenGrup(ToplanmaTuru toplanmaTuru, double sure);
         string GetKomisyonMinMaxDate(Guid stenoId, DateTime? gorevBasTarih, DateTime? gorevBitisTarih, double sure);
     }
     public class GorevAtamaService : BaseService, IGorevAtamaService
@@ -158,7 +158,7 @@ namespace TTBS.Services
         }
         public IEnumerable<Stenograf> GetStenografIdList()
         {
-            return  _stenografRepo.Get().OrderBy(x => x.SiraNo).Select(x => new Stenograf { Id =x.Id,StenoGorevTuru =x.StenoGorevTuru,AdSoyad =x.AdSoyad});
+            return  _stenografRepo.Get().OrderBy(x => x.SiraNo).Select(x => new Stenograf { Id =x.Id,StenoGorevTuru =x.StenoGorevTuru,AdSoyad =x.AdSoyad,GrupId =x.GrupId});
         }
         public void CreateStenoGorevDonguEkle(Guid birlesimId, Guid oturumId)
         {
@@ -653,22 +653,22 @@ namespace TTBS.Services
                 izinTur = result.FirstOrDefault();
             return izinTur;
         }
-        public DateTime? GetGidenGrup(ToplanmaTuru toplanmaTuru,double sure)
+        public GrupDetay GetGidenGrup(ToplanmaTuru toplanmaTuru,double sure)
         {
             var result = _grupDetayRepo.Get(x=>x.GidenGrupPasif ==DurumStatu.Hayır).FirstOrDefault();  
             if(result != null && result.GidenGrupSaat.HasValue)
             {
                 if(result.GidenGrupSaatUygula == DurumStatu.Evet)
                 {
-                    return result.GidenGrupSaat.Value;
+                    result.GidenGrupSaat = result.GidenGrupSaat.Value;
                 }
                 else
                 {
-                    return toplanmaTuru == ToplanmaTuru.GenelKurul ? result.GidenGrupSaat.Value.AddMinutes(-60) : result.GidenGrupSaat.Value.AddMinutes(-9 * sure);
+                    result.GidenGrupSaat = toplanmaTuru == ToplanmaTuru.GenelKurul ? result.GidenGrupSaat.Value.AddMinutes(-60) : result.GidenGrupSaat.Value.AddMinutes(-9 * sure);
                 }
             }
-              
-            return DateTime.MinValue;
+
+            return result;
         }
 
         public string GetKomisyonMinMaxDate(Guid stenoId, DateTime? gorevBasTarih, DateTime? gorevBitisTarih,double sure)

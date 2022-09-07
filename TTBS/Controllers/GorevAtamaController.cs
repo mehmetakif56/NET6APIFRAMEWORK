@@ -103,10 +103,10 @@ namespace TTBS.Controllers
                     atamaList.Add(newEntity);
                 }
             }
-            var gidenTarih = _gorevAtamaService.GetGidenGrup(toplanmaTuru, sure);
-            if (gidenTarih!=DateTime.MinValue && atamaList.Where(x => x.GorevBasTarihi >= gidenTarih).ToList() != null)
+            var gidenTarihResult = _gorevAtamaService.GetGidenGrup(toplanmaTuru, sure);
+            if (gidenTarihResult != null && atamaList.Where(x => x.GorevBasTarihi >= gidenTarihResult.GidenGrupSaat).ToList() != null)
             {
-                atamaList.Where(x => x.GorevBasTarihi >= gidenTarih).ToList().ForEach(x =>
+                atamaList.Where(x => x.GorevBasTarihi >= gidenTarihResult.GidenGrupSaat).ToList().ForEach(x =>
                 {
                     x.GidenGrupMu = true;
                     x.GidenGrup = "GidenGrup";
