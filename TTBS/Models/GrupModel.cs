@@ -7,5 +7,6 @@ namespace TTBS.Models
         public Guid? Id { get; set; }
         public string Ad { get; set; }
         public StenoGorevTuru StenoGrupTuru { get; set; }
+        public bool gidenGrup { get; set; }
     }
 }

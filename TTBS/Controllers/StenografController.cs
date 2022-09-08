@@ -317,8 +317,8 @@ namespace TTBS.Controllers
         public IEnumerable<StenoGorevModel> GetStenoGorevByStenografAndDate(Guid? stenografId, DateTime gorevAtamaTarihi, DateTime gorevBitTarihi)
         {
             var stenoEntity = _stenoService.GetStenoGorevByStenografAndDate(stenografId, gorevAtamaTarihi, gorevBitTarihi);
-            var model = _mapper.Map<IEnumerable<StenoGorevModel>>(stenoEntity);
-            return model;
+            //var model = _mapper.Map<IEnumerable<StenoGorevModel>>(stenoEntity);
+            return stenoEntity;
         }
 
 

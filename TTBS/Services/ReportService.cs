@@ -1,25 +1,40 @@
-﻿using TTBS.Core.Entities;
+﻿using AutoMapper;
+using TTBS.Core.Entities;
 using TTBS.Core.Enums;
 using TTBS.Core.Interfaces;
+using TTBS.Models;
 
 namespace TTBS.Services
 {
     public interface IReportService
     {
         IEnumerable<Birlesim> GetReportStenoPlanBetweenDateGorevTur(DateTime gorevBasTarihi, DateTime gorevBitTarihi, int? gorevTuru);
-        IEnumerable<GorevAtama> GetStenoGorevByStenografAndDate(Guid? stenografId, DateTime gorevBasTarihi, DateTime gorevBitTarihi);
+        IEnumerable<ReportPlanModel> GetStenoGorevByStenografAndDate(Guid? stenografId, DateTime gorevBasTarihi, DateTime gorevBitTarihi);
     }
     public class ReportService : BaseService, IReportService
     {
         private IRepository<Birlesim> _birlesimRepo;
         private IRepository<GorevAtama> _stenoGorevRepo;
+        private IRepository<GorevAtamaGenelKurul> _genelKurulAtamaRepo;
+        private IRepository<GorevAtamaKomisyon> _komisyonAtamaRepo;
+        private IRepository<GorevAtamaOzelToplanma> _ozelToplanmaAtamaRepo;
+        public readonly IMapper _mapper;
+
 
         public ReportService(IRepository<Birlesim> birlesimRepo, 
                              IRepository<GorevAtama> stenoGorevRepo,
+                             IRepository<GorevAtamaGenelKurul> genelKurulAtamaRepo,
+                             IRepository<GorevAtamaKomisyon> komisyonAtamaRepo,
+                             IRepository<GorevAtamaOzelToplanma> ozelToplanmaAtamaRepo,
+                             IMapper mapper,
                              IServiceProvider provider) : base(provider)
         {
-           _birlesimRepo=birlesimRepo;
+            _birlesimRepo=birlesimRepo;
             _stenoGorevRepo = stenoGorevRepo;
+            _genelKurulAtamaRepo = genelKurulAtamaRepo;
+            _ozelToplanmaAtamaRepo = ozelToplanmaAtamaRepo;
+            _komisyonAtamaRepo = komisyonAtamaRepo;
+            _mapper = mapper;
         }
 
         public IEnumerable<Birlesim> GetReportStenoPlanBetweenDateGorevTur(DateTime gorevBasTarihi, DateTime gorevBitTarihi, int? gorevTuru)
@@ -47,11 +62,32 @@ namespace TTBS.Services
             }
         }
 
-        public IEnumerable<GorevAtama> GetStenoGorevByStenografAndDate(Guid? stenografId, DateTime gorevBasTarihi, DateTime gorevBitTarihi)
+        public IEnumerable<ReportPlanModel> GetStenoGorevByStenografAndDate(Guid? stenografId, DateTime gorevBasTarihi, DateTime gorevBitTarihi)
         {
-            if(stenografId!=null)
-                 return _stenoGorevRepo.Get(x => x.StenografId == stenografId && x.Birlesim.BaslangicTarihi >= gorevBasTarihi && x.Birlesim.BitisTarihi <= gorevBitTarihi, includeProperties: "Birlesim,Stenograf");
-            return  _stenoGorevRepo.Get(x => x.Birlesim.BaslangicTarihi >= gorevBasTarihi && x.Birlesim.BitisTarihi <= gorevBitTarihi, includeProperties: "Birlesim,Stenograf");
+            if (stenografId != null)
+            {
+                var birlesim = _genelKurulAtamaRepo.Get(x => x.StenografId == stenografId && x.Birlesim.BaslangicTarihi >= gorevBasTarihi && x.Birlesim.BitisTarihi <= gorevBitTarihi, includeProperties: "Birlesim,Stenograf").GroupBy(x => new { x.BirlesimId, x.StenografId });
+                var komisyon = _komisyonAtamaRepo.Get(x => x.StenografId == stenografId && x.Birlesim.BaslangicTarihi >= gorevBasTarihi && x.Birlesim.BitisTarihi <= gorevBitTarihi, includeProperties: "Birlesim,Stenograf").GroupBy(x => new { x.BirlesimId, x.StenografId });
+                var ozel = _ozelToplanmaAtamaRepo.Get(x => x.StenografId == stenografId && x.Birlesim.BaslangicTarihi >= gorevBasTarihi && x.Birlesim.BitisTarihi <= gorevBitTarihi, includeProperties: "Birlesim,Stenograf").GroupBy(x => new { x.BirlesimId, x.StenografId });
+
+                var model = _mapper.Map<IEnumerable<ReportPlanModel>>(birlesim)
+                    .Concat(_mapper.Map<IEnumerable<ReportPlanModel>>(komisyon))
+                    .Concat(_mapper.Map<IEnumerable<ReportPlanModel>>(ozel));
+
+                return model;
+            }
+            else
+            {
+                var birlesim = _genelKurulAtamaRepo.Get(x => x.Birlesim.BaslangicTarihi >= gorevBasTarihi && x.Birlesim.BitisTarihi <= gorevBitTarihi, includeProperties: "Birlesim,Stenograf").GroupBy(x => new { x.BirlesimId, x.StenografId });
+                var komisyon = _komisyonAtamaRepo.Get(x => x.Birlesim.BaslangicTarihi >= gorevBasTarihi && x.Birlesim.BitisTarihi <= gorevBitTarihi, includeProperties: "Birlesim,Stenograf").GroupBy(x => new { x.BirlesimId, x.StenografId });
+                var ozel = _ozelToplanmaAtamaRepo.Get(x => x.Birlesim.BaslangicTarihi >= gorevBasTarihi && x.Birlesim.BitisTarihi <= gorevBitTarihi, includeProperties: "Birlesim,Stenograf").GroupBy(x => new { x.BirlesimId, x.StenografId });
+
+                var model = _mapper.Map<IEnumerable<ReportPlanModel>>(birlesim)
+                    .Concat(_mapper.Map<IEnumerable<ReportPlanModel>>(komisyon))
+                    .Concat(_mapper.Map<IEnumerable<ReportPlanModel>>(ozel));
+
+                return model;
+            }
         }
     }
 }
