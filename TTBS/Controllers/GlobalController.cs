@@ -285,8 +285,16 @@ namespace TTBS.Controllers
         [HttpGet("GetAllGrup")]
         public IEnumerable<GrupModel> GetAllGrup(int grupTuru)
         {
-            var entity = _globalService.GetAllGrup(grupTuru);
-            var model = _mapper.Map<IEnumerable<GrupModel>>(entity);
+            var grupEntity = _globalService.GetAllGrup(grupTuru);
+            var gidenGrup = _globalService.GetGrupDetayLast().LastOrDefault();
+            var model = _mapper.Map<IEnumerable<GrupModel>>(grupEntity);
+            model.ToList().ForEach(x =>
+            {
+                if (x.Id == gidenGrup.GrupId)
+                    x.gidenGrup = true;
+                else
+                    x.gidenGrup = false;
+            });
             return model;
         }
 
