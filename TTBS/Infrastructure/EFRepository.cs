@@ -66,6 +66,7 @@ namespace TTBS.Infrastructure
         {
             //entity.ModifiedDate = DateTime.Now;
             //entity.ModifiedBy = userId;
+            _dbContext.Entry(entity).State = EntityState.Modified;
             _dbSet.Update(entity);
         }
 
@@ -81,11 +82,8 @@ namespace TTBS.Infrastructure
 
         public void Update(IEnumerable<T> entities, Guid? userId = null, bool bulkInsert = false)
         {
-            if (bulkInsert)
-                _dbSet.UpdateRange(entities);
-            //_dbContext.BulkUpdate(entities);
-            else
-                _dbSet.UpdateRange(entities);
+
+           _dbSet.UpdateRange(entities);
         }
 
         public IEnumerable<T> Get(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, string includeProperties = null, bool asNoTracking = false, int? skip = null, int? take = null)
