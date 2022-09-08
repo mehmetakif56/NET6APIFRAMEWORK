@@ -17,7 +17,7 @@ namespace TTBS.Services
         IEnumerable<GorevAtama> GetStenoGorevById(Guid id);
         IEnumerable<GorevAtama> GetStenoGorevByName(string adSoyad);
         IEnumerable<GorevAtama> GetStenoGorevByDateAndStatus(DateTime gorevBasTarihi, DateTime gorevBitTarihi, int status);
-        IEnumerable<GorevAtama> GetStenoGorevByStenografAndDate(Guid? stenografId, DateTime gorevBasTarihi, DateTime gorevBitTarihi);
+        IEnumerable<StenoGorevModel> GetStenoGorevByStenografAndDate(Guid? stenografId, DateTime gorevBasTarihi, DateTime gorevBitTarihi);
         void UpdateStenoGorev(List<GorevAtama> stenoGorev);
         void CreateStenoIzin(StenoIzin stenoGorev);
         IEnumerable<GorevAtama> GetStenoGorevByGorevTuru(int gorevTuru);
@@ -54,6 +54,8 @@ namespace TTBS.Services
         private IRepository<Grup> _grupRepo;
         private IRepository<Oturum> _oturumRepo;
         private IRepository<GorevAtamaGenelKurul> _genelKurulAtamaRepo;
+        private IRepository<GorevAtamaKomisyon> _komisyonAtamaRepo;
+        private IRepository<GorevAtamaOzelToplanma> _ozelToplanmaAtamaRepo;
         private readonly IGorevAtamaGKMBusiness _gorevAtamaGKMRepo;
         private readonly IGorevAtamaKomMBusiness _gorevAtamaKomMRepo;
         public readonly IMapper _mapper;
@@ -67,6 +69,8 @@ namespace TTBS.Services
                                 IGorevAtamaGKMBusiness gorevAtamaGKMRepo,
                                 IGorevAtamaKomMBusiness gorevAtamaKomMRepo,
                                 IRepository<GorevAtamaGenelKurul> genelKurulAtamaRepo,
+                                IRepository<GorevAtamaKomisyon> komisyonAtamaRepo,
+                                IRepository<GorevAtamaOzelToplanma> ozelToplanmaAtamaRepo,
                                 IMapper mapper,
                                 IServiceProvider provider) : base(provider)
         {
@@ -81,6 +85,8 @@ namespace TTBS.Services
             _gorevAtamaGKMRepo = gorevAtamaGKMRepo;
             _gorevAtamaKomMRepo = gorevAtamaKomMRepo;
             _genelKurulAtamaRepo = genelKurulAtamaRepo;
+            _ozelToplanmaAtamaRepo = ozelToplanmaAtamaRepo;
+            _komisyonAtamaRepo = komisyonAtamaRepo;
             _mapper = mapper;
         }
 
@@ -352,12 +358,32 @@ namespace TTBS.Services
             _stenoGorevRepo.Save();
         }
 
-        public IEnumerable<GorevAtama> GetStenoGorevByStenografAndDate(Guid? stenografId, DateTime gorevBasTarihi, DateTime gorevBitTarihi)
+        public IEnumerable<StenoGorevModel> GetStenoGorevByStenografAndDate(Guid? stenografId, DateTime gorevBasTarihi, DateTime gorevBitTarihi)
         {
             if (stenografId != null)
-                return _stenoGorevRepo.Get(x => x.StenografId == stenografId && x.GorevBasTarihi >= gorevBasTarihi && x.GorevBitisTarihi <= gorevBitTarihi, includeProperties: "Stenograf");
+            {
+                var birlesim = _genelKurulAtamaRepo.Get(x => x.StenografId == stenografId && x.GorevBasTarihi >= gorevBasTarihi && x.GorevBitisTarihi <= gorevBitTarihi, includeProperties: "Stenograf");
+                var komisyon = _komisyonAtamaRepo.Get(x => x.StenografId == stenografId && x.GorevBasTarihi >= gorevBasTarihi && x.GorevBitisTarihi <= gorevBitTarihi, includeProperties: "Stenograf");
+                var ozel = _ozelToplanmaAtamaRepo.Get(x => x.StenografId == stenografId && x.GorevBasTarihi >= gorevBasTarihi && x.GorevBitisTarihi <= gorevBitTarihi, includeProperties: "Stenograf");
+
+                var model = _mapper.Map<IEnumerable<StenoGorevModel>>(birlesim)
+                    .Concat(_mapper.Map<IEnumerable<StenoGorevModel>>(komisyon))
+                    .Concat(_mapper.Map<IEnumerable<StenoGorevModel>>(ozel));
+                
+                return model.OrderBy(x => x.GorevBasTarihi);
+            }
             else
-                return _stenoGorevRepo.Get(x => x.GorevBasTarihi >= gorevBasTarihi && x.GorevBitisTarihi <= gorevBitTarihi, includeProperties: "Stenograf");
+            {
+                var birlesim = _genelKurulAtamaRepo.Get(x => x.GorevBasTarihi >= gorevBasTarihi && x.GorevBitisTarihi <= gorevBitTarihi, includeProperties: "Stenograf");
+                var komisyon = _komisyonAtamaRepo.Get(x => x.GorevBasTarihi >= gorevBasTarihi && x.GorevBitisTarihi <= gorevBitTarihi, includeProperties: "Stenograf");
+                var ozel = _ozelToplanmaAtamaRepo.Get(x => x.GorevBasTarihi >= gorevBasTarihi && x.GorevBitisTarihi <= gorevBitTarihi, includeProperties: "Stenograf");
+
+                var model = _mapper.Map<IEnumerable<StenoGorevModel>>(birlesim)
+                   .Concat(_mapper.Map<IEnumerable<StenoGorevModel>>(komisyon))
+                   .Concat(_mapper.Map<IEnumerable<StenoGorevModel>>(ozel));
+
+                return model.OrderBy(x => x.GorevBasTarihi);
+            }
         }
 
         public IEnumerable<GorevAtama> GetStenoGorevByGrupId(Guid id)

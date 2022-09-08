@@ -32,6 +32,33 @@ namespace TTBS.Helper
                 .ForMember(dest => dest.StenografAd, opt => opt.MapFrom(src => src.Stenograf.AdSoyad));
             CreateMap<ReportPlanModel, GorevAtama>();
 
+            CreateMap<IEnumerable<GorevAtamaGenelKurul>, ReportPlanModel>()
+                .ForMember(dest => dest.StenografAd, opt => opt.MapFrom(src => src.First().Stenograf.AdSoyad))
+                .ForMember(dest => dest.GorevlendirmeSure, opt => opt.MapFrom(src => src.Sum(x => x.GorevBitisTarihi.Value.Subtract(x.GorevBasTarihi.Value).Minutes)))
+                .ForMember(dest => dest.ToplanmaTuru, opt => opt.MapFrom(src => src.First().Stenograf.StenoGorevTuru))
+                .ForMember(dest => dest.GorevlendirmeSay, opt => opt.MapFrom(src => src.Count()));
+            CreateMap<GorevAtamaGenelKurul, ReportPlanModel>()
+                .ForMember(dest => dest.StenografAd, opt => opt.MapFrom(src => src.Stenograf.AdSoyad));
+            CreateMap<ReportPlanModel, GorevAtamaGenelKurul>();
+
+            CreateMap<IEnumerable<GorevAtamaKomisyon>, ReportPlanModel>()
+                .ForMember(dest => dest.StenografAd, opt => opt.MapFrom(src => src.First().Stenograf.AdSoyad))
+                .ForMember(dest => dest.GorevlendirmeSure, opt => opt.MapFrom(src => src.Sum(x => x.GorevBitisTarihi.Value.Subtract(x.GorevBasTarihi.Value).Minutes)))
+                .ForMember(dest => dest.ToplanmaTuru, opt => opt.MapFrom(src => src.First().Stenograf.StenoGorevTuru))
+                .ForMember(dest => dest.GorevlendirmeSay, opt => opt.MapFrom(src => src.Count()));
+            CreateMap<GorevAtamaKomisyon, ReportPlanModel>()
+                .ForMember(dest => dest.StenografAd, opt => opt.MapFrom(src => src.Stenograf.AdSoyad));
+            CreateMap<ReportPlanModel, GorevAtamaKomisyon>();
+
+            CreateMap<IEnumerable<GorevAtamaOzelToplanma>, ReportPlanModel>()
+                .ForMember(dest => dest.StenografAd, opt => opt.MapFrom(src => src.First().Stenograf.AdSoyad))
+                .ForMember(dest => dest.GorevlendirmeSure, opt => opt.MapFrom(src => src.Sum(x => x.GorevBitisTarihi.Value.Subtract(x.GorevBasTarihi.Value).Minutes)))
+                .ForMember(dest => dest.ToplanmaTuru, opt => opt.MapFrom(src => src.First().Stenograf.StenoGorevTuru))
+                .ForMember(dest => dest.GorevlendirmeSay, opt => opt.MapFrom(src => src.Count()));
+            CreateMap<GorevAtamaOzelToplanma, ReportPlanModel>()
+                .ForMember(dest => dest.StenografAd, opt => opt.MapFrom(src => src.Stenograf.AdSoyad));
+            CreateMap<ReportPlanModel, GorevAtamaOzelToplanma>();
+
             CreateMap<Birlesim, ReportPlanDetayModel>()
                  .ForMember(dest => dest.GorevTarihi, opt => opt.MapFrom(src => src.BaslangicTarihi.HasValue ? src.BaslangicTarihi.Value.ToShortDateString() : ""))
                  .ForMember(dest => dest.BasSaat, opt => opt.MapFrom(src => src.BaslangicTarihi.HasValue ? src.BaslangicTarihi.Value.ToShortTimeString() : ""))
@@ -130,6 +157,47 @@ namespace TTBS.Helper
             CreateMap<StenoGorevModel, GorevAtama>();
             //.ForMember(dest => dest.GorevDakika, opt => opt.MapFrom(src => src.GorevDakika.HasValue ? src.GorevDakika.Value.Hour*60+ src.GorevDakika.Value.Minute:0));
 
+            CreateMap<GorevAtamaOzelToplanma, StenoGorevModel>()
+               .ForMember(dest => dest.AdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad))
+               .ForMember(dest => dest.SiraNo, opt => opt.MapFrom(src => src.Stenograf.SiraNo));
+            //.ForMember(dest => dest.StenoToplantiVar, opt => 
+            //                                       opt.MapFrom(src => src.Birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul &&  src.DifMin<=60 && src.DifMin>0 ? true:
+            //                                       (src.Birlesim.ToplanmaTuru == ToplanmaTuru.Komisyon && src.DifMin<=src.Birlesim.StenoSure*9 && src.DifMin > 0) ? true:false));
+
+            CreateMap<GorevAtamaOzelToplanma, StenoGorevModel>()
+               .ForMember(dest => dest.AdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad))
+               .ForMember(dest => dest.SiraNo, opt => opt.MapFrom(src => src.Stenograf.SiraNo));
+            //.ForMember(dest => dest.StenoToplantiVar, opt => 
+            //                                       opt.MapFrom(src => src.Birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul &&  src.DifMin<=60 && src.DifMin>0 ? true:
+            //                                       (src.Birlesim.ToplanmaTuru == ToplanmaTuru.Komisyon && src.DifMin<=src.Birlesim.StenoSure*9 && src.DifMin > 0) ? true:false));
+
+            CreateMap<GorevAtamaOzelToplanma, StenoGorevModel>()
+               .ForMember(dest => dest.AdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad))
+               .ForMember(dest => dest.SiraNo, opt => opt.MapFrom(src => src.Stenograf.SiraNo));
+            //.ForMember(dest => dest.StenoToplantiVar, opt => 
+            //                                       opt.MapFrom(src => src.Birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul &&  src.DifMin<=60 && src.DifMin>0 ? true:
+            //                                       (src.Birlesim.ToplanmaTuru == ToplanmaTuru.Komisyon && src.DifMin<=src.Birlesim.StenoSure*9 && src.DifMin > 0) ? true:false));
+
+            CreateMap<StenoGorevModel, GorevAtamaOzelToplanma>();
+            //.ForMember(dest => dest.GorevDakika, opt => opt.MapFrom(src => src.GorevDakika.HasValue ? src.GorevDakika.Value.Hour*60+ src.GorevDakika.Value.Minute:0));
+
+            CreateMap<GorevAtamaGenelKurul, StenoGorevModel>()
+               .ForMember(dest => dest.AdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad))
+               .ForMember(dest => dest.SiraNo, opt => opt.MapFrom(src => src.Stenograf.SiraNo));
+            //.ForMember(dest => dest.StenoToplantiVar, opt => 
+            //                                       opt.MapFrom(src => src.Birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul &&  src.DifMin<=60 && src.DifMin>0 ? true:
+            //                                       (src.Birlesim.ToplanmaTuru == ToplanmaTuru.Komisyon && src.DifMin<=src.Birlesim.StenoSure*9 && src.DifMin > 0) ? true:false));
+            CreateMap<StenoGorevModel, GorevAtamaGenelKurul>();
+            //.ForMember(dest => dest.GorevDakika, opt => opt.MapFrom(src => src.GorevDakika.HasValue ? src.GorevDakika.Value.Hour*60+ src.GorevDakika.Value.Minute:0));
+
+            CreateMap<GorevAtamaKomisyon, StenoGorevModel>()
+               .ForMember(dest => dest.AdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad))
+               .ForMember(dest => dest.SiraNo, opt => opt.MapFrom(src => src.Stenograf.SiraNo));
+            //.ForMember(dest => dest.StenoToplantiVar, opt => 
+            //                                       opt.MapFrom(src => src.Birlesim.ToplanmaTuru == ToplanmaTuru.GenelKurul &&  src.DifMin<=60 && src.DifMin>0 ? true:
+            //                                       (src.Birlesim.ToplanmaTuru == ToplanmaTuru.Komisyon && src.DifMin<=src.Birlesim.StenoSure*9 && src.DifMin > 0) ? true:false));
+            CreateMap<StenoGorevModel, GorevAtamaKomisyon>();
+            //.ForMember(dest => dest.GorevDakika, opt => opt.MapFrom(src => src.GorevDakika.HasValue ? src.GorevDakika.Value.Hour*60+ src.GorevDakika.Value.Minute:0));
 
 
             CreateMap<GorevAtamaKomisyon, StenoModel>()
