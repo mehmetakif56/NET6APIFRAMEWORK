@@ -332,18 +332,22 @@ namespace TTBS.Services
             var stenoGorevLine = stenoGorev.Where(x => x.SatırNo >= satırNo);
             if (stenoGorevLine != null && stenoGorevLine.Count() > 0)
             {
-                var gorevBas = stenoGorevLine.FirstOrDefault().GorevBasTarihi;
-                var stenoSure = stenoGorevLine.FirstOrDefault().StenoSure;
+                var gorevBas = stenoGorevLine.Where(x => x.GorevStatu!=GorevStatu.Iptal).FirstOrDefault().GorevBasTarihi;
+                var stenoSure = stenoGorevLine.Where(x => x.GorevStatu != GorevStatu.Iptal).FirstOrDefault().StenoSure;
                 var list = new List<GorevAtamaKomisyon>();
                 foreach (var item in stenoGorevLine)
                 {
-                    item.StenoSure = sure;
-                    item.GorevBasTarihi = gorevBas;
-                    item.GorevBitisTarihi = item.GorevBasTarihi.Value.AddMinutes(sure);
-                    gorevBas = item.GorevBitisTarihi;
-                    sure = digerAtamalarDahil ? item.StenoSure : stenoSure;
+                    if(item.GorevStatu!=GorevStatu.Iptal)
+                    {
+                        item.StenoSure = sure;
+                        item.GorevBasTarihi = gorevBas;
+                        item.GorevBitisTarihi = item.GorevBasTarihi.Value.AddMinutes(sure);
+                        gorevBas = item.GorevBitisTarihi;
+                        sure = digerAtamalarDahil ? item.StenoSure : stenoSure;
+                           
+                    }
                     list.Add(item);
-                }
+                 }
                 _gorevAtamaKomRepo.Update(list);
                 _gorevAtamaKomRepo.Save();
                 AddKomisyonOnay(modelList);
