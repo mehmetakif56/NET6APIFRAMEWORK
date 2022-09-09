@@ -14,6 +14,7 @@ namespace TTBS.Services
         IEnumerable<StenoIzin> GetStenoIzinByStenografId(Guid id);
         IEnumerable<StenoIzin> GetStenoIzinByName(string adSoyad);
         StenoIzınCountModel GetStenoIzinBetweenDateAndStenograf(DateTime basTarihi, DateTime bitTarihi, string? field, string? sortOrder, int? izinTur, Guid? stenografId, int pageIndex, int pagesize);
+        IzınTuru GetStenoIzinTodayByStenoId(Guid? stenoId);
         IEnumerable<GorevAtama> GetStenoGorevById(Guid id);
         IEnumerable<GorevAtama> GetStenoGorevByName(string adSoyad);
         IEnumerable<GorevAtama> GetStenoGorevByDateAndStatus(DateTime gorevBasTarihi, DateTime gorevBitTarihi, int status);
@@ -171,6 +172,20 @@ namespace TTBS.Services
             return stenoIzınCountModel;
         }
 
+        public IzınTuru GetStenoIzinTodayByStenoId(Guid? stenoId)
+        {
+            try
+            {
+                var date = DateTime.Today;
+                var stenoIzinList = _stenoIzinRepo.Get(x => x.StenografId == stenoId && x.BaslangicTarihi <= date && x.BitisTarihi >= date, includeProperties: "Stenograf").FirstOrDefault();
+                
+                return stenoIzinList == null ? IzınTuru.Bulunmuyor : stenoIzinList.IzinTuru;
+            }
+            catch(Exception ex)
+            {
+                return IzınTuru.Bulunmuyor;
+            }
+        }
         public IEnumerable<GorevAtama> GetStenoGorevById(Guid id)
         {
             return _stenoGorevRepo.Get(x => x.Id == id, includeProperties: "Stenograf");
