@@ -13,11 +13,14 @@ namespace TTBS.Controllers
     public class GorevAtamaController : BaseController<GorevAtamaController>
     {
         private readonly IGorevAtamaService _gorevAtamaService;
+        private readonly IStenografService _stenografService;
         private readonly ILogger<GorevAtamaController> _logger;
         public readonly IMapper _mapper;
         private readonly IGlobalService _globalService;
-        public GorevAtamaController(IGorevAtamaService gorevAtamaService, ILogger<GorevAtamaController> logger, IMapper mapper,IGlobalService globalService)
+        public GorevAtamaController(IGorevAtamaService gorevAtamaService, IStenografService stenografService,
+            ILogger<GorevAtamaController> logger, IMapper mapper,IGlobalService globalService)
         {
+            _stenografService = stenografService;
             _gorevAtamaService = gorevAtamaService;
             _logger = logger;
             _mapper = mapper;
@@ -419,6 +422,7 @@ namespace TTBS.Controllers
                 StenoGorevTuru = z.Key.StenoGorevTuru,
                 SiraNo = z.Key.SiraNo,
                 SonGorevSuresi = z.Key.SonGorevSuresi,
+                StenoIzinTuru = _stenografService.GetStenoIzinTodayByStenoId(z.Key.StenografId),
                 StenoGorevDurum = z.Key.StenoGorevDurum
                 //GorevStatu=(int)z.Key.GorevStatu
             });
