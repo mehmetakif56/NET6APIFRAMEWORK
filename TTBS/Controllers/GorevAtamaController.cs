@@ -114,7 +114,8 @@ namespace TTBS.Controllers
                     x.GidenGrupMu = true;
                     x.GidenGrup = "GidenGrup";
                 });
-            }               
+            }
+            
             return BirlesimSureHesaplama(atamaList); 
         }
         private List<GorevAtamaModel> BirlesimSureHesaplama(List<GorevAtamaModel> atamaList)
