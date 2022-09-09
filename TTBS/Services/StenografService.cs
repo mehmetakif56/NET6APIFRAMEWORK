@@ -250,7 +250,6 @@ namespace TTBS.Services
         public void UpdateStenoGorev(List<GorevAtama> entityList)
         {
             _stenoGorevRepo.Update(entityList, CurrentUser.Id);
-            _stenoGorevRepo.Save();
         }
 
         public void CreateStenoIzin(StenoIzin entity)
@@ -265,8 +264,6 @@ namespace TTBS.Services
                 var modelList = BirlesimIzinHesaplama(_mapper.Map<List<GorevAtamaModel>>(result));
                 var entityList = _mapper.Map<List<GorevAtamaGenelKurul>>(modelList);
                 _genelKurulAtamaRepo.Update(entityList);
-                _genelKurulAtamaRepo.Save();
-
             }
         }
 

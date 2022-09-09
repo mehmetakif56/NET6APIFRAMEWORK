@@ -54,6 +54,7 @@ namespace TTBS.Services
         public double GetStenoSureYearlyById(Guid? stenoId, Guid? yasamaId);
         public double GetStenoSureDailyById(Guid? stenoId);
         IEnumerable<Birlesim> GetAktifGKBirlesim();
+        Guid CreateOturum(Oturum oturum);
     }
     public class GlobalService : BaseService, IGlobalService
     {
@@ -274,6 +275,13 @@ namespace TTBS.Services
         {
             _oturumRepo.Delete(oturum);
             _oturumRepo.Save();
+        }
+
+        public Guid CreateOturum(Oturum oturum)
+        {
+            _oturumRepo.Create(oturum);
+            _oturumRepo.Save();
+            return oturum.Id;
         }
 
         public void UpdateBirlesim(Birlesim birlesim)
