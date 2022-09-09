@@ -1,4 +1,5 @@
-﻿using TTBS.Core.Entities;
+﻿using System.Transactions;
+using TTBS.Core.Entities;
 using TTBS.Core.Enums;
 using TTBS.Core.Extensions;
 using TTBS.Core.Interfaces;
@@ -22,7 +23,7 @@ namespace TTBS.Services
         void DeleteBirlesim(Guid id);
         void CreateKomisyon(Komisyon komisyon);
         void CreateGrup(Grup grup);
-        void CreateGrupDetay(GrupDetay grup);
+        bool CreateGrupDetay(GrupDetay grup);
         void UpdateGrupDetay(DateTime? gidenSaat);
         GrupDetay GetGrupDetay();
         IEnumerable<GrupDetay> GetGrupDetayLast();
@@ -115,7 +116,7 @@ namespace TTBS.Services
 
         public IEnumerable<Birlesim> GetBirlesimById(Guid id)
         {
-            return _birlesimRepo.Get(x=>x.Id ==id, includeProperties: "Yasama");
+            return _birlesimRepo.Get(x => x.Id == id, includeProperties: "Yasama");
         }
 
         public Komisyon GetKomisyonById(Guid id)
@@ -133,7 +134,7 @@ namespace TTBS.Services
         {
             _donemRepo.Create(donem, CurrentUser.Id);
             _donemRepo.Save();
-        }       
+        }
         public void CreateKomisyon(Komisyon komisyon)
         {
             _komisyonRepo.Create(komisyon, CurrentUser.Id);
@@ -147,7 +148,7 @@ namespace TTBS.Services
 
         public IEnumerable<Komisyon> GetAllAltKomisyon()
         {
-            return _komisyonRepo.Get( includeProperties: "AltKomisyons");
+            return _komisyonRepo.Get(includeProperties: "AltKomisyons");
         }
 
         public IEnumerable<AltKomisyon> GetAltKomisyon()
@@ -183,7 +184,7 @@ namespace TTBS.Services
         }
         public IEnumerable<Grup> GetAllGrup(int grupTuru)
         {
-            return _grupRepo.Get(x=>(int)x.StenoGrupTuru == grupTuru);
+            return _grupRepo.Get(x => (int)x.StenoGrupTuru == grupTuru);
         }
 
         public Grup GetGrupById(Guid id)
@@ -268,7 +269,7 @@ namespace TTBS.Services
 
         public IEnumerable<Oturum> GetOturumByBirlesimId(Guid id)
         {
-            return _oturumRepo.Get(x => x.BirlesimId == id,includeProperties: "Birlesim");
+            return _oturumRepo.Get(x => x.BirlesimId == id, includeProperties: "Birlesim");
         }
 
         public void DeleteOturum(Oturum oturum)
@@ -297,7 +298,7 @@ namespace TTBS.Services
         public void DeleteBirlesim(Guid id)
         {
             var result = _birlesimRepo.Get(x => x.Id == id && (x.ToplanmaDurumu == ToplanmaStatu.Oluşturuldu || x.ToplanmaDurumu == ToplanmaStatu.Planlandı));
-            
+
             if (result.Any())
             {
                 _birlesimRepo.Delete(result);
@@ -320,7 +321,7 @@ namespace TTBS.Services
         public void DeleteStenoToplamSure(Guid id)
         {
             var result = _stenoToplamSureRepo.Get(x => x.Id == id);
-            if(result != null)
+            if (result != null)
             {
                 _stenoToplamSureRepo.Delete(result);
                 _stenoToplamSureRepo.Save();
@@ -329,9 +330,9 @@ namespace TTBS.Services
 
         public IEnumerable<StenoToplamGenelSure> GetGrupToplamSureByDate(Guid groupId, DateTime? baslangic, DateTime? bitis, Guid? yasamaId)
         {
-            if(yasamaId == null)
+            if (yasamaId == null)
             {
-                return _stenoToplamSureRepo.Get(x => x.GroupId == groupId && x.Tarih >= baslangic && x.Tarih <= bitis, includeProperties:"Stenograf");
+                return _stenoToplamSureRepo.Get(x => x.GroupId == groupId && x.Tarih >= baslangic && x.Tarih <= bitis, includeProperties: "Stenograf");
             }
             return _stenoToplamSureRepo.Get(x => x.GroupId == groupId && x.YasamaId == yasamaId, includeProperties: "Stenograf");
         }
@@ -358,17 +359,19 @@ namespace TTBS.Services
             return result;
         }
 
-        public void CreateGrupDetay(GrupDetay detay)
+        public bool CreateGrupDetay(GrupDetay detay)
         {
             var grpDetay = _grupDetayRepo.GetFirst();
-            if(grpDetay != null)
+            if (grpDetay != null)
             {
                 grpDetay.IsDeleted = true;
-                 _grupDetayRepo.Update(grpDetay);
+                _grupDetayRepo.Update(grpDetay);
                 _grupDetayRepo.Save();
             }
             _grupDetayRepo.Create(detay);
             _grupDetayRepo.Save();
+
+            return true;
         }
 
         public void UpdateGrupDetay(DateTime? gidenSaat)
@@ -383,12 +386,12 @@ namespace TTBS.Services
         }
         public IEnumerable<GrupDetay> GetGrupDetayLast()
         {
-            return _grupDetayRepo.Get(x => x.GidenGrupPasif == DurumStatu.Hayır, includeProperties: "Grup").OrderByDescending(x=>x.GidenGrupTarih);
-                                
+            return _grupDetayRepo.Get(x => x.GidenGrupPasif == DurumStatu.Hayır, includeProperties: "Grup").OrderByDescending(x => x.GidenGrupTarih);
+
         }
         public GrupDetay GetGrupDetay()
         {
-            return _grupDetayRepo.GetFirst( includeProperties: "Grup");
+            return _grupDetayRepo.GetFirst(includeProperties: "Grup");
         }
     }
 }

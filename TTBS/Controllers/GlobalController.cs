@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
+using System.Transactions;
 using TTBS.Core.Entities;
 using TTBS.Core.Enums;
 using TTBS.Models;
@@ -14,6 +15,7 @@ namespace TTBS.Controllers
     {
         private readonly IGlobalService _globalService;
         private readonly IStenografService _stenoService;
+        private readonly GorevAtamaService _gorevAtamaService;
         private readonly ILogger<GlobalController> _logger;
         public readonly IMapper _mapper;
 
@@ -238,17 +240,30 @@ namespace TTBS.Controllers
         [HttpPost("CreateGrupDetay")]
         public IActionResult CreateGrupDetay(GrupGuncelleModel model)
         {
-            try
+            using (TransactionScope transactionScope = new TransactionScope())
             {
-                var entity = Mapper.Map<GrupDetay>(model);
-                _globalService.CreateGrupDetay(entity);
-           
-                return Ok(entity);
-            }
-            catch(Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+                try
+                {
+                    var entity = Mapper.Map<GrupDetay>(model);
+                    bool createStatus = _globalService.CreateGrupDetay(entity);
+
+                    if (createStatus)
+                    {
+
+                        _gorevAtamaService.ActivateGidenGrupByGorevAtama();
+
+                    }
+
+                    transactionScope.Complete();
+                    return Ok(entity);
+                }
+                catch (Exception ex)
+                {
+                    transactionScope.Dispose();
+                    return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                }
+
+            } 
             
         }
         [HttpPost("UpdateGrupDetay")]
