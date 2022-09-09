@@ -518,8 +518,7 @@ namespace TTBS.Services
 
                 minStenoResult.GorevBasTarihi = mindate.AddMinutes(mindateDiff);
                 minStenoResult.GorevBitisTarihi = minStenoResult.GorevBasTarihi.Value.AddMinutes(sonuc);
-                minStenoResult.GorevStatu = GorevStatu.DevamEdiyor;
-                var gorevBasPlan = minStenoResult.GorevBasTarihi.Value.AddMinutes(-(mindateDiff % modResult.FirstOrDefault()));
+                 var gorevBasPlan = minStenoResult.GorevBasTarihi.Value.AddMinutes(-(mindateDiff % modResult.FirstOrDefault()));
                 var remain = gorevBasPlan.Subtract(mindate).TotalMinutes;
                 updateList.Add(minStenoResult);
 
@@ -528,7 +527,6 @@ namespace TTBS.Services
                 {
                     item.GorevBasTarihi = item.GorevBasTarihi.Value.AddMinutes(remain);
                     item.GorevBitisTarihi = item.GorevBasTarihi.Value.AddMinutes(modResult.FirstOrDefault());
-                    minStenoResult.GorevStatu = GorevStatu.DevamEdiyor;
                     updateList.Add(item);
                 }
                 UpdateGorevAtama(updateList, toplanmaTuru);
@@ -561,7 +559,6 @@ namespace TTBS.Services
 
                 minStenoResult.GorevBasTarihi = mindate.AddMinutes(mindateDiff);
                 minStenoResult.GorevBitisTarihi = minStenoResult.GorevBasTarihi.Value.AddMinutes(sonuc);
-                minStenoResult.GorevStatu = GorevStatu.DevamEdiyor;
                 var gorevBasPlan = minStenoResult.GorevBasTarihi.Value.AddMinutes(-(mindateDiff % modResult.FirstOrDefault()));
                 var remain = gorevBasPlan.Subtract(mindate).TotalMinutes;
                 updateList.Add(minStenoResult);
@@ -571,7 +568,6 @@ namespace TTBS.Services
                 {
                     item.GorevBasTarihi = item.GorevBasTarihi.Value.AddMinutes(remain);
                     item.GorevBitisTarihi = item.GorevBasTarihi.Value.AddMinutes(modResult.FirstOrDefault());
-                    minStenoResult.GorevStatu = GorevStatu.DevamEdiyor;
                     updateList.Add(item);
                 }
                 UpdateGorevAtama(updateList, toplanmaTuru);
@@ -592,7 +588,6 @@ namespace TTBS.Services
                     var sonuc = modResult - (mindateDiff % modResult);
                     result.GorevBasTarihi = basTarih;
                     result.GorevBitisTarihi = result.GorevBasTarihi.Value.AddMinutes(sonuc);
-                    result.GorevStatu = GorevStatu.DevamEdiyor;
                     result.OturumId = oturumId;
                     updateList.Add(result);
 
@@ -602,7 +597,6 @@ namespace TTBS.Services
                     {
                         item.GorevBasTarihi = item.GorevBasTarihi.Value.AddMinutes(remain);
                         item.GorevBitisTarihi = item.GorevBasTarihi.Value.AddMinutes(modResult);
-                        item.GorevStatu = GorevStatu.DevamEdiyor;
                         item.OturumId = oturumId;
                         updateList.Add(result);
                     }
