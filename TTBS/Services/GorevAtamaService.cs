@@ -284,7 +284,7 @@ namespace TTBS.Services
 
                         extractedGK = gkModel.Where(p => p.GorevBasTarihi >= gidenTarihResult.GidenGrupSaat).ToList();
 
-                        gkModel.AsParallel().ForAll((data) =>
+                        extractedGK.AsParallel().ForAll((data) =>
                         {
                             data.GidenGrupMu = true;
                             data.GidenGrup = "GidenGrup";
@@ -308,8 +308,10 @@ namespace TTBS.Services
                             {
                                 data.GidenGrupMu = true;
                                 data.GidenGrup = "GidenGrup";
+
+                                extractedCommision.Add(data);
                             }
-                            extractedCommision.Add(data);
+                          
                         });
 
                         _gorevAtamaKomRepo.Update(extractedCommision);
