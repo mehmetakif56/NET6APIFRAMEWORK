@@ -13,6 +13,7 @@ namespace TTBS.Infrastructure
         {
             _dbContext = dbContext;
             _dbSet = dbContext.Set<T>();
+         
         }
 
         public void Create(T entity, Guid? userId = null)
@@ -66,6 +67,7 @@ namespace TTBS.Infrastructure
         {
             //entity.ModifiedDate = DateTime.Now;
             //entity.ModifiedBy = userId;
+          
             _dbContext.Entry(entity).State = EntityState.Modified;
             _dbSet.Update(entity);
         }
@@ -82,8 +84,26 @@ namespace TTBS.Infrastructure
 
         public void Update(IEnumerable<T> entities, Guid? userId = null, bool bulkInsert = false)
         {
+            foreach (var item in entities)
+            {
+               var local = _dbContext.Set<T>()
+                .Local
+                .FirstOrDefault(entry => entry.Id.Equals(item.Id));
 
-           _dbSet.UpdateRange(entities);
+                        // check if local is not null 
+                   if (local != null)
+                        {
+                            // detach
+                            _dbContext.Entry(local).State = EntityState.Detached;
+                                }
+                        // set Modified flag in your entry
+                        _dbContext.Entry(item).State = EntityState.Modified;
+
+                        // save 
+                        _dbContext.SaveChanges();
+                    }
+            //_dbContext.ChangeTracker.Clear();
+            //_dbSet.UpdateRange(entities);
         }
 
         public IEnumerable<T> Get(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, string includeProperties = null, bool asNoTracking = false, int? skip = null, int? take = null)

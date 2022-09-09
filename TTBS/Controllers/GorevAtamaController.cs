@@ -13,11 +13,14 @@ namespace TTBS.Controllers
     public class GorevAtamaController : BaseController<GorevAtamaController>
     {
         private readonly IGorevAtamaService _gorevAtamaService;
+        private readonly IStenografService _stenografService;
         private readonly ILogger<GorevAtamaController> _logger;
         public readonly IMapper _mapper;
         private readonly IGlobalService _globalService;
-        public GorevAtamaController(IGorevAtamaService gorevAtamaService, ILogger<GorevAtamaController> logger, IMapper mapper,IGlobalService globalService)
+        public GorevAtamaController(IGorevAtamaService gorevAtamaService, IStenografService stenografService,
+            ILogger<GorevAtamaController> logger, IMapper mapper,IGlobalService globalService)
         {
+            _stenografService = stenografService;
             _gorevAtamaService = gorevAtamaService;
             _logger = logger;
             _mapper = mapper;
@@ -104,9 +107,9 @@ namespace TTBS.Controllers
                 }
             }
             var gidenTarihResult = _gorevAtamaService.GetGidenGrup(toplanmaTuru, sure);
-            if (gidenTarihResult != null && atamaList.Where(x => x.GorevBasTarihi >= gidenTarihResult.GidenGrupSaat).ToList() != null)
+            if (gidenTarihResult != null && atamaList.Where(x => x.GorevBasTarihi >= gidenTarihResult.GidenGrupSaat).OrderBy(x=>x.SatırNo).ToList() != null)
             {
-                atamaList.Where(x => x.GorevBasTarihi >= gidenTarihResult.GidenGrupSaat).ToList().ForEach(x =>
+                atamaList.Where(x => x.GorevBasTarihi >= gidenTarihResult.GidenGrupSaat).OrderBy(x => x.SatırNo).ToList().ForEach(x =>
                 {
                     x.GidenGrupMu = true;
                     x.GidenGrup = "GidenGrup";
@@ -144,7 +147,7 @@ namespace TTBS.Controllers
                 item.SureAsmaVar = stenoToplamSureAsım;
                 lst.Add(item);
             }
-           return lst;
+            return lst;
         }
 
         private List<GorevAtamaModel> BirlesimKomisyonHesaplama(List<GorevAtamaModel> atamaList)
@@ -357,10 +360,10 @@ namespace TTBS.Controllers
                         birlesim.ToplanmaDurumu = ToplanmaStatu.DevamEdiyor;
                         _globalService.UpdateBirlesim(birlesim);
                     }
-                    //var oturum = _globalService.GetOturumByBirlesimId(model.BirlesimId).Where(x => x.BitisTarihi != null).LastOrDefault();
-                    ////var oturumId= _globalService.CreateOturum(new Oturum { BirlesimId = model.BirlesimId, BaslangicTarihi = model.BasTarihi });
-                    //var oturumId = Guid.Empty;
-                    //_gorevAtamaService.UpdateBirlesimStenoGorevDevamEtme(model.BirlesimId, model.BasTarihi, oturum.BitisTarihi.Value, oturumId,model.ToplanmaTuru);
+                    var oturum = _globalService.GetOturumByBirlesimId(model.BirlesimId).Where(x => x.BitisTarihi != null).LastOrDefault();
+                    var oturumId= _globalService.CreateOturum(new Oturum { BirlesimId = model.BirlesimId, BaslangicTarihi = model.BasTarihi });
+            
+                    _gorevAtamaService.UpdateBirlesimStenoGorevDevamEtme(model.BirlesimId, model.BasTarihi, oturum.BitisTarihi.Value, oturumId, model.ToplanmaTuru);
                 }
                 else if (ToplanmaBaslatmaStatu.Sonladırma == model.ToplanmaBaslatmaStatu)
                 {
@@ -420,6 +423,7 @@ namespace TTBS.Controllers
                 StenoGorevTuru = z.Key.StenoGorevTuru,
                 SiraNo = z.Key.SiraNo,
                 SonGorevSuresi = z.Key.SonGorevSuresi,
+                StenoIzinTuru = _stenografService.GetStenoIzinTodayByStenoId(z.Key.StenografId),
                 StenoGorevDurum = z.Key.StenoGorevDurum
                 //GorevStatu=(int)z.Key.GorevStatu
             });

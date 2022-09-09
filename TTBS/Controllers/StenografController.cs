@@ -293,6 +293,7 @@ namespace TTBS.Controllers
         //        }
         //    }
         //    //var entity = Mapper.Map<List<GorevAtama>>(model);
+        //    //var entity = Mapper.Map<List<GorevAtama>>(model);
         //    //_stenoService.UpdateStenoGorev(entity);
         //    return lst;
         //}
@@ -361,7 +362,14 @@ namespace TTBS.Controllers
             var stenoEntity = _stenoService.GetAllStenografByGroupId(groupId);
             var model = _mapper.Map<IEnumerable<StenoModel>>(stenoEntity);
             //şimdilik kaldırıldı, tablodan direkt getirelecek, perfomanstan dolayı
-            //model.ToList().ForEach(x => { x.GorevStatu = -1; x.GunlukGorevSuresi = _globalService.GetStenoSureDailyById(x.Id); x.HaftalikGorevSuresi = (int)_globalService.GetStenoSureWeeklyById(x.Id); x.YillikGorevSuresi = (int)_globalService.GetStenoSureYearlyById(x.Id, yasamaId); });
+            model.ToList().ForEach(x => 
+            { 
+                x.GorevStatu = -1;
+                x.GunlukGorevSuresi = _globalService.GetStenoSureDailyById(x.Id);
+                x.HaftalikGorevSuresi = (int)_globalService.GetStenoSureWeeklyById(x.Id);
+                x.YillikGorevSuresi = (int)_globalService.GetStenoSureYearlyById(x.Id, yasamaId);
+                x.StenoIzinTuru = _stenoService.GetStenoIzinTodayByStenoId(x.Id);
+            });
             return model;
         }
 
