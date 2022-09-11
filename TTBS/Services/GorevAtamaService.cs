@@ -21,7 +21,7 @@ namespace TTBS.Services
         void CreateStenoAtamaKom(List<GorevAtamaKomisyon> gorevAtamaList);
         Birlesim UpdateBirlesimGorevAtama(Guid birlesimId, int turAdedi);
         List<GorevAtamaGenelKurul> GetStenografIdListLast();
-        void AddStenoGorevAtamaKomisyon(IEnumerable<Guid> stenografIds, Guid birlesimId, Guid oturumId);
+        List<GorevAtamaModel> AddStenoGorevAtamaKomisyon(IEnumerable<Guid> stenografIds, Guid birlesimId, Guid oturumId);
         void ApproveStenografKomisyon();
         void CancelStenografKomisyon();
         List<GorevAtamaModel> CreateStenoGorevDonguEkle(Guid birlesimId, Guid oturumId);
@@ -174,7 +174,7 @@ namespace TTBS.Services
                 var grpList = stenoList.GroupBy(c => c.StenografId).Select(x => new { StenografId = x.Key });
 
                 var gorevBitis = stenoList.Where(x=>x.GorevStatu !=GorevStatu.Iptal).LastOrDefault().GorevBitisTarihi;
-                var refSatırNo = stenoList.Where(x => x.GorevStatu != GorevStatu.Iptal).LastOrDefault().SatırNo;    
+                var refSatırNo = stenoList.LastOrDefault().SatırNo;    
                 int firsRec = 1;
                 foreach (var item in grpList)
                 {
@@ -193,7 +193,7 @@ namespace TTBS.Services
             }
             return atamaList;
         }
-        public void AddStenoGorevAtamaKomisyon(IEnumerable<Guid> stenografIds, Guid birlesimId, Guid oturumId)
+        public List<GorevAtamaModel> AddStenoGorevAtamaKomisyon(IEnumerable<Guid> stenografIds, Guid birlesimId, Guid oturumId)
         {
             var result = _gorevAtamaKomRepo.Get(x => x.BirlesimId == birlesimId).OrderBy(x => x.SatırNo);
             var stenoList = _mapper.Map<List<GorevAtamaModel>>(result);
@@ -233,14 +233,10 @@ namespace TTBS.Services
                         }
                     }
                 }
-                var lastResult = stenoList.OrderBy(x => x.SatırNo);
-                var entityList = _mapper.Map<List<GorevAtamaKomisyon>>(lastResult);
                 _gorevAtamaKomRepo.Delete(result);
                 _gorevAtamaKomRepo.Save();
-
-                _gorevAtamaKomRepo.Create(entityList);
-                _gorevAtamaKomRepo.Save();
             }
+            return stenoList.OrderBy(x => x.SatırNo).ToList();
         }
         public List<GorevAtamaModel> GetGorevAtamaByBirlesimId(Guid birlesimId, ToplanmaTuru toplanmaTuru)
         {
@@ -314,8 +310,8 @@ namespace TTBS.Services
                 var stenoGorevLine = stenoGorev.Where(x => x.SatırNo >= satırNo);
                 if (stenoGorevLine != null && stenoGorevLine.Count() > 0)
                 {
-                    var gorevBas = stenoGorevLine.Where(x => x.GorevStatu!=GorevStatu.Iptal).FirstOrDefault().GorevBasTarihi;
-                    var stenoSure = stenoGorevLine.Where(x => x.GorevStatu != GorevStatu.Iptal).FirstOrDefault().StenoSure;
+                    var gorevBas = stenoGorevLine.FirstOrDefault().GorevBasTarihi;
+                    var stenoSure = stenoGorevLine.FirstOrDefault().StenoSure;
                   
                     foreach (var item in stenoGorevLine)
                     {
@@ -337,10 +333,10 @@ namespace TTBS.Services
         }
         public void ChangeOrderStenografKomisyon(Guid kaynakBirlesimId, Guid kaynakStenoId, Guid hedefBirlesimId, Guid hedefStenoId)
         {
+
             if (kaynakBirlesimId != hedefBirlesimId)
             {
                 var stenoGrevHedef = _gorevAtamaKomRepo.Get(x => x.BirlesimId == hedefBirlesimId).OrderBy(x => x.SatırNo).ToList();
-                var modelList = _mapper.Map<List<GorevAtamaModel>>(stenoGrevHedef);
                 if (stenoGrevHedef != null && stenoGrevHedef.Count() > 0)
                 {
                     var minStenoGorev = stenoGrevHedef.Where(x => x.StenografId == hedefStenoId);
@@ -366,17 +362,21 @@ namespace TTBS.Services
                             _gorevAtamaKomRepo.Save();
                         }
                     }
+                    var kaynak = _gorevAtamaKomRepo.Get(x => x.BirlesimId == kaynakBirlesimId && x.StenografId == kaynakStenoId);
+                    if (kaynak != null)
+                    {
+                        _gorevAtamaKomRepo.Delete(kaynak);
+                        _gorevAtamaKomRepo.Save();
+                    }
                 }
             }
             else
             {
                 var stenoGrevHedef = _gorevAtamaKomRepo.Get(x => x.BirlesimId == hedefBirlesimId).OrderBy(x => x.SatırNo);
-                var modelList = _mapper.Map<List<GorevAtamaModel>>(stenoGrevHedef);
-                if (stenoGrevHedef != null && stenoGrevHedef.Count() > 0)
+                if (stenoGrevHedef != null && stenoGrevHedef.Count() > 0)      
                 {
                     var stenoList = new List<GorevAtamaKomisyon>();
                     var hedefSteno = stenoGrevHedef.Where(x => x.StenografId == hedefStenoId).OrderBy(x => x.SatırNo).ToArray();
-
                     var kaynakSteno = stenoGrevHedef.Where(x => x.StenografId == kaynakStenoId).OrderBy(x => x.SatırNo).ToArray();
 
                     for (int i = 0; i < hedefSteno.Count(); i++)

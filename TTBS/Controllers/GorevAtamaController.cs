@@ -196,7 +196,13 @@ namespace TTBS.Controllers
                 return BadRequest("Stenograf Listesi Dolu Olmalıdır!");
             try
             {
-                _gorevAtamaService.AddStenoGorevAtamaKomisyon(model.StenografIds, model.BirlesimId, model.OturumId);
+                var atamaList = _gorevAtamaService.AddStenoGorevAtamaKomisyon(model.StenografIds, model.BirlesimId, model.OturumId);
+                if (atamaList != null && atamaList.Count() > 0)
+                {
+                    var modelList = BirlesimIptalHesaplama(atamaList);
+                    var entityList = Mapper.Map<List<GorevAtamaKomisyon>>(modelList);
+                    _gorevAtamaService.CreateStenoAtamaKom(entityList);
+                }
             }
             catch (Exception ex)
             { return BadRequest(ex.Message); }
@@ -236,6 +242,14 @@ namespace TTBS.Controllers
             try
             {
                 _gorevAtamaService.ChangeOrderStenografKomisyon(kaynakBirlesimId, kaynakStenografId, hedefBirlesimId, hedefStenografId);
+                var hedefResult = _gorevAtamaService.GetGorevAtamaByBirlesimId(hedefBirlesimId, ToplanmaTuru.Komisyon);
+                if (hedefResult != null && hedefResult.Count()>0)
+                {
+                    var modelList = new List<GorevAtamaModel>();
+                    _mapper.Map(hedefResult, modelList);
+                    _gorevAtamaService.UpdateGorevAtama(BirlesimIptalHesaplama(modelList), ToplanmaTuru.Komisyon);
+                }
+
             }
             catch (Exception ex)
             { return BadRequest(ex.Message); }
@@ -459,25 +473,29 @@ namespace TTBS.Controllers
 
         private List<GorevAtamaModel> BirlesimIptalHesaplama(List<GorevAtamaModel> atamaList)
         {
-            var gorevBasTarihi = atamaList.Where(x=>x.GorevStatu!=GorevStatu.Iptal).FirstOrDefault().GorevBasTarihi.Value;
-            var gorevBitTarihi = atamaList.Where(x => x.GorevStatu != GorevStatu.Iptal).FirstOrDefault().GorevBitisTarihi.Value;
+            var gorevBasTarihi = atamaList.FirstOrDefault().GorevBasTarihi.Value;
+            var gorevBitTarihi = atamaList.Where(x=>x.GorevStatu != GorevStatu.Iptal).FirstOrDefault().GorevBitisTarihi.Value;
             var lst = new List<GorevAtamaModel>();
-            foreach (var item in atamaList)
+            for (int i = 0; i < atamaList.Count; i++)
             {
-                if(item.GorevStatu!=GorevStatu.Iptal)
+                if (atamaList[i].GorevStatu != GorevStatu.Iptal)
                 {
-                    if (item.GorevBasTarihi != gorevBasTarihi)
+                    if (atamaList[i].GorevBasTarihi != gorevBasTarihi)
                     {
-                        item.GorevBasTarihi = gorevBasTarihi;
+                        atamaList[i].GorevBasTarihi = gorevBasTarihi;
                     }
-                    if (item.GorevBitisTarihi != gorevBitTarihi)
+                    if (atamaList[i].GorevBitisTarihi != gorevBitTarihi)
                     {
-                        item.GorevBitisTarihi = gorevBitTarihi;
+                        atamaList[i].GorevBitisTarihi = gorevBitTarihi;
                     }
-                    gorevBasTarihi = item.GorevBitisTarihi.Value;
-                    gorevBitTarihi = item.GorevBitisTarihi.HasValue ? item.GorevBitisTarihi.Value.AddMinutes(item.StenoSure) : DateTime.MinValue;
+                    if(i+1 < atamaList.Count)
+                    {
+                        gorevBasTarihi = atamaList[i].GorevBitisTarihi.Value;
+                        gorevBitTarihi = atamaList[i].GorevBitisTarihi.HasValue ? atamaList[i].GorevBitisTarihi.Value.AddMinutes(atamaList[i + 1].StenoSure) : DateTime.MinValue;
+                    }
+                   
                 }
-                lst.Add(item);
+                lst.Add(atamaList[i]);
             }
             return lst;
         }
