@@ -15,15 +15,16 @@ namespace TTBS.Controllers
     {
         private readonly IGlobalService _globalService;
         private readonly IStenografService _stenoService;
-        private readonly GorevAtamaService _gorevAtamaService;
+        private readonly IGorevAtamaService _gorevAtamaService;
         private readonly ILogger<GlobalController> _logger;
         public readonly IMapper _mapper;
 
-        public GlobalController(IGlobalService globalService, IStenografService stenoService,ILogger<GlobalController> logger, IMapper mapper)
+        public GlobalController(IGlobalService globalService, IGorevAtamaService gorevAtamaService, IStenografService stenoService,ILogger<GlobalController> logger, IMapper mapper)
         {
             _globalService = globalService;
             _stenoService = stenoService;
-            _logger = logger;
+            _gorevAtamaService = gorevAtamaService;
+             _logger = logger;
             _mapper = mapper;
         }
         #region Donem
@@ -245,15 +246,13 @@ namespace TTBS.Controllers
                 try
                 {
                     var entity = Mapper.Map<GrupDetay>(model);
-                    bool createStatus = _globalService.CreateGrupDetay(entity);
-
+                    bool createStatus = _globalService.CreateGrupDetay(entity);                 
                     if (createStatus)
                     {
-
-                        _gorevAtamaService.ActivateGidenGrupByGorevAtama();
-
+                        var gidenTarihResult = _gorevAtamaService.GetGidenGrup();
+                        if (gidenTarihResult != null)
+                            _gorevAtamaService.ActivateGidenGrupByGorevAtama(gidenTarihResult.GidenGrupSaat.Value, gidenTarihResult.GidenGrupSaatUygula);
                     }
-
                     transactionScope.Complete();
                     return Ok(entity);
                 }
@@ -262,10 +261,9 @@ namespace TTBS.Controllers
                     transactionScope.Dispose();
                     return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
                 }
-
             } 
-            
         }
+
         [HttpPost("UpdateGrupDetay")]
         public IActionResult UpdateGrupDetay(DateTime gidenSaat)
         {
