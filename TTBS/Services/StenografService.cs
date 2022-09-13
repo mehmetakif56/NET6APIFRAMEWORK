@@ -363,6 +363,9 @@ namespace TTBS.Services
 
         public IEnumerable<Stenograf> GetAllStenografByGroupId(Guid? groupId)
         {
+            if(groupId == null)
+                return _stenografRepo.Get();
+
             return _stenografRepo.Get(x => x.GrupId == groupId);
         }
 
@@ -383,6 +386,11 @@ namespace TTBS.Services
 
         public IEnumerable<Birlesim> GetBirlesimByDate(DateTime basTarihi, int toplanmaTuru)
         {
+            if(toplanmaTuru == 1)
+            {
+                return _birlesimRepo.Get(x => (int)x.ToplanmaTuru == toplanmaTuru, includeProperties: "Oturums,Komisyon").Where(x => x.BaslangicTarihi.Value.ToShortDateString() == basTarihi.ToShortDateString());
+            }
+
             return _birlesimRepo.Get(x => (int)x.ToplanmaTuru == toplanmaTuru, includeProperties: "Oturums").Where(x => x.BaslangicTarihi.Value.ToShortDateString() == basTarihi.ToShortDateString());
         }
 
