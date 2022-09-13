@@ -376,9 +376,11 @@ namespace TTBS.Services
         public void UpdateGrupDetay(DateTime? gidenSaat)
         {
             var grpDetay = _grupDetayRepo.GetFirst();
-            if (grpDetay != null)
+            if (grpDetay != null && gidenSaat.HasValue)
             {
-                grpDetay.GidenGrupSaat = gidenSaat;
+                DateTime updatedGidenSaat = gidenSaat.Value;
+                grpDetay.GidenGrupSaat = updatedGidenSaat;
+               
                 _grupDetayRepo.Update(grpDetay);
                 _grupDetayRepo.Save();
             }
