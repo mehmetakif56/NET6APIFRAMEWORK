@@ -300,15 +300,19 @@ namespace TTBS.Controllers
         {
             var grupEntity = _globalService.GetAllGrup(grupTuru);
             var gidenGrup = _globalService.GetGrupDetayLast().LastOrDefault();
-            var model = _mapper.Map<IEnumerable<GrupModel>>(grupEntity);
-            model.ToList().ForEach(x =>
+            if(grupEntity != null && gidenGrup != null)
             {
-                if (x.Id == gidenGrup.GrupId)
-                    x.gidenGrup = true;
-                else
-                    x.gidenGrup = false;
-            });
-            return model;
+                var model = _mapper.Map<IEnumerable<GrupModel>>(grupEntity);
+                model.ToList().ForEach(x =>
+                {
+                    if (x.Id == gidenGrup.GrupId)
+                        x.gidenGrup = true;
+                    else
+                        x.gidenGrup = false;
+                });
+                return model;
+            }
+            return null;
         }
 
         [HttpDelete("DeleteGroup")]
