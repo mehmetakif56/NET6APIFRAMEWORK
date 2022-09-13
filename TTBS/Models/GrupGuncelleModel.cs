@@ -7,5 +7,6 @@ namespace TTBS.Models
         public Guid? GrupId { get; set; }
         public DurumStatu GidenGrupPasif { get; set; }
         public DurumStatu GidenGrupSaatUygula { get; set; }
+        public DateTime? GidenGrupSaat { get; set; }
     }
 }

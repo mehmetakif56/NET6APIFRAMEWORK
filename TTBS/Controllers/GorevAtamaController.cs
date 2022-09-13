@@ -221,9 +221,9 @@ namespace TTBS.Controllers
                 var atamaList = _gorevAtamaService.GetGorevAtamaByBirlesimId(birlesimId, ToplanmaTuru.Komisyon);
                 if (atamaList != null && atamaList.Count() > 0)
                 {
-                    var modelList = BirlesimIptalHesaplama(atamaList);
-                    var entityList = Mapper.Map<List<GorevAtamaKomisyon>>(modelList);
-                    _gorevAtamaService.CreateStenoAtamaKom(entityList);
+                    var modelList = new List<GorevAtamaModel>();
+                    _mapper.Map(atamaList, modelList);
+                    _gorevAtamaService.UpdateGorevAtama(BirlesimIptalHesaplama(modelList), ToplanmaTuru.Komisyon);
                 }
             }
             catch (Exception ex)
