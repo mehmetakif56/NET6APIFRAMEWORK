@@ -42,6 +42,7 @@ namespace TTBS.Controllers
             var model = _mapper.Map<List<BirlesimViewModel>>(stenoEntity);
             return model;
         }
+
         [HttpGet("GetBirlesimByDate")]
         public List<BirlesimViewModel> GetBirlesimByDate(DateTime gorevTarihi, int gorevTuru)
         {
