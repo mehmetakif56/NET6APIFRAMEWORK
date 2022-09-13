@@ -378,10 +378,7 @@ namespace TTBS.Services
             var grpDetay = _grupDetayRepo.GetFirst();
             if (grpDetay != null)
             {
-                DateTime updatedGidenSaat = new DateTime(grpDetay.GidenGrupSaat.Value.Year, grpDetay.GidenGrupSaat.Value.Month
-                    , grpDetay.GidenGrupSaat.Value.Day, gidenSaat.Value.Hour, gidenSaat.Value.Minute, gidenSaat.Value.Second);
-                grpDetay.GidenGrupSaat = updatedGidenSaat;
-                grpDetay.GidenGrupTarih= (DateTime)grpDetay.GidenGrupSaat;
+                grpDetay.GidenGrupSaat = gidenSaat;
                 _grupDetayRepo.Update(grpDetay);
                 _grupDetayRepo.Save();
             }
