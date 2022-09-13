@@ -292,7 +292,7 @@ namespace TTBS.Services
 
         public IEnumerable<Birlesim> GetAktifGKBirlesim()
         {
-            return _birlesimRepo.Get(x => x.ToplanmaTuru == ToplanmaTuru.GenelKurul && x.ToplanmaDurumu != ToplanmaStatu.Tamamlandı && x.ToplanmaDurumu != ToplanmaStatu.Iptal);
+            return _birlesimRepo.Get(x => x.BaslangicTarihi.Value.Date<= DateTime.Now.Date && x.ToplanmaTuru == ToplanmaTuru.GenelKurul && x.ToplanmaDurumu != ToplanmaStatu.Tamamlandı && x.ToplanmaDurumu != ToplanmaStatu.Iptal);
         }
         public void DeleteBirlesim(Guid id)
         {
