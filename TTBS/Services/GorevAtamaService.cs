@@ -532,13 +532,13 @@ namespace TTBS.Services
                         var exractedStenos = stenograflar.Where(stenoRepoPredict => !birlesimNotCompletedAtamas.Any(kalanPredict => kalanPredict.StenografId == stenoRepoPredict.Id))
                             .OrderBy(x => x.SiraNo).ToList();
 
-                        var notCompletedBirlesimStenos = stenograflar.Where(stenoRepoPredict => birlesimNotCompletedAtamas.Any(kalanPredict => kalanPredict.StenografId == stenoRepoPredict.Id)).ToList();
+                        var notCompletedBirlesimStenos = stenograflar.Where(stenoRepoPredict => birlesimNotCompletedAtamas.Any(kalanPredict => kalanPredict.StenografId == stenoRepoPredict.Id)).OrderBy(x => x.SiraNo).ToList();
 
                         int restartedIndex = 0;
                         //birlesimde görevini tamamlamayan stenografların sıraları güncelleniyor
                         notCompletedBirlesimStenos.ForEach(x =>
                         {
-                            x.SiraNo = restartedIndex += 1;
+                            x.BirlesimSıraNo = restartedIndex += 1;
                         });
 
                         reOrderedStenographs.AddRange(notCompletedBirlesimStenos);
@@ -546,7 +546,7 @@ namespace TTBS.Services
                         //birlesimde görev almayan stenografların sıraları güncelleniyor
                         exractedStenos.ForEach(x =>
                         {
-                            x.SiraNo = restartedIndex += 1;
+                            x.BirlesimSıraNo = restartedIndex += 1;
                         });
                         reOrderedStenographs.AddRange(exractedStenos);
 

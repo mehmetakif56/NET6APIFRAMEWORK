@@ -31,5 +31,6 @@ namespace TTBS.Core.Entities
         public IzınTuru StenoIzinTuru { get; set; }
         [NotMapped]
         public bool ToplantiVar { get; set; }
+        public int BirlesimSıraNo { get; set; }
     }
 }
