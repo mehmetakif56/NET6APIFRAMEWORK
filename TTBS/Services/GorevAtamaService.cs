@@ -519,44 +519,16 @@ namespace TTBS.Services
                     try
                     {
 
-                        List<Stenograf> reOrderedStenographs = new List<Stenograf>();
+                        result.Where(x => x.SatırNo <= satırNo && x.GorevStatu != GorevStatu.Iptal).ToList().ForEach(x => x.GorevStatu = GorevStatu.Tamamlandı);
 
-                    result.Where(x => x.SatırNo <= satırNo && x.GorevStatu != GorevStatu.Iptal).ToList().ForEach(x => x.GorevStatu = GorevStatu.Tamamlandı);
+                        UpdateGorevAtama(result, toplanmaTuru);
+                        //
+                        var birlesimNotCompletedAtamas = result.Where(x => x.SatırNo > satırNo).OrderBy(x => x.GorevBasTarihi).ToList();
+                        ControlAndUpdateNotcompletedBirlesimAtama(birlesimNotCompletedAtamas);
+                        //
+                        SaveStenoStatistics(result, satırNo, toplanmaTuru, birlesimId);
 
-                    UpdateGorevAtama(result, toplanmaTuru);
-                    //
-                    var birlesimNotCompletedAtamas = result.Where(x => x.SatırNo > satırNo).OrderBy(x => x.GorevBasTarihi).ToList();
-                    if (birlesimNotCompletedAtamas.Any())
-                    {
-                        var stenograflar = _stenografRepo.Get();
-                        var exractedStenos = stenograflar.Where(stenoRepoPredict => !birlesimNotCompletedAtamas.Any(kalanPredict => kalanPredict.StenografId == stenoRepoPredict.Id))
-                            .OrderBy(x => x.SiraNo).ToList();
-
-                        var notCompletedBirlesimStenos = stenograflar.Where(stenoRepoPredict => birlesimNotCompletedAtamas.Any(kalanPredict => kalanPredict.StenografId == stenoRepoPredict.Id)).OrderBy(x => x.SiraNo).ToList();
-
-                        int restartedIndex = 0;
-                        //birlesimde görevini tamamlamayan stenografların sıraları güncelleniyor
-                        notCompletedBirlesimStenos.ForEach(x =>
-                        {
-                            x.BirlesimSıraNo = restartedIndex += 1;
-                        });
-
-                        reOrderedStenographs.AddRange(notCompletedBirlesimStenos);
-
-                        //birlesimde görev almayan stenografların sıraları güncelleniyor
-                        exractedStenos.ForEach(x =>
-                        {
-                            x.BirlesimSıraNo = restartedIndex += 1;
-                        });
-                        reOrderedStenographs.AddRange(exractedStenos);
-
-                        _stenografRepo.Update(reOrderedStenographs, CurrentUser.Id);
-                        _stenografRepo.Save();
-                    }
-                    //
-                    SaveStenoStatistics(result, satırNo, toplanmaTuru, birlesimId);
-
-                    scope.Complete();
+                        scope.Complete();
                     }
                     catch (Exception exception)
                     {
@@ -567,6 +539,44 @@ namespace TTBS.Services
                 }           
 
             }
+        }
+
+        private void ControlAndUpdateNotcompletedBirlesimAtama(List<GorevAtamaModel> birlesimNotCompletedAtamas)
+        {
+            if (birlesimNotCompletedAtamas.Any())
+            {
+                var stenograflar = _stenografRepo.Get();
+                var exractedStenos = stenograflar.Where(stenoRepoPredict => !birlesimNotCompletedAtamas.Any(kalanPredict => kalanPredict.StenografId == stenoRepoPredict.Id))
+                    .OrderBy(x => x.SiraNo).ToList();
+
+                var notCompletedBirlesimStenos = stenograflar.Where(stenoRepoPredict => birlesimNotCompletedAtamas.Any(kalanPredict => kalanPredict.StenografId == stenoRepoPredict.Id)).OrderBy(x => x.SiraNo).ToList();
+
+                UpdateStenographOrders(exractedStenos, notCompletedBirlesimStenos);
+            }
+        }
+
+        private bool UpdateStenographOrders( List<Stenograf> exractedStenos, List<Stenograf> notCompletedBirlesimStenos)
+        {
+            List<Stenograf> reOrderedStenographs = new List<Stenograf>();
+            int restartedIndex = 0;
+
+            //birlesimde görevini tamamlamayan stenografların sıraları güncelleniyor
+            notCompletedBirlesimStenos.ForEach(x =>
+            {
+                x.BirlesimSıraNo = restartedIndex += 1;
+            });
+
+            reOrderedStenographs.AddRange(notCompletedBirlesimStenos);
+
+            //birlesimde görev almayan stenografların sıraları güncelleniyor
+            exractedStenos.ForEach(x =>
+            {
+                x.BirlesimSıraNo = restartedIndex += 1;
+            });
+            reOrderedStenographs.AddRange(exractedStenos);
+
+            _stenografRepo.Update(reOrderedStenographs, CurrentUser.Id);
+            return _stenografRepo.Save();
         }
 
         public void SaveStenoStatistics(List<GorevAtamaModel> gorevList, int satırNo, ToplanmaTuru toplanmaTuru, Guid birlesimId)
