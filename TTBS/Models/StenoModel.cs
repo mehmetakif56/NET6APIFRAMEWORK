@@ -18,5 +18,6 @@ namespace TTBS.Models
         public Guid GrupId { get; set; }
         public IzınTuru StenoIzinTuru { get; set; }
         public bool ToplantiVar { get; set; }
+        public int BirlesimSıraNo { get; set; }
     }
 }
