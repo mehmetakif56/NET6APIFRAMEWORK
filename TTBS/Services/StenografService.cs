@@ -27,7 +27,7 @@ namespace TTBS.Services
         IEnumerable<Birlesim> GetBirlesimByDateAndTur(DateTime gorevTarihi, DateTime gorevBitTarihi, int gorevTuru);
         List<GorevAtama> GetStenoGorevBySatatus(int status);
         IEnumerable<Stenograf> GetAllStenografByGroupId(Guid? groupId);
-        void CreateStenograf(Stenograf stenograf);
+        void CreateStenograf(List<Stenograf> stenograf);
         IEnumerable<Stenograf> GetAllStenografByGorevTuru(int? gorevTuru);
         void DeleteStenoGorev(Guid stenoGorevId);
         IEnumerable<GorevAtama> GetStenoGorevByGrupId(Guid id);
@@ -394,9 +394,9 @@ namespace TTBS.Services
             return _birlesimRepo.Get(x => (int)x.ToplanmaTuru == toplanmaTuru, includeProperties: "Oturums").Where(x => x.BaslangicTarihi.Value.ToShortDateString() == basTarihi.ToShortDateString());
         }
 
-        public void CreateStenograf(Stenograf entity)
+        public void CreateStenograf(List<Stenograf> entity)
         {
-            _stenografRepo.Create(entity, CurrentUser.Id);
+            _stenografRepo.Create(entity);
             _stenografRepo.Save();
         }
         public IEnumerable<Stenograf> GetAllStenografByGorevTuru(int? gorevTuru)
