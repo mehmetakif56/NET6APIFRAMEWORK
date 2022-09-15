@@ -7,7 +7,7 @@ namespace TTBS.Core.Entities
     public class Oturum : BaseEntity
     {
         public Guid Id { get; set; }
-        public int OturumNo { get; set; } = 1;       
+        public int OturumNo { get; set; } = 1;
         public DateTime? BaslangicTarihi { get; set; }
         public DateTime? BitisTarihi { get; set; }
         public string OturumBaskan { get; set; }
@@ -17,5 +17,9 @@ namespace TTBS.Core.Entities
         public bool YoklamaliMi { get; set; }
         public Birlesim Birlesim { get; set; }
         public Guid BirlesimId { get; set; }
+        public int AcanSira { get; set; }
+        public int KapatanSira { get; set; }
+        public int AcanSiraUzman { get; set; }
+        public int KapatanSiraUzman { get; set; }
     }
 }

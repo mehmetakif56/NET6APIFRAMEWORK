@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq.Expressions;
 using TTBS.Core.Entities;
 using TTBS.Core.Enums;
 using TTBS.Models;
@@ -338,6 +339,7 @@ namespace TTBS.Controllers
                     if (oturum != null)
                     {
                         oturum.BaslangicTarihi = model.BasTarihi;
+                        SetOturumModifiedStenoInfo(model.ToplanmaBaslatmaStatu, model, oturum);
                         _globalService.UpdateOturum(oturum);
                     }
                 }
@@ -353,6 +355,7 @@ namespace TTBS.Controllers
                     if (oturum != null)
                     {
                         oturum.BitisTarihi = model.BasTarihi;
+                        SetOturumModifiedStenoInfo(model.ToplanmaBaslatmaStatu, model, oturum);
                         _globalService.UpdateOturum(oturum);
                     }
                 }
@@ -364,8 +367,9 @@ namespace TTBS.Controllers
                         birlesim.ToplanmaDurumu = ToplanmaStatu.DevamEdiyor;
                         _globalService.UpdateBirlesim(birlesim);
                     }
-                    var oturum = _globalService.GetOturumByBirlesimId(model.BirlesimId).Where(x => x.BitisTarihi != null).LastOrDefault();
-                     _globalService.CreateOturum(new Oturum { BirlesimId = model.BirlesimId, BaslangicTarihi = model.BasTarihi });
+                    var oturum = new Oturum { BirlesimId = model.BirlesimId, BaslangicTarihi = model.BasTarihi };
+                    SetOturumModifiedStenoInfo(model.ToplanmaBaslatmaStatu, model, oturum);
+                    _globalService.CreateOturum(oturum);
                 }
                 else if (ToplanmaBaslatmaStatu.Sonladırma == model.ToplanmaBaslatmaStatu)
                 {
@@ -373,6 +377,7 @@ namespace TTBS.Controllers
                     if (oturum != null)
                     {
                         oturum.BitisTarihi = model.BasTarihi;
+                        SetOturumModifiedStenoInfo(model.ToplanmaBaslatmaStatu, model, oturum);
                         _globalService.UpdateOturum(oturum);
 
                     }
@@ -390,6 +395,34 @@ namespace TTBS.Controllers
             { return BadRequest(ex.Message); }
 
             return Ok();
+        }
+
+        private static void SetOturumModifiedStenoInfo(ToplanmaBaslatmaStatu toplanmaBaslatmaStatu, BirlesimStenoGorevModel model, Oturum? oturum)
+        {
+            if (toplanmaBaslatmaStatu.Equals(ToplanmaBaslatmaStatu.Baslama) || toplanmaBaslatmaStatu.Equals(ToplanmaBaslatmaStatu.DevamEtme))
+            {
+                switch (model.StenoGorevTuru)
+                {
+                    case StenoGorevTuru.Stenograf:
+                        oturum.AcanSira = model.SatırNo;
+                        break;
+                    case StenoGorevTuru.Uzman:
+                        oturum.AcanSiraUzman = model.SatırNo;
+                        break;
+                }
+            }
+            else if (toplanmaBaslatmaStatu.Equals(ToplanmaBaslatmaStatu.AraVerme) || toplanmaBaslatmaStatu.Equals(ToplanmaBaslatmaStatu.Sonladırma))
+            {
+                switch (model.StenoGorevTuru)
+                {
+                    case StenoGorevTuru.Stenograf:
+                        oturum.KapatanSira = model.SatırNo;
+                        break;
+                    case StenoGorevTuru.Uzman:
+                        oturum.KapatanSiraUzman = model.SatırNo;
+                        break;
+                }
+            }  
         }
 
         [HttpDelete("DeleteGorevByBirlesimIdAndStenoId")]
