@@ -142,7 +142,7 @@ namespace TTBS.Services
                 _mapper.Map(result, stenoList);
                 var grpList = stenoList.GroupBy(c => c.StenografId).Select(x => new { StenografId = x.Key });
                 var gorevBitis = stenoList.Where(x => x.GorevStatu != GorevStatu.Iptal).LastOrDefault().GorevBitisTarihi;
-                var refSatırNo = stenoList.LastOrDefault().SatırNo;
+                var refSatırNo = stenoList.LastOrDefault().SatirNo;
                 var gidenGrupResult = GetGidenGrup();
                 int firsRec = 1;               
                 foreach (var item in grpList)
@@ -154,7 +154,7 @@ namespace TTBS.Services
                     newEntity.StenoSure = stenoList.Where(x => x.StenografId == item.StenografId).LastOrDefault().StenoSure;
                     newEntity.GorevBasTarihi = gorevBitis;
                     newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.Value.AddMinutes(newEntity.StenoSure);
-                    newEntity.SatırNo = refSatırNo + firsRec;
+                    newEntity.SatirNo = refSatırNo + firsRec;
                     gorevBitis = newEntity.GorevBitisTarihi;
                     newEntity.StenoIzinTuru = GetStenoIzinByGorevBasTarih(item.StenografId, newEntity.GorevBasTarihi);
                     newEntity.GidenGrupMu = GidenGrupHesaplama(ToplanmaTuru.Komisyon, newEntity.StenoSure) != DateTime.MinValue &&
@@ -176,7 +176,7 @@ namespace TTBS.Services
                 _mapper.Map(result, stenoList);
                 var grpList = stenoList.GroupBy(c => c.StenografId).Select(x => new { StenografId = x.Key });
                 var gorevBitis = stenoList.Where(x => x.GorevStatu != GorevStatu.Iptal).LastOrDefault().GorevBitisTarihi;
-                var refSatırNo = stenoList.LastOrDefault().SatırNo;
+                var refSatırNo = stenoList.LastOrDefault().SatirNo;
                 var gidenGrupResult = GetGidenGrup();
                 int firsRec = 1;
                 foreach (var item in grpList)
@@ -188,7 +188,7 @@ namespace TTBS.Services
                     newEntity.StenoSure = stenoList.Where(x => x.StenografId == item.StenografId).LastOrDefault().StenoSure;
                     newEntity.GorevBasTarihi = gorevBitis;
                     newEntity.GorevBitisTarihi = newEntity.GorevBasTarihi.Value.AddMinutes(newEntity.StenoSure);
-                    newEntity.SatırNo = refSatırNo + firsRec;
+                    newEntity.SatirNo = refSatırNo + firsRec;
                     gorevBitis = newEntity.GorevBitisTarihi;
                     newEntity.StenoIzinTuru = GetStenoIzinByGorevBasTarih(item.StenografId, newEntity.GorevBasTarihi);
                     newEntity.KomisyonAd = gorevTuru == StenoGorevTuru.Stenograf ? GetKomisyonMinMaxDate(item.StenografId, newEntity.GorevBasTarihi, newEntity.GorevBitisTarihi, newEntity.StenoSure) : null;
@@ -218,18 +218,18 @@ namespace TTBS.Services
                     for (int i = 1; i <= stenoList.Count() / grpListCnt; i++)
                     {
                         var deger = (grpListCnt * i) + k;
-                        var refSteno = stenoList.Where(x => x.SatırNo == deger).OrderBy(x => x.SatırNo).FirstOrDefault();
+                        var refSteno = stenoList.Where(x => x.SatirNo == deger).OrderBy(x => x.SatirNo).FirstOrDefault();
                         if (refSteno != null)
                         {
-                            foreach (var item in stenoList.Where(x => x.SatırNo > refSteno.SatırNo).OrderBy(x => x.SatırNo))
+                            foreach (var item in stenoList.Where(x => x.SatirNo > refSteno.SatirNo).OrderBy(x => x.SatirNo))
                             {
                                 item.GorevBasTarihi = item.GorevBasTarihi.Value.AddMinutes(refSteno.StenoSure);
                                 item.GorevBitisTarihi = item.GorevBitisTarihi.Value.AddMinutes(refSteno.StenoSure);
-                                item.SatırNo = item.SatırNo + 1;
+                                item.SatirNo = item.SatirNo + 1;
                             }
                             var nwGrv = new GorevAtamaModel
                             {
-                                SatırNo = deger + 1,
+                                SatirNo = deger + 1,
                                 StenografId = steno,
                                 BirlesimId = birlesimId,
                                 OturumId = oturumId,
@@ -551,11 +551,11 @@ namespace TTBS.Services
                     try
                     {
 
-                        result.Where(x => x.SatırNo <= satırNo && x.GorevStatu != GorevStatu.Iptal).ToList().ForEach(x => x.GorevStatu = GorevStatu.Tamamlandı);
+                        result.Where(x => x.SatirNo <= satırNo && x.GorevStatu != GorevStatu.Iptal).ToList().ForEach(x => x.GorevStatu = GorevStatu.Tamamlandı);
 
                         UpdateGorevAtama(result, toplanmaTuru);
                         //
-                        var birlesimNotCompletedAtamas = result.Where(x => x.SatırNo > satırNo).OrderBy(x => x.GorevBasTarihi).ToList();
+                        var birlesimNotCompletedAtamas = result.Where(x => x.SatirNo > satırNo).OrderBy(x => x.GorevBasTarihi).ToList();
                         ControlAndUpdateNotcompletedBirlesimAtama(toplanmaTuru, birlesimNotCompletedAtamas);
                         //
                         SaveStenoStatistics(result, satırNo, toplanmaTuru, birlesimId);
@@ -627,7 +627,7 @@ namespace TTBS.Services
         public void SaveStenoStatistics(List<GorevAtamaModel> gorevList, int satırNo, ToplanmaTuru toplanmaTuru, Guid birlesimId)
         {
 
-            var statistics = gorevList.Where(x => x.SatırNo <= satırNo && x.GorevStatu != GorevStatu.Iptal).GroupBy(x => x.StenografId);
+            var statistics = gorevList.Where(x => x.SatirNo <= satırNo && x.GorevStatu != GorevStatu.Iptal).GroupBy(x => x.StenografId);
             statistics.ToList().ForEach(x =>
             {
                 var steno = _stenografRepo.GetById(x.FirstOrDefault().StenografId);
