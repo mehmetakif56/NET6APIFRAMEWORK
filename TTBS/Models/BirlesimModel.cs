@@ -8,8 +8,8 @@ namespace TTBS.Models
         public string BirlesimNo { get; set; } =String.Empty;
         public DateTime? BaslangicTarihi { get; set; }
         public Guid YasamaId { get; set; }
-        public decimal StenoSure { get; set; }
-        public decimal UzmanStenoSure { get; set; }
+        public double StenoSure { get; set; }
+        public double UzmanStenoSure { get; set; }
         public Guid KomisyonId { get; set; } = Guid.Empty;
         public Guid? AltKomisyonId { get; set; } = Guid.Empty;
         public Guid? OzelToplanmaId { get; set; } = Guid.Empty;
