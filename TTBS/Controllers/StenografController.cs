@@ -419,11 +419,11 @@ namespace TTBS.Controllers
             return model;
         }
         [HttpPost("CreateStenograf")]
-        public IActionResult CreateStenograf(StenoModel model)
+        public IActionResult CreateStenograf(List<StenoCreateModel> model)
         {
             try
             {
-                var entity = Mapper.Map<Stenograf>(model);
+                var entity = Mapper.Map<List<Stenograf>>(model);
                 _stenoService.CreateStenograf(entity);
             }
             catch (Exception ex)
