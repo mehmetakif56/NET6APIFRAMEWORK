@@ -46,15 +46,19 @@ namespace TTBS.Controllers
                     var stenoAllList = _gorevAtamaService.GetStenografIdList();
                     var stenoList = stenoAllList.Where(x => x.StenoGorevTuru == StenoGorevTuru.Stenograf)
                                                 .Select(x => x.Id);
-                                                
-                    var modelList = SetGorevAtama(birlesim, oturumId, stenoList,birlesim.StenoSure,ToplanmaTuru.GenelKurul, StenoGorevTuru.Stenograf);
-                    var stenoUzmanList = stenoAllList.Where(x => x.StenoGorevTuru == StenoGorevTuru.Uzman)
-                                                     .Select(x => x.Id);
-                                                    
-                    var modelUzmanList = SetGorevAtama(birlesim, oturumId, stenoUzmanList, birlesim.UzmanStenoSure, ToplanmaTuru.GenelKurul, StenoGorevTuru.Uzman);
-                    modelList.AddRange(modelUzmanList);
-                    var entityList = Mapper.Map<List<GorevAtamaGenelKurul>>(modelList);
-                    _gorevAtamaService.CreateStenoAtamaGK(entityList);
+                    if(stenoList!=null && stenoList.Count()>0)
+                    {
+                        var modelList = SetGorevAtama(birlesim, oturumId, stenoList, birlesim.StenoSure, ToplanmaTuru.GenelKurul, StenoGorevTuru.Stenograf);
+                        var stenoUzmanList = stenoAllList.Where(x => x.StenoGorevTuru == StenoGorevTuru.Uzman)
+                                                         .Select(x => x.Id);
+                        if(stenoUzmanList!=null && stenoUzmanList.Count()>0)
+                        {
+                            var modelUzmanList = SetGorevAtama(birlesim, oturumId, stenoUzmanList, birlesim.UzmanStenoSure, ToplanmaTuru.GenelKurul, StenoGorevTuru.Uzman);
+                            modelList.AddRange(modelUzmanList);
+                        }
+                        var entityList = Mapper.Map<List<GorevAtamaGenelKurul>>(modelList);
+                        _gorevAtamaService.CreateStenoAtamaGK(entityList);
+                    }
                 }
             }
             catch (Exception ex)
