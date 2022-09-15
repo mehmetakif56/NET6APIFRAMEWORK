@@ -17,9 +17,9 @@ namespace TTBS.Core.Entities
         public bool YoklamaliMi { get; set; }
         public Birlesim Birlesim { get; set; }
         public Guid BirlesimId { get; set; }
-        public int AcanSira { get; set; }
-        public int KapatanSira { get; set; }
-        public int AcanSiraUzman { get; set; }
-        public int KapatanSiraUzman { get; set; }
+        public string Acan { get; set; }
+        public string Kapatan { get; set; }
+        public string AcanUzman { get; set; }
+        public string KapatanUzman { get; set; }
     }
 }
