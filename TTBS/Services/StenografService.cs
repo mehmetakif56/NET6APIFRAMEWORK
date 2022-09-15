@@ -197,9 +197,14 @@ namespace TTBS.Services
                    item.StenoIzinTuru = entity.IzinTuru;
                    atamaList.Add(item);
                 }
-                var modelList = BirlesimIzinHesaplama(_mapper.Map<List<GorevAtamaModel>>(atamaList));
+                var modelList = _mapper.Map<List<GorevAtamaModel>>(atamaList);
                 var entityList = _mapper.Map<List<GorevAtamaGenelKurul>>(modelList);
                 _genelKurulAtamaRepo.Update(entityList);
+                // var allResult = _genelKurulAtamaRepo.Get(x=>x.BirlesimId == result.FirstOrDefault().BirlesimId)
+                //BirlesimIzinHesaplama();
+
+
+
             }
 
             if (resultKom != null && resultKom.Count() > 0)
