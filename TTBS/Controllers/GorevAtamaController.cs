@@ -67,8 +67,8 @@ namespace TTBS.Controllers
             return Ok();
         }
 
-        [HttpPost("UpdateBirlesim")]
-        public IActionResult UpdateBirlesim(BirlesimModel model)
+        [HttpPost("UpdateBirlesimGorevAtama")]
+        public IActionResult UpdateBirlesimGorevAtama(BirlesimModel model)
         {
             try
             {

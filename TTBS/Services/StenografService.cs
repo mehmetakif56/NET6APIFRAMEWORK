@@ -297,9 +297,9 @@ namespace TTBS.Services
         public IEnumerable<Stenograf> GetAllStenografByGorevTuru(int? gorevTuru)
         {
             if (gorevTuru != null)
-                return _stenografRepo.Get(x => (int)x.StenoGorevTuru == gorevTuru, includeProperties: "GorevAtamas");
+                return _stenografRepo.Get(x => (int)x.StenoGorevTuru == gorevTuru);
             else
-                return _stenografRepo.Get(includeProperties: "GorevAtamas");
+                return _stenografRepo.Get();
         }
 
         public IEnumerable<StenoGorevModel> GetStenoGorevByStenografAndDate(Guid? stenografId, DateTime gorevBasTarihi, DateTime gorevBitTarihi)
