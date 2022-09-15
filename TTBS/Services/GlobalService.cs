@@ -55,6 +55,7 @@ namespace TTBS.Services
         double GetStenoSureDailyById(Guid? stenoId);
         IEnumerable<Birlesim> GetAktifGKBirlesim();
         void CreateOturum(Oturum oturum);
+        Grup UpdateNextGrupDetay(DateTime gidenTarih);
     }
     public class GlobalService : BaseService, IGlobalService
     {
@@ -379,6 +380,18 @@ namespace TTBS.Services
             }
             return grpDetay.FirstOrDefault();
         }
+
+        public Grup UpdateNextGrupDetay(DateTime gidenTarih)
+        {
+            var grpDetay = _grupDetayRepo.Get(x => x.GidenGrupSaat.Value.Date == DateTime.Now.Date, includeProperties: "Grup");
+            if (grpDetay != null && grpDetay.Count() > 0)
+            {
+                grpDetay.FirstOrDefault().GidenGrupTarih = gidenTarih;
+                _grupDetayRepo.Update(grpDetay.FirstOrDefault());
+                _grupDetayRepo.Save();
+            }
+            return _grupRepo.GetFirst(x=>x.GrupSıraNo == grpDetay.FirstOrDefault().Grup.GrupSıraNo+1);
+        }
         public IEnumerable<GrupDetay> GetGrupDetayLast()
         {
             return _grupDetayRepo.Get(x => x.GidenGrupPasif == DurumStatu.Hayır, includeProperties: "Grup").OrderByDescending(x => x.GidenGrupTarih);
@@ -386,7 +399,7 @@ namespace TTBS.Services
         }
         public GrupDetay GetGrupDetay()
         {
-            return _grupDetayRepo.GetFirst(includeProperties: "Grup");
+            return _grupDetayRepo.GetFirst(x => x.GidenGrupSaat.Value.Date == DateTime.Now.Date,includeProperties: "Grup");
         }
     }
 }

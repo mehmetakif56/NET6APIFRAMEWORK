@@ -246,7 +246,7 @@ namespace TTBS.Controllers
                 try
                 {
                     var now = DateTime.Now;
-                    model.GidenGrupSaat = model.GidenGrupSaat ?? new DateTime(now.Year, now.Month, now.Day, 18, 0, 0); ;
+                    model.GidenGrupSaat = model.GidenGrupSaat ?? new DateTime(now.Year, now.Month, now.Day, 18, 0, 0); 
                     var entity = Mapper.Map<GrupDetay>(model);
                     bool createStatus = _globalService.CreateGrupDetay(entity);                 
                     if (createStatus)
@@ -262,6 +262,30 @@ namespace TTBS.Controllers
                     return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
                 }
             } 
+        }
+
+        [HttpPost("CreateNextGrupDetay")]
+        public IActionResult CreateNextGrupDetay()
+        {
+            try
+            {
+                var gidenTarih = DateTime.Today;
+                var entity = _globalService.UpdateNextGrupDetay(gidenTarih);
+                if (entity != null)
+                {
+                    var gidenGrupSaat = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 18, 0, 0);
+                    var newDetay = new GrupDetay { GrupId = entity.Id, GidenGrupSaat = gidenGrupSaat.AddDays(1) };
+                    bool createStatus = _globalService.CreateGrupDetay(newDetay);
+                    if(!createStatus)
+                        return BadRequest("Giden grup otomatik atama işlemi yapılamadı");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            return Ok();
         }
 
         [HttpPost("UpdateGrupDetay")]
