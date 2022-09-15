@@ -15,7 +15,6 @@ namespace TTBS.Core.Entities
         public string GidenGrupSaat { get; set; }
         public Guid? GrupId { get; set; }
         public Grup Grup { get; set; }
-        public virtual ICollection<GorevAtama> GorevAtamas { get; set; }
         public virtual ICollection<StenoIzin> StenoIzins { get; set; }
         [NotMapped]
         public bool StenoGorevDurum { get; set;}
