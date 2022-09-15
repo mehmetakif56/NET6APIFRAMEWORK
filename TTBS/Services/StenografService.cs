@@ -187,47 +187,33 @@ namespace TTBS.Services
             _stenoIzinRepo.Create(entity, CurrentUser.Id);
             _stenoIzinRepo.Save();
 
-            var result = _genelKurulAtamaRepo.Get(x =>x.StenografId == entity.StenografId && x.GorevBasTarihi.Value >= entity.BaslangicTarihi && x.GorevBasTarihi.Value <= entity.BitisTarihi);
-            var resultKom = _komisyonAtamaRepo.Get(x => x.StenografId == entity.StenografId && x.GorevBasTarihi.Value >= entity.BaslangicTarihi && x.GorevBasTarihi.Value <= entity.BitisTarihi);
-            var resultOzel = _ozelToplanmaAtamaRepo.Get(x => x.StenografId == entity.StenografId && x.GorevBasTarihi.Value >= entity.BaslangicTarihi && x.GorevBasTarihi.Value <= entity.BitisTarihi);
+            var result = _genelKurulAtamaRepo.Get(x => x.GorevBitisTarihi.Value.Date ==entity.BaslangicTarihi.Value.Date);
+            var resultKom = _komisyonAtamaRepo.Get(x => x.GorevBitisTarihi.Value.Date == entity.BaslangicTarihi.Value.Date);
+            var resultOzel = _ozelToplanmaAtamaRepo.Get(x => x.GorevBitisTarihi.Value.Date == entity.BaslangicTarihi.Value.Date);
 
             if (result != null && result.Count() > 0)
             {
-                var modelList = new List<GorevAtamaModel>();
-                result.ToList().ForEach(x => x.StenoIzinTuru = entity.IzinTuru);
-                _genelKurulAtamaRepo.Update(result);
-
-                foreach (var item in result.GroupBy(x => x.BirlesimId))
-                {
-                    var allResult = _genelKurulAtamaRepo.Get(x => x.BirlesimId == item.FirstOrDefault().BirlesimId);
-                    _mapper.Map(allResult, modelList);
-                    //BirlesimIzinHesaplama();
-                }
-
-
-
-
-
-
+                var modelList = _mapper.Map<List<GorevAtamaModel>>(result);
+                modelList.Where(x => x.StenografId == entity.StenografId && x.GorevBasTarihi.Value >= entity.BaslangicTarihi && x.GorevBasTarihi.Value <= entity.BitisTarihi).ToList().
+                          ForEach(x=>x.StenoIzinTuru = entity.IzinTuru);
+                var entityList = _mapper.Map<List<GorevAtamaGenelKurul>>(BirlesimIzinHesaplama(modelList));
+                _genelKurulAtamaRepo.Update(entityList);
             }
 
             if (resultKom != null && resultKom.Count() > 0)
             {
-                var atamaList = new List<GorevAtamaKomisyon>();
-                foreach (var item in resultKom)
-                {
-                    item.StenoIzinTuru = entity.IzinTuru;
-                    atamaList.Add(item);
-                }
-                var modelList = BirlesimIzinHesaplama(_mapper.Map<List<GorevAtamaModel>>(atamaList));
+                var modelList = _mapper.Map<List<GorevAtamaModel>>(resultKom);
+                modelList.Where(x => x.StenografId == entity.StenografId && x.GorevBasTarihi.Value >= entity.BaslangicTarihi && x.GorevBasTarihi.Value <= entity.BitisTarihi).ToList().
+                         ForEach(x => x.StenoIzinTuru = entity.IzinTuru);
                 var entityList = _mapper.Map<List<GorevAtamaKomisyon>>(modelList);
                 _komisyonAtamaRepo.Update(entityList);
             }
 
             if (resultOzel != null && resultOzel.Count() > 0)
             {
-                resultOzel.Where(x => x.StenografId == entity.StenografId && x.GorevBasTarihi >= entity.BaslangicTarihi && x.GorevBasTarihi <= entity.BitisTarihi).ToList().ForEach(x => x.StenoIzinTuru = entity.IzinTuru);
-                var modelList = BirlesimIzinHesaplama(_mapper.Map<List<GorevAtamaModel>>(resultOzel));
+                var modelList = _mapper.Map<List<GorevAtamaModel>>(resultOzel);
+                modelList.Where(x => x.StenografId == entity.StenografId && x.GorevBasTarihi.Value >= entity.BaslangicTarihi && x.GorevBasTarihi.Value <= entity.BitisTarihi).ToList().
+                         ForEach(x => x.StenoIzinTuru = entity.IzinTuru);
                 var entityList = _mapper.Map<List<GorevAtamaOzelToplanma>>(modelList);
                 _ozelToplanmaAtamaRepo.Update(entityList);
             }
