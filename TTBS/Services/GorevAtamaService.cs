@@ -510,11 +510,11 @@ namespace TTBS.Services
         }
         public void UpdateStenoGorevTamamla(Guid birlesimId, ToplanmaTuru toplanmaTuru, int satırNo)
         {
+
             var result = GetGorevAtamaByBirlesimId(birlesimId, toplanmaTuru);
             if (result != null && result.Count() > 0)
             {
-                
-                    using (TransactionScope scope = new TransactionScope())
+                using (TransactionScope scope = new TransactionScope())
                 {
                     try
                     {
@@ -524,7 +524,7 @@ namespace TTBS.Services
                         UpdateGorevAtama(result, toplanmaTuru);
                         //
                         var birlesimNotCompletedAtamas = result.Where(x => x.SatırNo > satırNo).OrderBy(x => x.GorevBasTarihi).ToList();
-                        ControlAndUpdateNotcompletedBirlesimAtama(birlesimNotCompletedAtamas);
+                        ControlAndUpdateNotcompletedBirlesimAtama(toplanmaTuru, birlesimNotCompletedAtamas);
                         //
                         SaveStenoStatistics(result, satırNo, toplanmaTuru, birlesimId);
 
@@ -536,26 +536,39 @@ namespace TTBS.Services
 
                         throw exception;
                     }
-                }           
+                }
 
             }
+
         }
 
-        private void ControlAndUpdateNotcompletedBirlesimAtama(List<GorevAtamaModel> birlesimNotCompletedAtamas)
+        private void ControlAndUpdateNotcompletedBirlesimAtama(ToplanmaTuru toplanmaTuru, List<GorevAtamaModel> birlesimNotCompletedAtamas)
         {
-            if (birlesimNotCompletedAtamas.Any())
+            if (toplanmaTuru.Equals(ToplanmaTuru.GenelKurul))
             {
-                var stenograflar = _stenografRepo.Get();
-                var exractedStenos = stenograflar.Where(stenoRepoPredict => !birlesimNotCompletedAtamas.Any(kalanPredict => kalanPredict.StenografId == stenoRepoPredict.Id))
-                    .OrderBy(x => x.SiraNo).ToList();
+                if (birlesimNotCompletedAtamas.Any())
+                {
+                    var stenograflar = _stenografRepo.Get();
+                    var exractedStenos = stenograflar.Where(stenoRepoPredict => !birlesimNotCompletedAtamas.Any(kalanPredict => kalanPredict.StenografId == stenoRepoPredict.Id))
+                        .OrderBy(x => x.SiraNo).ToList();
 
-                var notCompletedBirlesimStenos = stenograflar.Where(stenoRepoPredict => birlesimNotCompletedAtamas.Any(kalanPredict => kalanPredict.StenografId == stenoRepoPredict.Id)).OrderBy(x => x.SiraNo).ToList();
+                    var notCompletedBirlesimStenos = stenograflar.Where(stenoRepoPredict => birlesimNotCompletedAtamas.Any(kalanPredict => kalanPredict.StenografId == stenoRepoPredict.Id)).OrderBy(x => x.SiraNo).ToList();
 
-                UpdateStenographOrders(exractedStenos, notCompletedBirlesimStenos);
+                    UpdateStenographOrders(exractedStenos, notCompletedBirlesimStenos);
+                }
+                else
+                {
+                    var stenograflar = _stenografRepo.Get().ToList();
+                    stenograflar.ForEach(x =>
+                    {
+                        x.BirlesimSıraNo = x.SiraNo;
+                    });
+                }
+
             }
         }
 
-        private bool UpdateStenographOrders( List<Stenograf> exractedStenos, List<Stenograf> notCompletedBirlesimStenos)
+        private bool UpdateStenographOrders(List<Stenograf> exractedStenos, List<Stenograf> notCompletedBirlesimStenos)
         {
             List<Stenograf> reOrderedStenographs = new List<Stenograf>();
             int restartedIndex = 0;
