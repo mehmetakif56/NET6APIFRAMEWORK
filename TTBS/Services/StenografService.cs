@@ -29,6 +29,8 @@ namespace TTBS.Services
         IEnumerable<Birlesim> GetBirlesimByDateAndGroup(DateTime? baslangic, DateTime? bitis, Guid? yasamaId, Guid grup);
         void CreateStenoGroup(Guid stenoId, Guid grupId);
 
+        Stenograf GetStenoBySiraNoAndGorevTuru(int siraNo, StenoGorevTuru stenoGorevTuru);
+        IEnumerable<Stenograf> GetAllStenografWithStatisticsByGroupId(Guid? groupId);
     }
     public class StenografService : BaseService, IStenografService
     {
@@ -255,6 +257,14 @@ namespace TTBS.Services
             return _stenografRepo.Get(x => x.GrupId == groupId);
         }
 
+        public IEnumerable<Stenograf> GetAllStenografWithStatisticsByGroupId(Guid? groupId)
+        {
+            if (groupId == null)
+                return _stenografRepo.Get(x => !x.GorevAtamaKomisyons.Where(x => x.GorevStatu != GorevStatu.Planlandı || x.GorevStatu != GorevStatu.DevamEdiyor).Select(x => x.StenografId).Contains(x.Id));
+
+            return _stenografRepo.Get(x => !x.GorevAtamaKomisyons.Where(x=>x.GorevStatu!= GorevStatu.Planlandı || x.GorevStatu != GorevStatu.DevamEdiyor).Select(x=>x.StenografId).Contains(x.Id) &&  x.GrupId == groupId);
+        }
+
         public IEnumerable<Stenograf> GetStenoGorevByTur(int gorevTuru)
         {
             return _stenografRepo.Get(x => (int)x.StenoGorevTuru == gorevTuru);
@@ -373,6 +383,11 @@ namespace TTBS.Services
                 _stenografRepo.Update(steno);
                 _stenografRepo.Save();
             }
+        }
+
+        public Stenograf GetStenoBySiraNoAndGorevTuru(int siraNo, StenoGorevTuru stenoGorevTuru)
+        {
+            return _stenografRepo.Get(p => p.SiraNo == siraNo && p.StenoGorevTuru == stenoGorevTuru).First();
         }
     }
 }

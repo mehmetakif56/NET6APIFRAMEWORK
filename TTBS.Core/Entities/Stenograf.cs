@@ -16,6 +16,7 @@ namespace TTBS.Core.Entities
         public Guid? GrupId { get; set; }
         public Grup Grup { get; set; }
         public virtual ICollection<StenoIzin> StenoIzins { get; set; }
+        public virtual ICollection<GorevAtamaKomisyon> GorevAtamaKomisyons { get; set; }
         [NotMapped]
         public bool StenoGorevDurum { get; set;}
         [NotMapped]

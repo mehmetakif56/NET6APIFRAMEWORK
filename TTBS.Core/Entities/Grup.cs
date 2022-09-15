@@ -13,5 +13,6 @@ namespace TTBS.Core.Entities
         public virtual ICollection<Stenograf> Stenografs { get; set; }
         public StenoGorevTuru StenoGrupTuru { get; set; }
         public virtual ICollection<GrupDetay> GrupDetays { get; set; }
+        public int GrupSıraNo { get; set; }
     }
 }

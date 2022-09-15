@@ -24,7 +24,7 @@ namespace TTBS.Services
         void CreateKomisyon(Komisyon komisyon);
         void CreateGrup(Grup grup);
         bool CreateGrupDetay(GrupDetay grup);
-        void UpdateGrupDetay(DateTime? gidenSaat);
+        GrupDetay UpdateGrupDetay(DateTime? gidenSaat);
         GrupDetay GetGrupDetay();
         IEnumerable<GrupDetay> GetGrupDetayLast();
         IEnumerable<Grup> GetAllGrup(int grupTuru);
@@ -46,7 +46,6 @@ namespace TTBS.Services
         OzelGorevTur GetOzelGorevTurById(Guid id);
         void DeleteOturum(Oturum oturum);
         void UpdateOturum(Oturum oturum);
-        void UpdateBirlesim(Birlesim birlesim);
         IEnumerable<Oturum> GetOturumByBirlesimId(Guid id);
         Guid InsertStenoToplamSure(StenoToplamGenelSure stenoToplamGenelSure);
         void DeleteStenoToplamSure(Guid id);
@@ -56,6 +55,7 @@ namespace TTBS.Services
         double GetStenoSureDailyById(Guid? stenoId);
         IEnumerable<Birlesim> GetAktifGKBirlesim();
         void CreateOturum(Oturum oturum);
+        Grup UpdateNextGrupDetay(DateTime gidenTarih);
     }
     public class GlobalService : BaseService, IGlobalService
     {
@@ -284,12 +284,6 @@ namespace TTBS.Services
             _oturumRepo.Save();
         }
 
-        public void UpdateBirlesim(Birlesim birlesim)
-        {
-            _birlesimRepo.Update(birlesim, CurrentUser.Id);
-            _birlesimRepo.Save();
-        }
-
         public IEnumerable<Birlesim> GetAktifGKBirlesim()
         {
             return _birlesimRepo.Get(x => x.BaslangicTarihi.Value.Date<= DateTime.Now.Date && x.ToplanmaTuru == ToplanmaTuru.GenelKurul && x.ToplanmaDurumu != ToplanmaStatu.Tamamlandı && x.ToplanmaDurumu != ToplanmaStatu.Iptal);
@@ -360,30 +354,43 @@ namespace TTBS.Services
 
         public bool CreateGrupDetay(GrupDetay detay)
         {
-            var grpDetay = _grupDetayRepo.GetFirst();
-            if (grpDetay != null)
+            var grpDetay = _grupDetayRepo.Get(x=>x.GidenGrupSaat.Value.Date == detay.GidenGrupSaat.Value.Date);
+            if (grpDetay != null && grpDetay.Count()>0)
             {
-                grpDetay.IsDeleted = true;
-                _grupDetayRepo.Update(grpDetay);
+                detay.Id = grpDetay.FirstOrDefault().Id;
+                _grupDetayRepo.Update(detay);
                 _grupDetayRepo.Save();
             }
-            _grupDetayRepo.Create(detay);
-            _grupDetayRepo.Save();
-
+            else
+            {
+                _grupDetayRepo.Create(detay);
+                _grupDetayRepo.Save();
+            }
             return true;
         }
 
-        public void UpdateGrupDetay(DateTime? gidenSaat)
+        public GrupDetay UpdateGrupDetay(DateTime? gidenSaat)
         {
-            var grpDetay = _grupDetayRepo.GetFirst();
-            if (grpDetay != null && gidenSaat.HasValue)
+            var grpDetay = _grupDetayRepo.Get(x => x.GidenGrupSaat.Value.Date == gidenSaat.Value.Date);
+            if (grpDetay != null && grpDetay.Count() > 0)
             {
-                DateTime updatedGidenSaat = gidenSaat.Value;
-                grpDetay.GidenGrupSaat = updatedGidenSaat;
-               
-                _grupDetayRepo.Update(grpDetay);
+                grpDetay.FirstOrDefault().GidenGrupSaat = gidenSaat;               
+                _grupDetayRepo.Update(grpDetay.FirstOrDefault());
                 _grupDetayRepo.Save();
             }
+            return grpDetay.FirstOrDefault();
+        }
+
+        public Grup UpdateNextGrupDetay(DateTime gidenTarih)
+        {
+            var grpDetay = _grupDetayRepo.Get(x => x.GidenGrupSaat.Value.Date == DateTime.Now.Date, includeProperties: "Grup");
+            if (grpDetay != null && grpDetay.Count() > 0)
+            {
+                grpDetay.FirstOrDefault().GidenGrupTarih = gidenTarih;
+                _grupDetayRepo.Update(grpDetay.FirstOrDefault());
+                _grupDetayRepo.Save();
+            }
+            return _grupRepo.GetFirst(x=>x.GrupSıraNo == grpDetay.FirstOrDefault().Grup.GrupSıraNo+1);
         }
         public IEnumerable<GrupDetay> GetGrupDetayLast()
         {
@@ -392,7 +399,7 @@ namespace TTBS.Services
         }
         public GrupDetay GetGrupDetay()
         {
-            return _grupDetayRepo.GetFirst(includeProperties: "Grup");
+            return _grupDetayRepo.GetFirst(x => x.GidenGrupSaat.Value.Date == DateTime.Now.Date,includeProperties: "Grup");
         }
     }
 }

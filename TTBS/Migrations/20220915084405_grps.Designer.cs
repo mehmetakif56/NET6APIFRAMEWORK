@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TTBS.Infrastructure;
 
@@ -11,9 +12,10 @@ using TTBS.Infrastructure;
 namespace TTBS.Migrations
 {
     [DbContext(typeof(TTBSContext))]
-    partial class TTBSContextModelSnapshot : ModelSnapshot
+    [Migration("20220915084405_grps")]
+    partial class grps
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -513,11 +515,11 @@ namespace TTBS.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Acan")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("AcanSira")
+                        .HasColumnType("int");
 
-                    b.Property<string>("AcanUzman")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("AcanSiraUzman")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("BaslangicTarihi")
                         .HasColumnType("datetime2");
@@ -534,11 +536,11 @@ namespace TTBS.Migrations
                     b.Property<bool>("KapaliOturum")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Kapatan")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("KapatanSira")
+                        .HasColumnType("int");
 
-                    b.Property<string>("KapatanUzman")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("KapatanSiraUzman")
+                        .HasColumnType("int");
 
                     b.Property<string>("KatipUye_1")
                         .HasColumnType("nvarchar(max)");
