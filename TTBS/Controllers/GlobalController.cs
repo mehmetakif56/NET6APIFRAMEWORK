@@ -245,13 +245,13 @@ namespace TTBS.Controllers
             {
                 try
                 {
+                    var now = DateTime.Now;
+                    model.GidenGrupSaat = model.GidenGrupSaat ?? new DateTime(now.Year, now.Month, now.Day, 18, 0, 0); ;
                     var entity = Mapper.Map<GrupDetay>(model);
                     bool createStatus = _globalService.CreateGrupDetay(entity);                 
                     if (createStatus)
                     {
-                        var gidenTarihResult = _gorevAtamaService.GetGidenGrup();
-                        if (gidenTarihResult != null)
-                            _gorevAtamaService.ActivateGidenGrupByGorevAtama(gidenTarihResult.GidenGrupSaat.Value, gidenTarihResult.GidenGrupSaatUygula);
+                       _gorevAtamaService.ActivateGidenGrupByGorevAtama(entity.GidenGrupPasif,entity.GidenGrupSaat,entity.GidenGrupSaatUygula);
                     }
                     transactionScope.Complete();
                     return Ok(entity);
@@ -265,10 +265,28 @@ namespace TTBS.Controllers
         }
 
         [HttpPost("UpdateGrupDetay")]
-        public IActionResult UpdateGrupDetay(DateTime gidenSaat)
+        public IActionResult UpdateGrupDetay(DateTime? gidenSaat)
         {
-            _globalService.UpdateGrupDetay(gidenSaat);
-            return Ok();
+            using (TransactionScope transactionScope = new TransactionScope())
+            {
+                try
+                {
+                    var now = DateTime.Now;
+                    gidenSaat = gidenSaat ?? new DateTime(now.Year, now.Month, now.Day, 18, 0, 0); ;
+                    var entity = _globalService.UpdateGrupDetay(gidenSaat);
+                    if (entity != null)
+                    {
+                        _gorevAtamaService.ActivateGidenGrupByGorevAtama(entity.GidenGrupPasif, entity.GidenGrupSaat, entity.GidenGrupSaatUygula);
+                    }
+                    transactionScope.Complete();
+                    return Ok();
+                }
+                catch (Exception ex)
+                {
+                    transactionScope.Dispose();
+                    return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                }
+            }
 
         }
         [HttpGet("GetGrupDetay")]

@@ -24,7 +24,7 @@ namespace TTBS.Services
         void CreateKomisyon(Komisyon komisyon);
         void CreateGrup(Grup grup);
         bool CreateGrupDetay(GrupDetay grup);
-        void UpdateGrupDetay(DateTime? gidenSaat);
+        GrupDetay UpdateGrupDetay(DateTime? gidenSaat);
         GrupDetay GetGrupDetay();
         IEnumerable<GrupDetay> GetGrupDetayLast();
         IEnumerable<Grup> GetAllGrup(int grupTuru);
@@ -354,28 +354,30 @@ namespace TTBS.Services
         public bool CreateGrupDetay(GrupDetay detay)
         {
             var grpDetay = _grupDetayRepo.Get(x=>x.GidenGrupSaat.Value.Date == detay.GidenGrupSaat.Value.Date);
-            if (grpDetay != null)
+            if (grpDetay != null && grpDetay.Count()>0)
             {
-                _grupDetayRepo.Update(grpDetay);
+                detay.Id = grpDetay.FirstOrDefault().Id;
+                _grupDetayRepo.Update(detay);
                 _grupDetayRepo.Save();
             }
-            _grupDetayRepo.Create(detay);
-            _grupDetayRepo.Save();
-
+            else
+            {
+                _grupDetayRepo.Create(detay);
+                _grupDetayRepo.Save();
+            }
             return true;
         }
 
-        public void UpdateGrupDetay(DateTime? gidenSaat)
+        public GrupDetay UpdateGrupDetay(DateTime? gidenSaat)
         {
-            var grpDetay = _grupDetayRepo.GetFirst();
-            if (grpDetay != null && gidenSaat.HasValue)
+            var grpDetay = _grupDetayRepo.Get(x => x.GidenGrupSaat.Value.Date == gidenSaat.Value.Date);
+            if (grpDetay != null && grpDetay.Count() > 0)
             {
-                DateTime updatedGidenSaat = gidenSaat.Value;
-                grpDetay.GidenGrupSaat = updatedGidenSaat;
-               
-                _grupDetayRepo.Update(grpDetay);
+                grpDetay.FirstOrDefault().GidenGrupSaat = gidenSaat;               
+                _grupDetayRepo.Update(grpDetay.FirstOrDefault());
                 _grupDetayRepo.Save();
             }
+            return grpDetay.FirstOrDefault();
         }
         public IEnumerable<GrupDetay> GetGrupDetayLast()
         {
