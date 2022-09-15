@@ -42,6 +42,7 @@ namespace TTBS.Services
         string GetKomisyonMinMaxDate(Guid stenoId, DateTime? gorevBasTarih, DateTime? gorevBitisTarih, double sure);
         void UpdateGorevAtama(IEnumerable<GorevAtamaModel> model, ToplanmaTuru toplanmaTuru);
         bool ActivateGidenGrupByGorevAtama(DateTime? gidenGrupSaat, DurumStatu uygula);
+        void UpdateBirlesim(Birlesim birlesim);
     }
     public class GorevAtamaService : BaseService, IGorevAtamaService
     {
@@ -89,6 +90,12 @@ namespace TTBS.Services
 
             return birlesim;
         }
+        public void UpdateBirlesim(Birlesim birlesim)
+        {
+            _birlesimRepo.Update(birlesim, CurrentUser.Id);
+            _birlesimRepo.Save();
+        }
+
         public Guid CreateOturum(Oturum oturum)
         {
             var otr = _oturumRepo.Get(x => x.BirlesimId == oturum.BirlesimId);

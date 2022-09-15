@@ -46,7 +46,6 @@ namespace TTBS.Services
         OzelGorevTur GetOzelGorevTurById(Guid id);
         void DeleteOturum(Oturum oturum);
         void UpdateOturum(Oturum oturum);
-        void UpdateBirlesim(Birlesim birlesim);
         IEnumerable<Oturum> GetOturumByBirlesimId(Guid id);
         Guid InsertStenoToplamSure(StenoToplamGenelSure stenoToplamGenelSure);
         void DeleteStenoToplamSure(Guid id);
@@ -282,12 +281,6 @@ namespace TTBS.Services
         {
             _oturumRepo.Create(oturum);
             _oturumRepo.Save();
-        }
-
-        public void UpdateBirlesim(Birlesim birlesim)
-        {
-            _birlesimRepo.Update(birlesim, CurrentUser.Id);
-            _birlesimRepo.Save();
         }
 
         public IEnumerable<Birlesim> GetAktifGKBirlesim()
