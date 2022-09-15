@@ -8,7 +8,7 @@ namespace TTBS.Models
     public class GorevAtamaModel
     {
         public Guid Id { get; set; }
-        public int SatirNo { get; set; }
+        public int SatırNo { get; set; }
         public Guid BirlesimId { get; set; }
         public Guid StenografId { get; set; }
         public Guid OturumId { get; set; }

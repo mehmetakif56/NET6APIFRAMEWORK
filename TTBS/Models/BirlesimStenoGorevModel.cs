@@ -10,7 +10,7 @@ namespace TTBS.Models
         public ToplanmaBaslatmaStatu ToplanmaBaslatmaStatu { get; set; }
         public ToplanmaTuru ToplanmaTuru { get; set; }
         public StenoGorevTuru StenoGorevTuru { get; set; }
-        public int SatirNo { get; set; }
+        public int SatırNo { get; set; }
   
     }
 }
