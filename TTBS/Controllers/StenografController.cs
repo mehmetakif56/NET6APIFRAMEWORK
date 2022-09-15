@@ -156,7 +156,7 @@ namespace TTBS.Controllers
         [HttpGet("GetAllStenografWithStatisticsByGroupId")]
         public IEnumerable<StenoModel> GetAllStenografWithStatisticsByGroupId(Guid? groupId, Guid yasamaId)
         {
-            var stenoEntity = _stenoService.GetAllStenografByGroupId(groupId);
+            var stenoEntity = _stenoService.GetAllStenografWithStatisticsByGroupId(groupId);
             var model = _mapper.Map<IEnumerable<StenoModel>>(stenoEntity);
             //şimdilik kaldırıldı, tablodan direkt getirelecek, perfomanstan dolayı
             model.ToList().ForEach(x => 
