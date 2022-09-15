@@ -29,6 +29,8 @@ namespace TTBS.Services
         IEnumerable<Birlesim> GetBirlesimByDateAndGroup(DateTime? baslangic, DateTime? bitis, Guid? yasamaId, Guid grup);
         void CreateStenoGroup(Guid stenoId, Guid grupId);
 
+        Stenograf GetStenoBySiraNoAndGorevTuru(int siraNo, StenoGorevTuru stenoGorevTuru);
+
     }
     public class StenografService : BaseService, IStenografService
     {
@@ -385,6 +387,11 @@ namespace TTBS.Services
                 _stenografRepo.Update(steno);
                 _stenografRepo.Save();
             }
+        }
+
+        public Stenograf GetStenoBySiraNoAndGorevTuru(int siraNo, StenoGorevTuru stenoGorevTuru)
+        {
+            return _stenografRepo.Get(p => p.SiraNo == siraNo && p.StenoGorevTuru == stenoGorevTuru).First();
         }
     }
 }

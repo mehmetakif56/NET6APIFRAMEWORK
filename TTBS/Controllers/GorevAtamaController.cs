@@ -439,17 +439,19 @@ namespace TTBS.Controllers
             return Ok();
         }
 
-        private static void SetOturumModifiedStenoInfo(ToplanmaBaslatmaStatu toplanmaBaslatmaStatu, BirlesimStenoGorevModel model, Oturum? oturum)
+        private void SetOturumModifiedStenoInfo(ToplanmaBaslatmaStatu toplanmaBaslatmaStatu, BirlesimStenoGorevModel model, Oturum? oturum)
         {
+           var matchedStenograph= _stenografService.GetStenoBySiraNoAndGorevTuru(model.SatırNo, model.StenoGorevTuru);
+
             if (toplanmaBaslatmaStatu.Equals(ToplanmaBaslatmaStatu.Baslama) || toplanmaBaslatmaStatu.Equals(ToplanmaBaslatmaStatu.DevamEtme))
             {
                 switch (model.StenoGorevTuru)
                 {
                     case StenoGorevTuru.Stenograf:
-                        oturum.AcanSira = model.SatırNo;
+                        oturum.Acan = matchedStenograph.AdSoyad;
                         break;
                     case StenoGorevTuru.Uzman:
-                        oturum.AcanSiraUzman = model.SatırNo;
+                        oturum.AcanUzman = matchedStenograph.AdSoyad;
                         break;
                 }
             }
@@ -458,10 +460,10 @@ namespace TTBS.Controllers
                 switch (model.StenoGorevTuru)
                 {
                     case StenoGorevTuru.Stenograf:
-                        oturum.KapatanSira = model.SatırNo;
+                        oturum.Kapatan = matchedStenograph.AdSoyad;
                         break;
                     case StenoGorevTuru.Uzman:
-                        oturum.KapatanSiraUzman = model.SatırNo;
+                        oturum.KapatanUzman = matchedStenograph.AdSoyad;
                         break;
                 }
             }  
