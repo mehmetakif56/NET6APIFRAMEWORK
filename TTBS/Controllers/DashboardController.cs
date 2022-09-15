@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using TTBS.Core.Entities;
+using TTBS.Core.Enums;
+using TTBS.Models;
 using TTBS.Services;
 
 namespace TTBS.Controllers
@@ -30,10 +32,10 @@ namespace TTBS.Controllers
 
 
         [HttpGet("GetActiveGorevler")]
-        public IEnumerable<GorevAtama> GetActiveGorevler()
+        public IEnumerable<GorevAtamaModel> GetActiveGorevler(ToplanmaTuru toplanmaTuru)
         {
-            var entity = _dashboardService.GetActiveGorevler();
-            var model = _mapper.Map<IEnumerable<GorevAtama>>(entity);
+            var entity = _dashboardService.GetActiveGorevler(toplanmaTuru);
+            var model = _mapper.Map<IEnumerable<GorevAtamaModel>>(entity);
             return model;
         }
     }

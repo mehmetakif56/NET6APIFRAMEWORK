@@ -23,7 +23,6 @@ namespace TTBS.Core.Entities
         public int TurAdedi { get; set; } = 3;
         public ToplanmaStatu ToplanmaDurumu { get; set; }
         public virtual ICollection<Oturum> Oturums { get; set; }
-        public virtual ICollection<GorevAtama> GorevAtamas { get; set; }
         public Guid KomisyonId { get; set; } 
         public Guid? AltKomisyonId { get; set; } 
         public Guid OzelToplanmaId { get; set; }
