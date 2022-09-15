@@ -353,10 +353,9 @@ namespace TTBS.Services
 
         public bool CreateGrupDetay(GrupDetay detay)
         {
-            var grpDetay = _grupDetayRepo.GetFirst();
+            var grpDetay = _grupDetayRepo.Get(x=>x.GidenGrupSaat.Value.Date == detay.GidenGrupSaat.Value.Date);
             if (grpDetay != null)
             {
-                grpDetay.IsDeleted = true;
                 _grupDetayRepo.Update(grpDetay);
                 _grupDetayRepo.Save();
             }
