@@ -58,7 +58,6 @@
     <Compile Include="Entities\Birlesim.cs" />
     <Compile Include="Entities\ClaimEntity.cs" />
     <Compile Include="Entities\Komisyon.cs" />
-    <Compile Include="Entities\GorevAtama.cs" />
     <Compile Include="Entities\StenoIzin.cs" />
     <Compile Include="Entities\UserRoleEntity.cs" />
     <Compile Include="Entities\RoleEntity.cs" />

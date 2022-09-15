@@ -25,12 +25,6 @@ namespace TTBS.Infrastructure
         {
             builder.ToTable("Komisyon");
         }
-
-        private void ConfigureStenoGorev(EntityTypeBuilder<GorevAtama> builder)
-        {
-            builder.ToTable("GorevAtama");
-        }
-
         private void ConfigureStenoIzin(EntityTypeBuilder<StenoIzin> builder)
         {
             builder.ToTable("StenoIzin");

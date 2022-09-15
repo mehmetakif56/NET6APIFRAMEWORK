@@ -18,7 +18,6 @@ namespace TTBS.Infrastructure
         public DbSet<Yasama> Yasamas { get; set; }
         public DbSet<Birlesim> Birlesims { get; set; }
         public DbSet<Komisyon> Komisyons { get; set; }
-        public DbSet<GorevAtama> GorevAtamas { get; set; }
         public DbSet<StenoIzin> StenoIzin { get; set; }
         public DbSet<Stenograf> Stenografs { get; set; }
         public DbSet<Grup> Grups { get; set; }
@@ -44,7 +43,6 @@ namespace TTBS.Infrastructure
             builder.Entity<Komisyon>(ConfigureKomisyon);
             builder.Entity<Donem>(ConfigureDonem);
             builder.Entity<StenoIzin>(ConfigureStenoIzin);
-            builder.Entity<GorevAtama>(ConfigureStenoGorev);
             builder.Entity<Yasama>(ConfigureYasama);
             builder.Entity<Stenograf>(ConfigureStenograf);
             builder.Entity<Grup>(ConfigureGrup);

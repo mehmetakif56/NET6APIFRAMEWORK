@@ -14,7 +14,6 @@ namespace TTBS.Services
     public class ReportService : BaseService, IReportService
     {
         private IRepository<Birlesim> _birlesimRepo;
-        private IRepository<GorevAtama> _stenoGorevRepo;
         private IRepository<GorevAtamaGenelKurul> _genelKurulAtamaRepo;
         private IRepository<GorevAtamaKomisyon> _komisyonAtamaRepo;
         private IRepository<GorevAtamaOzelToplanma> _ozelToplanmaAtamaRepo;
@@ -22,7 +21,6 @@ namespace TTBS.Services
 
 
         public ReportService(IRepository<Birlesim> birlesimRepo, 
-                             IRepository<GorevAtama> stenoGorevRepo,
                              IRepository<GorevAtamaGenelKurul> genelKurulAtamaRepo,
                              IRepository<GorevAtamaKomisyon> komisyonAtamaRepo,
                              IRepository<GorevAtamaOzelToplanma> ozelToplanmaAtamaRepo,
@@ -30,7 +28,6 @@ namespace TTBS.Services
                              IServiceProvider provider) : base(provider)
         {
             _birlesimRepo=birlesimRepo;
-            _stenoGorevRepo = stenoGorevRepo;
             _genelKurulAtamaRepo = genelKurulAtamaRepo;
             _ozelToplanmaAtamaRepo = ozelToplanmaAtamaRepo;
             _komisyonAtamaRepo = komisyonAtamaRepo;
