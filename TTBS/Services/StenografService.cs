@@ -399,7 +399,7 @@ namespace TTBS.Services
 
         public List<OturumStenoInfoModel> GetOturumInfoWithStenograf(Guid birlesimId)
         {
-            var matchedBirlesim = _birlesimRepo.GetById(birlesimId);
+            var matchedBirlesim = _birlesimRepo.GetFirst(x=> x.Id == birlesimId, includeProperties: "Oturums");
             List<OturumStenoInfoModel> oturumStenoInfoModels = new List<OturumStenoInfoModel>();
            
             var birlesimOturums = matchedBirlesim.Oturums;
@@ -413,24 +413,24 @@ namespace TTBS.Services
                     oturumStenoInfoModel.BaslangicTarihi= oturum.BaslangicTarihi.HasValue ? oturum.BaslangicTarihi : null;
                     oturumStenoInfoModel.BitisTarihi = oturum.BitisTarihi.HasValue ? oturum.BitisTarihi : null;                    
 
-                    if (oturum.AcanSira.HasValue)
+                    if (oturum.AcanSira.HasValue && oturum.AcanSira!=0)
                     {
-                     var matchedSteno=   _stenografRepo.Get(p => p.StenoGorevTuru == StenoGorevTuru.Stenograf && p.SiraNo == oturum.AcanSira).First();
+                     var matchedSteno=   _stenografRepo.GetFirst(p => p.StenoGorevTuru == StenoGorevTuru.Stenograf && p.SiraNo == oturum.AcanSira);
                         oturumStenoInfoModel.AcanStenograf = matchedSteno;
                     }
-                    if (oturum.KapatanSira.HasValue)
+                    if (oturum.KapatanSira.HasValue && oturum.KapatanSira != 0)
                     {
-                        var matchedSteno = _stenografRepo.Get(p => p.StenoGorevTuru == StenoGorevTuru.Stenograf && p.SiraNo == oturum.KapatanSira).First();
+                        var matchedSteno = _stenografRepo.GetFirst(p => p.StenoGorevTuru == StenoGorevTuru.Stenograf && p.SiraNo == oturum.KapatanSira);
                         oturumStenoInfoModel.KapatanStenograf = matchedSteno;
                     }
-                    if (oturum.AcanSiraUzman.HasValue)
+                    if (oturum.AcanSiraUzman.HasValue && oturum.AcanSiraUzman != 0)
                     {
-                        var matchedSteno = _stenografRepo.Get(p => p.StenoGorevTuru == StenoGorevTuru.Uzman && p.SiraNo == oturum.AcanSiraUzman).First();
+                        var matchedSteno = _stenografRepo.GetFirst(p => p.StenoGorevTuru == StenoGorevTuru.Uzman && p.SiraNo == oturum.AcanSiraUzman);
                         oturumStenoInfoModel.AcanSiraUzman = matchedSteno;
                     }
-                    if (oturum.KapatanSiraUzman.HasValue)
+                    if (oturum.KapatanSiraUzman.HasValue && oturum.KapatanSiraUzman != 0)
                     {
-                        var matchedSteno = _stenografRepo.Get(p => p.StenoGorevTuru == StenoGorevTuru.Uzman && p.SiraNo == oturum.KapatanSiraUzman).First();
+                        var matchedSteno = _stenografRepo.GetFirst(p => p.StenoGorevTuru == StenoGorevTuru.Uzman && p.SiraNo == oturum.KapatanSiraUzman);
                         oturumStenoInfoModel.KapatanSiraUzman = matchedSteno;
                     }
                     oturumStenoInfoModels.Add(oturumStenoInfoModel);
