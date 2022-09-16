@@ -513,10 +513,10 @@ namespace TTBS.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("AcanSira")
+                    b.Property<int?>("AcanSira")
                         .HasColumnType("int");
 
-                    b.Property<int>("AcanSiraUzman")
+                    b.Property<int?>("AcanSiraUzman")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("BaslangicTarihi")
@@ -534,10 +534,10 @@ namespace TTBS.Migrations
                     b.Property<bool>("KapaliOturum")
                         .HasColumnType("bit");
 
-                    b.Property<int>("KapatanSira")
+                    b.Property<int?>("KapatanSira")
                         .HasColumnType("int");
 
-                    b.Property<int>("KapatanSiraUzman")
+                    b.Property<int?>("KapatanSiraUzman")
                         .HasColumnType("int");
 
                     b.Property<string>("KatipUye_1")

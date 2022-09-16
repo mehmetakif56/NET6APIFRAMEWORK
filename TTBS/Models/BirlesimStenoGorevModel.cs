@@ -11,6 +11,7 @@ namespace TTBS.Models
         public ToplanmaTuru ToplanmaTuru { get; set; }
         public StenoGorevTuru StenoGorevTuru { get; set; }
         public int SatırNo { get; set; }
-  
+        public Guid StenografId { get; set; }
+
     }
 }

@@ -442,7 +442,7 @@ namespace TTBS.Controllers
 
         private void SetOturumModifiedStenoInfo(ToplanmaBaslatmaStatu toplanmaBaslatmaStatu, BirlesimStenoGorevModel model, Oturum? oturum)
         {
-           var matchedStenograph= _stenografService.GetStenoBySiraNoAndGorevTuru(model.SatırNo, model.StenoGorevTuru);
+           Stenograf matchedStenograph= _stenografService.GetStenoById(model.StenografId);
 
             if (toplanmaBaslatmaStatu.Equals(ToplanmaBaslatmaStatu.Baslama) || toplanmaBaslatmaStatu.Equals(ToplanmaBaslatmaStatu.DevamEtme))
             {

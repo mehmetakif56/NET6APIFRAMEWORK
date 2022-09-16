@@ -31,6 +31,8 @@ namespace TTBS.Services
 
         Stenograf GetStenoBySiraNoAndGorevTuru(int siraNo, StenoGorevTuru stenoGorevTuru);
         IEnumerable<Stenograf> GetAllStenografWithStatisticsByGroupId(Guid? groupId);
+        Stenograf GetStenoById(Guid stenografId);
+        List<OturumStenoInfoModel> GetOturumInfoWithStenograf(Guid birlesimId);
     }
     public class StenografService : BaseService, IStenografService
     {
@@ -48,7 +50,7 @@ namespace TTBS.Services
         private readonly IGorevAtamaGKMBusiness _gorevAtamaGKMRepo;
         private readonly IGorevAtamaKomMBusiness _gorevAtamaKomMRepo;
         public readonly IMapper _mapper;
-        public StenografService(IRepository<StenoIzin> stenoIzinRepo, 
+        public StenografService(IRepository<StenoIzin> stenoIzinRepo,
                                 IUnitOfWork unitWork,
                                 IRepository<Stenograf> stenografRepo,
                                 IRepository<StenografBeklemeSure> stenoBeklemeSure,
@@ -173,7 +175,7 @@ namespace TTBS.Services
                 return IzınTuru.Bulunmuyor;
             }
         }
-       
+
         public DurumStatu GetStenoGidenGrupDurum(Guid stenoId)
         {
             //var result = _stenoGrupRepo.Get(x => x.StenoId == stenoId);
@@ -187,7 +189,7 @@ namespace TTBS.Services
             _stenoIzinRepo.Create(entity, CurrentUser.Id);
             _stenoIzinRepo.Save();
 
-            var result = _genelKurulAtamaRepo.Get(x => x.GorevBitisTarihi.Value.Date ==entity.BaslangicTarihi.Value.Date);
+            var result = _genelKurulAtamaRepo.Get(x => x.GorevBitisTarihi.Value.Date == entity.BaslangicTarihi.Value.Date);
             var resultKom = _komisyonAtamaRepo.Get(x => x.GorevBitisTarihi.Value.Date == entity.BaslangicTarihi.Value.Date);
             var resultOzel = _ozelToplanmaAtamaRepo.Get(x => x.GorevBitisTarihi.Value.Date == entity.BaslangicTarihi.Value.Date);
 
@@ -195,7 +197,7 @@ namespace TTBS.Services
             {
                 var modelList = _mapper.Map<List<GorevAtamaModel>>(result);
                 modelList.Where(x => x.StenografId == entity.StenografId && x.GorevBasTarihi.Value >= entity.BaslangicTarihi && x.GorevBasTarihi.Value <= entity.BitisTarihi).ToList().
-                          ForEach(x=>x.StenoIzinTuru = entity.IzinTuru);
+                          ForEach(x => x.StenoIzinTuru = entity.IzinTuru);
                 var entityList = _mapper.Map<List<GorevAtamaGenelKurul>>(BirlesimIzinHesaplama(modelList));
                 _genelKurulAtamaRepo.Update(entityList);
             }
@@ -248,10 +250,10 @@ namespace TTBS.Services
             return lst;
         }
 
-     
+
         public IEnumerable<Stenograf> GetAllStenografByGroupId(Guid? groupId)
         {
-            if(groupId == null)
+            if (groupId == null)
                 return _stenografRepo.Get();
 
             return _stenografRepo.Get(x => x.GrupId == groupId);
@@ -262,7 +264,7 @@ namespace TTBS.Services
             if (groupId == null)
                 return _stenografRepo.Get(x => !x.GorevAtamaKomisyons.Where(x => x.GorevStatu != GorevStatu.Planlandı || x.GorevStatu != GorevStatu.DevamEdiyor).Select(x => x.StenografId).Contains(x.Id));
 
-            return _stenografRepo.Get(x => !x.GorevAtamaKomisyons.Where(x=>x.GorevStatu!= GorevStatu.Planlandı || x.GorevStatu != GorevStatu.DevamEdiyor).Select(x=>x.StenografId).Contains(x.Id) &&  x.GrupId == groupId);
+            return _stenografRepo.Get(x => !x.GorevAtamaKomisyons.Where(x => x.GorevStatu != GorevStatu.Planlandı || x.GorevStatu != GorevStatu.DevamEdiyor).Select(x => x.StenografId).Contains(x.Id) && x.GrupId == groupId);
         }
 
         public IEnumerable<Stenograf> GetStenoGorevByTur(int gorevTuru)
@@ -270,7 +272,7 @@ namespace TTBS.Services
             return _stenografRepo.Get(x => (int)x.StenoGorevTuru == gorevTuru);
         }
 
-    
+
         public IEnumerable<Birlesim> GetBirlesimByDateAndTur(DateTime basTarihi, DateTime bitTarihi, int toplanmaTuru)
         {
             return _birlesimRepo.Get(x => x.BaslangicTarihi >= basTarihi && x.BaslangicTarihi <= bitTarihi && (int)x.ToplanmaTuru == toplanmaTuru, includeProperties: "Oturums");
@@ -278,7 +280,7 @@ namespace TTBS.Services
 
         public IEnumerable<Birlesim> GetBirlesimByDate(DateTime basTarihi, int toplanmaTuru)
         {
-            if(toplanmaTuru == 1)
+            if (toplanmaTuru == 1)
             {
                 return _birlesimRepo.Get(x => (int)x.ToplanmaTuru == toplanmaTuru, includeProperties: "Oturums,Komisyon").Where(x => x.BaslangicTarihi.Value.ToShortDateString() == basTarihi.ToShortDateString());
             }
@@ -388,6 +390,55 @@ namespace TTBS.Services
         public Stenograf GetStenoBySiraNoAndGorevTuru(int siraNo, StenoGorevTuru stenoGorevTuru)
         {
             return _stenografRepo.Get(p => p.SiraNo == siraNo && p.StenoGorevTuru == stenoGorevTuru).First();
+        }
+
+        public Stenograf GetStenoById(Guid stenografId)
+        {
+            return _stenografRepo.Get(p => p.Id == stenografId).First();
+        }
+
+        public List<OturumStenoInfoModel> GetOturumInfoWithStenograf(Guid birlesimId)
+        {
+            var matchedBirlesim = _birlesimRepo.GetById(birlesimId);
+            List<OturumStenoInfoModel> oturumStenoInfoModels = new List<OturumStenoInfoModel>();
+           
+            var birlesimOturums = matchedBirlesim.Oturums;
+            if (birlesimOturums != null)
+            {
+                foreach (Oturum oturum in birlesimOturums)
+                {
+                    OturumStenoInfoModel oturumStenoInfoModel = new OturumStenoInfoModel();
+
+                    oturumStenoInfoModel.BirlesimId = birlesimId;
+                    oturumStenoInfoModel.BaslangicTarihi= oturum.BaslangicTarihi.HasValue ? oturum.BaslangicTarihi : null;
+                    oturumStenoInfoModel.BitisTarihi = oturum.BitisTarihi.HasValue ? oturum.BitisTarihi : null;                    
+
+                    if (oturum.AcanSira.HasValue)
+                    {
+                     var matchedSteno=   _stenografRepo.Get(p => p.StenoGorevTuru == StenoGorevTuru.Stenograf && p.SiraNo == oturum.AcanSira).First();
+                        oturumStenoInfoModel.AcanStenograf = matchedSteno;
+                    }
+                    if (oturum.KapatanSira.HasValue)
+                    {
+                        var matchedSteno = _stenografRepo.Get(p => p.StenoGorevTuru == StenoGorevTuru.Stenograf && p.SiraNo == oturum.KapatanSira).First();
+                        oturumStenoInfoModel.KapatanStenograf = matchedSteno;
+                    }
+                    if (oturum.AcanSiraUzman.HasValue)
+                    {
+                        var matchedSteno = _stenografRepo.Get(p => p.StenoGorevTuru == StenoGorevTuru.Uzman && p.SiraNo == oturum.AcanSiraUzman).First();
+                        oturumStenoInfoModel.AcanSiraUzman = matchedSteno;
+                    }
+                    if (oturum.KapatanSiraUzman.HasValue)
+                    {
+                        var matchedSteno = _stenografRepo.Get(p => p.StenoGorevTuru == StenoGorevTuru.Uzman && p.SiraNo == oturum.KapatanSiraUzman).First();
+                        oturumStenoInfoModel.KapatanSiraUzman = matchedSteno;
+                    }
+                    oturumStenoInfoModels.Add(oturumStenoInfoModel);
+                }
+            }
+
+            return oturumStenoInfoModels;
+
         }
     }
 }
