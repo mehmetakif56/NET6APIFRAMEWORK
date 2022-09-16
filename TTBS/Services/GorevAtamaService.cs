@@ -169,7 +169,7 @@ namespace TTBS.Services
         {
             var result = _gorevAtamaGKRepo.Get(x => x.BirlesimId == birlesimId, includeProperties: "Stenograf").OrderBy(x => x.SatırNo).ToList();
             var stenoList = new List<GorevAtamaModel>();
-            if (stenoList != null && stenoList.Count > 0)
+            if (result != null && result.Count > 0)
             {
                 var grpList = result.GroupBy(c => new { c.StenografId, c.Stenograf.GrupId }).Select(x => new { StenografId = x.Key.StenografId, GrupId = x.Key.GrupId });
                 var gorevBitis = result.Where(x => x.GorevStatu != GorevStatu.Iptal).LastOrDefault().GorevBitisTarihi;
