@@ -162,10 +162,10 @@ namespace TTBS.Controllers
             //şimdilik kaldırıldı, tablodan direkt getirelecek, perfomanstan dolayı
             model.ToList().ForEach(x =>
             {
-                x.GorevStatu = -1;
-                x.GunlukGorevSuresi = _globalService.GetStenoSureDailyById(x.Id);
-                x.HaftalikGorevSuresi = (int)_globalService.GetStenoSureWeeklyById(x.Id);
-                x.YillikGorevSuresi = (int)_globalService.GetStenoSureYearlyById(x.Id, yasamaId);
+                var statistic = _globalService.GetStenoSureModelById(x.Id, yasamaId);
+                x.GunlukGorevSuresi = statistic.GunlukGorevSuresi;
+                x.HaftalikGorevSuresi = statistic.HaftalikGorevSuresi;
+                x.YillikGorevSuresi = statistic.YillikGorevSuresi;
                 x.StenoIzinTuru = _stenoService.GetStenoIzinTodayByStenoId(x.Id);
             });
             return model;

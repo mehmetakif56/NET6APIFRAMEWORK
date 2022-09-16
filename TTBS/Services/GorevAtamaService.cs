@@ -20,7 +20,7 @@ namespace TTBS.Services
         void UpdateStenoAtamaGK(List<GorevAtamaGenelKurul> gorevAtamaList);
         void CreateStenoAtamaKom(List<GorevAtamaKomisyon> gorevAtamaList);
         Birlesim UpdateBirlesimGorevAtama(Guid birlesimId, int turAdedi);
-        List<GorevAtamaModel> AddStenoGorevAtamaKomisyon(IEnumerable<Guid> stenografIds, Guid birlesimId, Guid oturumId);
+        List<GorevAtamaModel> AddStenoGorevAtamaKomisyon(IEnumerable<StenoKomisyonGrupModel> stenografIds, Guid birlesimId, Guid oturumId);
         void ApproveStenografKomisyon();
         void CancelStenografKomisyon();
         List<GorevAtamaModel> CreateStenoGorevDonguKomisyon(Guid birlesimId, Guid oturumId);
@@ -37,8 +37,8 @@ namespace TTBS.Services
         void UpdateStenoGorevTamamla(Guid birlesimId, ToplanmaTuru toplanmaTuru, int satırNo);
         IEnumerable<GorevAtamaKomisyon> GetAssignedStenoByBirlesimId(Guid birlesimId);
         IzınTuru GetStenoIzinByGorevBasTarih(Guid stenoId, DateTime? gorevBasTarih);
-        GrupDetay GetGidenGrup();
-        DateTime GidenGrupHesaplama(ToplanmaTuru toplanmaTuru, double sure);
+        GrupDetay GetGidenGrup(Guid grupId);
+        DateTime GidenGrupHesaplama(ToplanmaTuru toplanmaTuru, double sure,Guid grupId);
         string GetKomisyonMinMaxDate(Guid stenoId, DateTime? gorevBasTarih, DateTime? gorevBitisTarih, double sure);
         void UpdateGorevAtama(IEnumerable<GorevAtamaModel> model, ToplanmaTuru toplanmaTuru);
         bool ActivateGidenGrupByGorevAtama(DurumStatu gidenGrupPasif, DateTime? gidenGrupSaat, DurumStatu uygula);
@@ -135,15 +135,14 @@ namespace TTBS.Services
         }
         public List<GorevAtamaModel> CreateStenoGorevDonguKomisyon(Guid birlesimId, Guid oturumId)
         {
-           var result =_gorevAtamaKomRepo.Get(x => x.BirlesimId == birlesimId).OrderBy(x => x.SatırNo).ToList();
+           var result =_gorevAtamaKomRepo.Get(x => x.BirlesimId == birlesimId,includeProperties:"Stenograf").OrderBy(x => x.SatırNo).ToList();
             var stenoList = new List<GorevAtamaModel>();
             if (stenoList != null && stenoList.Count > 0)
             {
                 _mapper.Map(result, stenoList);
-                var grpList = stenoList.GroupBy(c => c.StenografId).Select(x => new { StenografId = x.Key });
+                var grpList = result.GroupBy(c => new { c.StenografId, c.Stenograf.GrupId }).Select(x => new { StenografId = x.Key.StenografId,GrupId =x.Key.GrupId });
                 var gorevBitis = stenoList.Where(x => x.GorevStatu != GorevStatu.Iptal).LastOrDefault().GorevBitisTarihi;
                 var refSatırNo = stenoList.LastOrDefault().SatırNo;
-                var gidenGrupResult = GetGidenGrup();
                 int firsRec = 1;               
                 foreach (var item in grpList)
                 {
@@ -157,8 +156,8 @@ namespace TTBS.Services
                     newEntity.SatırNo = refSatırNo + firsRec;
                     gorevBitis = newEntity.GorevBitisTarihi;
                     newEntity.StenoIzinTuru = GetStenoIzinByGorevBasTarih(item.StenografId, newEntity.GorevBasTarihi);
-                    newEntity.GidenGrupMu = GidenGrupHesaplama(ToplanmaTuru.Komisyon, newEntity.StenoSure) != DateTime.MinValue &&
-                    newEntity.GorevBasTarihi >= GidenGrupHesaplama(ToplanmaTuru.Komisyon, newEntity.StenoSure) ? true : false;
+                    newEntity.GidenGrupMu = GidenGrupHesaplama(ToplanmaTuru.Komisyon, newEntity.StenoSure,(Guid)item.GrupId) != DateTime.MinValue &&
+                    newEntity.GorevBasTarihi >= GidenGrupHesaplama(ToplanmaTuru.Komisyon, newEntity.StenoSure,(Guid)item.GrupId) ? true : false;
                     newEntity.GidenGrup = newEntity.GidenGrupMu ? "GidenGrup" : string.Empty;
                     stenoList.Add(newEntity);
                     firsRec++;
@@ -169,15 +168,14 @@ namespace TTBS.Services
 
         public List<GorevAtamaModel> CreateStenoGorevDonguGenelKurul(Guid birlesimId, Guid oturumId,StenoGorevTuru gorevTuru)
         {
-            var result = _gorevAtamaGKRepo.Get(x => x.BirlesimId == birlesimId).OrderBy(x => x.SatırNo).ToList();
+            var result = _gorevAtamaGKRepo.Get(x => x.BirlesimId == birlesimId, includeProperties: "Stenograf").OrderBy(x => x.SatırNo).ToList();
             var stenoList = new List<GorevAtamaModel>();
             if (stenoList != null && stenoList.Count > 0)
             {
                 _mapper.Map(result, stenoList);
-                var grpList = stenoList.GroupBy(c => c.StenografId).Select(x => new { StenografId = x.Key });
+                var grpList = result.GroupBy(c => new { c.StenografId, c.Stenograf.GrupId }).Select(x => new { StenografId = x.Key.StenografId, GrupId = x.Key.GrupId });
                 var gorevBitis = stenoList.Where(x => x.GorevStatu != GorevStatu.Iptal).LastOrDefault().GorevBitisTarihi;
                 var refSatırNo = stenoList.LastOrDefault().SatırNo;
-                var gidenGrupResult = GetGidenGrup();
                 int firsRec = 1;
                 foreach (var item in grpList)
                 {
@@ -192,8 +190,8 @@ namespace TTBS.Services
                     gorevBitis = newEntity.GorevBitisTarihi;
                     newEntity.StenoIzinTuru = GetStenoIzinByGorevBasTarih(item.StenografId, newEntity.GorevBasTarihi);
                     newEntity.KomisyonAd = gorevTuru == StenoGorevTuru.Stenograf ? GetKomisyonMinMaxDate(item.StenografId, newEntity.GorevBasTarihi, newEntity.GorevBitisTarihi, newEntity.StenoSure) : null;
-                    newEntity.GidenGrupMu = GidenGrupHesaplama(ToplanmaTuru.GenelKurul, newEntity.StenoSure) != DateTime.MinValue &&
-                    newEntity.GorevBasTarihi >= GidenGrupHesaplama(ToplanmaTuru.GenelKurul, newEntity.StenoSure) ? true : false;
+                    newEntity.GidenGrupMu = GidenGrupHesaplama(ToplanmaTuru.GenelKurul, newEntity.StenoSure,(Guid)item.GrupId) != DateTime.MinValue &&
+                    newEntity.GorevBasTarihi >= GidenGrupHesaplama(ToplanmaTuru.GenelKurul, newEntity.StenoSure,(Guid)item.GrupId) ? true : false;
                     newEntity.GidenGrup = newEntity.GidenGrupMu ? "GidenGrup" : string.Empty;
                     stenoList.Add(newEntity);
                     firsRec++;
@@ -201,7 +199,7 @@ namespace TTBS.Services
             }
             return stenoList;
         }
-        public List<GorevAtamaModel> AddStenoGorevAtamaKomisyon(IEnumerable<Guid> stenografIds, Guid birlesimId, Guid oturumId)
+        public List<GorevAtamaModel> AddStenoGorevAtamaKomisyon(IEnumerable<StenoKomisyonGrupModel> stenografIds, Guid birlesimId, Guid oturumId)
         {
             var result = _gorevAtamaKomRepo.Get(x => x.BirlesimId == birlesimId).OrderBy(x => x.SatırNo);
             var stenoList = new List<GorevAtamaModel>();
@@ -230,7 +228,7 @@ namespace TTBS.Services
                             var nwGrv = new GorevAtamaModel
                             {
                                 SatırNo = deger + 1,
-                                StenografId = steno,
+                                StenografId = steno.Id,
                                 BirlesimId = birlesimId,
                                 OturumId = oturumId,
                                 StenoSure = refSteno.StenoSure,
@@ -876,9 +874,9 @@ namespace TTBS.Services
                 izinTur = result.FirstOrDefault();
             return izinTur;
         }
-        public GrupDetay GetGidenGrup()
+        public GrupDetay GetGidenGrup(Guid grupId)
         {
-            return _grupDetayRepo.Get(x => x.GidenGrupPasif == DurumStatu.Hayır && x.GidenGrupSaat.HasValue && x.GidenGrupSaat.Value.Date == DateTime.Now.Date).FirstOrDefault();
+            return _grupDetayRepo.Get(x => x.GrupId == grupId && x.GidenGrupPasif == DurumStatu.Hayır && x.GidenGrupSaat.HasValue && x.GidenGrupSaat.Value.Date == DateTime.Now.Date).FirstOrDefault();
         }
         public string GetKomisyonMinMaxDate(Guid stenoId, DateTime? gorevBasTarih, DateTime? gorevBitisTarih, double sure)
         {
@@ -935,10 +933,10 @@ namespace TTBS.Services
                 }
             }
         }
-        public DateTime GidenGrupHesaplama(ToplanmaTuru toplanmaTuru, double sure)
+        public DateTime GidenGrupHesaplama(ToplanmaTuru toplanmaTuru, double sure,Guid grupId)
         {
             var gidenGrupSaat = DateTime.MinValue;
-            var gidenTarihResult = GetGidenGrup();
+            var gidenTarihResult = GetGidenGrup(grupId);
             if (gidenTarihResult != null)
             {
                 if (gidenTarihResult.GidenGrupSaatUygula == DurumStatu.Evet)
