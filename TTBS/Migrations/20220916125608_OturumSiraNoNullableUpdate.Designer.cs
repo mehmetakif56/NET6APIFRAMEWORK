@@ -12,8 +12,8 @@ using TTBS.Infrastructure;
 namespace TTBS.Migrations
 {
     [DbContext(typeof(TTBSContext))]
-    [Migration("20220916080505_OturumSiraNoUpdate")]
-    partial class OturumSiraNoUpdate
+    [Migration("20220916125608_OturumSiraNoNullableUpdate")]
+    partial class OturumSiraNoNullableUpdate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -515,10 +515,10 @@ namespace TTBS.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("AcanSira")
+                    b.Property<int?>("AcanSira")
                         .HasColumnType("int");
 
-                    b.Property<int>("AcanSiraUzman")
+                    b.Property<int?>("AcanSiraUzman")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("BaslangicTarihi")
@@ -536,10 +536,10 @@ namespace TTBS.Migrations
                     b.Property<bool>("KapaliOturum")
                         .HasColumnType("bit");
 
-                    b.Property<int>("KapatanSira")
+                    b.Property<int?>("KapatanSira")
                         .HasColumnType("int");
 
-                    b.Property<int>("KapatanSiraUzman")
+                    b.Property<int?>("KapatanSiraUzman")
                         .HasColumnType("int");
 
                     b.Property<string>("KatipUye_1")

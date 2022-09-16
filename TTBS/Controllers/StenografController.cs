@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using TTBS.Core.Entities;
 using TTBS.Core.Enums;
 using TTBS.Models;
@@ -12,12 +13,12 @@ namespace TTBS.Controllers
     public class StenografController : BaseController<StenografController>
     {
         private readonly IStenografService _stenoService;
-        private readonly IGlobalService _globalService;   
+        private readonly IGlobalService _globalService;
         //private readonly IMongoDBService _mongoDBService;
         private readonly ILogger<StenografController> _logger;
         public readonly IMapper _mapper;
 
-        public StenografController(IStenografService stenoService, IGlobalService globalService,ILogger<StenografController> logger, IMapper mapper)
+        public StenografController(IStenografService stenoService, IGlobalService globalService, ILogger<StenografController> logger, IMapper mapper)
         {
             _stenoService = stenoService;
             _globalService = globalService;
@@ -106,7 +107,7 @@ namespace TTBS.Controllers
         }
 
         [HttpGet("GetStenoIzinBetweenDateAndStenograf")]
-        public StenoIzınCountModel GetStenoIzinBetweenDateAndStenograf(DateTime basTarihi,DateTime bitTarihi,string? field,string? sortOrder, int? izinTur,Guid? stenograf, int pageIndex, int pagesize)
+        public StenoIzınCountModel GetStenoIzinBetweenDateAndStenograf(DateTime basTarihi, DateTime bitTarihi, string? field, string? sortOrder, int? izinTur, Guid? stenograf, int pageIndex, int pagesize)
         {
             var stenoEntity = _stenoService.GetStenoIzinBetweenDateAndStenograf(basTarihi, bitTarihi, field, sortOrder, izinTur, stenograf, pageIndex, pagesize);
             //var model = _mapper.Map<IEnumerable<StenoIzinModel>>(stenoEntity.StenoIzinModels);
@@ -126,7 +127,7 @@ namespace TTBS.Controllers
             {
                 return BadRequest(ex.Message);
             }
-           
+
         }
         #endregion
 
@@ -159,12 +160,12 @@ namespace TTBS.Controllers
             var stenoEntity = _stenoService.GetAllStenografWithStatisticsByGroupId(groupId);
             var model = _mapper.Map<IEnumerable<StenoModel>>(stenoEntity);
             //şimdilik kaldırıldı, tablodan direkt getirelecek, perfomanstan dolayı
-            model.ToList().ForEach(x => 
-            { 
-                x.GorevStatu = -1;
-                x.GunlukGorevSuresi = _globalService.GetStenoSureDailyById(x.Id);
-                x.HaftalikGorevSuresi = (int)_globalService.GetStenoSureWeeklyById(x.Id);
-                x.YillikGorevSuresi = (int)_globalService.GetStenoSureYearlyById(x.Id, yasamaId);
+            model.ToList().ForEach(x =>
+            {
+                var statistic = _globalService.GetStenoSureModelById(x.Id, yasamaId);
+                x.GunlukGorevSuresi = statistic.GunlukGorevSuresi;
+                x.HaftalikGorevSuresi = statistic.HaftalikGorevSuresi;
+                x.YillikGorevSuresi = statistic.YillikGorevSuresi;
                 x.StenoIzinTuru = _stenoService.GetStenoIzinTodayByStenoId(x.Id);
             });
             return model;
@@ -174,9 +175,10 @@ namespace TTBS.Controllers
         public List<StenoGrupViewModel> GetAllStenografGroup(int gorevTur)
         {
             var stenoEntity = _stenoService.GetAllStenografGroup(gorevTur);
-            var lst =new List<StenoGrupViewModel>();
+            var lst = new List<StenoGrupViewModel>();
 
-            foreach (var item in stenoEntity.GroupBy(c => new {
+            foreach (var item in stenoEntity.GroupBy(c => new
+            {
                 c.Id,
                 c.Ad,
                 c.StenoGrupTuru
@@ -187,9 +189,9 @@ namespace TTBS.Controllers
                 StenoGrupTuru = gcs.Key.StenoGrupTuru
             }))
             {
-                lst.Add(new StenoGrupViewModel { GrupId =item.GrupId,GrupName =item.GrupName,StenoGrupTuru =item.StenoGrupTuru} );
+                lst.Add(new StenoGrupViewModel { GrupId = item.GrupId, GrupName = item.GrupName, StenoGrupTuru = item.StenoGrupTuru });
             }
-            foreach (var item in lst) 
+            foreach (var item in lst)
             {
                 var steno = stenoEntity.SelectMany(x => x.Stenografs).Where(x => x.GrupId == item.GrupId).Select(cl => new StenoViewModel
                 {
@@ -199,7 +201,7 @@ namespace TTBS.Controllers
                     StenoGorevTuru = cl.StenoGorevTuru
                 }).ToList();
                 item.StenoViews = new List<StenoViewModel>();
-                foreach (var item2 in steno.Where(x=>(int)x.StenoGorevTuru == gorevTur))
+                foreach (var item2 in steno.Where(x => (int)x.StenoGorevTuru == gorevTur))
                 {
                     item.StenoViews.Add(item2);
                 }
@@ -227,7 +229,7 @@ namespace TTBS.Controllers
 
             return Ok();
         }
-       
+
         [HttpGet("GetAllStenoGrupNotInclueded")]
         public IEnumerable<StenoModel> GetAllStenoGrupNotInclueded()
         {
@@ -260,7 +262,7 @@ namespace TTBS.Controllers
                 var entityList = Mapper.Map<List<Stenograf>>(model);
                 _stenoService.UpdateStenoSiraNo(entityList);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -285,6 +287,22 @@ namespace TTBS.Controllers
                 return BadRequest(ex.Message);
             }
             return Ok();
+        }
+
+
+        [HttpGet("GetOturumInfoWithStenograf")]
+        public ActionResult<List<OturumStenoInfoModel>> GetOturumInfoWithStenograf(Guid birlesimId)
+        {
+            try
+            {
+                var oturumStenoInfoModels = _stenoService.GetOturumInfoWithStenograf(birlesimId);
+
+                return Ok(oturumStenoInfoModels);
+            }
+            catch (Exception exception)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, exception.Message);
+            }
         }
     }
 }
