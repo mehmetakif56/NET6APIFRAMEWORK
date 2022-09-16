@@ -449,10 +449,10 @@ namespace TTBS.Controllers
                 switch (model.StenoGorevTuru)
                 {
                     case StenoGorevTuru.Stenograf:
-                        oturum.Acan = matchedStenograph.AdSoyad;
+                        oturum.AcanSira = matchedStenograph.SiraNo;
                         break;
                     case StenoGorevTuru.Uzman:
-                        oturum.AcanUzman = matchedStenograph.AdSoyad;
+                        oturum.AcanSiraUzman = matchedStenograph.SiraNo;
                         break;
                 }
             }
@@ -461,10 +461,10 @@ namespace TTBS.Controllers
                 switch (model.StenoGorevTuru)
                 {
                     case StenoGorevTuru.Stenograf:
-                        oturum.Kapatan = matchedStenograph.AdSoyad;
+                        oturum.KapatanSira = matchedStenograph.SiraNo;
                         break;
                     case StenoGorevTuru.Uzman:
-                        oturum.KapatanUzman = matchedStenograph.AdSoyad;
+                        oturum.KapatanSiraUzman = matchedStenograph.SiraNo;
                         break;
                 }
             }  
