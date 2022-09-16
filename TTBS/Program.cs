@@ -59,7 +59,7 @@ builder.Services.AddCors(options =>
                           policy =>
                           {
                               policy.WithOrigins("http://localhost:4200",
-                                                  "https://localhost:4200", "http://10.8.132.63:7111")
+                                                  "https://localhost:4200","http://10.8.132.63:7111/ttbsfrontend", "http://10.8.132.63:7111/")
                                                   .AllowAnyHeader()
                                                   .AllowAnyMethod();
                           });
