@@ -32,8 +32,8 @@ namespace TTBS.Services
         void DeleteGorevByBirlesimIdAndStenoId(Guid birlesimId, Guid stenografId, ToplanmaTuru toplanmaTuru);
         void UpdateBirlesimStenoGorevBaslama(Guid birlesimId, DateTime basTarih, ToplanmaTuru toplanmaTuru);
         void UpdateBirlesimStenoGorevDevamEtme(Guid birlesimId, DateTime basTarih, DateTime oturumKapanmaTarihi, Guid oturumId, ToplanmaTuru toplanmaTuru);
-        List<GorevAtamaModel> UpdateGorevDurumByBirlesimAndSteno(Guid birlesimId, Guid stenoId, ToplanmaTuru toplanmaTuru);
-        List<GorevAtamaModel> UpdateGorevDurumById(Guid id, Guid birlesimId, ToplanmaTuru toplanmaTuru);
+        List<GorevAtamaModel> UpdateGorevDurumByBirlesimAndSteno(Guid birlesimId, Guid stenoId, ToplanmaTuru toplanmaTuru, StenoGorevTuru gorevTuru);
+        List<GorevAtamaModel> UpdateGorevDurumById(Guid id, Guid birlesimId, ToplanmaTuru toplanmaTuru,StenoGorevTuru gorevTuru);
         void UpdateStenoGorevTamamla(Guid birlesimId, ToplanmaTuru toplanmaTuru, int satırNo);
         IEnumerable<GorevAtamaKomisyon> GetAssignedStenoByBirlesimId(Guid birlesimId);
         IzınTuru GetStenoIzinByGorevBasTarih(Guid stenoId, DateTime? gorevBasTarih);
@@ -797,9 +797,9 @@ namespace TTBS.Services
                 _birlesimRepo.Save();
             }
         }
-        public List<GorevAtamaModel> UpdateGorevDurumByBirlesimAndSteno(Guid birlesimId, Guid stenoId, ToplanmaTuru toplanmaTuru)
+        public List<GorevAtamaModel> UpdateGorevDurumByBirlesimAndSteno(Guid birlesimId, Guid stenoId, ToplanmaTuru toplanmaTuru,StenoGorevTuru gorevTuru)
         {
-            var allRresult = UpdateGorevDurumModelList(birlesimId, toplanmaTuru);
+            var allRresult = UpdateGorevDurumModelList(birlesimId, toplanmaTuru, gorevTuru);
             if (allRresult != null && allRresult.Count() > 0)
             {
                 var resultPlan = allRresult.Where(x => x.StenografId == stenoId && x.GorevStatu == GorevStatu.Planlandı);
@@ -831,26 +831,26 @@ namespace TTBS.Services
                 _komisyonOnayRepo.Save();
             }
         }
-        private List<GorevAtamaModel> UpdateGorevDurumModelList(Guid birlesimId, ToplanmaTuru toplanmaTuru)
+        private List<GorevAtamaModel> UpdateGorevDurumModelList(Guid birlesimId, ToplanmaTuru toplanmaTuru, StenoGorevTuru gorevTuru)
         {
             var result = new List<GorevAtamaModel>();
             if (toplanmaTuru == ToplanmaTuru.GenelKurul)
             {
-                result = _mapper.Map<List<GorevAtamaModel>>(_gorevAtamaGKRepo.Get(x => x.BirlesimId == birlesimId && x.GorevBasTarihi >= DateTime.Now)); ;
+                result = _mapper.Map<List<GorevAtamaModel>>(_gorevAtamaGKRepo.Get(x => x.BirlesimId == birlesimId && x.StenoGorevTuru == StenoGorevTuru.Stenograf && x.GorevBasTarihi >= DateTime.Now)); 
             }
             else if (toplanmaTuru == ToplanmaTuru.Komisyon)
             {
-                result = _mapper.Map<List<GorevAtamaModel>>(_gorevAtamaKomRepo.Get(x => x.BirlesimId == birlesimId && x.GorevBasTarihi >= DateTime.Now));
+                result = _mapper.Map<List<GorevAtamaModel>>(_gorevAtamaKomRepo.Get(x => x.BirlesimId == birlesimId &&  x.StenoGorevTuru == StenoGorevTuru.Stenograf && x.GorevBasTarihi >= DateTime.Now));
             }
             else if (toplanmaTuru == ToplanmaTuru.Komisyon)
             {
-                result = _mapper.Map<List<GorevAtamaModel>>(_gorevAtamaOzelRepo.Get(x => x.BirlesimId == birlesimId && x.GorevBasTarihi >= DateTime.Now));
+                result = _mapper.Map<List<GorevAtamaModel>>(_gorevAtamaOzelRepo.Get(x => x.BirlesimId == birlesimId && x.StenoGorevTuru == StenoGorevTuru.Stenograf && x.GorevBasTarihi >= DateTime.Now));
             }
             return result;
         }
-        public List<GorevAtamaModel> UpdateGorevDurumById(Guid id, Guid birlesimId, ToplanmaTuru toplanmaTuru)
+        public List<GorevAtamaModel> UpdateGorevDurumById(Guid id, Guid birlesimId, ToplanmaTuru toplanmaTuru,StenoGorevTuru gorevTuru)
         {
-            var result = UpdateGorevDurumModelList(birlesimId, toplanmaTuru);
+            var result = UpdateGorevDurumModelList(birlesimId, toplanmaTuru, gorevTuru);
             if (result != null && result.Count > 0)
             {
                 var detay = result.Where(x => x.Id == id);
