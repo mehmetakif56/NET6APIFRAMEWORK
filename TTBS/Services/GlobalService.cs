@@ -3,6 +3,7 @@ using TTBS.Core.Entities;
 using TTBS.Core.Enums;
 using TTBS.Core.Extensions;
 using TTBS.Core.Interfaces;
+using TTBS.Models;
 using TTBS.MongoDB;
 
 namespace TTBS.Services
@@ -52,6 +53,7 @@ namespace TTBS.Services
         IEnumerable<StenoToplamGenelSure> GetGrupToplamSureByDate(Guid groupId, DateTime? baslangic, DateTime? bitis, Guid? yasamaId);
         double GetStenoSureWeeklyById(Guid? stenoId);
         double GetStenoSureYearlyById(Guid? stenoId, Guid? yasamaId);
+        StenoModel GetStenoSureModelById(Guid? stenoId, Guid? yasamaId);
         double GetStenoSureDailyById(Guid? stenoId);
         IEnumerable<Birlesim> GetAktifGKBirlesim();
         void CreateOturum(Oturum oturum);
@@ -350,6 +352,19 @@ namespace TTBS.Services
         {
             var result = _stenoToplamSureRepo.Get(x => x.StenografId == stenoId && x.YasamaId == yasamaId).Select(x => x.Sure).Sum();
             return result;
+        }
+
+        public StenoModel GetStenoSureModelById(Guid? stenoId, Guid? yasamaId)
+        {
+            var result = _stenoToplamSureRepo.Get(x => x.StenografId == stenoId && x.YasamaId == yasamaId);
+            DateTime now = DateTime.Now.Date;
+            return new StenoModel()
+            {
+                Id = stenoId,
+                GunlukGorevSuresi = result.Where(x => x.Tarih.Date <= now && x.Tarih.Date >= now.AddDays(-1)).Select(x => x.Sure).Sum(),
+                HaftalikGorevSuresi = result.Where(x => x.Tarih < now.AddDays(1) && x.Tarih >= now.AddDays(-7)).Select(x => x.Sure).Sum(),
+                YillikGorevSuresi = result.Select(x => x.Sure).Sum()
+            };
         }
 
         public bool CreateGrupDetay(GrupDetay detay)
