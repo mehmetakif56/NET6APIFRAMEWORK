@@ -67,8 +67,8 @@ namespace TTBS.Infrastructure
         {
             //entity.ModifiedDate = DateTime.Now;
             //entity.ModifiedBy = userId;
-          
-            _dbContext.Entry(entity).State = EntityState.Modified;
+            _dbContext.ChangeTracker.Clear();
+            _dbContext.Entry(entity).State = EntityState.Modified;            
             _dbSet.Update(entity);
         }
 

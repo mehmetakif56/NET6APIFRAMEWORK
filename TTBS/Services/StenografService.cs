@@ -410,7 +410,7 @@ namespace TTBS.Services
                 foreach (Oturum oturum in birlesimOturums)
                 {
                     OturumStenoInfoModel oturumStenoInfoModel = new OturumStenoInfoModel();
-
+                    oturumStenoInfoModel.OturumId= oturum.Id;
                     oturumStenoInfoModel.BirlesimId = birlesimId;
                     oturumStenoInfoModel.BaslangicTarihi= oturum.BaslangicTarihi.HasValue ? oturum.BaslangicTarihi : null;
                     oturumStenoInfoModel.BitisTarihi = oturum.BitisTarihi.HasValue ? oturum.BitisTarihi : null;                    

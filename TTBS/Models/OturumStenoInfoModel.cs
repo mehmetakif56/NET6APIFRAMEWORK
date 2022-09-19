@@ -6,6 +6,7 @@ namespace TTBS.Models
     public class OturumStenoInfoModel
     {
         public Guid BirlesimId { get; set; }
+        public Guid OturumId { get; set; }
         public DateTime? BaslangicTarihi { get; set; }
         public DateTime? BitisTarihi { get; set; }        
         public Stenograf? AcanStenograf { get; set; }

@@ -368,6 +368,7 @@ namespace TTBS.Services
             if (kaynakBirlesimId != hedefBirlesimId)
             {
                 var stenoGrevHedef = _gorevAtamaKomRepo.Get(x => x.BirlesimId == hedefBirlesimId).OrderBy(x => x.SatırNo).ToList();
+                
                 if (stenoGrevHedef != null && stenoGrevHedef.Count() > 0)
                 {
                     var minStenoGorev = stenoGrevHedef.Where(x => x.StenografId == hedefStenoId);
@@ -381,6 +382,7 @@ namespace TTBS.Services
                         newEntity.GorevBasTarihi = item.GorevBasTarihi;
                         newEntity.GorevBitisTarihi = item.GorevBitisTarihi;
                         newEntity.StenoSure = item.StenoSure;
+                        newEntity.SatırNo = item.SatırNo;
                         _gorevAtamaKomRepo.Create(newEntity);
                         _gorevAtamaKomRepo.Save();
 
@@ -392,7 +394,19 @@ namespace TTBS.Services
                             _gorevAtamaKomRepo.Update(hedef);
                             _gorevAtamaKomRepo.Save();
                         }
-                    }
+
+                        var stenoGrevHedefReOrder = _gorevAtamaKomRepo.Get(x => x.BirlesimId == hedefBirlesimId &&
+                        ( x.SatırNo>= item.SatırNo && x.StenografId != kaynakStenoId)).OrderBy(x => x.SatırNo).ToList();
+                        stenoGrevHedefReOrder.ForEach(p =>
+                        {
+                            p.SatırNo += 1;
+                            _gorevAtamaKomRepo.Update(p);
+                            _gorevAtamaKomRepo.Save();
+                        }
+                        );
+
+                    }                                      
+
                     var kaynak = _gorevAtamaKomRepo.Get(x => x.BirlesimId == kaynakBirlesimId && x.StenografId == kaynakStenoId);
                     if (kaynak != null)
                     {
@@ -479,7 +493,7 @@ namespace TTBS.Services
             }
         }
         public void UpdateGorevAtama(IEnumerable<GorevAtamaModel> model, ToplanmaTuru toplanmaTuru)
-        {
+        {            
             if (toplanmaTuru == ToplanmaTuru.GenelKurul)
             {
                 var entity = new List<GorevAtamaGenelKurul>();

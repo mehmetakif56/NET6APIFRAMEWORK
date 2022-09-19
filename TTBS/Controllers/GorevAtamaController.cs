@@ -553,7 +553,7 @@ namespace TTBS.Controllers
         private void UpdateGenelKurulKomisyon()
         {
             var gkBirlesim = _globalService.GetAktifGKBirlesim();
-            if (gkBirlesim != null)
+            if (gkBirlesim != null && gkBirlesim.Count()>0)
             {
                 var gkAtama = _gorevAtamaService.GetGorevAtamaByBirlesimId(gkBirlesim.FirstOrDefault().Id, ToplanmaTuru.GenelKurul).Where(x=>x.GorevBasTarihi.HasValue && x.GorevBasTarihi.Value.Date == DateTime.Now.Date);
                 if (gkAtama != null && gkAtama.Count()>0)
