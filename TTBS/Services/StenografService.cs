@@ -402,9 +402,11 @@ namespace TTBS.Services
             var matchedBirlesim = _birlesimRepo.GetFirst(x=> x.Id == birlesimId, includeProperties: "Oturums");
             List<OturumStenoInfoModel> oturumStenoInfoModels = new List<OturumStenoInfoModel>();
            
-            var birlesimOturums = matchedBirlesim.Oturums;
-            if (birlesimOturums != null)
+            
+            if (matchedBirlesim!=null)
             {
+                var birlesimOturums = matchedBirlesim.Oturums;
+
                 foreach (Oturum oturum in birlesimOturums)
                 {
                     OturumStenoInfoModel oturumStenoInfoModel = new OturumStenoInfoModel();
@@ -437,7 +439,7 @@ namespace TTBS.Services
                 }
             }
 
-            return oturumStenoInfoModels;
+            return oturumStenoInfoModels.OrderBy(x=> x.BaslangicTarihi).ToList();
 
         }
     }
