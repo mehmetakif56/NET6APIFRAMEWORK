@@ -565,9 +565,7 @@ namespace TTBS.Services
                         throw exception;
                     }
                 }
-
             }
-
         }
 
         private void ControlAndUpdateNotcompletedBirlesimAtama(ToplanmaTuru toplanmaTuru, List<GorevAtamaModel> birlesimNotCompletedAtamas)
@@ -592,7 +590,6 @@ namespace TTBS.Services
                         x.BirlesimSıraNo = x.SiraNo;
                     });
                 }
-
             }
         }
 
