@@ -41,6 +41,7 @@ namespace TTBS.Infrastructure
             //    e.CreatedDate = DateTime.Now;
             //    e.CreatedBy = userId;
             //});
+            _dbContext.ChangeTracker.Clear();
             _dbSet.AddRange(entities);
         }
 
@@ -79,6 +80,7 @@ namespace TTBS.Infrastructure
             //    e.ModifiedDate = DateTime.Now;
             //    e.ModifiedBy = userId;
             //});
+            _dbContext.ChangeTracker.Clear();
             _dbSet.UpdateRange(entities);
         }
 
