@@ -923,6 +923,7 @@ namespace TTBS.Services
                     var onayResult = _mapper.Map<List<GorevAtamaModel>>(onaylar);
                     onaylar.ForEach(x => x.OnayDurumu = true);
                     var entityList = _mapper.Map<List<GorevAtamaKomisyon>>(onayResult);
+                     entityList.AsParallel().ForAll(x => x.Id = Guid.Empty);
                     _gorevAtamaKomRepo.Create(entityList);
                     _gorevAtamaKomRepo.Save();
                 }
