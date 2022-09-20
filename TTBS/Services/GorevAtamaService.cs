@@ -373,6 +373,7 @@ namespace TTBS.Services
                 {
                     var minStenoGorev = stenoGrevHedef.Where(x => x.StenografId == hedefStenoId);
 
+     
                     foreach (var item in minStenoGorev)
                     {
                         var newEntity = new GorevAtamaKomisyon();
@@ -385,25 +386,26 @@ namespace TTBS.Services
                         newEntity.SatırNo = item.SatırNo;
                         _gorevAtamaKomRepo.Create(newEntity);
                         _gorevAtamaKomRepo.Save();
-
+        
                         var hedefStenoGorev = stenoGrevHedef.Where(x => x.GorevBasTarihi >= item.GorevBasTarihi);
                         foreach (var hedef in hedefStenoGorev)
                         {
                             hedef.GorevBasTarihi = hedef.GorevBasTarihi.Value.AddMinutes(hedef.StenoSure);
                             hedef.GorevBitisTarihi = hedef.GorevBasTarihi.Value.AddMinutes(hedef.StenoSure);
+                            hedef.SatırNo += 1;
                             _gorevAtamaKomRepo.Update(hedef);
                             _gorevAtamaKomRepo.Save();
                         }
 
-                        var stenoGrevHedefReOrder = _gorevAtamaKomRepo.Get(x => x.BirlesimId == hedefBirlesimId &&
-                        ( x.SatırNo>= item.SatırNo && x.StenografId != kaynakStenoId)).OrderBy(x => x.SatırNo).ToList();
-                        stenoGrevHedefReOrder.ForEach(p =>
-                        {
-                            p.SatırNo += 1;
-                            _gorevAtamaKomRepo.Update(p);
-                            _gorevAtamaKomRepo.Save();
-                        }
-                        );
+                        //var stenoGrevHedefReOrder = _gorevAtamaKomRepo.Get(x => x.BirlesimId == hedefBirlesimId &&
+                        //( x.SatırNo>= item.SatırNo && x.StenografId != kaynakStenoId)).OrderBy(x => x.SatırNo).ToList();
+                        //stenoGrevHedefReOrder.ForEach(p =>
+                        //{
+                        //    p.SatırNo += 1;
+                        //    _gorevAtamaKomRepo.Update(p);
+                        //    _gorevAtamaKomRepo.Save();
+                        //}
+                        //);
 
                     }                                      
 
