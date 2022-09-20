@@ -911,21 +911,25 @@ namespace TTBS.Services
         }
         public void CancelStenografKomisyon()
         {
-            var result = _gorevAtamaKomRepo.Get(x => !x.OnayDurumu && x.Birlesim.ToplanmaDurumu != ToplanmaStatu.Iptal && x.Birlesim.ToplanmaDurumu != ToplanmaStatu.Tamamlandı).OrderBy(x => x.SatırNo).ToList();
+            var result = _gorevAtamaKomRepo.Get(x => !x.OnayDurumu && x.Birlesim.ToplanmaDurumu != ToplanmaStatu.Iptal && x.Birlesim.ToplanmaDurumu != ToplanmaStatu.Tamamlandı).GroupBy(x => x.BirlesimId).Select(x =>  x.Key).ToList();
             if (result != null && result.Count() > 0)
             {
-                result.ForEach(x => x.IsDeleted = true);
-                _gorevAtamaKomRepo.Update(result);
-
-                var onaylar = _komisyonOnayRepo.GetAll().OrderBy(x => x.SatırNo).ToList();
-                if (onaylar != null)
+                foreach (var item in result)
                 {
-                    var onayResult = _mapper.Map<List<GorevAtamaModel>>(onaylar);
-                    onaylar.ForEach(x => x.OnayDurumu = true);
-                    var entityList = _mapper.Map<List<GorevAtamaKomisyon>>(onayResult);
-                     entityList.AsParallel().ForAll(x => x.Id = Guid.Empty);
-                    _gorevAtamaKomRepo.Create(entityList);
-                    _gorevAtamaKomRepo.Save();
+                    var degisenAtamlar = _gorevAtamaKomRepo.Get(x=>x.BirlesimId == item).OrderBy(x=>x.SatırNo).ToList();
+                    degisenAtamlar.ForEach(x =>x.IsDeleted = true);
+                    _gorevAtamaKomRepo.Update(degisenAtamlar);
+
+                    var onaylar = _komisyonOnayRepo.Get(x => x.BirlesimId == item).OrderBy(x => x.SatırNo).ToList();
+                    if (onaylar != null)
+                    {
+                        var onayResult = _mapper.Map<List<GorevAtamaModel>>(onaylar);
+                        onaylar.ForEach(x => x.OnayDurumu = true);
+                        var entityList = _mapper.Map<List<GorevAtamaKomisyon>>(onayResult);
+                        entityList.AsParallel().ForAll(x => x.Id = Guid.Empty);
+                        _gorevAtamaKomRepo.Create(entityList);
+                        _gorevAtamaKomRepo.Save();
+                    }
                 }
             }
         }

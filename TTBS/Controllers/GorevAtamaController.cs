@@ -542,6 +542,10 @@ namespace TTBS.Controllers
                     {
                         item.GorevBitisTarihi = gorevBitTarihi;
                     }
+                    if(item.GorevBitisTarihi.Value.Subtract(item.GorevBasTarihi.Value).Minutes!=item.StenoSure)
+                    {
+                        item.GorevBitisTarihi = item.GorevBasTarihi.Value.AddMinutes(item.StenoSure);
+                    }
                     gorevBasTarihi = item.GorevBitisTarihi.Value;
                     gorevBitTarihi = item.GorevBitisTarihi.HasValue ? item.GorevBitisTarihi.Value.AddMinutes(item.StenoSure) : DateTime.MinValue;
                 }
