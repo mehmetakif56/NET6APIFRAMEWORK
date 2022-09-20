@@ -8,9 +8,9 @@ namespace TTBS.Core.Enums
 {
     public enum ToplanmaBaslatmaStatu
     {
-        Baslama=0,
-        AraVerme = 1,
-        DevamEtme =2,   
-        Sonladırma=3
+        Baslama=1,
+        AraVerme = 2,
+        DevamEtme =3,   
+        Sonladırma=4
     }
 }
