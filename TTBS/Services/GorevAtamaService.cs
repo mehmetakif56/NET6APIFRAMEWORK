@@ -558,17 +558,17 @@ namespace TTBS.Services
         }
         public void UpdateBirlesimStenoGorevDevamEtme(Guid birlesimId, DateTime basTarih, int kaynakSatırNo,int hedefSatırNo, Guid oturumId, ToplanmaTuru toplanmaTuru)
         {
-            var model = GetGorevAtamaByBirlesimId(birlesimId, toplanmaTuru).Where(x => kaynakSatırNo <= x.SatırNo);
+            var model = GetGorevAtamaByBirlesimId(birlesimId, toplanmaTuru).Where(x => kaynakSatırNo < x.SatırNo);
             if (model != null && model.Count() > 0)
             {
                 if (toplanmaTuru == ToplanmaTuru.GenelKurul)
                 {
-                    SetToplanmaDevamEtme(model.Where(x => x.StenoGorevTuru == StenoGorevTuru.Stenograf).ToList(), basTarih, toplanmaTuru, oturumId);
-                    SetToplanmaDevamEtme(model.Where(x => x.StenoGorevTuru == StenoGorevTuru.Uzman).ToList(), basTarih, toplanmaTuru, oturumId);
+                    SetToplanmaDevamEtme(model.Where(x => x.StenoGorevTuru == StenoGorevTuru.Stenograf).ToList(), basTarih, toplanmaTuru, oturumId,hedefSatırNo);
+                    SetToplanmaDevamEtme(model.Where(x => x.StenoGorevTuru == StenoGorevTuru.Uzman).ToList(), basTarih, toplanmaTuru, oturumId, hedefSatırNo);
                 }
                 else
                 {
-                    SetToplanmaDevamEtme(model.Where(x => x.StenoGorevTuru == StenoGorevTuru.Stenograf).ToList(), basTarih, toplanmaTuru, oturumId);
+                    SetToplanmaDevamEtme(model.Where(x => x.StenoGorevTuru == StenoGorevTuru.Stenograf).ToList(), basTarih, toplanmaTuru, oturumId, hedefSatırNo);
                 }
             }
         }
@@ -797,25 +797,26 @@ namespace TTBS.Services
                 UpdateGorevAtama(updateList, toplanmaTuru);
             }
         }
-        private void SetToplanmaDevamEtme(List<GorevAtamaModel> resultList, DateTime basTarih, ToplanmaTuru toplanmaTuru, Guid oturumId)
+        private void SetToplanmaDevamEtme(List<GorevAtamaModel> resultList, DateTime basTarih, ToplanmaTuru toplanmaTuru, Guid oturumId,int hedefSatırNo)
         {
             var updateList = new List<GorevAtamaModel>();
             if (resultList != null && resultList.Count() > 0)
             {
-                var result = resultList.Where(x=>basTarih>x.GorevBasTarihi).OrderBy(x => x.GorevBasTarihi).FirstOrDefault();
+                var resultFirst = resultList.Where(x=>x.GorevStatu != GorevStatu.Iptal).First();
+                var result = resultList.Where(x=> hedefSatırNo <= x.SatırNo  && basTarih >x.GorevBasTarihi).OrderBy(x => x.GorevBasTarihi).FirstOrDefault();
                 if(result != null)
                 {
                     var mindateDiff = basTarih.Subtract(result.GorevBasTarihi.Value).TotalMinutes;
-                    var modResult = result.StenoSure - mindateDiff;
+                    var modResult = resultFirst.StenoSure - mindateDiff;
                     if (modResult != null && modResult > 0)
                     {
-                        result.GorevBasTarihi = basTarih;
-                        result.GorevBitisTarihi = result.GorevBasTarihi.Value.AddMinutes(modResult);
+                        resultFirst.GorevBasTarihi = basTarih;
+                        resultFirst.GorevBitisTarihi = result.GorevBasTarihi.Value.AddMinutes(modResult);
                         var ilkGorevBitisTarihi = result.GorevBitisTarihi.Value;
-                        result.OturumId = oturumId;
-                        updateList.Add(result);
+                        resultFirst.OturumId = oturumId;
+                        updateList.Add(resultFirst);
 
-                        var remainResult = resultList.Where(x => x.Id != result.Id);
+                        var remainResult = resultList.Where(x => x.Id != resultFirst.Id);
                         foreach (var item in remainResult)
                         {
                             item.GorevBasTarihi = ilkGorevBitisTarihi;
