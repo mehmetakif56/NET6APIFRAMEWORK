@@ -610,7 +610,7 @@ namespace TTBS.Controllers
             var gkBirlesim = _globalService.GetAktifGKBirlesim();
             if (gkBirlesim != null && gkBirlesim.Count()>0)
             {
-                var gkAtama = _gorevAtamaService.GetGorevAtamaByBirlesimId(gkBirlesim.FirstOrDefault().Id, ToplanmaTuru.GenelKurul).Where(x=>x.GorevBasTarihi.HasValue && x.GorevBasTarihi.Value.Date == DateTime.Now.Date);
+                var gkAtama = _gorevAtamaService.GetGorevAtamaByBirlesimId(gkBirlesim.FirstOrDefault().Id, ToplanmaTuru.GenelKurul);
                 if (gkAtama != null && gkAtama.Count()>0)
                 {
                     var modelList = _mapper.Map<List<GorevAtamaModel>>(gkAtama);
