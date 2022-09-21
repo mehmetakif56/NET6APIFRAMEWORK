@@ -463,7 +463,7 @@ namespace TTBS.Controllers
                     var oturum = new Oturum { BirlesimId = model.BirlesimId, BaslangicTarihi = model.BasTarihi };
                     SetOturumModifiedStenoInfo(model.ToplanmaBaslatmaStatu, model, oturum);
                     _globalService.CreateOturum(oturum);
-                    _gorevAtamaService.UpdateBirlesimStenoGorevDevamEtme(model.BirlesimId, model.BasTarihi, model.SatırNo, oturum.Id, model.ToplanmaTuru);
+                    _gorevAtamaService.UpdateBirlesimStenoGorevDevamEtme(model.BirlesimId, model.BasTarihi, model.KaynakSatırNo, model.HedefSatırNo, oturum.Id, model.ToplanmaTuru);
                 }
                 else if (ToplanmaBaslatmaStatu.Sonladırma == model.ToplanmaBaslatmaStatu)
                 {
@@ -482,7 +482,7 @@ namespace TTBS.Controllers
                         birlesim.ToplanmaDurumu = ToplanmaStatu.Tamamlandı;
                         _gorevAtamaService.UpdateBirlesim(birlesim);
                     }
-                    _gorevAtamaService.UpdateStenoGorevTamamla(model.BirlesimId,  model.ToplanmaTuru,model.SatırNo);
+                    _gorevAtamaService.UpdateStenoGorevTamamla(model.BirlesimId,  model.ToplanmaTuru,model.KaynakSatırNo,model.HedefSatırNo);
                 }
             }
             catch (Exception ex)
