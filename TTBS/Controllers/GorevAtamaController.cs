@@ -521,7 +521,7 @@ namespace TTBS.Controllers
         }
 
         [HttpDelete("DeleteGorevByBirlesimIdAndStenoId")]
-        public IActionResult DeleteGorevByBirlesimIdAndStenoId(Guid birlesimId, Guid stenografId, ToplanmaTuru toplanmaTuru)
+        public IActionResult DeleteGorevByBirlesimIdAndStenoId(Guid birlesimId, List<Guid> stenografId, ToplanmaTuru toplanmaTuru)
         {
             try
             {
