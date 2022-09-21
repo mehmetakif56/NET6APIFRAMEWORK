@@ -43,7 +43,7 @@ namespace TTBS.Services
         DateTime GidenGrupHesaplama(ToplanmaTuru toplanmaTuru, double sure,Guid grupId);
         string GetKomisyonMinMaxDate(Guid stenoId, DateTime? gorevBasTarih, DateTime? gorevBitisTarih, double sure);
         void UpdateGorevAtama(IEnumerable<GorevAtamaModel> model, ToplanmaTuru toplanmaTuru);
-        bool ActivateGidenGrupByGorevAtama(DurumStatu gidenGrupPasif, DateTime? gidenGrupSaat, DurumStatu uygula);
+        bool ActivateGidenGrupByGorevAtama(DurumStatu gidenGrupPasif, DateTime? gidenGrupSaat, DurumStatu uygula,Guid grupId);
         void UpdateBirlesim(Birlesim birlesim);
     }
     public class GorevAtamaService : BaseService, IGorevAtamaService
@@ -275,41 +275,58 @@ namespace TTBS.Services
 
             return model;
         }
-        public bool ActivateGidenGrupByGorevAtama(DurumStatu gidenGrupPasif, DateTime? gidenGrupSaat, DurumStatu uygula)
+        public bool ActivateGidenGrupByGorevAtama(DurumStatu gidenGrupPasif, DateTime? gidenGrupSaat, DurumStatu uygula,Guid grupId)
         {
             var conventionTypes = Enum.GetValues(typeof(ToplanmaTuru)).Cast<ToplanmaTuru>();
             foreach (var type in conventionTypes)
             {
                 if (type.Equals(ToplanmaTuru.GenelKurul))
                 {
-                    var gkModel = _gorevAtamaGKRepo.Get(x => x.GorevStatu != GorevStatu.Iptal && x.GorevStatu != GorevStatu.Tamamlandı).OrderBy(x => x.SatırNo).ToList();
+                    var gkModel = _gorevAtamaGKRepo.Get(x =>x.Birlesim.ToplanmaDurumu != ToplanmaStatu.Iptal &&  x.Birlesim.ToplanmaDurumu != ToplanmaStatu.Tamamlandı && x.GorevStatu != GorevStatu.Tamamlandı,includeProperties:"Stenograf").OrderBy(x => x.SatırNo).ToList();
                     if (gkModel != null && gkModel.Any())
                     {
                         var extractedGK = new List<GorevAtamaGenelKurul>();
                         var gidenGrupTarih = uygula == DurumStatu.Hayır ? gidenGrupSaat.Value.AddMinutes(-60) : gidenGrupSaat;
-                        extractedGK = gkModel.Where(p => p.GorevBasTarihi >= gidenGrupTarih).ToList();
-                        if(gidenGrupPasif == DurumStatu.Evet)
+                        extractedGK = gkModel.Where(p => p.Stenograf.GrupId != grupId).ToList();
+
+                        if (extractedGK != null && extractedGK.Any())
                         {
-                            extractedGK.AsParallel().ForAll((data) =>
+                            foreach (var item in extractedGK.GroupBy(x=>x.BirlesimId).Select(x=>x.Key))
                             {
-                                data.GidenGrupMu = false;
-                                data.GidenGrup = string.Empty;
-                            });
+                                extractedGK.Where(x=>x.BirlesimId == item).AsParallel().ForAll((data) =>
+                                {
+                                    data.GidenGrupMu = false;
+                                    data.GidenGrup = string.Empty;
+                                });
+                                _gorevAtamaGKRepo.Update(extractedGK.Where(x => x.BirlesimId == item));
+                            }
                         }
-                        else
+                        extractedGK = gkModel.Where(p => p.Stenograf.GrupId == grupId).ToList();
+                        if(extractedGK !=null && extractedGK.Any())
                         {
-                            extractedGK.AsParallel().ForAll((data) =>
+                            if (gidenGrupPasif == DurumStatu.Evet)
                             {
-                                data.GidenGrupMu = true;
-                                data.GidenGrup = "GidenGrup";
-                            });
-                        }                    
-                        _gorevAtamaGKRepo.Update(extractedGK);
+                                extractedGK.AsParallel().ForAll((data) =>
+                                {
+                                    data.GidenGrupMu = false;
+                                    data.GidenGrup = string.Empty;
+                                });
+                            }
+                            else
+                            {
+                                extractedGK.AsParallel().ForAll((data) =>
+                                {
+                                    data.GidenGrupMu = true;
+                                    data.GidenGrup = "GidenGrup";
+                                });
+                            }
+                            _gorevAtamaGKRepo.Update(extractedGK);
+                        }
                     }
                 }
                 else if (type.Equals(ToplanmaTuru.Komisyon))
                 {
-                    var commisionModel = _gorevAtamaKomRepo.Get(x => x.GorevStatu != GorevStatu.Iptal && x.GorevStatu != GorevStatu.Tamamlandı).OrderBy(x => x.SatırNo).ToList();
+                    var commisionModel = _gorevAtamaKomRepo.Get(x => x.Birlesim.ToplanmaDurumu != ToplanmaStatu.Iptal && x.Birlesim.ToplanmaDurumu != ToplanmaStatu.Tamamlandı && x.GorevStatu != GorevStatu.Tamamlandı).OrderBy(x => x.SatırNo).ToList();
                     if (commisionModel != null && commisionModel.Any())
                     {
                         var extractedCommision = new List<GorevAtamaKomisyon>();
