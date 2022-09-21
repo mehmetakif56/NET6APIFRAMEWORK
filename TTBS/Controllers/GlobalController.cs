@@ -251,7 +251,7 @@ namespace TTBS.Controllers
                     bool createStatus = _globalService.CreateGrupDetay(entity);                 
                     if (createStatus)
                     {
-                       _gorevAtamaService.ActivateGidenGrupByGorevAtama(entity.GidenGrupPasif,entity.GidenGrupSaat,entity.GidenGrupSaatUygula);
+                       _gorevAtamaService.ActivateGidenGrupByGorevAtama(entity.GidenGrupPasif,entity.GidenGrupSaat,entity.GidenGrupSaatUygula, entity.GrupId);
                     }
                     transactionScope.Complete();
                     return Ok(entity);
@@ -300,7 +300,7 @@ namespace TTBS.Controllers
                     var entity = _globalService.UpdateGrupDetay(gidenSaat);
                     if (entity != null)
                     {
-                        _gorevAtamaService.ActivateGidenGrupByGorevAtama(entity.GidenGrupPasif, entity.GidenGrupSaat, entity.GidenGrupSaatUygula);
+                        _gorevAtamaService.ActivateGidenGrupByGorevAtama(entity.GidenGrupPasif, entity.GidenGrupSaat, entity.GidenGrupSaatUygula,entity.GrupId);
                     }
                     transactionScope.Complete();
                     return Ok();
