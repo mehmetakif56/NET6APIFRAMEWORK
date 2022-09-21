@@ -566,7 +566,19 @@ namespace TTBS.Services
                     try
                     {
 
-                        result.Where(x => x.SatırNo <= satırNo && x.GorevStatu != GorevStatu.Iptal).ToList().ForEach(x => x.GorevStatu = GorevStatu.Tamamlandı);
+                        result.Where(x => x.SatırNo <= satırNo && x.GorevStatu != GorevStatu.Iptal).ToList().ForEach(x =>
+                        {
+                            x.GorevStatu = GorevStatu.Tamamlandı;
+                            if(x.SatırNo == satırNo)
+                            {
+                                var steno = _stenografRepo.GetById(x.StenografId);
+                                steno.BirlesimKapatanMi = true;
+                                _stenografRepo.Update(steno);
+                                _stenografRepo.Save();
+                            }
+                        });
+
+                        result.Where(x => x.SatırNo > satırNo && x.GorevStatu != GorevStatu.Iptal).ToList().ForEach(x => x.GorevStatu = GorevStatu.Iptal);
 
                         UpdateGorevAtama(result, toplanmaTuru);
                         //

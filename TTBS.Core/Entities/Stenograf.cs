@@ -33,5 +33,6 @@ namespace TTBS.Core.Entities
         [NotMapped]
         public bool ToplantiVar { get; set; }
         public int BirlesimSıraNo { get; set; }
+        public bool BirlesimKapatanMi { get; set; }
     }
 }
