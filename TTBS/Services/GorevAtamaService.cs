@@ -33,7 +33,7 @@ namespace TTBS.Services
         IEnumerable<Stenograf> GetStenografIdList();
         void DeleteGorevByBirlesimIdAndStenoId(Guid birlesimId, List<Guid> stenografId, ToplanmaTuru toplanmaTuru);
         void UpdateBirlesimStenoGorevBaslama(Guid birlesimId, DateTime basTarih, ToplanmaTuru toplanmaTuru);
-        void UpdateBirlesimStenoGorevDevamEtme(Guid birlesimId, DateTime basTarih, DateTime oturumKapanmaTarihi, Guid oturumId, ToplanmaTuru toplanmaTuru);
+        void UpdateBirlesimStenoGorevDevamEtme(Guid birlesimId, DateTime basTarih, int satırNo, Guid oturumId, ToplanmaTuru toplanmaTuru);
         List<GorevAtamaModel> UpdateGorevDurumByBirlesimAndSteno(Guid birlesimId, Guid stenoId, ToplanmaTuru toplanmaTuru, StenoGorevTuru gorevTuru);
         List<GorevAtamaModel> UpdateGorevDurumById(Guid id, Guid birlesimId, ToplanmaTuru toplanmaTuru,StenoGorevTuru gorevTuru);
         void UpdateStenoGorevTamamla(Guid birlesimId, ToplanmaTuru toplanmaTuru, int satırNo);
@@ -539,9 +539,9 @@ namespace TTBS.Services
                 _gorevAtamaOzelRepo.Save();
             }
         }
-        public void UpdateBirlesimStenoGorevDevamEtme(Guid birlesimId, DateTime basTarih, DateTime oturumKapanmaTarihi, Guid oturumId, ToplanmaTuru toplanmaTuru)
+        public void UpdateBirlesimStenoGorevDevamEtme(Guid birlesimId, DateTime basTarih, int satırNo, Guid oturumId, ToplanmaTuru toplanmaTuru)
         {
-            var model = GetGorevAtamaByBirlesimId(birlesimId, toplanmaTuru).Where(x => oturumKapanmaTarihi <= x.GorevBasTarihi);
+            var model = GetGorevAtamaByBirlesimId(birlesimId, toplanmaTuru).Where(x => satırNo > x.SatırNo);
             if (model != null && model.Count() > 0)
             {
                 if (toplanmaTuru == ToplanmaTuru.GenelKurul)
@@ -896,7 +896,8 @@ namespace TTBS.Services
         {
             var result = _gorevAtamaKomRepo.Get(x => x.StenografId == stenoId && x.GorevStatu != GorevStatu.Iptal && x.GorevStatu != GorevStatu.Tamamlandı &&
                                                 x.Birlesim.ToplanmaDurumu != ToplanmaStatu.Iptal &&
-                                                x.Birlesim.ToplanmaDurumu != ToplanmaStatu.Tamamlandı, includeProperties: "Birlesim.Komisyon")
+                                                x.Birlesim.ToplanmaDurumu != ToplanmaStatu.Tamamlandı && 
+                                                x.OnayDurumu == true , includeProperties: "Birlesim.Komisyon")
                                                 .GroupBy(x => new { StenoId = x.StenografId, BirlesimId = x.BirlesimId })
                                                 .Select(x => new
                                                 {
@@ -909,22 +910,26 @@ namespace TTBS.Services
         }
         public void ApproveStenografKomisyon()
         {
-            var result = _gorevAtamaKomRepo.Get(x => !x.OnayDurumu && x.Birlesim.ToplanmaDurumu != ToplanmaStatu.Iptal && x.Birlesim.ToplanmaDurumu != ToplanmaStatu.Tamamlandı).OrderBy(x => x.SatırNo).ToList();
+            var result = _gorevAtamaKomRepo.Get(x => !x.OnayDurumu && x.Birlesim.ToplanmaDurumu != ToplanmaStatu.Iptal && x.Birlesim.ToplanmaDurumu != ToplanmaStatu.Tamamlandı).GroupBy(x => x.BirlesimId).Select(x => x.Key).ToList();
             if (result != null && result.Count() > 0)
             {
-                result.ForEach(x => x.OnayDurumu = true);
-                _gorevAtamaKomRepo.Update(result);
-
-                var onaylar = _komisyonOnayRepo.GetAll();
-                if (onaylar != null)
+                foreach (var item in result)
                 {
-                    _komisyonOnayRepo.Delete(onaylar);
-                    _komisyonOnayRepo.Save();
+                    var degisenAtamlar = _gorevAtamaKomRepo.Get(x => x.BirlesimId == item).OrderBy(x => x.SatırNo).ToList();
+                    degisenAtamlar.ForEach(x => x.OnayDurumu = true);
+                    _gorevAtamaKomRepo.Update(degisenAtamlar);
 
-                    var modelList = new List<GorevAtamaModel>();
-                    _mapper.Map(result, modelList);
-                    _komisyonOnayRepo.Create(_mapper.Map<List<GorevAtamaKomisyonOnay>>(modelList));
-                    _komisyonOnayRepo.Save();
+                    var onaylar = _komisyonOnayRepo.Get(x => x.BirlesimId == item).OrderBy(x => x.SatırNo).ToList();
+                    if (onaylar != null)
+                    {
+                        _komisyonOnayRepo.Delete(onaylar);
+                        _komisyonOnayRepo.Save();
+
+                        var modelList = new List<GorevAtamaModel>();
+                        _mapper.Map(result, modelList);
+                        _komisyonOnayRepo.Create(_mapper.Map<List<GorevAtamaKomisyonOnay>>(modelList));
+                        _komisyonOnayRepo.Save();
+                    }
                 }
             }
         }

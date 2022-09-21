@@ -463,6 +463,7 @@ namespace TTBS.Controllers
                     var oturum = new Oturum { BirlesimId = model.BirlesimId, BaslangicTarihi = model.BasTarihi };
                     SetOturumModifiedStenoInfo(model.ToplanmaBaslatmaStatu, model, oturum);
                     _globalService.CreateOturum(oturum);
+                    _gorevAtamaService.UpdateBirlesimStenoGorevDevamEtme(model.BirlesimId, model.BasTarihi, model.SatırNo, oturum.Id, model.ToplanmaTuru);
                 }
                 else if (ToplanmaBaslatmaStatu.Sonladırma == model.ToplanmaBaslatmaStatu)
                 {
