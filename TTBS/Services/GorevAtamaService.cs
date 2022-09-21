@@ -464,8 +464,11 @@ namespace TTBS.Services
                         {
                             var minDate = birlesim.BaslangicTarihi;
                             var updateList = new List<GorevAtamaModel>();
+                            var sayac = 1;
                             foreach (var item in gorevler)
                             {
+                                item.SatırNo = sayac;
+                                sayac++;
                                 item.GorevBasTarihi = minDate.Value;
                                 item.GorevBitisTarihi = item.GorevBasTarihi.Value.AddMinutes(item.StenoSure);
                                 minDate = item.GorevBitisTarihi;
