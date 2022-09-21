@@ -18,6 +18,8 @@ namespace TTBS.Services
         Guid CreateOturum(Oturum Oturum);
         void CreateStenoAtamaGK(List<GorevAtamaGenelKurul> gorevAtamaList);
         void UpdateStenoAtamaGK(List<GorevAtamaGenelKurul> gorevAtamaList);
+        void UpdateStenoAtamaKom(List<GorevAtamaKomisyon> gorevAtamaList);
+        void UpdateStenoAtamaOzelToplanti(List<GorevAtamaOzelToplanma> gorevAtamaList);
         void CreateStenoAtamaKom(List<GorevAtamaKomisyon> gorevAtamaList);
         Birlesim UpdateBirlesimGorevAtama(Guid birlesimId, int turAdedi);
         List<GorevAtamaModel> AddStenoGorevAtamaKomisyon(IEnumerable<StenoKomisyonGrupModel> stenografIds, Guid birlesimId, Guid oturumId);
@@ -114,6 +116,16 @@ namespace TTBS.Services
         {
             _gorevAtamaGKRepo.Update(gorevAtamaList);
         }
+        public void UpdateStenoAtamaKom(List<GorevAtamaKomisyon> gorevAtamaList)
+        {
+            _gorevAtamaKomRepo.Update(gorevAtamaList);
+        }
+
+        public void UpdateStenoAtamaOzelToplanti(List<GorevAtamaOzelToplanma> gorevAtamaList)
+        {
+            _gorevAtamaOzelRepo.Update(gorevAtamaList);
+        }
+
         public void CreateStenoAtamaKom(List<GorevAtamaKomisyon> gorevAtamaList)
         {
             _gorevAtamaKomRepo.Create(gorevAtamaList);

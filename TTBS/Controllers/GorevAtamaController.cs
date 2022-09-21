@@ -102,6 +102,56 @@ namespace TTBS.Controllers
                         }
                     }
                   }
+                else if(model.ToplanmaTuru == ToplanmaTuru.Komisyon)
+                {
+                    var atamaList = _gorevAtamaService.GetGorevAtamaByBirlesimId(entity.Id, ToplanmaTuru.Komisyon).OrderBy(x => x.SatırNo);
+                    if (atamaList != null)
+                    {
+                        var entityList = new List<GorevAtamaKomisyon>();
+                        _mapper.Map(atamaList, entityList);
+                        
+                        var stenoAllList = _gorevAtamaService.GetAssignedStenoByBirlesimId((Guid)model.Id).OrderBy(x => x.SatırNo);
+                        var stenoList = stenoAllList.Where(x => x.StenoGorevTuru == StenoGorevTuru.Stenograf)
+                                                    .Select(x => new StenoKomisyonGrupModel { Id = x.StenografId, GrupId = x.Stenograf.GrupId });
+                        if (stenoList != null && stenoList.Count() > 0)
+                        {
+                            var modelList = SetGorevAtama(entity, atamaList.FirstOrDefault().OturumId, stenoList, model.StenoSure, ToplanmaTuru.Komisyon, StenoGorevTuru.Stenograf);
+
+                            entityList.ForEach(x => x.IsDeleted = true);
+                            _gorevAtamaService.UpdateStenoAtamaKom(entityList);
+
+                            modelList.AsParallel().ForAll(x => x.Id = Guid.Empty);
+                            var entityNewList = Mapper.Map<List<GorevAtamaKomisyon>>(modelList);
+                            _gorevAtamaService.CreateStenoAtamaKom(entityNewList);
+                            
+                        }
+                    }
+                }
+                //else if(model.ToplanmaTuru == ToplanmaTuru.OzelToplanti)
+                //{
+                //    var atamaList = _gorevAtamaService.GetGorevAtamaByBirlesimId(entity.Id, ToplanmaTuru.OzelToplanti).OrderBy(x => x.SatırNo);
+                //    if (atamaList != null)
+                //    {
+                //        var entityList = new List<GorevAtamaOzelToplanma>();
+                //        _mapper.Map(atamaList, entityList);
+
+                //        var stenoAllList = _gorevAtamaService.GetAssignedStenoByBirlesimId((Guid)model.Id).OrderBy(x => x.SatırNo);
+                //        var stenoList = stenoAllList.Where(x => x.StenoGorevTuru == StenoGorevTuru.Stenograf)
+                //                                    .Select(x => new StenoKomisyonGrupModel { Id = x.StenografId, GrupId = x.Stenograf.GrupId });
+                //        if (stenoList != null && stenoList.Count() > 0)
+                //        {
+                //            var modelList = SetGorevAtama(entity, atamaList.FirstOrDefault().OturumId, stenoList, model.StenoSure, ToplanmaTuru.OzelToplanti, StenoGorevTuru.Stenograf);
+
+                //            entityList.ForEach(x => x.IsDeleted = true);
+                //            _gorevAtamaService.UpdateStenoAtamaOzelToplanti(entityList);
+
+                //            modelList.AsParallel().ForAll(x => x.Id = Guid.Empty);
+                //            var entityNewList = Mapper.Map<List<GorevAtamaOzelToplanma>>(modelList);
+                //            _gorevAtamaService.CreateStenoAtamaKom(entityNewList);
+
+                //        }
+                //    }
+                //}
                 return Ok(entity);
             }
             catch (Exception ex)
