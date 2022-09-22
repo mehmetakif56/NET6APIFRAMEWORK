@@ -290,27 +290,24 @@ namespace TTBS.Services
             {
                 if (type.Equals(ToplanmaTuru.GenelKurul))
                 {
-                    var gkModel = _gorevAtamaGKRepo.Get(x =>x.Birlesim.ToplanmaDurumu != ToplanmaStatu.Iptal &&  x.Birlesim.ToplanmaDurumu != ToplanmaStatu.Tamamlandı && x.GorevStatu != GorevStatu.Tamamlandı,includeProperties:"Stenograf").OrderBy(x => x.SatırNo).ToList();
-                    if (gkModel != null && gkModel.Any())
+                    //globalService.GetAktifGKBirlesim() metodu implementasyonu global servisi görev atamada implement etmemek için içerik metod dahil edilmişti.,
+                    var gkBirlesim = _birlesimRepo.Get(x => x.BaslangicTarihi.Value.Date <= DateTime.Now.Date && x.ToplanmaTuru == ToplanmaTuru.GenelKurul && x.ToplanmaDurumu != ToplanmaStatu.Tamamlandı && x.ToplanmaDurumu != ToplanmaStatu.Iptal);
+                    if (gkBirlesim != null && gkBirlesim.Any()) {
+                        var gkModel = GetGorevAtamaByBirlesimId(gkBirlesim.FirstOrDefault().Id, ToplanmaTuru.GenelKurul);
+                        if (gkModel != null && gkModel.Any())
                     {
                         var extractedGK = new List<GorevAtamaGenelKurul>();
                         var gidenGrupTarih = uygula == DurumStatu.Hayır ? gidenGrupSaat.Value.AddMinutes(-60) : gidenGrupSaat;
-                        extractedGK = gkModel.Where(p => p.Stenograf.GrupId != grupId).ToList();
-
-                        if (extractedGK != null && extractedGK.Any())
-                        {
-                            foreach (var item in extractedGK.GroupBy(x=>x.BirlesimId).Select(x=>x.Key))
+                            gkModel.AsParallel().ForAll((data) =>
                             {
-                                extractedGK.Where(x=>x.BirlesimId == item).AsParallel().ForAll((data) =>
-                                {
-                                    data.GidenGrupMu = false;
-                                    data.GidenGrup = string.Empty;
-                                });
-                                _gorevAtamaGKRepo.Update(extractedGK.Where(x => x.BirlesimId == item));
-                            }
-                        }
-                        extractedGK = gkModel.Where(p => p.Stenograf.GrupId == grupId).ToList();
-                        if(extractedGK !=null && extractedGK.Any())
+                                data.GidenGrupMu = false;
+                                data.GidenGrup = string.Empty;
+                            });
+
+                            var modelList = _mapper.Map<List<GorevAtamaGenelKurul>>(gkModel);
+                            _gorevAtamaGKRepo.Update(modelList);
+                           
+                        if (extractedGK != null && extractedGK.Any())
                         {
                             if (gidenGrupPasif == DurumStatu.Evet)
                             {
@@ -331,6 +328,7 @@ namespace TTBS.Services
                             _gorevAtamaGKRepo.Update(extractedGK);
                         }
                     }
+                }
                 }
                 else if (type.Equals(ToplanmaTuru.Komisyon))
                 {
@@ -962,7 +960,7 @@ namespace TTBS.Services
                         _komisyonOnayRepo.Save();
 
                         var modelList = new List<GorevAtamaModel>();
-                        _mapper.Map(result, modelList);
+                        _mapper.Map(degisenAtamlar, modelList);
                         _komisyonOnayRepo.Create(_mapper.Map<List<GorevAtamaKomisyonOnay>>(modelList));
                         _komisyonOnayRepo.Save();
                     }
