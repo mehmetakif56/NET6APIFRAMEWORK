@@ -536,7 +536,6 @@ namespace TTBS.Services
         }
         private void DeleteGorevAtama(IEnumerable<GorevAtamaModel> model, ToplanmaTuru toplanmaTuru)
         {
-            //Buradaki delete işlemlerinde tracked hatası veriyor hakan hoca ile bakalım.
             if (toplanmaTuru == ToplanmaTuru.GenelKurul)
             {
                 var entity = Mapper.Map<GorevAtamaGenelKurul>(model);
