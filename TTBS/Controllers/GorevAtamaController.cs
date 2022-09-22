@@ -37,7 +37,7 @@ namespace TTBS.Controllers
                 var gkBirlesim = _globalService.GetAktifGKBirlesim();
                 if (gkBirlesim != null && gkBirlesim.Count() > 0)
                 {
-                    return BadRequest("Mevcut Genel Kurul toplantısı devam ettiğinde yeni bir Genel Kurul oluşturalamaz!");
+                    return StatusCode(StatusCodes.Status406NotAcceptable, Json("Mevcut Genel Kurul toplantısı devam ettiğinde yeni bir Genel Kurul oluşturalamaz!"));
                 }
             }
             catch (Exception ex)
