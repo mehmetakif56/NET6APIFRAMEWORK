@@ -753,7 +753,7 @@ namespace TTBS.Services
             var resultFirst = result.Where(x => x.GorevStatu != GorevStatu.Iptal).FirstOrDefault();
             var mindate = resultFirst.GorevBasTarihi.Value;
             var gorevId = resultFirst.Id;
-            var mindateDiff = basTarih.Subtract(result.Min(x => x.GorevBasTarihi).Value).TotalMinutes;
+            var mindateDiff = basTarih.Subtract(result.Min(x => x.GorevBasTarihi).Value == DateTime.MinValue ? mindate : result.Min(x => x.GorevBasTarihi).Value).TotalMinutes;
 
             UpdateBirlesimBaslamaSaat(birlesimId, mindateDiff);
 
@@ -762,7 +762,7 @@ namespace TTBS.Services
             {
                 var sonuc = modResult.FirstOrDefault() - (mindateDiff % modResult.FirstOrDefault());
                 var minStenoResult = result.Where(x => x.GorevBasTarihi == mindate).FirstOrDefault();
-                if (minStenoResult.GorevStatu == GorevStatu.Iptal)
+                if (minStenoResult.GorevStatu == GorevStatu.Iptal && result.Min(x => x.GorevBasTarihi).Value != DateTime.MinValue)
                 {
                     minStenoResult.GorevBasTarihi = mindate.AddMinutes(mindateDiff);
                     minStenoResult.GorevBitisTarihi = minStenoResult.GorevBasTarihi.Value.AddMinutes(sonuc);
@@ -776,7 +776,7 @@ namespace TTBS.Services
                 var remain = gorevBasPlan.Subtract(mindate).TotalMinutes;
                 updateList.Add(minStenoResult);
 
-                var remainResult = result.Where(x => !updateList.Select(x => x.Id).Contains(x.Id));
+                var remainResult = result.Where(x => x.GorevBasTarihi != DateTime.MinValue && !updateList.Select(x => x.Id).Contains(x.Id));
                 foreach (var item in remainResult)
                 {
                     item.GorevBasTarihi = item.GorevBasTarihi.Value.AddMinutes(remain);
