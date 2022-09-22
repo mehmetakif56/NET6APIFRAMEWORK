@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.Extensions.Caching.Memory;
 using System.Transactions;
 using TTBS.Core.Entities;
 using TTBS.Core.Enums;
@@ -57,7 +56,6 @@ namespace TTBS.Services
         private IRepository<GorevAtamaKomisyonOnay> _komisyonOnayRepo;
         private IRepository<StenoToplamGenelSure> _stenoToplamGenelSureRepo;
         public readonly IMapper _mapper;
-        private readonly IMemoryCache _memoryCache;
         public GorevAtamaService(IRepository<Birlesim> birlesimRepo,
                                  IRepository<GorevAtamaGenelKurul> gorevAtamaGKRepo,
                                  IRepository<GorevAtamaKomisyon> gorevAtamaKomRepo,
@@ -69,7 +67,6 @@ namespace TTBS.Services
                                  IRepository<GorevAtamaKomisyonOnay> komisyonOnayRepo,
                                  IRepository<StenoToplamGenelSure> stenoToplamGenelSureRepo,
                                  IMapper mapper,
-                                 IMemoryCache memoryCache,
                                  IServiceProvider provider) : base(provider)
         {
             _birlesimRepo = birlesimRepo;
@@ -83,7 +80,6 @@ namespace TTBS.Services
             _komisyonOnayRepo = komisyonOnayRepo;
             _stenoToplamGenelSureRepo = stenoToplamGenelSureRepo;
             _mapper = mapper;
-            _memoryCache = memoryCache;
         }
         public Birlesim CreateBirlesim(Birlesim birlesim)
         {
