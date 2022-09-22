@@ -586,7 +586,7 @@ namespace TTBS.Services
                         result.Where(x => x.SatırNo <= kaynakSatırNo && x.GorevStatu != GorevStatu.Iptal).ToList().ForEach(x =>
                         {
                             x.GorevStatu = GorevStatu.Tamamlandı;
-                            if(x.SatırNo == kaynakSatırNo)
+                            if(x.SatırNo == kaynakSatırNo && x.StenoGorevTuru == StenoGorevTuru.Stenograf)
                             {
                                 var steno = _stenografRepo.GetById(x.StenografId);
                                 steno.BirlesimKapatanMi = true;
@@ -795,6 +795,17 @@ namespace TTBS.Services
                     updateList.Add(item);
                 }
                 UpdateGorevAtama(updateList, toplanmaTuru);
+            }
+
+            if (toplanmaTuru == ToplanmaTuru.GenelKurul)
+            {
+                var steno = _stenografRepo.Get(x => x.BirlesimKapatanMi == true).FirstOrDefault();
+                if (steno != null)
+                {
+                    steno.BirlesimKapatanMi = false;
+                    _stenografRepo.Update(steno);
+                    _stenografRepo.Save();
+                }
             }
         }
         private void SetToplanmaDevamEtme(List<GorevAtamaModel> resultList, DateTime basTarih, ToplanmaTuru toplanmaTuru, Guid oturumId,int hedefSatırNo)

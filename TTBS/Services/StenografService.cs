@@ -33,6 +33,8 @@ namespace TTBS.Services
         IEnumerable<Stenograf> GetAllStenografWithStatisticsByGroupId(Guid? groupId);
         Stenograf GetStenoById(Guid stenografId);
         List<OturumStenoInfoModel> GetOturumInfoWithStenograf(Guid birlesimId);
+
+        Stenograf GetBirlesimKapatanStenograf();
     }
     public class StenografService : BaseService, IStenografService
     {
@@ -449,6 +451,12 @@ namespace TTBS.Services
 
             return oturumStenoInfoModels.OrderBy(x=> x.BaslangicTarihi).ToList();
 
+        }
+
+        public Stenograf GetBirlesimKapatanStenograf()
+        {
+            return _stenografRepo.Get(x => x.BirlesimKapatanMi == true).FirstOrDefault();
+            return _stenografRepo.Get(x => x.BirlesimKapatanMi == true).FirstOrDefault();
         }
     }
 }
