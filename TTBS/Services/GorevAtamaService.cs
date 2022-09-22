@@ -277,20 +277,11 @@ namespace TTBS.Services
         }
         public bool ActivateGidenGrupByGorevAtama(DurumStatu gidenGrupPasif, DateTime? gidenGrupSaat, DurumStatu uygula,Guid grupId)
         {
-            //var gkBirlesim = _globalService.GetAktifGKBirlesim();
-            //if (gkBirlesim != null && gkBirlesim.Count() > 0)
-            //{
-            //    var gkAtama = _gorevAtamaService.GetGorevAtamaByBirlesimId(gkBirlesim.FirstOrDefault().Id, ToplanmaTuru.GenelKurul);
-            //    if (gkAtama != null && gkAtama.Count() > 0)
-            //    {
-            //        var modelList = _mapper.Map<List<GorevAtamaModel>>(gkAtama);
-
-                    var conventionTypes = Enum.GetValues(typeof(ToplanmaTuru)).Cast<ToplanmaTuru>();
+            var conventionTypes = Enum.GetValues(typeof(ToplanmaTuru)).Cast<ToplanmaTuru>();
             foreach (var type in conventionTypes)
             {
                 if (type.Equals(ToplanmaTuru.GenelKurul))
                 {
-                    //globalService.GetAktifGKBirlesim() metodu implementasyonu global servisi görev atamada implement etmemek için içerik metod dahil edilmişti.,
                     var gkBirlesim = _birlesimRepo.Get(x => x.BaslangicTarihi.Value.Date <= DateTime.Now.Date && x.ToplanmaTuru == ToplanmaTuru.GenelKurul && x.ToplanmaDurumu != ToplanmaStatu.Tamamlandı && x.ToplanmaDurumu != ToplanmaStatu.Iptal);
                     if (gkBirlesim != null && gkBirlesim.Any()) {
                         var gkModel = GetGorevAtamaByBirlesimId(gkBirlesim.FirstOrDefault().Id, ToplanmaTuru.GenelKurul);
