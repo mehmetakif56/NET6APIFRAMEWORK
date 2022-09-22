@@ -277,7 +277,15 @@ namespace TTBS.Services
         }
         public bool ActivateGidenGrupByGorevAtama(DurumStatu gidenGrupPasif, DateTime? gidenGrupSaat, DurumStatu uygula,Guid grupId)
         {
-            var conventionTypes = Enum.GetValues(typeof(ToplanmaTuru)).Cast<ToplanmaTuru>();
+            //var gkBirlesim = _globalService.GetAktifGKBirlesim();
+            //if (gkBirlesim != null && gkBirlesim.Count() > 0)
+            //{
+            //    var gkAtama = _gorevAtamaService.GetGorevAtamaByBirlesimId(gkBirlesim.FirstOrDefault().Id, ToplanmaTuru.GenelKurul);
+            //    if (gkAtama != null && gkAtama.Count() > 0)
+            //    {
+            //        var modelList = _mapper.Map<List<GorevAtamaModel>>(gkAtama);
+
+                    var conventionTypes = Enum.GetValues(typeof(ToplanmaTuru)).Cast<ToplanmaTuru>();
             foreach (var type in conventionTypes)
             {
                 if (type.Equals(ToplanmaTuru.GenelKurul))
@@ -811,7 +819,7 @@ namespace TTBS.Services
                     if (modResult != null && modResult > 0)
                     {
                         resultFirst.GorevBasTarihi = basTarih;
-                        resultFirst.GorevBitisTarihi = result.GorevBasTarihi.Value.AddMinutes(modResult);
+                        resultFirst.GorevBitisTarihi = basTarih.AddMinutes(modResult);
                         var ilkGorevBitisTarihi = result.GorevBitisTarihi.Value;
                         resultFirst.OturumId = oturumId;
                         updateList.Add(resultFirst);
@@ -823,7 +831,7 @@ namespace TTBS.Services
                             item.GorevBitisTarihi = item.GorevBasTarihi.Value.AddMinutes(item.StenoSure);
                             item.OturumId = oturumId;
                             ilkGorevBitisTarihi = item.GorevBitisTarihi.Value;
-                            updateList.Add(result);
+                            updateList.Add(item);
                         }
                         UpdateGorevAtama(updateList, toplanmaTuru);
                     }
