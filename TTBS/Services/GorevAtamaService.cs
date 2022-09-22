@@ -1,13 +1,11 @@
 ﻿using AutoMapper;
-using System;
-using System.Globalization;
+using Microsoft.Extensions.Caching.Memory;
 using System.Transactions;
 using TTBS.Core.Entities;
 using TTBS.Core.Enums;
-using TTBS.Core.Extensions;
 using TTBS.Core.Interfaces;
 using TTBS.Models;
-using TTBS.MongoDB;
+
 using GorevStatu = TTBS.Core.Enums.GorevStatu;
 
 namespace TTBS.Services
@@ -59,7 +57,7 @@ namespace TTBS.Services
         private IRepository<GorevAtamaKomisyonOnay> _komisyonOnayRepo;
         private IRepository<StenoToplamGenelSure> _stenoToplamGenelSureRepo;
         public readonly IMapper _mapper;
-
+        private readonly IMemoryCache _memoryCache;
         public GorevAtamaService(IRepository<Birlesim> birlesimRepo,
                                  IRepository<GorevAtamaGenelKurul> gorevAtamaGKRepo,
                                  IRepository<GorevAtamaKomisyon> gorevAtamaKomRepo,
@@ -71,6 +69,7 @@ namespace TTBS.Services
                                  IRepository<GorevAtamaKomisyonOnay> komisyonOnayRepo,
                                  IRepository<StenoToplamGenelSure> stenoToplamGenelSureRepo,
                                  IMapper mapper,
+                                 IMemoryCache memoryCache,
                                  IServiceProvider provider) : base(provider)
         {
             _birlesimRepo = birlesimRepo;
@@ -84,6 +83,7 @@ namespace TTBS.Services
             _komisyonOnayRepo = komisyonOnayRepo;
             _stenoToplamGenelSureRepo = stenoToplamGenelSureRepo;
             _mapper = mapper;
+            _memoryCache = memoryCache;
         }
         public Birlesim CreateBirlesim(Birlesim birlesim)
         {
@@ -622,7 +622,6 @@ namespace TTBS.Services
                 }
             }
         }
-
         private void ControlAndUpdateNotcompletedBirlesimAtama(ToplanmaTuru toplanmaTuru, List<GorevAtamaModel> birlesimNotCompletedAtamas)
         {
             if (toplanmaTuru.Equals(ToplanmaTuru.GenelKurul))
@@ -647,7 +646,6 @@ namespace TTBS.Services
                 }
             }
         }
-
         private bool UpdateStenographOrders(List<Stenograf> exractedStenos, List<Stenograf> notCompletedBirlesimStenos)
         {
             List<Stenograf> reOrderedStenographs = new List<Stenograf>();
@@ -671,7 +669,6 @@ namespace TTBS.Services
             _stenografRepo.Update(reOrderedStenographs, CurrentUser.Id);
             return _stenografRepo.Save();
         }
-
         public void SaveStenoStatistics(List<GorevAtamaModel> gorevList, int satırNo, ToplanmaTuru toplanmaTuru, Guid birlesimId)
         {
 
@@ -1012,6 +1009,11 @@ namespace TTBS.Services
                 }
             }
             return gidenGrupSaat;
+        }
+
+        public void CachedMemory()
+        {
+
         }
         #region kapatıldı, şimdilik,açılabilir
         #endregion
