@@ -30,7 +30,7 @@ namespace TTBS.Controllers
         }
 
         [HttpPost("CheckBirlesim")]
-        public IActionResult CheckBirlesim(BirlesimModel model)
+        public IActionResult CheckBirlesim()
         {
             try
             {
