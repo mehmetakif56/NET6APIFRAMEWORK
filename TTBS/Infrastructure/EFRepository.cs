@@ -11,9 +11,9 @@ namespace TTBS.Infrastructure
 
         public EFRepository(TTBSContext dbContext)
         {
-            _dbContext = dbContext;
+            _dbContext = dbContext;            
+            _dbContext.ChangeTracker.Entries().AsParallel().ForAll(x=> x.State= EntityState.Detached);
             _dbSet = dbContext.Set<T>();
-         
         }
 
         public void Create(T entity, Guid? userId = null)
