@@ -220,7 +220,7 @@ namespace TTBS.Controllers
                     newEntity.GidenGrupMu = _gorevAtamaService.GidenGrupHesaplama(ToplanmaTuru.Komisyon, newEntity.StenoSure, (Guid)item.GrupId) != DateTime.MinValue &&
                     newEntity.GorevBasTarihi >= _gorevAtamaService.GidenGrupHesaplama(ToplanmaTuru.Komisyon, newEntity.StenoSure, (Guid)item.GrupId) ? true : false;
                     newEntity.GidenGrup = newEntity.GidenGrupMu ? "GidenGrup" : string.Empty;
-                    newEntity.BirlesimKapatanMı = i ==0 ? item.BirlesimKapatan:true;
+                    newEntity.BirlesimKapatanMı = toplanmaTuru == ToplanmaTuru.GenelKurul && i == 0 ? item.BirlesimKapatan:true;
                     firstRec = gorevTuru == StenoGorevTuru.Uzman && !firstRecInc ? 1 : firstRec + 1;
                     firstRecInc = gorevTuru == StenoGorevTuru.Uzman ? true : false;
                     newEntity.SatırNo = firstRec;
