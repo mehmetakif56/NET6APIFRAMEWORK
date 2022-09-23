@@ -7,7 +7,7 @@ namespace TTBS.Models
     {
         public Guid Id { get; set; }
         public Guid? GrupId { get; set; }
-        public bool BirlesimKapatan { get; set; }
+        public bool BirlesimKapatan { get; set; } =false;
         public StenoGorevTuru StenoGorevTuru { get; set; }
     }
 }

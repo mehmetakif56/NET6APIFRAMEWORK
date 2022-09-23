@@ -103,12 +103,12 @@ namespace TTBS.Controllers
                         _gorevAtamaService.UpdateStenoAtamaGK(entityList);
                         var stenoAllList = _gorevAtamaService.GetStenografIdList();
                         var stenoList = stenoAllList.Where(x => x.StenoGorevTuru == StenoGorevTuru.Stenograf)
-                                                    .Select(x => new StenoKomisyonGrupModel { Id = x.Id, GrupId = x.GrupId });
+                                                    .Select(x => new StenoKomisyonGrupModel { Id = x.Id, GrupId = x.GrupId ,BirlesimKapatan =x.BirlesimKapatanMi});
                         if (stenoList != null && stenoList.Count() > 0)
                         {
                             var modelList = SetGorevAtama(entity, atamaList.FirstOrDefault().OturumId, stenoList, model.StenoSure, ToplanmaTuru.GenelKurul, StenoGorevTuru.Stenograf);
                             var stenoUzmanList = stenoAllList.Where(x => x.StenoGorevTuru == StenoGorevTuru.Uzman)
-                                                             .Select(x => new StenoKomisyonGrupModel { Id = x.Id, GrupId = x.GrupId });
+                                                             .Select(x => new StenoKomisyonGrupModel { Id = x.Id, GrupId = x.GrupId , BirlesimKapatan = x.BirlesimKapatanMi });
                             if (stenoUzmanList != null && stenoUzmanList.Count() > 0)
                             {
                                 var modelUzmanList = SetGorevAtama(entity, atamaList.FirstOrDefault().OturumId, stenoUzmanList, model.UzmanStenoSure, ToplanmaTuru.GenelKurul, StenoGorevTuru.Uzman);
