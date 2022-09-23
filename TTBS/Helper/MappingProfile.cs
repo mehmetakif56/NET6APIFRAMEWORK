@@ -67,20 +67,21 @@ namespace TTBS.Helper
             CreateMap<GorevAtamaModel, GorevAtamaGenelKurul>();
             CreateMap<GorevAtamaGenelKurul, GorevAtamaModel>()
                              .ForMember(dest => dest.StenoAdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad))
-                             .ForMember(dest => dest.StenoGorevTuru, opt => opt.MapFrom(src => src.Stenograf.StenoGorevTuru));
-
+                             .ForMember(dest => dest.StenoGorevTuru, opt => opt.MapFrom(src => src.Stenograf.StenoGorevTuru))
+                             .ForMember(dest => dest.BirlesimKapatanMı, opt => opt.MapFrom(src => src.Stenograf.BirlesimKapatanMi));
 
             CreateMap<GorevAtamaModel, GorevAtamaKomisyon>();
             CreateMap<GorevAtamaKomisyon, GorevAtamaModel>()
                     .ForMember(dest => dest.StenoAdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad))
-                    .ForMember(dest => dest.StenoGorevTuru, opt => opt.MapFrom(src => src.Stenograf.StenoGorevTuru));
+                    .ForMember(dest => dest.StenoGorevTuru, opt => opt.MapFrom(src => src.Stenograf.StenoGorevTuru))
+                    .ForMember(dest => dest.BirlesimKapatanMı, opt => opt.MapFrom(src => src.Stenograf.BirlesimKapatanMi));
 
 
             CreateMap<GorevAtamaModel, GorevAtamaKomisyonOnay>();
             CreateMap<GorevAtamaKomisyonOnay, GorevAtamaModel>()
                     .ForMember(dest => dest.StenoAdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad))
-                    .ForMember(dest => dest.StenoGorevTuru, opt => opt.MapFrom(src => src.Stenograf.StenoGorevTuru));
-
+                    .ForMember(dest => dest.StenoGorevTuru, opt => opt.MapFrom(src => src.Stenograf.StenoGorevTuru))
+                    .ForMember(dest => dest.BirlesimKapatanMı, opt => opt.MapFrom(src => src.Stenograf.BirlesimKapatanMi));
 
             CreateMap<OturumModel, Oturum>();
             CreateMap<Oturum, OturumModel>();

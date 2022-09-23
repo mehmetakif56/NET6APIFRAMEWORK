@@ -25,5 +25,6 @@ namespace TTBS.Models
         public string StenoAdSoyad { get; set; }
         public StenoGorevTuru StenoGorevTuru { get; set; }
         public bool GidenGrupMu { get; set; }
+        public bool BirlesimKapatanMı { get; set; }
     }
 }
