@@ -68,20 +68,23 @@ namespace TTBS.Helper
             CreateMap<GorevAtamaGenelKurul, GorevAtamaModel>()
                              .ForMember(dest => dest.StenoAdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad))
                              .ForMember(dest => dest.StenoGorevTuru, opt => opt.MapFrom(src => src.Stenograf.StenoGorevTuru))
-                             .ForMember(dest => dest.BirlesimKapatanMı, opt => opt.MapFrom(src => src.Stenograf.BirlesimKapatanMi));
+                             .ForMember(dest => dest.BirlesimKapatanMı, opt => opt.MapFrom(src => src.Birlesim.ToplanmaDurumu == ToplanmaStatu.Tamamlandı ||  src.Birlesim.ToplanmaDurumu == ToplanmaStatu.DevamEdiyor || src.GorevStatu != GorevStatu.Iptal? true : src.Stenograf.BirlesimKapatanMi))
+                             .ForMember(dest => dest.StenoSiraNo, opt => opt.MapFrom(src => src.Stenograf.SiraNo));
 
             CreateMap<GorevAtamaModel, GorevAtamaKomisyon>();
             CreateMap<GorevAtamaKomisyon, GorevAtamaModel>()
                     .ForMember(dest => dest.StenoAdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad))
                     .ForMember(dest => dest.StenoGorevTuru, opt => opt.MapFrom(src => src.Stenograf.StenoGorevTuru))
-                    .ForMember(dest => dest.BirlesimKapatanMı, opt => opt.MapFrom(src => src.Stenograf.BirlesimKapatanMi));
+                    .ForMember(dest => dest.BirlesimKapatanMı, opt => opt.MapFrom(src => src.Stenograf.BirlesimKapatanMi))
+                      .ForMember(dest => dest.StenoSiraNo, opt => opt.MapFrom(src => src.Stenograf.SiraNo));
 
 
             CreateMap<GorevAtamaModel, GorevAtamaKomisyonOnay>();
             CreateMap<GorevAtamaKomisyonOnay, GorevAtamaModel>()
                     .ForMember(dest => dest.StenoAdSoyad, opt => opt.MapFrom(src => src.Stenograf.AdSoyad))
                     .ForMember(dest => dest.StenoGorevTuru, opt => opt.MapFrom(src => src.Stenograf.StenoGorevTuru))
-                    .ForMember(dest => dest.BirlesimKapatanMı, opt => opt.MapFrom(src => src.Stenograf.BirlesimKapatanMi));
+                    .ForMember(dest => dest.BirlesimKapatanMı, opt => opt.MapFrom(src => src.Stenograf.BirlesimKapatanMi))
+                      .ForMember(dest => dest.StenoSiraNo, opt => opt.MapFrom(src => src.Stenograf.SiraNo));
 
             CreateMap<OturumModel, Oturum>();
             CreateMap<Oturum, OturumModel>();

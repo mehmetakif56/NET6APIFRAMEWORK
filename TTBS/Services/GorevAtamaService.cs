@@ -139,7 +139,7 @@ namespace TTBS.Services
         }
         public IEnumerable<Stenograf> GetStenografIdList()
         {
-            return _stenografRepo.Get().OrderBy(x => x.SiraNo).Select(x => new Stenograf { Id = x.Id, StenoGorevTuru = x.StenoGorevTuru, AdSoyad = x.AdSoyad, GrupId = x.GrupId });
+            return _stenografRepo.Get().OrderBy(x => x.SiraNo).Select(x => new Stenograf { Id = x.Id, StenoGorevTuru = x.StenoGorevTuru, AdSoyad = x.AdSoyad, GrupId = x.GrupId, BirlesimKapatanMi =x.BirlesimKapatanMi });
         }
         public List<GorevAtamaModel> CreateStenoGorevDonguKomisyon(Guid birlesimId, Guid oturumId)
         {
@@ -256,17 +256,17 @@ namespace TTBS.Services
             var model = new List<GorevAtamaModel>();
             if (toplanmaTuru == ToplanmaTuru.GenelKurul)
             {
-                var result = _gorevAtamaGKRepo.Get(x => x.BirlesimId == birlesimId, includeProperties: "Stenograf").OrderBy(x => x.SatırNo).ToList();
+                var result = _gorevAtamaGKRepo.Get(x => x.BirlesimId == birlesimId, includeProperties: "Birlesim,Stenograf").OrderBy(x => x.SatırNo).ToList();
                 _mapper.Map(result, model);
                 //model = _mapper.Map<List<GorevAtamaModel>>(_gorevAtamaGKRepo.Get(x => x.BirlesimId == birlesimId ,includeProperties:"Stenograf").OrderBy(x=>x.SatırNo).ToList());
             }
             else if (toplanmaTuru == ToplanmaTuru.Komisyon)
             {
-                model = _mapper.Map<List<GorevAtamaModel>>(_gorevAtamaKomRepo.Get(x => x.BirlesimId == birlesimId, includeProperties: "Stenograf").OrderBy(x => x.SatırNo).ToList());
+                model = _mapper.Map<List<GorevAtamaModel>>(_gorevAtamaKomRepo.Get(x => x.BirlesimId == birlesimId, includeProperties: "Birlesim,Stenograf").OrderBy(x => x.SatırNo).ToList());
             }
             else if (toplanmaTuru == ToplanmaTuru.OzelToplanti)
             {
-                model = _mapper.Map<List<GorevAtamaModel>>(_gorevAtamaOzelRepo.Get(x => x.BirlesimId == birlesimId, includeProperties: "Stenograf").OrderBy(x => x.SatırNo).ToList());
+                model = _mapper.Map<List<GorevAtamaModel>>(_gorevAtamaOzelRepo.Get(x => x.BirlesimId == birlesimId, includeProperties: "Birlesim,Stenograf").OrderBy(x => x.SatırNo).ToList());
             }
 
             return model;
@@ -577,13 +577,14 @@ namespace TTBS.Services
 
                         result.Where(x => x.SatırNo <= kaynakSatırNo && x.GorevStatu != GorevStatu.Iptal).ToList().ForEach(x => x.GorevStatu = GorevStatu.Tamamlandı);
                         result.Where(x => x.SatırNo > kaynakSatırNo && x.GorevStatu != GorevStatu.Iptal).ToList().ForEach(x => x.GorevStatu = GorevStatu.Iptal);
-
-                        var stenoList = new List<Guid>();
-                        result.Where(x => x.SatırNo >= kaynakSatırNo).ToList().ForEach(x => stenoList.Add(x.StenografId));
-                        var stenos = _stenografRepo.Get(x => stenoList.Contains(x.Id));
-                        stenos.ToList().ForEach(x => x.BirlesimKapatanMi = true);
-                        _stenografRepo.Update(stenos);
-                        _stenografRepo.Save();
+                        var stenoSiraNo = result.Where(x => x.SatırNo == kaynakSatırNo).FirstOrDefault().StenoSiraNo;
+                        var stenos = _stenografRepo.Get() ;
+                        foreach (var item in stenos)
+                        {
+                            item.BirlesimKapatanMi =item.SiraNo >= stenoSiraNo ? true:false;
+                            _stenografRepo.Update(item);
+                            _stenografRepo.Save();
+                        }
 
 
                         UpdateGorevAtama(result, toplanmaTuru);
