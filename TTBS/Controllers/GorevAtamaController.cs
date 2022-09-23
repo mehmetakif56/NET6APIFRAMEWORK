@@ -189,7 +189,7 @@ namespace TTBS.Controllers
                 var modelList = SetGorevAtama(birlesim, oturum.Id, model.StenografIds, birlesim.StenoSure,ToplanmaTuru.Komisyon, StenoGorevTuru.Stenograf);
                 var entityList = Mapper.Map<List<GorevAtamaKomisyon>>(modelList);
                 _gorevAtamaService.CreateStenoAtamaKom(entityList);
-                //UpdateGenelKurulKomisyon();
+                UpdateGenelKurulKomisyon();
             }
             catch (Exception ex)
             { return BadRequest(ex.Message); }
