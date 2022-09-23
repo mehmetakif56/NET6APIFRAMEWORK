@@ -581,7 +581,7 @@ namespace TTBS.Services
                         var stenos = _stenografRepo.Get() ;
                         foreach (var item in stenos)
                         {
-                            item.BirlesimKapatanMi =item.SiraNo >= stenoSiraNo ? true:false;
+                            item.BirlesimKapatanMi =item.SiraNo > stenoSiraNo ? true:false;
                             _stenografRepo.Update(item);
                             _stenografRepo.Save();
                         }
