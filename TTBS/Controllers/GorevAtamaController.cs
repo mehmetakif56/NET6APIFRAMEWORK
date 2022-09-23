@@ -551,15 +551,16 @@ namespace TTBS.Controllers
 
         private void SetOturumModifiedStenoInfo(ToplanmaBaslatmaStatu toplanmaBaslatmaStatu, BirlesimStenoGorevModel model, Oturum? oturum)
         {
+            var stenograf =_stenografService.GetStenoById(model.StenografId);
             if (toplanmaBaslatmaStatu.Equals(ToplanmaBaslatmaStatu.Baslama) || toplanmaBaslatmaStatu.Equals(ToplanmaBaslatmaStatu.DevamEtme))
             {
                 switch (model.StenoGorevTuru)
                 {
                     case StenoGorevTuru.Stenograf:
-                        oturum.AcanSira = model.KaynakSatırNo;
+                        oturum.AcanSira = stenograf.SiraNo;
                         break;
                     case StenoGorevTuru.Uzman:
-                        oturum.AcanSiraUzman = model.KaynakSatırNo;
+                        oturum.AcanSiraUzman = stenograf.SiraNo;
                         break;
                 }
             }
@@ -568,10 +569,10 @@ namespace TTBS.Controllers
                 switch (model.StenoGorevTuru)
                 {
                     case StenoGorevTuru.Stenograf:
-                        oturum.KapatanSira = model.KaynakSatırNo;
+                        oturum.KapatanSira = stenograf.SiraNo;
                         break;
                     case StenoGorevTuru.Uzman:
-                        oturum.KapatanSiraUzman = model.KaynakSatırNo;
+                        oturum.KapatanSiraUzman = stenograf.SiraNo;
                         break;
                 }
             }
