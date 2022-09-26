@@ -29,7 +29,7 @@ namespace TTBS.Controllers
             _globalService = globalService;
         }
 
-        [HttpPost("CheckBirlesim")]
+        [HttpGet("CheckBirlesim")]
         public IActionResult CheckBirlesim()
         {
             try
@@ -37,13 +37,13 @@ namespace TTBS.Controllers
                 var gkBirlesim = _globalService.GetAktifGKBirlesim();
                 if (gkBirlesim != null && gkBirlesim.Count() > 0)
                 {
-                    return BadRequest("Mevcut Genel Kurul toplantısı devam ettiğinde yeni bir Genel Kurul oluşturalamaz!");
+                    return Json(true);
                 }
             }
             catch (Exception ex)
-            { return BadRequest(ex.Message); }
+            { return StatusCode(StatusCodes.Status500InternalServerError, ex.Message); }
 
-            return Ok();
+            return Json(false);
         }
         [HttpPost("CreateBirlesim")]
         public IActionResult CreateBirlesim(BirlesimModel model)
@@ -201,10 +201,10 @@ namespace TTBS.Controllers
         {
             var birlesimKapatanSteno = _stenografService.GetBirlesimKapatanStenograf();
             var atamaList = new List<GorevAtamaModel>();
-            var basDate = birlesim.BaslangicTarihi.HasValue ? birlesim.BaslangicTarihi.Value:DateTime.Now;
+            var basDate = birlesim.BaslangicTarihi.HasValue ? birlesim.BaslangicTarihi.Value : DateTime.Now;
             int firstRec = 0, sayac = 0;
             bool acanMi = birlesimKapatanSteno == null ? true : false;
-            
+
             for (int i = 0; i < birlesim.TurAdedi; i++)
             {
                 foreach (var item in stenoList)
@@ -273,7 +273,7 @@ namespace TTBS.Controllers
                 }
                 else
                 {
-                    if(item.GorevBasTarihi != DateTime.MinValue) //Birleşimde açan kişiden önceki kişilerin görev tarihi min date
+                    if (item.GorevBasTarihi != DateTime.MinValue) //Birleşimde açan kişiden önceki kişilerin görev tarihi min date
                     {
                         if (item.GorevBasTarihi != gorevBasTarihi)
                         {
