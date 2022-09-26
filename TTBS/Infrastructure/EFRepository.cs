@@ -11,8 +11,7 @@ namespace TTBS.Infrastructure
 
         public EFRepository(TTBSContext dbContext)
         {
-            _dbContext = dbContext;            
-            _dbContext.ChangeTracker.Entries().AsParallel().ForAll(x=> x.State= EntityState.Detached);
+            _dbContext = dbContext;     
             _dbSet = dbContext.Set<T>();
         }
 
