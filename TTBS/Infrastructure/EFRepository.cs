@@ -65,8 +65,6 @@ namespace TTBS.Infrastructure
 
         public void Update(T entity, Guid? userId = null)
         {
-            //entity.ModifiedDate = DateTime.Now;
-            //entity.ModifiedBy = userId;
             _dbContext.ChangeTracker.Clear();
             _dbContext.Entry(entity).State = EntityState.Modified;            
             _dbSet.Update(entity);
