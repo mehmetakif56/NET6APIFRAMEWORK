@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using System.Linq;
 using System.Transactions;
 using TTBS.Core.Entities;
 using TTBS.Core.Enums;
@@ -207,11 +208,12 @@ namespace TTBS.Services
         }
         public List<GorevAtamaModel> AddStenoGorevAtamaKomisyon(IEnumerable<StenoKomisyonGrupModel> stenografIds, Guid birlesimId, Guid oturumId)
         {
-            var result = _gorevAtamaKomRepo.Get(x => x.BirlesimId == birlesimId).OrderBy(x => x.SatırNo);
+            var result = _gorevAtamaKomRepo.Get(x => x.BirlesimId == birlesimId);//&& !stenografIds.Any(p=> p.Id.Equals(x.StenografId)).OrderBy(x => x.SatırNo);
+            var filteredStenographs = result = result.Where(x => !stenografIds.Any(p => p.Id.Equals(x.StenografId))).OrderBy(x => x.SatırNo);
             var stenoList = new List<GorevAtamaModel>();
-            if (result != null && result.Count() > 0)
+            if (filteredStenographs != null && filteredStenographs.Count() > 0)
             {
-                _mapper.Map(result, stenoList);
+                _mapper.Map(filteredStenographs, stenoList);
                 foreach (var steno in stenografIds)
                 {
                     var grpListCnt = stenoList.GroupBy(c => new
@@ -246,7 +248,7 @@ namespace TTBS.Services
                         }
                     }
                 }
-                _gorevAtamaKomRepo.Delete(result);
+                _gorevAtamaKomRepo.Delete(filteredStenographs);
                 _gorevAtamaKomRepo.Save();
             }
             return stenoList;
