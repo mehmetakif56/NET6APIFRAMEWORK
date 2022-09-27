@@ -99,10 +99,11 @@ namespace TTBS.Helper
             CreateMap<KomisyonAltModel, Komisyon>();
             CreateMap<Komisyon, KomisyonAltModel>();
 
-            CreateMap<Stenograf, StenoModel>()
-                 .ForMember(dest => dest.HaftalikGorevSuresi,
-                            opt => opt.MapFrom(src => 0));
+            CreateMap<Stenograf, StenoModel>();
             CreateMap<StenoModel, Stenograf>();
+            
+            CreateMap<Stenograf, StenoGidenGrupModel>();
+            CreateMap<StenoGidenGrupModel, Stenograf>();
 
             CreateMap<Stenograf, StenoCreateModel>();          
             CreateMap<StenoCreateModel, Stenograf>();

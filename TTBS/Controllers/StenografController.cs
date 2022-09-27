@@ -146,11 +146,20 @@ namespace TTBS.Controllers
 
         #region Stenograf
         [HttpGet("GetAllStenografByGroupId")]
-        public IEnumerable<StenoModel> GetAllStenografByGroupId(Guid? groupId)
+        public IEnumerable<StenoGidenGrupModel> GetAllStenografByGroupId(Guid? groupId)
         {
             var stenoEntity = _stenoService.GetAllStenografByGroupId(groupId);
-            var model = _mapper.Map<IEnumerable<StenoModel>>(stenoEntity);
-            model.ToList().ForEach(x => { x.GorevStatu = -1; });
+            var model = _mapper.Map<IEnumerable<StenoGidenGrupModel>>(stenoEntity);
+            var gidenGrup = _globalService.GetGrupDetay();
+            if(gidenGrup != null)
+            {
+                model.ToList().ForEach(x =>
+                {
+                    /*x.GorevStatu = -1;*/
+                    x.GidenGrup = x.GrupId == gidenGrup.GrupId ? true : false;
+                });
+            }
+            
             return model;
         }
 
