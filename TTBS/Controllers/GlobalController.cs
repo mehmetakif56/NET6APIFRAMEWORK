@@ -100,6 +100,21 @@ namespace TTBS.Controllers
             var model = entity != null ? _mapper.Map<BirlesimModel>(entity.FirstOrDefault()):new BirlesimModel { };
             return model;
         }
+        
+        [HttpGet("GetActiveGenelKurul")]
+        public BirlesimModel GetActiveGenelKurul()
+        {
+            try
+            {
+                var entity = _globalService.GetActiveGenelKurul();
+                var model = _mapper.Map<BirlesimModel>(entity);
+                return model;
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
+        }
      
 
         [HttpGet("GetAllBirlesim")]

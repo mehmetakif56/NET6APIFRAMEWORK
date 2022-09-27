@@ -15,6 +15,7 @@ namespace TTBS.Services
         IEnumerable<Birlesim> GetAllBirlesim();
         IEnumerable<Komisyon> GetAllKomisyon();
         IEnumerable<Birlesim> GetBirlesimById(Guid id);
+        Birlesim GetActiveGenelKurul();
         Komisyon GetKomisyonById(Guid id);
         Donem GetDonemById(Guid id);
         Yasama GetYasamaById(Guid id);
@@ -119,6 +120,11 @@ namespace TTBS.Services
         public IEnumerable<Birlesim> GetBirlesimById(Guid id)
         {
             return _birlesimRepo.Get(x => x.Id == id, includeProperties: "Yasama");
+        }
+
+        public Birlesim GetActiveGenelKurul()
+        {
+            return _birlesimRepo.Get(x => x.BitisTarihi == null && x.BaslangicTarihi.Value.Date >= DateTime.Now.Date.AddDays(-1) && x.ToplanmaTuru == ToplanmaTuru.GenelKurul, includeProperties: "Yasama").FirstOrDefault();
         }
 
         public Komisyon GetKomisyonById(Guid id)
