@@ -393,13 +393,15 @@ namespace TTBS.Services
         public GrupDetay UpdateGrupDetay(DateTime? gidenSaat)
         {
             var grpDetay = _grupDetayRepo.Get(x => x.GidenGrupTarih.Value.Date == gidenSaat.Value.Date);
+            var updatedGrup = new GrupDetay();
             if (grpDetay != null && grpDetay.Count() > 0)
             {
-                grpDetay.FirstOrDefault().GidenGrupTarih = gidenSaat;               
-                _grupDetayRepo.Update(grpDetay.FirstOrDefault());
+                updatedGrup = grpDetay.FirstOrDefault();
+                updatedGrup.GidenGrupTarih = gidenSaat;               
+                _grupDetayRepo.Update(updatedGrup);
                 _grupDetayRepo.Save();
             }
-            return grpDetay.FirstOrDefault();
+            return updatedGrup;
         }
 
         public Grup UpdateNextGrupDetay(DateTime gidenTarih)
