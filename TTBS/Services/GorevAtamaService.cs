@@ -706,6 +706,8 @@ namespace TTBS.Services
             var gorevId = resultFirst.Id;
             var mindateDiff = basTarih.Subtract(result.Min(x => x.GorevBasTarihi).Value == DateTime.MinValue ? mindate : result.Min(x => x.GorevBasTarihi).Value).TotalMinutes;
 
+            //Burada bir yerde birlesimi acan stenografın ilk gorev atamasının steno sureyi güncelleyeceğiz!!!
+
             UpdateBirlesimBaslamaSaat(birlesimId, mindateDiff);
 
             var modResult = result.Select(x => x.StenoSure);
@@ -715,12 +717,14 @@ namespace TTBS.Services
                 var minStenoResult = result.Where(x => x.GorevBasTarihi == mindate).FirstOrDefault();
                 if (minStenoResult.GorevStatu == GorevStatu.Iptal && result.Min(x => x.GorevBasTarihi).Value != DateTime.MinValue)
                 {
+                    
                     minStenoResult.GorevBasTarihi = mindate.AddMinutes(mindateDiff);
                     minStenoResult.GorevBitisTarihi = minStenoResult.GorevBasTarihi.Value.AddMinutes(sonuc);
                     updateList.Add(minStenoResult);
                     minStenoResult = result.Where(x => x.GorevBasTarihi == mindate && x.GorevStatu != GorevStatu.Iptal).FirstOrDefault();
                 }
 
+                minStenoResult.StenoSure = sonuc;
                 minStenoResult.GorevBasTarihi = mindate.AddMinutes(mindateDiff);
                 minStenoResult.GorevBitisTarihi = minStenoResult.GorevBasTarihi.Value.AddMinutes(sonuc);
                 var gorevBasPlan = minStenoResult.GorevBasTarihi.Value.AddMinutes(-(mindateDiff % modResult.FirstOrDefault()));
