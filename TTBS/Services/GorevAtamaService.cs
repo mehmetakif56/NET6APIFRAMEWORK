@@ -882,7 +882,7 @@ namespace TTBS.Services
         }
         public GrupDetay GetGidenGrup(Guid grupId)
         {
-            return _grupDetayRepo.Get(x => x.GrupId == grupId && x.GidenGrupPasif == DurumStatu.Hayır && x.GidenGrupSaat.HasValue && x.GidenGrupSaat.Value.Date == DateTime.Now.Date).FirstOrDefault();
+            return _grupDetayRepo.Get(x => x.GrupId == grupId && x.GidenGrupPasif == DurumStatu.Hayır && x.GidenGrupTarih.HasValue && x.GidenGrupTarih.Value.Date == DateTime.Now.Date).FirstOrDefault();
         }
         public string GetKomisyonMinMaxDate(Guid stenoId, DateTime? gorevBasTarih, DateTime? gorevBitisTarih, double sure)
         {
@@ -957,11 +957,11 @@ namespace TTBS.Services
             {
                 if (gidenTarihResult.GidenGrupSaatUygula == DurumStatu.Evet)
                 {
-                    gidenGrupSaat = gidenTarihResult.GidenGrupSaat.Value;
+                    gidenGrupSaat = gidenTarihResult.GidenGrupTarih.Value;
                 }
                 else
                 {
-                    gidenGrupSaat = toplanmaTuru == ToplanmaTuru.GenelKurul ? gidenTarihResult.GidenGrupSaat.Value.AddMinutes(-60) : gidenTarihResult.GidenGrupSaat.Value.AddMinutes(-9 * sure);
+                    gidenGrupSaat = toplanmaTuru == ToplanmaTuru.GenelKurul ? gidenTarihResult.GidenGrupTarih.Value.AddMinutes(-60) : gidenTarihResult.GidenGrupTarih.Value.AddMinutes(-9 * sure);
                 }
             }
             return gidenGrupSaat;

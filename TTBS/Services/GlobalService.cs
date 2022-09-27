@@ -375,7 +375,7 @@ namespace TTBS.Services
 
         public bool CreateGrupDetay(GrupDetay detay)
         {
-            var grpDetay = _grupDetayRepo.Get(x=>x.GidenGrupSaat.Value.Date == detay.GidenGrupSaat.Value.Date);
+            var grpDetay = _grupDetayRepo.Get(x=>x.GidenGrupTarih.Value.Date == detay.GidenGrupTarih.Value.Date);
             if (grpDetay != null && grpDetay.Count()>0)
             {
                 detay.Id = grpDetay.FirstOrDefault().Id;
@@ -392,10 +392,10 @@ namespace TTBS.Services
 
         public GrupDetay UpdateGrupDetay(DateTime? gidenSaat)
         {
-            var grpDetay = _grupDetayRepo.Get(x => x.GidenGrupSaat.Value.Date == gidenSaat.Value.Date);
+            var grpDetay = _grupDetayRepo.Get(x => x.GidenGrupTarih.Value.Date == gidenSaat.Value.Date);
             if (grpDetay != null && grpDetay.Count() > 0)
             {
-                grpDetay.FirstOrDefault().GidenGrupSaat = gidenSaat;               
+                grpDetay.FirstOrDefault().GidenGrupTarih = gidenSaat;               
                 _grupDetayRepo.Update(grpDetay.FirstOrDefault());
                 _grupDetayRepo.Save();
             }
@@ -404,7 +404,7 @@ namespace TTBS.Services
 
         public Grup UpdateNextGrupDetay(DateTime gidenTarih)
         {
-            var grpDetay = _grupDetayRepo.Get(x => x.GidenGrupSaat.Value.Date == DateTime.Now.Date, includeProperties: "Grup");
+            var grpDetay = _grupDetayRepo.Get(x => x.GidenGrupTarih.Value.Date == DateTime.Now.Date, includeProperties: "Grup");
             if (grpDetay != null && grpDetay.Count() > 0)
             {
                 grpDetay.FirstOrDefault().GidenGrupTarih = gidenTarih;
@@ -420,7 +420,7 @@ namespace TTBS.Services
         }
         public GrupDetay GetGrupDetay()
         {
-            return _grupDetayRepo.GetFirst(x => x.GidenGrupSaat.Value.Date == DateTime.Now.Date,includeProperties: "Grup");
+            return _grupDetayRepo.GetFirst(x => x.GidenGrupTarih.Value.Date == DateTime.Now.Date,includeProperties: "Grup");
         }
     }
 }

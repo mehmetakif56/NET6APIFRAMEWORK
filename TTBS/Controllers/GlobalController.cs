@@ -261,12 +261,12 @@ namespace TTBS.Controllers
                 try
                 {
                     var now = DateTime.Now;
-                    model.GidenGrupSaat = model.GidenGrupSaat ?? new DateTime(now.Year, now.Month, now.Day, 18, 0, 0); 
+                    model.GidenGrupTarih = model.GidenGrupTarih ?? new DateTime(now.Year, now.Month, now.Day, 18, 0, 0); 
                     var entity = Mapper.Map<GrupDetay>(model);
                     bool createStatus = _globalService.CreateGrupDetay(entity);                 
                     if (createStatus)
                     {
-                       _gorevAtamaService.ActivateGidenGrupByGorevAtama(entity.GidenGrupPasif,entity.GidenGrupSaat,entity.GidenGrupSaatUygula, entity.GrupId);
+                       _gorevAtamaService.ActivateGidenGrupByGorevAtama(entity.GidenGrupPasif,entity.GidenGrupTarih,entity.GidenGrupSaatUygula, entity.GrupId);
                     }
                     transactionScope.Complete();
                     return Ok(entity);
@@ -289,7 +289,7 @@ namespace TTBS.Controllers
                 if (entity != null)
                 {
                     var gidenGrupSaat = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 18, 0, 0);
-                    var newDetay = new GrupDetay { GrupId = entity.Id, GidenGrupSaat = gidenGrupSaat.AddDays(1) };
+                    var newDetay = new GrupDetay { GrupId = entity.Id, GidenGrupTarih = gidenGrupSaat.AddDays(1) };
                     bool createStatus = _globalService.CreateGrupDetay(newDetay);
                     if(!createStatus)
                         return BadRequest("Giden grup otomatik atama işlemi yapılamadı");
@@ -315,7 +315,7 @@ namespace TTBS.Controllers
                     var entity = _globalService.UpdateGrupDetay(gidenSaat);
                     if (entity != null)
                     {
-                        _gorevAtamaService.ActivateGidenGrupByGorevAtama(entity.GidenGrupPasif, entity.GidenGrupSaat, entity.GidenGrupSaatUygula,entity.GrupId);
+                        _gorevAtamaService.ActivateGidenGrupByGorevAtama(entity.GidenGrupPasif, entity.GidenGrupTarih, entity.GidenGrupSaatUygula,entity.GrupId);
                     }
                     transactionScope.Complete();
                     return Ok();
