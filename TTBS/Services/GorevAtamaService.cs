@@ -140,7 +140,7 @@ namespace TTBS.Services
         }
         public IEnumerable<Stenograf> GetStenografIdList()
         {
-            return _stenografRepo.Get().OrderBy(x => x.SiraNo).Select(x => new Stenograf { Id = x.Id, StenoGorevTuru = x.StenoGorevTuru, AdSoyad = x.AdSoyad, GrupId = x.GrupId });
+            return _stenografRepo.Get(x => x.SiraNo > 0).OrderBy(x => x.SiraNo).Select(x => new Stenograf { Id = x.Id, StenoGorevTuru = x.StenoGorevTuru, AdSoyad = x.AdSoyad, GrupId = x.GrupId });
         }
         public List<GorevAtamaModel> CreateStenoGorevDonguKomisyon(Guid birlesimId, Guid oturumId)
         {
