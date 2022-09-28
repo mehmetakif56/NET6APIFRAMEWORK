@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Core.Entities;
 using TTBS.Core.BaseEntities;
 
 namespace TTBS.Core.Entities

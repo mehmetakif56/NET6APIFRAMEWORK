@@ -3,19 +3,11 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using System.Text;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using TTBS.Core.Entities;
 using TTBS.Core.Extensions;
 using TTBS.Core.Utilities.Security.Encyption;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using TTBS.Core.Utilities.Security.Encyption;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-
-
-using TTBS.Core.Utilities.Security.Encyption;
-using TTBS.Core.Utilities.Security.Jwt;
 
 namespace TTBS.Core.Utilities.Security.Jwt
 {
