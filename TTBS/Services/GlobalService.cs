@@ -363,12 +363,17 @@ namespace TTBS.Services
         public StenoModel GetStenoSureModelById(Guid? stenoId, Guid? yasamaId)
         {
             var result = _stenoToplamSureRepo.Get(x => x.StenografId == stenoId && x.YasamaId == yasamaId);
+
             DateTime now = DateTime.Now.Date;
+            var haftaninIlkGunu = now.AddDays(-((int)now.DayOfWeek) + 1);
+            var haftalikBaslangicTarihi = new DateTime(haftaninIlkGunu.Year, haftaninIlkGunu.Month, haftaninIlkGunu.Day, 8, 0, 0);
+            var gunlukTarih = new DateTime(now.Year, now.Month, now.Day, 8, 0, 0);
+
             return new StenoModel()
             {
                 Id = stenoId,
-                GunlukGorevSuresi = result.Where(x => x.Tarih.Date <= now && x.Tarih.Date >= now.AddDays(-1)).Select(x => x.Sure).Sum(),
-                HaftalikGorevSuresi = result.Where(x => x.Tarih < now.AddDays(1) && x.Tarih >= now.AddDays(-7)).Select(x => x.Sure).Sum(),
+                GunlukGorevSuresi = result.Where(x => x.Tarih.Date >= gunlukTarih).Select(x => x.Sure).Sum(),
+                HaftalikGorevSuresi = result.Where(x => x.Tarih >= haftalikBaslangicTarihi).Select(x => x.Sure).Sum(),
                 YillikGorevSuresi = result.Select(x => x.Sure).Sum()
             };
         }
