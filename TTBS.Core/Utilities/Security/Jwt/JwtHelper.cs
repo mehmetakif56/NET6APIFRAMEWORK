@@ -10,12 +10,17 @@ using TTBS.Core.Utilities.Security.Encyption;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using TTBS.Core.Utilities.Security.Encyption;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+
+
+using TTBS.Core.Utilities.Security.Encyption;
 using TTBS.Core.Utilities.Security.Jwt;
 
 namespace TTBS.Core.Utilities.Security.Jwt
 {
     public class JwtHelper:ITokenHelper
-    {/*
+    {
         public IConfiguration Configuration { get; }
         private TokenOptions _tokenOptions;
         private DateTime _accessTokenExpiration;
@@ -66,5 +71,5 @@ namespace TTBS.Core.Utilities.Security.Jwt
             
             return claims;
         }
-    }*/
+    }
 }
