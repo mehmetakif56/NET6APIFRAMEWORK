@@ -415,18 +415,42 @@ namespace TTBS.Services
                     oturumStenoInfoModel.OturumId= oturum.Id;
                     oturumStenoInfoModel.BirlesimId = birlesimId;
                     oturumStenoInfoModel.BaslangicTarihi= oturum.BaslangicTarihi.HasValue ? oturum.BaslangicTarihi : null;
-                    oturumStenoInfoModel.BitisTarihi = oturum.BitisTarihi.HasValue ? oturum.BitisTarihi : null;                    
+                    oturumStenoInfoModel.BitisTarihi = oturum.BitisTarihi.HasValue ? oturum.BitisTarihi : null;
+                    var stenoGorev = new GorevAtamaModel();
+                    
 
                     if (oturum.AcanSira.HasValue && oturum.AcanSira!=0)
                     {
-                     var matchedSteno=   _stenografRepo.GetFirst(p => p.StenoGorevTuru == StenoGorevTuru.Stenograf && p.SiraNo == oturum.AcanSira);
+                        if (oturum.Birlesim.ToplanmaTuru.Equals(ToplanmaTuru.GenelKurul))
+                        {
+                            var temp = _genelKurulAtamaRepo.Get(x => x.BirlesimId == oturum.BirlesimId && x.SatırNo.Equals(oturum.AcanSira)).FirstOrDefault();
+                            stenoGorev = _mapper.Map<GorevAtamaModel>(temp);
+                        }
+                        else if (oturum.Birlesim.ToplanmaTuru.Equals(ToplanmaTuru.Komisyon))
+                        {
+                            var temp = _komisyonAtamaRepo.Get(x => x.BirlesimId == oturum.BirlesimId && x.SatırNo.Equals(oturum.AcanSira)).FirstOrDefault();
+                            stenoGorev = _mapper.Map<GorevAtamaModel>(temp);
+                        }
+
+                        var matchedSteno= _stenografRepo.GetFirst(p => p.StenoGorevTuru == StenoGorevTuru.Stenograf && p.Id == stenoGorev.StenografId);
                         oturumStenoInfoModel.AcanStenograf = matchedSteno.AdSoyad;
                         oturumStenoInfoModel.AcanStenografId = matchedSteno.Id;
                         oturumStenoInfoModel.AcanSira = matchedSteno.SiraNo;
                     }
                     if (oturum.KapatanSira.HasValue && oturum.KapatanSira != 0)
                     {
-                        var matchedSteno = _stenografRepo.GetFirst(p => p.StenoGorevTuru == StenoGorevTuru.Stenograf && p.SiraNo == oturum.KapatanSira);
+                        if (oturum.Birlesim.ToplanmaTuru.Equals(ToplanmaTuru.GenelKurul))
+                        {
+                            var temp = _genelKurulAtamaRepo.Get(x => x.BirlesimId == oturum.BirlesimId && x.SatırNo.Equals(oturum.KapatanSira)).FirstOrDefault();
+                            stenoGorev = _mapper.Map<GorevAtamaModel>(temp);
+                        }
+                        else if (oturum.Birlesim.ToplanmaTuru.Equals(ToplanmaTuru.Komisyon))
+                        {
+                            var temp = _komisyonAtamaRepo.Get(x => x.BirlesimId == oturum.BirlesimId && x.SatırNo.Equals(oturum.KapatanSira)).FirstOrDefault();
+                            stenoGorev = _mapper.Map<GorevAtamaModel>(temp);
+                        }
+
+                        var matchedSteno = _stenografRepo.GetFirst(p => p.StenoGorevTuru == StenoGorevTuru.Stenograf && p.Id == stenoGorev.StenografId);
                         oturumStenoInfoModel.KapatanStenograf = matchedSteno.AdSoyad;
                         oturumStenoInfoModel.KapatanStenografId= matchedSteno.Id;
                         oturumStenoInfoModel.KapatanSira = matchedSteno.SiraNo;
