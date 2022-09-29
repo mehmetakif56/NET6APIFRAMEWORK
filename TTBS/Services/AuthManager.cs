@@ -33,8 +33,8 @@ namespace Business.Concrete
                 PasswordSalt = passwordSalt,
                 Status = true
             };
-            _userService.Add(user);
-            return  new SuccessDataResult<User>(user,Messages.UserRegistered);
+            //_userService.Add(user);
+            return user;
         }
 
         public User Login(UserForLoginDto userForLoginDto)
@@ -63,7 +63,7 @@ namespace Business.Concrete
 
         public AccessToken CreateAccessToken(User user)
         {
-            var claims = _userService.GetClaims(user);
+            var claims = new List<OperationClaim>();//_userService.GetClaims(user);
             var accessToken = _tokenHelper.CreateToken(user, claims);
             return accessToken;
         }

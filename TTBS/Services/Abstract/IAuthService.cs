@@ -11,7 +11,7 @@ namespace TTBS.Services
     {
         User Register(UserForRegisterDto userForRegisterDto,string password);
         User Login(UserForLoginDto userForLoginDto);
-        IResult UserExists(string email);
+        bool UserExists(string email);
         AccessToken CreateAccessToken(User user);
     }
 }
