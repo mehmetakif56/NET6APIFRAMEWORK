@@ -341,6 +341,7 @@ namespace TTBS.Services
         {
             foreach (var steno in stenoList)
             {
+                steno.GrupId = steno.SiraNo == 0 ? null : steno.GrupId;
                 _stenografRepo.Update(steno, CurrentUser.Id);
                 _stenografRepo.Save();
             }
