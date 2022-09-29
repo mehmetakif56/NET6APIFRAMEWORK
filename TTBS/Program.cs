@@ -1,4 +1,5 @@
 using AutoMapper;
+using Business.Concrete;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
@@ -80,7 +81,8 @@ builder.Services.AddScoped<IStenografService, StenografService>();
 builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<IGorevAtamaService, GorevAtamaService>();
-
+builder.Services.AddScoped<ITokenHelper, JwtHelper>();
+builder.Services.AddScoped<IAuthService, AuthManager>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -158,7 +160,7 @@ app.UseCors(MyAllowSpecificOrigins);
 app.UseRouting();
 app.UseAuthorization();
 app.UseSession();
-app.UseContextUserSession();
+//app.UseContextUserSession();
 app.MapControllers();
 
 app.Run();
