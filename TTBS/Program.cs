@@ -85,10 +85,6 @@ builder.Services.AddScoped<IGorevAtamaService, GorevAtamaService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var app = builder.Build();
-var config = app.Configuration;
-var tokenOptions = config.GetSection("TokenOptions").Get<TokenOptions>();
-
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -97,10 +93,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateLifetime = true,
-            ValidIssuer = tokenOptions.Issuer,
-            ValidAudience = tokenOptions.Audience,
+            ValidIssuer = builder.Configuration.GetValue<string>("TokenOptions:Issuer"),
+            ValidAudience = builder.Configuration.GetValue<string>("TokenOptions:Audience"),
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = SecurityKeyHelper.CreateSecurityKey(tokenOptions.SecurityKey)
+            IssuerSigningKey = SecurityKeyHelper.CreateSecurityKey(builder.Configuration.GetValue<string>("TokenOptions:SecurityKey"))
         };
     });
 //builder.Services.AddAuthentication(Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)
@@ -138,6 +134,7 @@ builder.Services.AddSession(options =>
 builder.Services.AddAuth();
 ;
 
+var app = builder.Build();
 
 app.UseRequestLocalization(new RequestLocalizationOptions
 {
