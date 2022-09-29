@@ -509,9 +509,11 @@ namespace TTBS.Controllers
                         SetOturumModifiedStenoInfo(model.ToplanmaBaslatmaStatu, model, oturum);
                         _globalService.UpdateOturum(oturum);
                     }
+                    _gorevAtamaService.UpdateStenoGorevAraVerme(model.BirlesimId, model.ToplanmaTuru, model.SatirNo);
                 }
                 else if (ToplanmaBaslatmaStatu.DevamEtme == model.ToplanmaBaslatmaStatu)
                 {
+                    var oturumAcan = _gorevAtamaService.GetOturumAcanSatirNo(model.BirlesimId, model.ToplanmaTuru, model.SatirNo);
                     var birlesim = _globalService.GetBirlesimById(model.BirlesimId).FirstOrDefault();
                     if (birlesim != null)
                     {
@@ -519,9 +521,10 @@ namespace TTBS.Controllers
                         _gorevAtamaService.UpdateBirlesim(birlesim);
                     }
                     var oturum = new Oturum { BirlesimId = model.BirlesimId, BaslangicTarihi = model.BasTarihi };
+                    model.SatirNo = oturumAcan.SatırNo;
                     SetOturumModifiedStenoInfo(model.ToplanmaBaslatmaStatu, model, oturum);
                     _globalService.CreateOturum(oturum);
-                    _gorevAtamaService.UpdateBirlesimStenoGorevDevamEtme(model.BirlesimId, model.BasTarihi, model.KaynakSatırNo, model.HedefSatırNo, oturum.Id, model.ToplanmaTuru);
+                    _gorevAtamaService.UpdateBirlesimStenoGorevDevamEtme(model.BirlesimId, model.BasTarihi, model.SatirNo, oturum.Id, model.ToplanmaTuru);
                 }
                 else if (ToplanmaBaslatmaStatu.Sonladırma == model.ToplanmaBaslatmaStatu)
                 {
@@ -540,7 +543,7 @@ namespace TTBS.Controllers
                         birlesim.ToplanmaDurumu = ToplanmaStatu.Tamamlandı;
                         _gorevAtamaService.UpdateBirlesim(birlesim);
                     }
-                    _gorevAtamaService.UpdateStenoGorevTamamla(model.BirlesimId, model.ToplanmaTuru, model.KaynakSatırNo, model.HedefSatırNo);
+                    _gorevAtamaService.UpdateStenoGorevTamamla(model.BirlesimId, model.ToplanmaTuru, model.SatirNo);
                 }
             }
             catch (Exception ex)
@@ -556,10 +559,10 @@ namespace TTBS.Controllers
                 switch (model.StenoGorevTuru)
                 {
                     case StenoGorevTuru.Stenograf:
-                        oturum.AcanSira = model.KaynakSatırNo;
+                        oturum.AcanSira = model.SatirNo;
                         break;
                     case StenoGorevTuru.Uzman:
-                        oturum.AcanSiraUzman = model.KaynakSatırNo;
+                        oturum.AcanSiraUzman = model.SatirNo;
                         break;
                 }
             }
@@ -568,10 +571,10 @@ namespace TTBS.Controllers
                 switch (model.StenoGorevTuru)
                 {
                     case StenoGorevTuru.Stenograf:
-                        oturum.KapatanSira = model.KaynakSatırNo;
+                        oturum.KapatanSira = model.SatirNo;
                         break;
                     case StenoGorevTuru.Uzman:
-                        oturum.KapatanSiraUzman = model.KaynakSatırNo;
+                        oturum.KapatanSiraUzman = model.SatirNo;
                         break;
                 }
             }
