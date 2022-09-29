@@ -356,7 +356,7 @@ namespace TTBS.Controllers
         public IEnumerable<GrupModel> GetAllGrup(int grupTuru)
         {
             var grupEntity = _globalService.GetAllGrup(grupTuru);
-            var gidenGrup = _globalService.GetGrupDetayLast().LastOrDefault();
+            var gidenGrup = _globalService.GetGrupDetay();
             if(grupEntity != null && gidenGrup != null)
             {
                 var model = _mapper.Map<IEnumerable<GrupModel>>(grupEntity);
