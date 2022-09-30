@@ -358,16 +358,19 @@ namespace TTBS.Controllers
         {
             var grupEntity = _globalService.GetAllGrup(grupTuru);
             var gidenGrup = _globalService.GetGrupDetay();
-            if(grupEntity != null && gidenGrup != null)
+            if(grupEntity != null)
             {
                 var model = _mapper.Map<IEnumerable<GrupModel>>(grupEntity);
-                model.ToList().ForEach(x =>
+                if (gidenGrup != null)
                 {
-                    if (x.Id == gidenGrup.GrupId)
-                        x.gidenGrup = true;
-                    else
-                        x.gidenGrup = false;
-                });
+                    model.ToList().ForEach(x =>
+                    {
+                        if (x.Id == gidenGrup.GrupId)
+                            x.gidenGrup = true;
+                        else
+                            x.gidenGrup = false;
+                    });
+                }
                 return model;
             }
             return null;
