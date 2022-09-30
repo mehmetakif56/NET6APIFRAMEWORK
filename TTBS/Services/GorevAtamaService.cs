@@ -329,7 +329,7 @@ namespace TTBS.Services
                         if (gkModel != null && gkModel.Any())
                         {
                             var extractedGK = new List<GorevAtamaGenelKurul>();
-                            var gidenGrupTarih = uygula == DurumStatu.Hayır ? gidenGrupSaat.Value.AddMinutes(-60) : gidenGrupSaat;
+                            var gidenGrupTarih = uygula == DurumStatu.Hayır ? gidenGrupSaat.Value.AddMinutes(-45) : gidenGrupSaat;
                             gkModel.ForEach((data) =>
                             {
                                 data.GorevStatu = data.GidenGrupMu ? GorevStatu.Planlandı : data.GorevStatu;
