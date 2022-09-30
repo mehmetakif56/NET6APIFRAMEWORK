@@ -118,7 +118,6 @@ namespace TTBS.Controllers
         }
 
 
-        [Authorize]
         [HttpGet("GetAllBirlesim")]
         public IEnumerable<BirlesimModel> GetAllBirlesim()
         {
