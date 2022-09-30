@@ -436,7 +436,7 @@ namespace TTBS.Services
                         var matchedSteno= _stenografRepo.GetFirst(p => p.StenoGorevTuru == StenoGorevTuru.Stenograf && p.Id == stenoGorev.StenografId);
                         oturumStenoInfoModel.AcanStenograf = matchedSteno.AdSoyad;
                         oturumStenoInfoModel.AcanStenografId = matchedSteno.Id;
-                        oturumStenoInfoModel.AcanSira = matchedSteno.SiraNo;
+                        oturumStenoInfoModel.AcanSira = oturum.AcanSira;
                     }
                     if (oturum.KapatanSira.HasValue && oturum.KapatanSira != 0)
                     {
@@ -454,21 +454,21 @@ namespace TTBS.Services
                         var matchedSteno = _stenografRepo.GetFirst(p => p.StenoGorevTuru == StenoGorevTuru.Stenograf && p.Id == stenoGorev.StenografId);
                         oturumStenoInfoModel.KapatanStenograf = matchedSteno.AdSoyad;
                         oturumStenoInfoModel.KapatanStenografId= matchedSteno.Id;
-                        oturumStenoInfoModel.KapatanSira = matchedSteno.SiraNo;
+                        oturumStenoInfoModel.KapatanSira = oturum.KapatanSira;
                     }
                     if (oturum.AcanSiraUzman.HasValue && oturum.AcanSiraUzman != 0)
                     {
                         var matchedSteno = _stenografRepo.GetFirst(p => p.StenoGorevTuru == StenoGorevTuru.Uzman && p.SiraNo == oturum.AcanSiraUzman);
                         oturumStenoInfoModel.AcanUzman = matchedSteno.AdSoyad;
                         oturumStenoInfoModel.AcanUzmanId =matchedSteno.Id;
-                        oturumStenoInfoModel.AcanSiraUzman = matchedSteno.SiraNo;
+                        oturumStenoInfoModel.AcanSiraUzman = oturum.AcanSiraUzman;
                     }
                     if (oturum.KapatanSiraUzman.HasValue && oturum.KapatanSiraUzman != 0)
                     {
                         var matchedSteno = _stenografRepo.GetFirst(p => p.StenoGorevTuru == StenoGorevTuru.Uzman && p.SiraNo == oturum.KapatanSiraUzman);
                         oturumStenoInfoModel.KapatanUzman = matchedSteno.AdSoyad;
                         oturumStenoInfoModel.KapatanUzmanId = matchedSteno.Id;
-                        oturumStenoInfoModel.KapatanSiraUzman = matchedSteno.SiraNo;
+                        oturumStenoInfoModel.KapatanSiraUzman = oturum.KapatanSiraUzman;
                     }
                     oturumStenoInfoModels.Add(oturumStenoInfoModel);
                 }
