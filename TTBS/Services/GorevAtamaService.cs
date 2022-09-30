@@ -34,8 +34,8 @@ namespace TTBS.Services
         void UpdateBirlesimStenoGorevDevamEtme(Guid birlesimId, DateTime basTarih, int satirNo, Guid oturumId, ToplanmaTuru toplanmaTuru);
         List<GorevAtamaModel> UpdateGorevDurumByBirlesimAndSteno(Guid birlesimId, Guid stenoId, ToplanmaTuru toplanmaTuru, StenoGorevTuru gorevTuru);
         List<GorevAtamaModel> UpdateGorevDurumById(Guid id, Guid birlesimId, ToplanmaTuru toplanmaTuru, StenoGorevTuru gorevTuru);
-        void UpdateStenoGorevTamamla(Guid birlesimId, ToplanmaTuru toplanmaTuru, int satirNo);
-        void UpdateStenoGorevAraVerme(Guid birlesimId, ToplanmaTuru toplanmaTuru, int satirNo);
+        void UpdateStenoGorevTamamla(Guid birlesimId, ToplanmaTuru toplanmaTuru, int satirNo, DateTime bitisTarih);
+        void UpdateStenoGorevAraVerme(Guid birlesimId, ToplanmaTuru toplanmaTuru, int satirNo, DateTime bitisTarih);
         IEnumerable<GorevAtamaKomisyon> GetAssignedStenoByBirlesimId(Guid birlesimId);
         IzınTuru GetStenoIzinByGorevBasTarih(Guid stenoId, DateTime? gorevBasTarih);
         GrupDetay GetGidenGrup(Guid grupId);
@@ -635,7 +635,7 @@ namespace TTBS.Services
                 }
             }
         }
-        public void UpdateStenoGorevTamamla(Guid birlesimId, ToplanmaTuru toplanmaTuru, int satirNo)
+        public void UpdateStenoGorevTamamla(Guid birlesimId, ToplanmaTuru toplanmaTuru, int satirNo, DateTime bitisTarih)
         {
 
             var result = GetGorevAtamaByBirlesimId(birlesimId, toplanmaTuru);
@@ -645,18 +645,24 @@ namespace TTBS.Services
                 {
                     try
                     {
-
+                        
                         result.Where(x => x.SatırNo <= satirNo && x.GorevStatu != GorevStatu.Iptal).ToList().ForEach(x =>
                         {
                             if (x.StenoIzinTuru.Equals(IzınTuru.Bulunmuyor))
                             {
                                 x.GorevStatu = GorevStatu.Tamamlandı;
-                                if (x.SatırNo == satirNo && x.StenoGorevTuru == StenoGorevTuru.Stenograf)
+                                
+                                if (x.SatırNo == satirNo)
                                 {
-                                    var steno = _stenografRepo.GetById(x.StenografId);
-                                    steno.BirlesimKapatanMi = true;
-                                    _stenografRepo.Update(steno);
-                                    _stenografRepo.Save();
+                                    if (x.StenoGorevTuru == StenoGorevTuru.Stenograf && toplanmaTuru.Equals(ToplanmaTuru.GenelKurul))
+                                    {
+                                        var steno = _stenografRepo.GetById(x.StenografId);
+                                        steno.BirlesimKapatanMi = true;
+                                        _stenografRepo.Update(steno);
+                                        _stenografRepo.Save();
+                                    }
+
+                                    x.StenoSure = bitisTarih.Subtract(x.GorevBasTarihi.Value).TotalMinutes;
                                 }
                             }
 
@@ -680,7 +686,7 @@ namespace TTBS.Services
             }
         }
 
-        public void UpdateStenoGorevAraVerme(Guid birlesimId, ToplanmaTuru toplanmaTuru, int satirNo)
+        public void UpdateStenoGorevAraVerme(Guid birlesimId, ToplanmaTuru toplanmaTuru, int satirNo, DateTime bitisTarih)
         {
             var result = GetGorevAtamaByBirlesimId(birlesimId, toplanmaTuru).Where(x => x.SatırNo <= satirNo && x.GorevStatu != GorevStatu.Iptal && x.GorevStatu != GorevStatu.Tamamlandı);
             if (result != null && result.Count() > 0)
@@ -695,6 +701,10 @@ namespace TTBS.Services
                             if (x.StenoIzinTuru.Equals(IzınTuru.Bulunmuyor))
                             {
                                 x.GorevStatu = GorevStatu.Tamamlandı;
+                            }
+                            if(x.SatırNo == satirNo)
+                            {
+                                x.StenoSure = bitisTarih.Subtract(x.GorevBasTarihi.Value).TotalMinutes;
                             }
                             list.Add(x);
 
@@ -838,16 +848,17 @@ namespace TTBS.Services
                 minStenoResult.StenoSure = sonuc;
                 minStenoResult.GorevBasTarihi = mindate.AddMinutes(mindateDiff);
                 minStenoResult.GorevBitisTarihi = minStenoResult.GorevBasTarihi.Value.AddMinutes(sonuc);
-                var gorevBasPlan = minStenoResult.GorevBasTarihi.Value.AddMinutes(-(mindateDiff % modResult.FirstOrDefault()));
+                var gorevBasPlan = minStenoResult.GorevBitisTarihi.Value;
                 var remain = gorevBasPlan.Subtract(mindate).TotalMinutes;
                 updateList.Add(minStenoResult);
 
                 var remainResult = result.Where(x => x.GorevBasTarihi != DateTime.MinValue && !updateList.Select(x => x.Id).Contains(x.Id));
                 foreach (var item in remainResult)
                 {
-                    item.GorevBasTarihi = item.GorevBasTarihi.Value.AddMinutes(remain);
-                    item.GorevBitisTarihi = item.GorevBasTarihi.Value.AddMinutes(modResult.FirstOrDefault());
+                    item.GorevBasTarihi = gorevBasPlan;
+                    item.GorevBitisTarihi = item.GorevBasTarihi.Value.AddMinutes(item.StenoSure);
                     updateList.Add(item);
+                    gorevBasPlan = item.GorevBitisTarihi.Value;
                 }
                 UpdateGorevAtama(updateList, toplanmaTuru);
             }

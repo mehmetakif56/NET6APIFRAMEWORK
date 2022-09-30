@@ -189,7 +189,7 @@ namespace TTBS.Controllers
                 var modelList = SetGorevAtama(birlesim, oturum.Id, model.StenografIds, birlesim.StenoSure, ToplanmaTuru.Komisyon, StenoGorevTuru.Stenograf);
                 var entityList = Mapper.Map<List<GorevAtamaKomisyon>>(modelList);
                 _gorevAtamaService.CreateStenoAtamaKom(entityList);
-                //UpdateGenelKurulKomisyon();
+                UpdateGenelKurulKomisyon();
             }
             catch (Exception ex)
             { return BadRequest(ex.Message); }
@@ -509,7 +509,7 @@ namespace TTBS.Controllers
                         SetOturumModifiedStenoInfo(model.ToplanmaBaslatmaStatu, model, oturum);
                         _globalService.UpdateOturum(oturum);
                     }
-                    _gorevAtamaService.UpdateStenoGorevAraVerme(model.BirlesimId, model.ToplanmaTuru, model.SatirNo);
+                    _gorevAtamaService.UpdateStenoGorevAraVerme(model.BirlesimId, model.ToplanmaTuru, model.SatirNo, model.BasTarihi);
                 }
                 else if (ToplanmaBaslatmaStatu.DevamEtme == model.ToplanmaBaslatmaStatu)
                 {
@@ -543,7 +543,7 @@ namespace TTBS.Controllers
                         birlesim.ToplanmaDurumu = ToplanmaStatu.Tamamlandı;
                         _gorevAtamaService.UpdateBirlesim(birlesim);
                     }
-                    _gorevAtamaService.UpdateStenoGorevTamamla(model.BirlesimId, model.ToplanmaTuru, model.SatirNo);
+                    _gorevAtamaService.UpdateStenoGorevTamamla(model.BirlesimId, model.ToplanmaTuru, model.SatirNo, model.BasTarihi);
                 }
             }
             catch (Exception ex)
@@ -633,9 +633,9 @@ namespace TTBS.Controllers
                 var gkAtama = _gorevAtamaService.GetGorevAtamaByBirlesimId(gkBirlesim.FirstOrDefault().Id, ToplanmaTuru.GenelKurul);
                 if (gkAtama != null && gkAtama.Count() > 0)
                 {
-                    var modelList = _mapper.Map<List<GorevAtamaModel>>(gkAtama);
+                    var modelList = _mapper.Map<List<GorevAtamaModel>>(gkAtama.OrderBy(x => x.SatırNo));
                     modelList.Where(x => x.StenoGorevTuru == StenoGorevTuru.Stenograf).ToList().ForEach(model => model.KomisyonAd = _gorevAtamaService.GetKomisyonMinMaxDate(model.StenografId, model.GorevBasTarihi, model.GorevBitisTarihi, model.StenoSure));
-                    var result = BirlesimSureHesaplama(modelList);
+                    var result = BirlesimSureHesaplama(modelList.Where(x => x.StenoGorevTuru == StenoGorevTuru.Stenograf).OrderBy(x => x.SatırNo).ToList());
                     var entityList = _mapper.Map<List<GorevAtamaGenelKurul>>(result);
                     _gorevAtamaService.UpdateStenoAtamaGK(entityList);
                 }
