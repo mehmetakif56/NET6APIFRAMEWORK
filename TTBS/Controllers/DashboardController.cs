@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TTBS.Core.Entities;
 using TTBS.Core.Enums;
@@ -30,7 +31,7 @@ namespace TTBS.Controllers
             _dashboardService = dashboardService;
         }
 
-
+        
         [HttpGet("GetActiveGorevler")]
         public IEnumerable<GorevAtamaModel> GetActiveGorevler(ToplanmaTuru toplanmaTuru)
         {

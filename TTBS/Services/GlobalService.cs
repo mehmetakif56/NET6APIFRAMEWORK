@@ -140,17 +140,17 @@ namespace TTBS.Services
 
         public void CreateDonem(Donem donem)
         {
-            _donemRepo.Create(donem, CurrentUser.Id);
+            _donemRepo.Create(donem);
             _donemRepo.Save();
         }
         public void CreateKomisyon(Komisyon komisyon)
         {
-            _komisyonRepo.Create(komisyon, CurrentUser.Id);
+            _komisyonRepo.Create(komisyon);
             _komisyonRepo.Save();
         }
         public void CreateAltKomisyon(AltKomisyon komisyon)
         {
-            _altkomisyonRepo.Create(komisyon, CurrentUser.Id);
+            _altkomisyonRepo.Create(komisyon);
             _altkomisyonRepo.Save();
         }
 
@@ -181,13 +181,13 @@ namespace TTBS.Services
 
         public void CreateYasama(Yasama yasama)
         {
-            _yasamaRepo.Create(yasama, CurrentUser.Id);
+            _yasamaRepo.Create(yasama);
             _yasamaRepo.Save();
         }
 
         public void CreateGrup(Grup grup)
         {
-            _grupRepo.Create(grup, CurrentUser.Id);
+            _grupRepo.Create(grup);
             _grupRepo.Save();
         }
         public IEnumerable<Grup> GetAllGrup(int grupTuru)
@@ -249,7 +249,7 @@ namespace TTBS.Services
 
         public void CreateOzelGorevTur(OzelGorevTur ozelGorevTur)
         {
-            _ozelGorevTurRepo.Create(ozelGorevTur, CurrentUser.Id);
+            _ozelGorevTurRepo.Create(ozelGorevTur);
             _ozelGorevTurRepo.Save();
         }
 
@@ -260,7 +260,7 @@ namespace TTBS.Services
 
         public void UpdateOzelGorevTur(OzelGorevTur ozelGorevTur)
         {
-            _ozelGorevTurRepo.Update(ozelGorevTur, CurrentUser.Id);
+            _ozelGorevTurRepo.Update(ozelGorevTur);
             _ozelGorevTurRepo.Save();
         }
 
@@ -271,7 +271,7 @@ namespace TTBS.Services
 
         public void UpdateOturum(Oturum oturum)
         {
-            _oturumRepo.Update(oturum, CurrentUser.Id);
+            _oturumRepo.Update(oturum);
             _oturumRepo.Save();
         }
 
@@ -313,7 +313,7 @@ namespace TTBS.Services
 
         public Guid InsertStenoToplamSure(StenoToplamGenelSure stenoToplamGenelSure)
         {
-            _stenoToplamSureRepo.Create(stenoToplamGenelSure, CurrentUser.Id);
+            _stenoToplamSureRepo.Create(stenoToplamGenelSure);
             _stenoToplamSureRepo.Save();
 
             return stenoToplamGenelSure.Id;

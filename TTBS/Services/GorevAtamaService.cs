@@ -85,14 +85,14 @@ namespace TTBS.Services
         }
         public Birlesim CreateBirlesim(Birlesim birlesim)
         {
-            _birlesimRepo.Create(birlesim, CurrentUser.Id);
+            _birlesimRepo.Create(birlesim);
             _birlesimRepo.Save();
 
             return birlesim;
         }
         public void UpdateBirlesim(Birlesim birlesim)
         {
-            _birlesimRepo.Update(birlesim, CurrentUser.Id);
+            _birlesimRepo.Update(birlesim);
             _birlesimRepo.Save();
         }
 
@@ -101,7 +101,7 @@ namespace TTBS.Services
             var otr = _oturumRepo.Get(x => x.BirlesimId == oturum.BirlesimId);
             if (otr != null && otr.Count() > 0)
                 oturum.OturumNo = otr.Max(x => x.OturumNo) + 1;
-            _oturumRepo.Create(oturum, CurrentUser.Id);
+            _oturumRepo.Create(oturum);
             _oturumRepo.Save();
             return oturum.Id;
         }

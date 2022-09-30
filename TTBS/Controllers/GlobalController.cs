@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 using System.Transactions;
@@ -115,8 +116,9 @@ namespace TTBS.Controllers
                 return null;
             }
         }
-     
 
+
+        [Authorize]
         [HttpGet("GetAllBirlesim")]
         public IEnumerable<BirlesimModel> GetAllBirlesim()
         {

@@ -76,7 +76,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IGlobalService, GlobalService>();
 builder.Services.AddSingleton(typeof(GenericSharedResourceService));
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<ISessionHelper, SessionHelper>();
+//builder.Services.AddScoped<ISessionHelper, SessionHelper>();
 builder.Services.AddScoped<IStenografService, StenografService>();
 builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
@@ -127,7 +127,7 @@ IMapper mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession(options =>
+/*builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromSeconds(10);
     options.Cookie.HttpOnly = true;
@@ -135,7 +135,7 @@ builder.Services.AddSession(options =>
 });
 builder.Services.AddAuth();
 ;
-
+*/
 var app = builder.Build();
 
 app.UseRequestLocalization(new RequestLocalizationOptions
@@ -158,9 +158,11 @@ app.UseHttpsRedirection();
 app.UseCors(MyAllowSpecificOrigins);
 
 app.UseRouting();
-app.UseAuthorization();
-app.UseSession();
+//app.UseSession();
 //app.UseContextUserSession();
+app.UseAuthentication();
+
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();

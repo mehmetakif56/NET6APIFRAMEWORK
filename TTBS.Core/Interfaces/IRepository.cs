@@ -30,17 +30,17 @@ namespace TTBS.Core.Interfaces
 
         TEntity GetOne(Expression<Func<TEntity, bool>> filter = null, string includeProperties = null, bool asNoTracking = false);
 
-        void Create(TEntity entity, Guid? userId = null);
+        void Create(TEntity entity);
 
-        void Create(System.Guid? userId = null, params TEntity[] entities);
+        void Create( params TEntity[] entities);
 
-        void Create(IEnumerable<TEntity> entities, Guid? userId = null);
+        void Create(IEnumerable<TEntity> entities);
 
-        void Update(TEntity entity, Guid? userId = null);
+        void Update(TEntity entity);
 
-        void Update(Guid? userId = null, params TEntity[] entities);
+        void Update( params TEntity[] entities);
 
-        void Update(IEnumerable<TEntity> entities, Guid? userId = null, bool bulkUpdate = false);
+        void Update(IEnumerable<TEntity> entities, bool bulkUpdate = false);
 
         void Delete(TEntity entity);
 
