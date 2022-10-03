@@ -35,8 +35,8 @@ namespace TTBS.Controllers
             }
             catch (Exception exception)
             {
-
-                return BadRequest(exception.Message);
+                return StatusCode(StatusCodes.Status400BadRequest, exception.Message);
+               
             }
             
 

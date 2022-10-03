@@ -9,11 +9,15 @@ using TTBS.Services;
 
 namespace Business.Concrete
 {
-    public class AuthManager:IAuthService
+    public class AuthManager : IAuthService
     {
         private IUserService _userService;
         private ITokenHelper _tokenHelper;
-
+        private static List<User> _users = new List<User>()
+        {
+            new User(){FirstName="tutanak1", LastName="123456",Email="dummymail",},
+            new User(){FirstName="tutanak2", LastName="987654",Email="dummymail",}
+        };
         public AuthManager(IUserService userService, ITokenHelper tokenHelper)
         {
             _userService = userService;
@@ -23,7 +27,7 @@ namespace Business.Concrete
         public User Register(UserForRegisterDto userForRegisterDto, string password)
         {
             byte[] passwordHash, passwordSalt;
-            HashingHelper.CreatePasswordHash(password,out passwordHash,out passwordSalt);
+            HashingHelper.CreatePasswordHash(password, out passwordHash, out passwordSalt);
             var user = new User
             {
                 Email = userForRegisterDto.Email,
@@ -52,7 +56,27 @@ namespace Business.Concrete
 
             return new SuccessDataResult<User>(userToCheck,Messages.SuccessfulLogin);
             */
-            return new User() { Email="dummymail", FirstName="dummy first name", LastName="dummy last name"};
+
+            User accessedUser;
+            if (userForLoginDto != null)
+            {
+                accessedUser = _users.FirstOrDefault(x => (!String.IsNullOrWhiteSpace(userForLoginDto.UserName) && x.FirstName.ToLower().Trim().Equals(userForLoginDto.UserName.ToLower().Trim()))
+                && (!String.IsNullOrWhiteSpace(userForLoginDto.Password) && x.LastName.ToLower().Trim().Equals(userForLoginDto.Password.ToLower().Trim()))
+                );
+
+                if (accessedUser == null)
+                {
+                    throw new Exception("Kullanıcı tanımlaması bulunmamaktadır.");
+                }
+
+            }
+            else
+            {
+                throw new Exception("Kullanıcı tanımlaması bulunmamaktadır.");
+            }
+
+
+            return accessedUser;
         }
 
         public bool UserExists(string email)
