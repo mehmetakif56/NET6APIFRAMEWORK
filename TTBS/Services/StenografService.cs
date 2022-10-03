@@ -188,7 +188,7 @@ namespace TTBS.Services
 
         public void CreateStenoIzin(StenoIzin entity)
         {
-            _stenoIzinRepo.Create(entity, CurrentUser.Id);
+            _stenoIzinRepo.Create(entity);
             _stenoIzinRepo.Save();
 
             var result = _genelKurulAtamaRepo.Get(x => x.GorevBitisTarihi.Value.Date == entity.BaslangicTarihi.Value.Date);
@@ -342,7 +342,7 @@ namespace TTBS.Services
             foreach (var steno in stenoList)
             {
                 steno.GrupId = steno.SiraNo == 0 ? null : steno.GrupId;
-                _stenografRepo.Update(steno, CurrentUser.Id);
+                _stenografRepo.Update(steno);
                 _stenografRepo.Save();
             }
 

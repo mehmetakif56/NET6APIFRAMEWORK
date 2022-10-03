@@ -15,14 +15,14 @@ namespace TTBS.Infrastructure
             _dbSet = dbContext.Set<T>();
         }
 
-        public void Create(T entity, Guid? userId = null)
+        public void Create(T entity)
         {
             //entity.CreatedDate = DateTime.Now;
             //entity.CreatedBy = userId;
             _dbSet.Add(entity);
         }
 
-        public void Create(Guid? userId = null, params T[] entities)
+        public void Create( params T[] entities)
         {
             //entities.ToList().ForEach((e) =>
             //{
@@ -33,7 +33,7 @@ namespace TTBS.Infrastructure
             _dbSet.AddRange(entities);
         }
 
-        public void Create(IEnumerable<T> entities, Guid? userId = null)
+        public void Create(IEnumerable<T> entities)
         {
             //entities.ToList().ForEach((e) =>
             //{
@@ -63,14 +63,14 @@ namespace TTBS.Infrastructure
             _dbSet.Remove(entity);
         }
 
-        public void Update(T entity, Guid? userId = null)
+        public void Update(T entity)
         {
             _dbContext.ChangeTracker.Clear();
             _dbContext.Entry(entity).State = EntityState.Modified;            
             _dbSet.Update(entity);
         }
 
-        public void Update(Guid? userId = null, params T[] entities)
+        public void Update( params T[] entities)
         {
             //entities.ToList().ForEach((e) =>
             //{
@@ -81,7 +81,7 @@ namespace TTBS.Infrastructure
             _dbSet.UpdateRange(entities);
         }
 
-        public void Update(IEnumerable<T> entities, Guid? userId = null, bool bulkInsert = false)
+        public void Update(IEnumerable<T> entities, bool bulkInsert = false)
         {
             foreach (var item in entities)
             {

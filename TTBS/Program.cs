@@ -1,12 +1,17 @@
 using AutoMapper;
+using Business.Concrete;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.IdentityModel.Tokens;
 using System.Globalization;
 using System.Text;
 using TTBS;
 using TTBS.Core.Interfaces;
+using TTBS.Core.Utilities.Security.Encyption;
+using TTBS.Core.Utilities.Security.Jwt;
 using TTBS.Extensions;
 using TTBS.Helper;
 using TTBS.Infrastructure;
@@ -14,7 +19,7 @@ using TTBS.MongoDB;
 using TTBS.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-;
+
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 // Add services to the container.
@@ -72,30 +77,46 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IGlobalService, GlobalService>();
 builder.Services.AddSingleton(typeof(GenericSharedResourceService));
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<ISessionHelper, SessionHelper>();
+//builder.Services.AddScoped<ISessionHelper, SessionHelper>();
 builder.Services.AddScoped<IStenografService, StenografService>();
 builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<IGorevAtamaService, GorevAtamaService>();
-
+builder.Services.AddScoped<ITokenHelper, JwtHelper>();
+builder.Services.AddScoped<IAuthService, AuthManager>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddAuthentication(Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters =
-                        new TokenValidationParameters
-                        {
 
-                            ValidateIssuer = true,
-                            ValidateAudience = true,
-                            ValidAudience = builder.Configuration.GetValue<string>("JWT:ValidAudience"),
-                            ValidIssuer = builder.Configuration.GetValue<string>("JWT:ValidIssuer"),
-                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetValue<string>("JWT:Secret")))
-                        };
-            
-                });
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidIssuer = builder.Configuration.GetValue<string>("TokenOptions:Issuer"),
+            ValidAudience = builder.Configuration.GetValue<string>("TokenOptions:Audience"),
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = SecurityKeyHelper.CreateSecurityKey(builder.Configuration.GetValue<string>("TokenOptions:SecurityKey"))
+        };
+    });
+//builder.Services.AddAuthentication(Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)
+//                .AddJwtBearer(options =>
+//                {
+//                    options.TokenValidationParameters =
+//                        new TokenValidationParameters
+//                        {
+
+//                            ValidateIssuer = true,
+//                            ValidateAudience = true,
+//                            ValidAudience = builder.Configuration.GetValue<string>("JWT:ValidAudience"),
+//                            ValidIssuer = builder.Configuration.GetValue<string>("JWT:ValidIssuer"),
+//                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetValue<string>("JWT:Secret")))
+//                        };
+
+//                });
 
 
 var mapperConfig = new MapperConfiguration(mc =>
@@ -107,7 +128,7 @@ IMapper mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession(options =>
+/*builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromSeconds(10);
     options.Cookie.HttpOnly = true;
@@ -115,7 +136,7 @@ builder.Services.AddSession(options =>
 });
 builder.Services.AddAuth();
 ;
-
+*/
 var app = builder.Build();
 
 app.UseRequestLocalization(new RequestLocalizationOptions
@@ -135,12 +156,14 @@ if (app.Environment.IsDevelopment() || (app.Environment.IsProduction()))
 
 app.UseHttpsRedirection();
 
-app.UseRouting();
 app.UseCors(MyAllowSpecificOrigins);
 
+app.UseRouting();
+//app.UseSession();
+//app.UseContextUserSession();
+app.UseAuthentication();
+
 app.UseAuthorization();
-app.UseSession();
-app.UseContextUserSession();
 app.MapControllers();
 
 app.Run();

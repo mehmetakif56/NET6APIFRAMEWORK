@@ -11,7 +11,7 @@ namespace TTBS.Controllers
         private ILogger<T> _logger;
         private IConfiguration _conf;
         private GenericSharedResourceService _localizer;
-        private UserEntity _currentUser;
+        //private UserEntity _currentUser;
 
         protected IConfiguration Configuration => _conf ?? (_conf = HttpContext.RequestServices.GetService<IConfiguration>());
         protected IMapper Mapper => _mapper ?? (_mapper = HttpContext.RequestServices.GetService<IMapper>());
